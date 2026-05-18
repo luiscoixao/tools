@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HTML Editor</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Syne:wght@400;700;800&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0d0d0f;
+    --surface: #16161a;
+    --surface2: #1e1e24;
+    --border: #2a2a35;
+    --accent: #e8ff47;
+    --accent2: #47ffe8;
+    --text: #e0e0e8;
+    --text-dim: #666678;
+    --danger: #ff4757;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Syne', sans-serif;
+    --bar-h: 48px;
+  }
+
+  html, body { height: 100%; overflow: hidden; background: var(--bg); color: var(--text); font-family: var(--sans); }
+
+  /* ── TOP BAR ── */
+  #topbar {
+    height: var(--bar-h);
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 0;
+    padding: 0 12px;
+    position: relative;
+    z-index: 10;
+  }
+  #topbar .logo {
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: .12em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-right: 16px;
+    white-space: nowrap;
+  }
+  .sep { width: 1px; height: 20px; background: var(--border); margin: 0 10px; flex-shrink: 0; }
+
+  .btn {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .06em;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    padding: 5px 12px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all .15s;
+    white-space: nowrap;
+  }
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+  .btn.primary { background: var(--accent); color: #0d0d0f; border-color: var(--accent); font-weight: 700; }
+  .btn.primary:hover { background: #d4eb3a; }
+  .btn.danger { border-color: var(--danger); color: var(--danger); }
+  .btn.danger:hover { background: var(--danger); color: #fff; }
+
+  #topbar .spacer { flex: 1; }
+  #view-toggle { display: flex; gap: 4px; }
+  .vbtn {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .08em;
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-dim);
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all .15s;
+  }
+  .vbtn.active { background: var(--surface2); border-color: var(--accent2); color: var(--accent2); }
+
+  /* ── STATUS BAR ── */
+  #statusbar {
+    height: 26px;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 14px;
+    gap: 16px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+  }
+  #statusbar span b { color: var(--accent); }
+  #statusbar .ok { color: #47ff8a; }
+  #statusbar .err { color: var(--danger); }
+
+  /* ── MAIN LAYOUT ── */
+  #workspace {
+    display: flex;
+    height: calc(100vh - var(--bar-h) - 26px);
+    overflow: hidden;
+  }
+
+  /* ── EDITOR PANE ── */
+  #editor-pane {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+    border-right: 2px solid var(--border);
+    transition: flex .25s ease;
+  }
+  #editor-pane.hidden { flex: 0; min-width: 0; max-width: 0; overflow: hidden; border: none; }
+
+  .pane-header {
+    height: 32px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 14px;
+    gap: 8px;
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-dim);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    flex-shrink: 0;
+  }
+  .pane-header .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .dot-edit { background: var(--accent); }
+  .dot-preview { background: var(--accent2); }
+
+  /* ── CODE AREA ── */
+  #editor-wrap {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+    position: relative;
+  }
+  #line-nums {
+    width: 44px;
+    padding: 14px 0;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--text-dim);
+    text-align: right;
+    padding-right: 10px;
+    overflow: hidden;
+    flex-shrink: 0;
+    user-select: none;
+  }
+  #code {
+    flex: 1;
+    background: var(--surface);
+    color: var(--text);
+    border: none;
+    outline: none;
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.7;
+    padding: 14px 16px;
+    resize: none;
+    tab-size: 2;
+    white-space: pre;
+    overflow-wrap: normal;
+    overflow: auto;
+    caret-color: var(--accent);
+  }
+  #code::selection { background: rgba(232,255,71,.18); }
+
+  /* ── DIVIDER ── */
+  #divider {
+    width: 6px;
+    background: var(--border);
+    cursor: col-resize;
+    flex-shrink: 0;
+    transition: background .15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  #divider:hover, #divider.dragging { background: var(--accent); }
+  #divider::after {
+    content: '⋮';
+    color: var(--bg);
+    font-size: 16px;
+    line-height: 1;
+  }
+
+  /* ── PREVIEW PANE ── */
+  #preview-pane {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+    transition: flex .25s ease;
+  }
+  #preview-pane.hidden { flex: 0; min-width: 0; max-width: 0; overflow: hidden; }
+
+  #preview {
+    flex: 1;
+    border: none;
+    background: #fff;
+  }
+
+  /* ── FILE INPUT ── */
+  #file-input { display: none; }
+
+  /* ── NOTIFICATION ── */
+  #notif {
+    position: fixed;
+    bottom: 40px;
+    right: 20px;
+    background: var(--accent);
+    color: #0d0d0f;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 8px 16px;
+    border-radius: 4px;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all .25s;
+    pointer-events: none;
+    z-index: 999;
+  }
+  #notif.show { opacity: 1; transform: translateY(0); }
+
+  /* ── DRAG OVERLAY ── */
+  #drop-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(13,13,15,.85);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 12px;
+    font-family: var(--sans);
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--accent);
+    border: 3px dashed var(--accent);
+    letter-spacing: .06em;
+  }
+  #drop-overlay.active { display: flex; }
+
+  /* ── RESPONSIVE: hide divider on mobile ── */
+  @media (max-width: 600px) {
+    #divider { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div id="topbar">
+  <span class="logo">HTML Editor</span>
+  <div class="sep"></div>
+  <button class="btn" onclick="loadFile()">📂 Ouvrir</button>
+  <input type="file" id="file-input" accept=".html,.htm" onchange="readFile(event)">
+  <div class="sep"></div>
+  <button class="btn primary" onclick="refreshPreview()">▶ Actualiser</button>
+  <button class="btn" onclick="downloadFile()">⬇ Télécharger</button>
+  <button class="btn danger" onclick="clearEditor()">✕ Vider</button>
+  <div class="spacer"></div>
+  <div id="view-toggle">
+    <button class="vbtn active" id="vbtn-split" onclick="setView('split')">Split</button>
+    <button class="vbtn" id="vbtn-edit" onclick="setView('edit')">Éditeur</button>
+    <button class="vbtn" id="vbtn-preview" onclick="setView('preview')">Aperçu</button>
+  </div>
+</div>
+
+<!-- WORKSPACE -->
+<div id="workspace">
+
+  <!-- EDITOR PANE -->
+  <div id="editor-pane">
+    <div class="pane-header">
+      <span class="dot dot-edit"></span>
+      Éditeur HTML
+      <span id="filename-label" style="margin-left:auto;color:#555;font-size:10px;">sans titre.html</span>
+    </div>
+    <div id="editor-wrap">
+      <div id="line-nums"></div>
+      <textarea id="code" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off"
+        placeholder="<!-- Collez ou tapez votre HTML ici, ou glissez un fichier -->"
+        oninput="onCodeChange()" onscroll="syncScroll()" onkeydown="handleTab(event)"></textarea>
+    </div>
+  </div>
+
+  <!-- RESIZE DIVIDER -->
+  <div id="divider" id="divider"></div>
+
+  <!-- PREVIEW PANE -->
+  <div id="preview-pane">
+    <div class="pane-header">
+      <span class="dot dot-preview"></span>
+      Aperçu
+      <span id="auto-label" style="margin-left:auto;color:var(--accent2);font-size:9px;letter-spacing:.1em;">AUTO-REFRESH ON</span>
+    </div>
+    <iframe id="preview" sandbox="allow-scripts allow-same-origin allow-forms allow-modals"></iframe>
+  </div>
+
+</div>
+
+<!-- STATUS BAR -->
+<div id="statusbar">
+  <span id="stat-lines"><b>0</b> lignes</span>
+  <span id="stat-chars"><b>0</b> chars</span>
+  <span id="stat-cursor">Ln <b>1</b>, Col <b>1</b></span>
+  <span id="stat-status" class="ok">✓ prêt</span>
+</div>
+
+<!-- NOTIFICATION -->
+<div id="notif"></div>
+
+<!-- DRAG OVERLAY -->
+<div id="drop-overlay">
+  <span>⬆</span>
+  Déposer le fichier HTML ici
+</div>
+
+<script>
+// ── STATE ──
+let autoRefresh = true;
+let refreshTimer = null;
+let currentFile = 'sans-titre.html';
+
+const code    = document.getElementById('code');
+const preview = document.getElementById('preview');
+const lineNums = document.getElementById('line-nums');
+
+// ── SAMPLE CONTENT ──
+const sample = `<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Ma Page</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f5f5f5;
+      padding: 2rem;
+      color: #333;
+    }
+    h1 { color: #e44; }
+  </style>
+</head>
+<body>
+  <h1>Bonjour le monde !</h1>
+  <p>Éditez ce HTML à gauche — l'aperçu se met à jour en temps réel.</p>
+  <ul>
+    <li>Item 1</li>
+    <li>Item 2</li>
+    <li>Item 3</li>
+  </ul>
+</body>
+</html>`;
+
+code.value = sample;
+refreshPreview();
+updateLineNums();
+updateStatus();
+
+// ── CORE ──
+function refreshPreview() {
+  try {
+    const doc = preview.contentDocument || preview.contentWindow.document;
+    doc.open();
+    doc.write(code.value);
+    doc.close();
+    document.getElementById('stat-status').textContent = '✓ rendu ok';
+    document.getElementById('stat-status').className = 'ok';
+  } catch(e) {
+    document.getElementById('stat-status').textContent = '✗ erreur';
+    document.getElementById('stat-status').className = 'err';
+  }
+}
+
+function onCodeChange() {
+  updateLineNums();
+  updateStatus();
+  if (!autoRefresh) return;
+  clearTimeout(refreshTimer);
+  refreshTimer = setTimeout(refreshPreview, 600);
+}
+
+function updateLineNums() {
+  const lines = code.value.split('\n').length;
+  lineNums.innerHTML = Array.from({length: lines}, (_, i) =>
+    `<div>${i + 1}</div>`).join('');
+  document.getElementById('stat-lines').innerHTML = `<b>${lines}</b> lignes`;
+  document.getElementById('stat-chars').innerHTML = `<b>${code.value.length}</b> chars`;
+}
+
+function syncScroll() {
+  lineNums.scrollTop = code.scrollTop;
+}
+
+function updateStatus() {
+  const val = code.value;
+  const pos = code.selectionStart;
+  const before = val.substring(0, pos);
+  const ln = before.split('\n').length;
+  const col = before.split('\n').pop().length + 1;
+  document.getElementById('stat-cursor').innerHTML = `Ln <b>${ln}</b>, Col <b>${col}</b>`;
+}
+
+code.addEventListener('click', updateStatus);
+code.addEventListener('keyup', updateStatus);
+
+function handleTab(e) {
+  if (e.key !== 'Tab') return;
+  e.preventDefault();
+  const start = code.selectionStart;
+  const end   = code.selectionEnd;
+  code.value = code.value.substring(0, start) + '  ' + code.value.substring(end);
+  code.selectionStart = code.selectionEnd = start + 2;
+  onCodeChange();
+}
+
+// ── FILE OPS ──
+function loadFile() {
+  document.getElementById('file-input').click();
+}
+
+function readFile(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  currentFile = file.name;
+  document.getElementById('filename-label').textContent = file.name;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    code.value = ev.target.result;
+    onCodeChange();
+    refreshPreview();
+    notify('Fichier chargé : ' + file.name);
+  };
+  reader.readAsText(file);
+}
+
+function downloadFile() {
+  const blob = new Blob([code.value], {type: 'text/html'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = currentFile;
+  a.click();
+  notify('Téléchargé : ' + currentFile);
+}
+
+function clearEditor() {
+  if (!confirm('Vider l\'éditeur ?')) return;
+  code.value = '';
+  currentFile = 'sans-titre.html';
+  document.getElementById('filename-label').textContent = currentFile;
+  refreshPreview();
+  onCodeChange();
+}
+
+// ── VIEW MODES ──
+function setView(mode) {
+  const ep = document.getElementById('editor-pane');
+  const pp = document.getElementById('preview-pane');
+  const dv = document.getElementById('divider');
+  document.querySelectorAll('.vbtn').forEach(b => b.classList.remove('active'));
+  document.getElementById('vbtn-' + mode).classList.add('active');
+
+  ep.classList.toggle('hidden', mode === 'preview');
+  pp.classList.toggle('hidden', mode === 'edit');
+  dv.style.display = mode === 'split' ? '' : 'none';
+}
+
+// ── DRAG RESIZE ──
+const divider = document.getElementById('divider');
+let dragging = false;
+
+divider.addEventListener('mousedown', e => {
+  dragging = true;
+  divider.classList.add('dragging');
+  document.body.style.cursor = 'col-resize';
+  document.body.style.userSelect = 'none';
+});
+
+document.addEventListener('mousemove', e => {
+  if (!dragging) return;
+  const ws = document.getElementById('workspace');
+  const rect = ws.getBoundingClientRect();
+  const ep = document.getElementById('editor-pane');
+  const pp = document.getElementById('preview-pane');
+  const total = rect.width - divider.offsetWidth;
+  const x = Math.max(120, Math.min(e.clientX - rect.left, total - 120));
+  const leftPct  = (x / total) * 100;
+  const rightPct = 100 - leftPct;
+  ep.style.flex = `0 0 ${leftPct}%`;
+  pp.style.flex = `0 0 ${rightPct}%`;
+});
+
+document.addEventListener('mouseup', () => {
+  dragging = false;
+  divider.classList.remove('dragging');
+  document.body.style.cursor = '';
+  document.body.style.userSelect = '';
+});
+
+// ── DRAG & DROP FILES ──
+const overlay = document.getElementById('drop-overlay');
+
+document.addEventListener('dragenter', e => {
+  if (e.dataTransfer.types.includes('Files')) overlay.classList.add('active');
+});
+document.addEventListener('dragleave', e => {
+  if (!e.relatedTarget || e.relatedTarget === document.documentElement)
+    overlay.classList.remove('active');
+});
+document.addEventListener('dragover', e => e.preventDefault());
+document.addEventListener('drop', e => {
+  e.preventDefault();
+  overlay.classList.remove('active');
+  const file = e.dataTransfer.files[0];
+  if (!file || !file.name.match(/\.html?$/i)) { notify('Fichier HTML requis'); return; }
+  currentFile = file.name;
+  document.getElementById('filename-label').textContent = file.name;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    code.value = ev.target.result;
+    onCodeChange();
+    refreshPreview();
+    notify('Chargé : ' + file.name);
+  };
+  reader.readAsText(file);
+});
+
+// ── NOTIFICATION ──
+function notify(msg) {
+  const n = document.getElementById('notif');
+  n.textContent = msg;
+  n.classList.add('show');
+  setTimeout(() => n.classList.remove('show'), 2500);
+}
+
+// ── KEYBOARD SHORTCUTS ──
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); refreshPreview(); }
+  if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); downloadFile(); }
+  if ((e.ctrlKey || e.metaKey) && e.key === 'o') { e.preventDefault(); loadFile(); }
+});
+</script>
+</body>
+</html>
