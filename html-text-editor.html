@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Éditeur de texte HTML</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&family=Syne:wght@400;700;800&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0d0d0f;
+    --surface: #16161a;
+    --surface2: #1e1e24;
+    --border: #2a2a35;
+    --accent: #e8ff47;
+    --text: #e0e0e8;
+    --text-dim: #666678;
+    --bar-h: 48px;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Syne', sans-serif;
+  }
+
+  html, body { height: 100%; overflow: hidden; background: var(--bg); color: var(--text); font-family: var(--sans); }
+
+  /* TOP BAR */
+  #topbar {
+    height: var(--bar-h);
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 14px;
+    z-index: 10;
+  }
+  .logo { font-size: 13px; font-weight: 800; letter-spacing: .12em; color: var(--accent); text-transform: uppercase; margin-right: 8px; }
+  .sep  { width: 1px; height: 20px; background: var(--border); margin: 0 6px; flex-shrink: 0; }
+  .spacer { flex: 1; }
+
+  .btn {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    padding: 5px 12px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all .15s;
+    white-space: nowrap;
+  }
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+  .btn.primary { background: var(--accent); color: #0d0d0f; border-color: var(--accent); font-weight: 700; }
+  .btn.primary:hover { background: #d4eb3a; }
+
+  /* MAIN */
+  #workspace {
+    height: calc(100vh - var(--bar-h) - 26px);
+    overflow: hidden;
+    position: relative;
+  }
+
+  #preview {
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: #fff;
+  }
+
+  /* STATUS */
+  #statusbar {
+    height: 26px;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 14px;
+    gap: 16px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+  }
+  #statusbar b { color: var(--accent); }
+
+  /* TOOLTIP flottant */
+  #edit-tooltip {
+    position: fixed;
+    background: var(--accent);
+    color: #0d0d0f;
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 3px;
+    pointer-events: none;
+    display: none;
+    z-index: 9999;
+    letter-spacing: .06em;
+  }
+
+  /* FILE INPUT */
+  #file-input { display: none; }
+
+  /* NOTIF */
+  #notif {
+    position: fixed;
+    bottom: 40px;
+    right: 20px;
+    background: var(--accent);
+    color: #0d0d0f;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 8px 16px;
+    border-radius: 4px;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all .25s;
+    pointer-events: none;
+    z-index: 9999;
+  }
+  #notif.show { opacity: 1; transform: translateY(0); }
+
+  /* DROP OVERLAY */
+  #drop-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(13,13,15,.88);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 12px;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--accent);
+    border: 3px dashed var(--accent);
+    letter-spacing: .06em;
+  }
+  #drop-overlay.active { display: flex; }
+</style>
+</head>
+<body>
+
+<div id="topbar">
+  <span class="logo">Text Editor</span>
+  <div class="sep"></div>
+  <button class="btn" onclick="loadFile()">📂 Ouvrir</button>
+  <input type="file" id="file-input" accept=".html,.htm" onchange="readFile(event)">
+  <button class="btn primary" onclick="downloadFile()">⬇ Télécharger</button>
+  <div class="spacer"></div>
+  <span style="font-family:var(--mono);font-size:10px;color:var(--text-dim);">Cliquez sur un texte pour l'éditer</span>
+</div>
+
+<div id="workspace">
+  <iframe id="preview" sandbox="allow-scripts allow-same-origin"></iframe>
+</div>
+
+<div id="statusbar">
+  <span id="stat-file">Aucun fichier</span>
+  <span id="stat-edits"><b>0</b> modification(s)</span>
+  <span id="stat-hint" style="margin-left:auto;color:#444">Ctrl+S pour télécharger</span>
+</div>
+
+<div id="edit-tooltip">✎ Éditer</div>
+<div id="notif"></div>
+<div id="drop-overlay"><span>⬆</span>Déposer le fichier HTML ici</div>
+
+<script>
+let currentFile = null;
+let originalHTML = '';
+let editCount = 0;
+
+const preview   = document.getElementById('preview');
+const tooltip   = document.getElementById('edit-tooltip');
+const overlay   = document.getElementById('drop-overlay');
+
+// ── INJECT EDITABLE BEHAVIOUR INTO IFRAME ──
+function injectEditable() {
+  const win = preview.contentWindow;
+  const doc = preview.contentDocument;
+  if (!doc) return;
+
+  // Text nodes only — find all elements that contain direct text
+  const TEXT_TAGS = ['P','H1','H2','H3','H4','H5','H6','LI','TD','TH','SPAN',
+                     'A','LABEL','BUTTON','CAPTION','FIGCAPTION','BLOCKQUOTE',
+                     'DT','DD','LEGEND','SUMMARY','MARK','STRONG','EM','B','I',
+                     'SMALL','CITE','Q','TIME','ADDRESS','SECTION','ARTICLE',
+                     'HEADER','FOOTER','MAIN','DIV'];
+
+  // Style highlight on hover
+  const style = doc.createElement('style');
+  style.textContent = `
+    [data-editable]:hover {
+      outline: 2px dashed #e8ff47 !important;
+      outline-offset: 2px !important;
+      cursor: text !important;
+    }
+    [data-editable]:focus {
+      outline: 2px solid #e8ff47 !important;
+      outline-offset: 2px !important;
+      background: rgba(232,255,71,.06) !important;
+    }
+  `;
+  doc.head.appendChild(style);
+
+  // Tag all elements with direct text content
+  doc.querySelectorAll(TEXT_TAGS.join(',')).forEach(el => {
+    // Only if it has meaningful text
+    const text = el.innerText?.trim();
+    if (!text || text.length < 1) return;
+    // Skip if it's a parent of another tagged element (to avoid nesting)
+    if (el.querySelector(TEXT_TAGS.join(','))) return;
+
+    el.setAttribute('contenteditable', 'true');
+    el.setAttribute('data-editable', '1');
+    el.setAttribute('spellcheck', 'false');
+
+    el.addEventListener('input', () => {
+      editCount++;
+      document.getElementById('stat-edits').innerHTML = `<b>${editCount}</b> modification(s)`;
+    });
+
+    // Prevent link navigation
+    el.addEventListener('click', e => e.preventDefault());
+  });
+
+  // Tooltip on mousemove
+  doc.addEventListener('mousemove', e => {
+    const el = e.target.closest('[data-editable]');
+    if (el) {
+      tooltip.style.display = 'block';
+      tooltip.style.left = (win.scrollX + e.clientX + 12) + 'px';
+      tooltip.style.top  = (win.scrollY + e.clientY - 28) + 'px';
+    } else {
+      tooltip.style.display = 'none';
+    }
+  });
+  doc.addEventListener('mouseleave', () => { tooltip.style.display = 'none'; });
+}
+
+// ── LOAD HTML STRING INTO IFRAME ──
+function loadHTML(html) {
+  originalHTML = html;
+  editCount = 0;
+  document.getElementById('stat-edits').innerHTML = '<b>0</b> modification(s)';
+
+  const doc = preview.contentDocument;
+  doc.open();
+  doc.write(html);
+  doc.close();
+
+  // Wait for iframe to render
+  setTimeout(injectEditable, 150);
+}
+
+// ── COLLECT MODIFIED HTML ──
+function getModifiedHTML() {
+  const doc = preview.contentDocument;
+
+  // Remove editing artefacts before export
+  const clone = doc.documentElement.cloneNode(true);
+  clone.querySelectorAll('[data-editable]').forEach(el => {
+    el.removeAttribute('contenteditable');
+    el.removeAttribute('data-editable');
+    el.removeAttribute('spellcheck');
+  });
+  // Remove injected style
+  clone.querySelectorAll('style').forEach(s => {
+    if (s.textContent.includes('data-editable')) s.remove();
+  });
+
+  return '<!DOCTYPE html>\n' + clone.outerHTML;
+}
+
+// ── FILE OPS ──
+function loadFile() { document.getElementById('file-input').click(); }
+
+function readFile(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  currentFile = file.name;
+  document.getElementById('stat-file').innerHTML = `<b>${file.name}</b>`;
+  const reader = new FileReader();
+  reader.onload = ev => { loadHTML(ev.target.result); notify('Chargé : ' + file.name); };
+  reader.readAsText(file);
+}
+
+function downloadFile() {
+  if (!currentFile) { notify('Aucun fichier chargé'); return; }
+  const html = getModifiedHTML();
+  const blob = new Blob([html], {type: 'text/html'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = currentFile;
+  a.click();
+  notify('Téléchargé : ' + currentFile);
+}
+
+// ── DRAG & DROP ──
+document.addEventListener('dragenter', e => {
+  if (e.dataTransfer.types.includes('Files')) overlay.classList.add('active');
+});
+document.addEventListener('dragleave', e => {
+  if (!e.relatedTarget || e.relatedTarget === document.documentElement)
+    overlay.classList.remove('active');
+});
+document.addEventListener('dragover', e => e.preventDefault());
+document.addEventListener('drop', e => {
+  e.preventDefault();
+  overlay.classList.remove('active');
+  const file = e.dataTransfer.files[0];
+  if (!file || !file.name.match(/\.html?$/i)) { notify('Fichier HTML requis'); return; }
+  currentFile = file.name;
+  document.getElementById('stat-file').innerHTML = `<b>${file.name}</b>`;
+  const reader = new FileReader();
+  reader.onload = ev => { loadHTML(ev.target.result); notify('Chargé : ' + file.name); };
+  reader.readAsText(file);
+});
+
+// ── KEYBOARD SHORTCUTS ──
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); downloadFile(); }
+  if ((e.ctrlKey || e.metaKey) && e.key === 'o') { e.preventDefault(); loadFile(); }
+});
+
+// ── NOTIF ──
+function notify(msg) {
+  const n = document.getElementById('notif');
+  n.textContent = msg;
+  n.classList.add('show');
+  setTimeout(() => n.classList.remove('show'), 2500);
+}
+</script>
+</body>
+</html>
