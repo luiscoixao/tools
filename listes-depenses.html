@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Listes de dépenses</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#f0f2f5;
+  --sidebar:#1e2433;
+  --sidebar-hover:#2a3147;
+  --card:#ffffff;
+  --card-border:#e2e8f0;
+  --header:#ffffff;
+  --accent:#3b6ff0;
+  --accent-light:#eef2fe;
+  --accent2:#10b981;
+  --accent2-light:#ecfdf5;
+  --danger:#ef4444;
+  --danger-light:#fef2f2;
+  --text:#1a202c;
+  --text2:#64748b;
+  --text3:#94a3b8;
+  --mono:'JetBrains Mono',monospace;
+  --sans:'Inter',sans-serif;
+}
+
+body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+
+/* TOP BAR */
+.topbar{
+  background:var(--header);border-bottom:1px solid var(--card-border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 1.5rem;height:56px;position:sticky;top:0;z-index:100;
+  box-shadow:0 1px 3px rgba(0,0,0,.05)
+}
+.topbar-left{display:flex;align-items:center;gap:1rem}
+.logo{font-size:.95rem;font-weight:700;color:var(--text);letter-spacing:-.02em}
+.logo span{color:var(--accent)}
+.date-chip{font-size:.72rem;color:var(--text2);background:var(--bg);padding:.25rem .65rem;border-radius:4px;border:1px solid var(--card-border)}
+.save-status{font-size:.7rem;color:var(--accent2);display:flex;align-items:center;gap:.3rem}
+.save-dot{width:6px;height:6px;background:var(--accent2);border-radius:50%}
+
+/* MAIN LAYOUT */
+.main{display:flex;flex:1;gap:0}
+
+/* SIDEBAR */
+.sidebar{
+  width:220px;min-height:calc(100vh - 56px);background:var(--sidebar);
+  padding:1.25rem .75rem;display:flex;flex-direction:column;gap:.25rem;
+  position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto;flex-shrink:0
+}
+.sidebar-title{font-size:.65rem;color:#4a5568;letter-spacing:.1em;text-transform:uppercase;padding:.5rem .75rem .25rem;font-weight:600}
+.sidebar-item{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.55rem .75rem;border-radius:6px;cursor:pointer;
+  font-size:.8rem;color:#94a3b8;transition:all .15s;gap:.5rem
+}
+.sidebar-item:hover{background:var(--sidebar-hover);color:#e2e8f0}
+.sidebar-item.active{background:var(--accent);color:#fff}
+.sidebar-item .si-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sidebar-item .si-total{font-family:var(--mono);font-size:.7rem;opacity:.8;white-space:nowrap}
+.sidebar-add{
+  margin-top:.5rem;padding:.55rem .75rem;border-radius:6px;
+  border:1px dashed #2a3147;color:#4a5568;font-size:.78rem;
+  cursor:pointer;text-align:center;transition:all .15s;background:none;width:100%;
+  font-family:var(--sans)
+}
+.sidebar-add:hover{border-color:var(--accent);color:var(--accent)}
+.sidebar-footer{margin-top:auto;padding-top:1rem;border-top:1px solid #2a3147}
+.grand-total-side{
+  background:#252d3f;border-radius:8px;padding:.75rem;
+}
+.gts-label{font-size:.65rem;color:#4a5568;text-transform:uppercase;letter-spacing:.1em;font-weight:600}
+.gts-val{font-family:var(--mono);font-size:1.15rem;font-weight:600;color:#e8ff47;margin-top:.2rem}
+.gts-sub{font-size:.65rem;color:#4a5568;margin-top:.15rem}
+
+/* CONTENT */
+.content{flex:1;padding:1.5rem;overflow-y:auto;min-width:0}
+
+.content-header{
+  display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem
+}
+.content-title{font-size:1rem;font-weight:600;color:var(--text)}
+.content-actions{display:flex;gap:.5rem}
+.btn-icon{
+  background:var(--card);border:1px solid var(--card-border);color:var(--text2);
+  padding:.4rem .75rem;border-radius:6px;font-size:.75rem;font-family:var(--sans);
+  cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:.35rem;font-weight:500
+}
+.btn-icon:hover{border-color:var(--accent);color:var(--accent)}
+.btn-icon.danger:hover{border-color:var(--danger);color:var(--danger);background:var(--danger-light)}
+.btn-primary{
+  background:var(--accent);color:#fff;border:none;
+  padding:.4rem .85rem;border-radius:6px;font-size:.75rem;font-family:var(--sans);
+  cursor:pointer;font-weight:600;transition:all .15s
+}
+.btn-primary:hover{background:#2d5ce0}
+
+/* CARD */
+.list-card{background:var(--card);border:1px solid var(--card-border);border-radius:10px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+
+.card-header{
+  display:flex;align-items:center;gap:.75rem;
+  padding:.85rem 1.1rem;border-bottom:1px solid var(--card-border);background:#fafbfc
+}
+.card-number{
+  width:24px;height:24px;background:var(--accent-light);color:var(--accent);
+  border-radius:5px;font-size:.7rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0
+}
+.card-title-input{
+  flex:1;background:transparent;border:none;color:var(--text);
+  font-family:var(--sans);font-weight:600;font-size:.88rem;outline:none
+}
+.card-title-input::placeholder{color:var(--text3)}
+.card-meta{font-size:.68rem;color:var(--text3);white-space:nowrap}
+
+/* TABLE */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+thead th{
+  font-size:.65rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--text3);padding:.5rem 1.1rem;text-align:left;border-bottom:1px solid var(--card-border);
+  background:#fafbfc
+}
+thead th:last-child{text-align:right;width:36px}
+thead th.th-price{text-align:right;width:120px}
+tbody tr{transition:background .1s}
+tbody tr:hover{background:#fafbfc}
+tbody td{padding:0;border-bottom:1px solid #f1f5f9}
+tbody tr:last-child td{border-bottom:none}
+td input{
+  background:transparent;border:none;color:var(--text);
+  font-family:var(--sans);font-size:.82rem;padding:.65rem 1.1rem;
+  outline:none;width:100%;
+}
+td input::placeholder{color:var(--text3)}
+td.td-price input{
+  font-family:var(--mono);font-size:.8rem;color:var(--accent);
+  text-align:right;padding-right:1.1rem
+}
+td.td-del{text-align:right;padding-right:.75rem}
+.btn-del-row{
+  background:none;border:none;color:var(--text3);cursor:pointer;
+  font-size:.85rem;line-height:1;padding:.2rem .35rem;border-radius:3px;transition:all .15s
+}
+.btn-del-row:hover{color:var(--danger);background:var(--danger-light)}
+
+/* CARD FOOTER */
+.card-footer{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.7rem 1.1rem;background:#fafbfc;border-top:1px solid var(--card-border)
+}
+.btn-add-row{
+  background:none;border:none;color:var(--accent);font-family:var(--sans);
+  font-size:.75rem;font-weight:500;cursor:pointer;padding:.2rem 0;
+  display:flex;align-items:center;gap:.3rem
+}
+.btn-add-row:hover{text-decoration:underline}
+.total-pill{
+  display:flex;align-items:center;gap:.5rem;
+  background:var(--accent-light);border-radius:6px;padding:.35rem .75rem
+}
+.tp-label{font-size:.65rem;color:var(--accent);text-transform:uppercase;letter-spacing:.07em;font-weight:600}
+.tp-val{font-family:var(--mono);font-size:.85rem;font-weight:600;color:var(--accent)}
+
+/* SUMMARY ROW */
+.summary-row{
+  background:var(--card);border:1px solid var(--card-border);border-radius:10px;
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:0;
+  overflow:hidden;margin-bottom:1.25rem;box-shadow:0 1px 3px rgba(0,0,0,.04)
+}
+.summary-cell{padding:.85rem 1.1rem;border-right:1px solid var(--card-border)}
+.summary-cell:last-child{border-right:none}
+.sc-label{font-size:.65rem;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;font-weight:600;margin-bottom:.25rem}
+.sc-val{font-family:var(--mono);font-size:1rem;font-weight:600;color:var(--text)}
+.sc-val.green{color:var(--accent2)}
+.sc-val.blue{color:var(--accent)}
+
+/* EMPTY */
+.empty-list{text-align:center;padding:2.5rem;color:var(--text3);font-size:.8rem}
+
+/* TOAST */
+.toast{
+  position:fixed;bottom:1.5rem;right:1.5rem;background:#1e2433;color:#e2e8f0;
+  padding:.6rem 1rem;border-radius:8px;font-size:.75rem;z-index:999;
+  opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none
+}
+.toast.show{opacity:1;transform:translateY(0)}
+
+@media(max-width:640px){
+  .sidebar{display:none}
+  .content{padding:1rem}
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <span class="logo">Dépenses<span>.</span></span>
+    <span class="date-chip" id="date-display"></span>
+  </div>
+  <span class="save-status"><span class="save-dot"></span>Sauvegarde auto</span>
+</div>
+
+<div class="main">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-title">Listes</div>
+    <div id="sidebar-items"></div>
+    <button class="sidebar-add" onclick="addList()">+ Nouvelle liste</button>
+    <div class="sidebar-footer">
+      <div class="grand-total-side">
+        <div class="gts-label">Total journée</div>
+        <div class="gts-val" id="gts-val">0,00 €</div>
+        <div class="gts-sub" id="gts-sub">0 liste · 0 entrée</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- CONTENT -->
+  <div class="content">
+    <div class="summary-row" id="summary-row">
+      <div class="summary-cell"><div class="sc-label">Listes</div><div class="sc-val blue" id="s-lists">0</div></div>
+      <div class="summary-cell"><div class="sc-label">Entrées</div><div class="sc-val" id="s-entries">0</div></div>
+      <div class="summary-cell"><div class="sc-label">Total journée</div><div class="sc-val green" id="s-total">0,00 €</div></div>
+      <div class="summary-cell"><div class="sc-label">Moyenne / liste</div><div class="sc-val" id="s-avg">—</div></div>
+    </div>
+
+    <div class="content-header">
+      <span class="content-title">Toutes les listes</span>
+      <div class="content-actions">
+        <button class="btn-primary" onclick="addList()">+ Nouvelle liste</button>
+      </div>
+    </div>
+
+    <div id="cards-container" style="display:flex;flex-direction:column;gap:1rem"></div>
+    <div class="empty-list" id="empty-msg" style="display:none">Aucune liste — cliquez sur « + Nouvelle liste »</div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// --- DATE ---
+const today = new Date();
+document.getElementById('date-display').textContent =
+  today.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+
+// --- STATE ---
+const STORAGE_KEY = 'depenses_v2';
+let lists = [];
+let idSeq = 1;
+const uid = () => idSeq++;
+
+function load() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const data = JSON.parse(raw);
+      lists = data.lists || [];
+      idSeq = data.idSeq || 100;
+    }
+  } catch(e) {}
+  if (!lists.length) lists = [{ id: uid(), name: 'Liste 1', entries: [] }];
+}
+
+function save() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({ lists, idSeq }));
+  showToast('Sauvegardé');
+}
+
+// --- ACTIONS ---
+function addList() {
+  lists.push({ id: uid(), name: 'Nouvelle liste', entries: [] });
+  render(); save();
+  setTimeout(() => {
+    const inputs = document.querySelectorAll('.card-title-input');
+    if (inputs.length) { const last = inputs[inputs.length-1]; last.focus(); last.select(); }
+  }, 40);
+}
+
+function deleteList(id) {
+  if (!confirm('Supprimer cette liste ?')) return;
+  lists = lists.filter(l => l.id !== id);
+  render(); save();
+}
+
+function updateListName(id, val) {
+  const l = lists.find(x => x.id === id);
+  if (l) { l.name = val; renderSidebar(); renderSummary(); save(); }
+}
+
+function addEntry(listId) {
+  const l = lists.find(x => x.id === listId);
+  if (!l) return;
+  l.entries.push({ id: uid(), label: '', price: '' });
+  render(); save();
+  setTimeout(() => {
+    const rows = document.querySelectorAll(`[data-list="${listId}"] .label-inp`);
+    if (rows.length) rows[rows.length - 1].focus();
+  }, 40);
+}
+
+function deleteEntry(listId, entryId) {
+  const l = lists.find(x => x.id === listId);
+  if (!l) return;
+  l.entries = l.entries.filter(e => e.id !== entryId);
+  render(); save();
+}
+
+function updateEntry(listId, entryId, field, val) {
+  const l = lists.find(x => x.id === listId);
+  if (!l) return;
+  const e = l.entries.find(x => x.id === entryId);
+  if (e) { e[field] = val; renderSummary(); renderSidebar(); renderTotals(); save(); }
+}
+
+// --- HELPERS ---
+function parsePrice(s) { if (!s) return 0; const n = parseFloat(s.replace(',','.')); return isNaN(n)?0:n; }
+function fmt(n) { return n.toFixed(2).replace('.',',') + ' €'; }
+function listTotal(l) { return l.entries.reduce((s,e) => s + parsePrice(e.price), 0); }
+function grandTotal() { return lists.reduce((s,l) => s + listTotal(l), 0); }
+function totalEntries() { return lists.reduce((s,l) => s + l.entries.length, 0); }
+
+// --- RENDER ---
+function render() {
+  renderCards();
+  renderSidebar();
+  renderSummary();
+  const empty = document.getElementById('empty-msg');
+  if (empty) empty.style.display = lists.length ? 'none' : 'block';
+}
+
+function renderCards() {
+  const c = document.getElementById('cards-container');
+  c.innerHTML = '';
+  lists.forEach((list, idx) => {
+    const card = document.createElement('div');
+    card.className = 'list-card';
+    card.dataset.list = list.id;
+
+    const rows = list.entries.map(e => `
+      <tr>
+        <td><input class="label-inp" type="text" placeholder="Description de l'entrée…" value="${esc(e.label)}"
+          oninput="updateEntry(${list.id},${e.id},'label',this.value)"></td>
+        <td class="td-price"><input type="text" placeholder="0,00" value="${esc(e.price)}"
+          oninput="updateEntry(${list.id},${e.id},'price',this.value)"
+          onkeydown="if(event.key==='Enter'){event.preventDefault();addEntry(${list.id})}"></td>
+        <td class="td-del"><button class="btn-del-row" onclick="deleteEntry(${list.id},${e.id})" title="Supprimer">✕</button></td>
+      </tr>`).join('');
+
+    card.innerHTML = `
+      <div class="card-header">
+        <div class="card-number">${idx+1}</div>
+        <input class="card-title-input" type="text" placeholder="Nom de la liste…" value="${esc(list.name)}"
+          oninput="updateListName(${list.id},this.value)">
+        <span class="card-meta">${list.entries.length} entrée${list.entries.length!==1?'s':''}</span>
+        <button class="btn-icon danger" onclick="deleteList(${list.id})">✕</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Description</th><th class="th-price">Montant</th><th></th></tr></thead>
+          <tbody>${rows || '<tr><td colspan="3" style="text-align:center;padding:1.25rem;color:#94a3b8;font-size:.78rem">Aucune entrée</td></tr>'}</tbody>
+        </table>
+      </div>
+      <div class="card-footer">
+        <button class="btn-add-row" onclick="addEntry(${list.id})">+ Ajouter une entrée</button>
+        <div class="total-pill">
+          <span class="tp-label">Total</span>
+          <span class="tp-val">${fmt(listTotal(list))}</span>
+        </div>
+      </div>`;
+    c.appendChild(card);
+  });
+}
+
+function renderSidebar() {
+  const c = document.getElementById('sidebar-items');
+  c.innerHTML = lists.map(l => `
+    <div class="sidebar-item">
+      <span class="si-name">${esc(l.name)||'Sans nom'}</span>
+      <span class="si-total">${fmt(listTotal(l))}</span>
+    </div>`).join('');
+  document.getElementById('gts-val').textContent = fmt(grandTotal());
+  document.getElementById('gts-sub').textContent = `${lists.length} liste${lists.length>1?'s':''} · ${totalEntries()} entrée${totalEntries()>1?'s':''}`;
+}
+
+function renderSummary() {
+  document.getElementById('s-lists').textContent = lists.length;
+  document.getElementById('s-entries').textContent = totalEntries();
+  document.getElementById('s-total').textContent = fmt(grandTotal());
+  const avg = lists.length ? grandTotal() / lists.length : 0;
+  document.getElementById('s-avg').textContent = lists.length ? fmt(avg) : '—';
+}
+
+function renderTotals() {
+  lists.forEach(l => {
+    const card = document.querySelector(`[data-list="${l.id}"]`);
+    if (!card) return;
+    const pill = card.querySelector('.tp-val');
+    if (pill) pill.textContent = fmt(listTotal(l));
+    const meta = card.querySelector('.card-meta');
+    if (meta) meta.textContent = `${l.entries.length} entrée${l.entries.length!==1?'s':''}`;
+  });
+  renderSidebar();
+  renderSummary();
+}
+
+function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 1500);
+}
+
+// --- INIT ---
+load();
+render();
+</script>
+</body>
+</html>
