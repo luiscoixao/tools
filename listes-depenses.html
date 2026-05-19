@@ -405,11 +405,8 @@ function renderCards() {
         '<input class="card-title-input" type="text" placeholder="Nom de la liste..." value="' + esc(list.name) + '"' +
         ' oninput="updateListName(' + list.id + ',this.value)" onclick="event.stopPropagation()">' +
         '<span class="card-meta">' + entriesLabel + ' \u00b7 ' + fmt(listTotal(list)) + '</span>' +
-        '<div class="collapse-btn">\u25bc</div>' +
-        '<button class="btn-icon" style="font-size:.7rem;padding:.3rem .6rem" onclick="exportCSV(' + list.id + ',event)">\u2b07 CSV</button>' +
-        '<button class="btn-icon green" style="font-size:.7rem;padding:.3rem .6rem" onclick="triggerImportList(' + list.id + ',event)">\u2b06 CSV</button>' +
-        '<button class="btn-icon danger" style="font-size:.7rem;padding:.3rem .6rem" onclick="deleteList(' + list.id + ',event)">\u2715</button>' +
-        '<input type="file" id="import-input-' + list.id + '" class="csv-file-input" accept=".csv,text/csv" onchange="handleImportInto(' + list.id + ',event)">' +
+        '<button onclick="deleteList(' + list.id + ',event)" style="background:none;border:none;color:#ef4444;font-size:1rem;cursor:pointer;padding:.1rem .3rem;flex-shrink:0" title="Supprimer">\u2715</button>' +
+        '<div class="collapse-btn">' + (isCollapsed ? '\u25ba' : '\u25bc') + '</div>' +
       '</div>' +
       '<div class="card-body">' +
         '<div class="table-wrap"><table>' +
@@ -417,9 +414,14 @@ function renderCards() {
           '<tbody>' + rows + '</tbody>' +
         '</table></div>' +
         '<div class="card-footer">' +
-          '<button class="btn-add-row" onclick="addEntry(' + list.id + ')">+ Ajouter une entree</button>' +
+          '<button class="btn-add-row" onclick="addEntry(' + list.id + ')">+ Ajouter</button>' +
+          '<div style="display:flex;align-items:center;gap:.4rem">' +
+            '<button class="btn-icon" style="font-size:.7rem;padding:.3rem .55rem" onclick="exportCSV(' + list.id + ',event)">\u2b07 CSV</button>' +
+            '<button class="btn-icon green" style="font-size:.7rem;padding:.3rem .55rem" onclick="triggerImportList(' + list.id + ',event)">\u2b06 CSV</button>' +
+          '</div>' +
           '<div class="total-pill"><span class="tp-label">Total</span><span class="tp-val">' + fmt(listTotal(list)) + '</span></div>' +
         '</div>' +
+        '<input type="file" id="import-input-' + list.id + '" class="csv-file-input" accept=".csv,text/csv" onchange="handleImportInto(' + list.id + ',event)">' +
       '</div>';
 
     c.appendChild(card);
