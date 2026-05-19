@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Relecture</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #111114;
+  --surface: #1a1a1f;
+  --border: #2e2e38;
+  --accent: #e8ff47;
+  --red: #ff3b30;
+  --yellow: #ffd60a;
+  --green: #30d158;
+  --text: #f0f0f5;
+  --dim: #6e6e80;
+  --bar: 56px;
+  --bottom: 80px;
+  --sans: 'Syne', -apple-system, sans-serif;
+}
+
+html, body {
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  overflow: hidden;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* ── TOP BAR ── */
+#topbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: var(--bar);
+  background: rgba(26,26,31,.96);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 10px;
+  z-index: 100;
+  padding-top: env(safe-area-inset-top);
+}
+.logo {
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: .1em;
+  color: var(--accent);
+  text-transform: uppercase;
+  flex: 1;
+}
+.top-btn {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--dim);
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 7px 13px;
+  border-radius: 8px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  white-space: nowrap;
+}
+.top-btn:active { opacity: .65; }
+
+/* ── SCROLL AREA ── */
+#scroll-area {
+  position: fixed;
+  top: var(--bar);
+  left: 0; right: 0;
+  bottom: var(--bottom);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  background: var(--bg);
+}
+
+/* ── CONTENT WRAPPER ── */
+#content-host {
+  padding: 20px 16px 40px;
+  min-height: 100%;
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--text);
+}
+
+/* Page HTML rendered here keeps its own styles,
+   but we override text color for readability */
+#content-host * {
+  max-width: 100%;
+  word-break: break-word;
+}
+
+/* ── ANNOTATIONS ── */
+mark.annot-del {
+  background: rgba(255,59,48,.28) !important;
+  color: inherit !important;
+  border-bottom: 2px solid var(--red);
+  border-radius: 3px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+mark.annot-rev {
+  background: rgba(255,214,10,.30) !important;
+  color: inherit !important;
+  border-bottom: 2px solid var(--yellow);
+  border-radius: 3px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+/* ── BOTTOM TOOLBAR ── */
+#toolbar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: var(--bottom);
+  background: rgba(26,26,31,.97);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 8px;
+  padding-bottom: env(safe-area-inset-bottom);
+  gap: 6px;
+  z-index: 100;
+}
+
+.tool {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  background: transparent;
+  transition: background .15s, border-color .15s;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  min-width: 58px;
+}
+.tool:active { opacity: .6; }
+.tool-icon {
+  font-size: 22px;
+  line-height: 1;
+}
+.tool-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+.tool.active-red    { background: rgba(255,59,48,.18);  border-color: var(--red);    }
+.tool.active-red .tool-label    { color: var(--red); }
+.tool.active-yellow { background: rgba(255,214,10,.15); border-color: var(--yellow); }
+.tool.active-yellow .tool-label { color: var(--yellow); }
+.tool.active-clear  { background: rgba(240,240,245,.08); border-color: var(--dim);   }
+.tool.active-clear .tool-label  { color: #fff; }
+
+/* ── EMPTY STATE ── */
+#empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 16px;
+  color: var(--dim);
+  text-align: center;
+  padding: 40px 30px;
+}
+#empty-state .big { font-size: 48px; }
+#empty-state h2 { font-size: 18px; font-weight: 800; color: var(--text); }
+#empty-state p  { font-size: 13px; line-height: 1.6; }
+
+.open-big {
+  background: var(--accent);
+  color: #111;
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: .06em;
+  padding: 14px 32px;
+  border-radius: 14px;
+  border: none;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  margin-top: 8px;
+}
+.open-big:active { opacity: .75; }
+
+/* ── MODE INDICATOR pill ── */
+#mode-pill {
+  position: fixed;
+  top: calc(var(--bar) + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(26,26,31,.92);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 5px 14px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--dim);
+  z-index: 99;
+  pointer-events: none;
+  transition: opacity .2s;
+  opacity: 0;
+  white-space: nowrap;
+}
+#mode-pill.show { opacity: 1; }
+#mode-pill.pill-red    { border-color: var(--red);    color: var(--red); }
+#mode-pill.pill-yellow { border-color: var(--yellow); color: var(--yellow); }
+#mode-pill.pill-clear  { border-color: var(--dim);    color: #fff; }
+
+/* ── STATS BAR ── */
+#stats {
+  position: fixed;
+  top: var(--bar);
+  right: 0;
+  display: flex;
+  gap: 0;
+  z-index: 98;
+  pointer-events: none;
+}
+.stat-chip {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 9px;
+  letter-spacing: .04em;
+}
+.stat-chip.s-red    { background: rgba(255,59,48,.20);  color: var(--red); }
+.stat-chip.s-yellow { background: rgba(255,214,10,.18); color: var(--yellow); }
+
+/* ── POPOVER MENU (tap on mark) ── */
+#mark-menu {
+  position: fixed;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 6px;
+  display: flex;
+  gap: 4px;
+  z-index: 200;
+  box-shadow: 0 8px 32px rgba(0,0,0,.5);
+  display: none;
+}
+.mm-btn {
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.mm-btn:active { opacity: .6; }
+.mm-del   { background: var(--red);    color: #fff; }
+.mm-rev   { background: var(--yellow); color: #111; }
+.mm-erase { background: var(--border); color: var(--text); }
+
+/* ── EXPORT SHEET ── */
+#export-sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: none;
+  align-items: flex-end;
+}
+#export-sheet.open { display: flex; }
+#sheet-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,.6);
+}
+#sheet-panel {
+  position: relative;
+  background: var(--surface);
+  border-radius: 20px 20px 0 0;
+  padding: 20px 20px calc(20px + env(safe-area-inset-bottom));
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.sheet-title {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 4px;
+  text-align: center;
+}
+.sheet-btn {
+  width: 100%;
+  padding: 16px;
+  border-radius: 12px;
+  border: none;
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.sheet-btn:active { opacity: .7; }
+.sheet-btn sub { font-size: 11px; font-weight: 400; opacity: .7; }
+.sb-annot { background: rgba(255,214,10,.15); color: var(--yellow); border: 1px solid rgba(255,214,10,.3); }
+.sb-clean { background: rgba(48,209,88,.12);  color: var(--green);  border: 1px solid rgba(48,209,88,.25); }
+.sb-cancel { background: var(--border); color: var(--dim); text-align: center; }
+
+#file-input { display: none; }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div id="topbar">
+  <span class="logo">Relecture</span>
+  <button class="top-btn" onclick="undoLast()">↩ Annuler</button>
+  <button class="top-btn" onclick="openExportSheet()" style="color:var(--accent);border-color:var(--accent)">Exporter</button>
+</div>
+
+<!-- STATS -->
+<div id="stats">
+  <span class="stat-chip s-red"    id="stat-r">0 ✕</span>
+  <span class="stat-chip s-yellow" id="stat-y">0 ◎</span>
+</div>
+
+<!-- MODE PILL -->
+<div id="mode-pill"></div>
+
+<!-- SCROLL AREA -->
+<div id="scroll-area">
+  <div id="content-host">
+    <div id="empty-state">
+      <div class="big">📄</div>
+      <h2>Aucun fichier</h2>
+      <p>Ouvrez un fichier HTML<br>pour commencer la relecture</p>
+      <button class="open-big" onclick="loadFile()">📂 Ouvrir un fichier HTML</button>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM TOOLBAR -->
+<div id="toolbar">
+  <div class="tool" id="tool-read" onclick="setMode(null)">
+    <span class="tool-icon">👁</span>
+    <span class="tool-label">Lecture</span>
+  </div>
+  <div class="tool" id="tool-red" onclick="setMode('red')">
+    <span class="tool-icon">🔴</span>
+    <span class="tool-label">Supprimer</span>
+  </div>
+  <div class="tool" id="tool-yellow" onclick="setMode('yellow')">
+    <span class="tool-icon">🟡</span>
+    <span class="tool-label">À revoir</span>
+  </div>
+  <div class="tool" id="tool-clear" onclick="setMode('clear')">
+    <span class="tool-icon">✦</span>
+    <span class="tool-label">Effacer</span>
+  </div>
+  <div class="tool" id="tool-open" onclick="loadFile()">
+    <span class="tool-icon">📂</span>
+    <span class="tool-label">Ouvrir</span>
+  </div>
+</div>
+
+<!-- MARK CONTEXT MENU -->
+<div id="mark-menu">
+  <button class="mm-btn mm-del"   onclick="recolorMark('red')">✕ Supprimer</button>
+  <button class="mm-btn mm-rev"   onclick="recolorMark('yellow')">◎ À revoir</button>
+  <button class="mm-btn mm-erase" onclick="eraseMark()">✦ Effacer</button>
+</div>
+
+<!-- EXPORT SHEET -->
+<div id="export-sheet">
+  <div id="sheet-backdrop" onclick="closeExportSheet()"></div>
+  <div id="sheet-panel">
+    <div class="sheet-title">Exporter</div>
+    <button class="sheet-btn sb-annot" onclick="exportAnnotated()">
+      ◎ Exporter annoté
+      <sub>HTML avec les surlignages visibles</sub>
+    </button>
+    <button class="sheet-btn sb-clean" onclick="exportClean()">
+      ✓ Exporter propre
+      <sub>Rouge supprimé · Jaune conservé sans couleur</sub>
+    </button>
+    <button class="sheet-btn sb-cancel" onclick="closeExportSheet()">Annuler</button>
+  </div>
+</div>
+
+<input type="file" id="file-input" accept=".html,.htm" onchange="readFile(event)">
+
+<script>
+// ── STATE ──
+let mode        = null;   // 'red' | 'yellow' | 'clear' | null
+let history     = [];
+let cntRed      = 0;
+let cntYellow   = 0;
+let currentFile = null;
+let rawHTML     = '';
+let activeMark  = null;   // mark being tapped
+
+const host      = document.getElementById('content-host');
+const markMenu  = document.getElementById('mark-menu');
+
+// ── MODE ──
+function setMode(m) {
+  mode = (mode === m) ? null : m;
+  updateModeUI();
+  hideMarkMenu();
+}
+
+function updateModeUI() {
+  ['read','red','yellow','clear'].forEach(id => {
+    document.getElementById('tool-' + id).className = 'tool';
+  });
+  const pill = document.getElementById('mode-pill');
+  pill.className = 'mode-pill';
+
+  if (mode === 'red') {
+    document.getElementById('tool-red').classList.add('active-red');
+    pill.textContent = '🔴 Sélectionner pour marquer À SUPPRIMER';
+    pill.className = 'show pill-red';
+  } else if (mode === 'yellow') {
+    document.getElementById('tool-yellow').classList.add('active-yellow');
+    pill.textContent = '🟡 Sélectionner pour marquer À REVOIR';
+    pill.className = 'show pill-yellow';
+  } else if (mode === 'clear') {
+    document.getElementById('tool-clear').classList.add('active-clear');
+    pill.textContent = '✦ Touchez une annotation pour l\'effacer';
+    pill.className = 'show pill-clear';
+  } else {
+    document.getElementById('tool-read').classList.add('active-clear');
+    pill.className = '';
+  }
+
+  // Allow/block native text selection
+  host.style.userSelect        = (mode === 'red' || mode === 'yellow') ? 'text' : 'none';
+  host.style.webkitUserSelect  = host.style.userSelect;
+}
+
+// ── SELECTION → MARK ──
+// We listen for selectionchange on document (works on iOS Safari)
+document.addEventListener('selectionchange', () => {
+  if (mode !== 'red' && mode !== 'yellow') return;
+  const sel = window.getSelection();
+  if (!sel || sel.isCollapsed) return;
+
+  // Debounce: wait for finger to lift
+  clearTimeout(window._selTimer);
+  window._selTimer = setTimeout(() => {
+    const sel2 = window.getSelection();
+    if (!sel2 || sel2.isCollapsed) return;
+    const range = sel2.getRangeAt(0);
+    if (!range || range.collapsed) return;
+    // Make sure selection is inside content-host
+    if (!host.contains(range.commonAncestorContainer)) return;
+    applyMark(range, mode);
+    sel2.removeAllRanges();
+  }, 400);
+});
+
+function applyMark(range, m) {
+  const cls  = m === 'red' ? 'annot-del' : 'annot-rev';
+  const mark = document.createElement('mark');
+  mark.className = cls;
+  mark.setAttribute('data-annot', m);
+
+  try {
+    range.surroundContents(mark);
+  } catch(e) {
+    const frag = range.extractContents();
+    mark.appendChild(frag);
+    range.insertNode(mark);
+  }
+
+  // Tap handler on the mark
+  mark.addEventListener('click', e => { e.stopPropagation(); onMarkTap(e, mark); });
+  mark.addEventListener('touchend', e => { e.stopPropagation(); onMarkTap(e, mark); });
+
+  history.push(mark);
+  if (m === 'red') cntRed++; else cntYellow++;
+  updateStats();
+}
+
+// ── MARK TAP ──
+function onMarkTap(e, mark) {
+  if (mode === 'clear') { eraseMarkDirect(mark); return; }
+  activeMark = mark;
+  showMarkMenu(e);
+}
+
+function showMarkMenu(e) {
+  const menu = markMenu;
+  menu.style.display = 'flex';
+  // Position near touch
+  const touch = e.changedTouches ? e.changedTouches[0] : e;
+  const x = Math.min(touch.clientX, window.innerWidth  - 240);
+  const y = Math.max(touch.clientY - 60, 70);
+  menu.style.left = x + 'px';
+  menu.style.top  = y + 'px';
+}
+
+function hideMarkMenu() {
+  markMenu.style.display = 'none';
+  activeMark = null;
+}
+
+document.addEventListener('click', e => {
+  if (!markMenu.contains(e.target)) hideMarkMenu();
+});
+
+function recolorMark(newMode) {
+  if (!activeMark) return;
+  const oldMode = activeMark.getAttribute('data-annot');
+  if (oldMode === 'red') cntRed = Math.max(0, cntRed - 1);
+  else                   cntYellow = Math.max(0, cntYellow - 1);
+
+  activeMark.setAttribute('data-annot', newMode);
+  activeMark.className = newMode === 'red' ? 'annot-del' : 'annot-rev';
+  if (newMode === 'red') cntRed++; else cntYellow++;
+  updateStats();
+  hideMarkMenu();
+}
+
+function eraseMark() { if (activeMark) { eraseMarkDirect(activeMark); hideMarkMenu(); } }
+
+function eraseMarkDirect(mark) {
+  const m = mark.getAttribute('data-annot');
+  if (m === 'red') cntRed = Math.max(0, cntRed - 1);
+  else             cntYellow = Math.max(0, cntYellow - 1);
+  const parent = mark.parentNode;
+  while (mark.firstChild) parent.insertBefore(mark.firstChild, mark);
+  parent.removeChild(mark);
+  parent.normalize();
+  updateStats();
+  // Remove from history
+  history = history.filter(h => h !== mark);
+}
+
+// ── UNDO ──
+function undoLast() {
+  if (!history.length) return;
+  eraseMarkDirect(history[history.length - 1]);
+}
+
+// ── STATS ──
+function updateStats() {
+  document.getElementById('stat-r').textContent = cntRed    + ' ✕';
+  document.getElementById('stat-y').textContent = cntYellow + ' ◎';
+}
+
+// ── LOAD FILE ──
+function loadFile() { document.getElementById('file-input').click(); }
+
+function readFile(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  currentFile = file.name;
+  const r = new FileReader();
+  r.onload = ev => {
+    rawHTML = ev.target.result;
+    renderHTML(rawHTML);
+  };
+  r.readAsText(file);
+  e.target.value = '';
+}
+
+function renderHTML(html) {
+  // Extract <body> content only to avoid CSS conflicts
+  const parser = new DOMParser();
+  const parsed = parser.parseFromString(html, 'text/html');
+  const body   = parsed.body;
+
+  // Remove scripts from content (keep layout safe)
+  body.querySelectorAll('script').forEach(s => s.remove());
+
+  host.innerHTML = '';
+  // Import nodes
+  Array.from(body.childNodes).forEach(node => {
+    host.appendChild(document.importNode(node, true));
+  });
+
+  // Also inject page styles (scoped via a wrapper div)
+  const headStyles = Array.from(parsed.head.querySelectorAll('style,link[rel=stylesheet]'));
+  headStyles.forEach(el => {
+    host.prepend(document.importNode(el, true));
+  });
+
+  cntRed = cntYellow = 0;
+  history = [];
+  updateStats();
+  setMode(null);
+}
+
+// ── EXPORT ──
+function openExportSheet() {
+  if (!currentFile) { alert('Aucun fichier chargé'); return; }
+  document.getElementById('export-sheet').classList.add('open');
+}
+function closeExportSheet() {
+  document.getElementById('export-sheet').classList.remove('open');
+}
+
+function exportAnnotated() {
+  closeExportSheet();
+  // Build full HTML: original head + annotated body
+  const parser  = new DOMParser();
+  const doc     = parser.parseFromString(rawHTML, 'text/html');
+
+  // Add annotation styles
+  const style = doc.createElement('style');
+  style.textContent = `
+    mark.annot-del { background: rgba(255,59,48,.28); color: inherit; border-bottom: 2px solid #ff3b30; border-radius: 3px; }
+    mark.annot-rev { background: rgba(255,214,10,.30); color: inherit; border-bottom: 2px solid #ffd60a; border-radius: 3px; }
+  `;
+  doc.head.appendChild(style);
+
+  // Replace body with annotated content
+  const annotated = host.cloneNode(true);
+  // Remove injected styles from host clone
+  annotated.querySelectorAll('style').forEach(s => { if (s.textContent.includes('annot-')) s.remove(); });
+  doc.body.innerHTML = annotated.innerHTML;
+
+  download('<!DOCTYPE html>\n' + doc.documentElement.outerHTML, 'annote_' + currentFile);
+}
+
+function exportClean() {
+  closeExportSheet();
+  const parser = new DOMParser();
+  const doc    = parser.parseFromString(rawHTML, 'text/html');
+
+  const annotated = host.cloneNode(true);
+  // Remove red marks (and their content)
+  annotated.querySelectorAll('mark.annot-del').forEach(m => m.remove());
+  // Unwrap yellow marks
+  annotated.querySelectorAll('mark.annot-rev').forEach(m => {
+    while (m.firstChild) m.parentNode.insertBefore(m.firstChild, m);
+    m.remove();
+  });
+  // Remove injected styles
+  annotated.querySelectorAll('style').forEach(s => s.remove());
+
+  doc.body.innerHTML = annotated.innerHTML;
+  download('<!DOCTYPE html>\n' + doc.documentElement.outerHTML, 'propre_' + currentFile);
+}
+
+function download(html, filename) {
+  const blob = new Blob([html], { type: 'text/html' });
+  const a    = document.createElement('a');
+  a.href     = URL.createObjectURL(blob);
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+</script>
+</body>
+</html>
