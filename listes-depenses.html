@@ -150,7 +150,7 @@ td.td-del{text-align:right;padding-right:.75rem}
 <div class="toast" id="toast"></div>
 
 <script>
-var STORAGE_KEY = 'depenses_v2';
+var STORAGE_KEY = 'depenses_v3';
 var lists = [], collapsed = {}, idSeq = 100;
 function uid() { return ++idSeq; }
 
@@ -162,6 +162,21 @@ function load() {
       lists = d.lists || [];
       idSeq = d.idSeq || 100;
       collapsed = d.collapsed || {};
+    }
+  } catch(e) {}
+  try {
+    var raw2 = localStorage.getItem('depenses_v2');
+    if (raw2) {
+      var d2 = JSON.parse(raw2);
+      var oldLists = d2.lists || [];
+      if (oldLists.length) {
+        var existingIds = {};
+        for (var i = 0; i < lists.length; i++) existingIds[lists[i].id] = true;
+        for (var j = 0; j < oldLists.length; j++) {
+          if (!existingIds[oldLists[j].id]) lists.push(oldLists[j]);
+        }
+        localStorage.removeItem('depenses_v2');
+      }
     }
   } catch(e) {}
   if (!lists.length) lists = [{ id: uid(), name: 'Liste 1', entries: [] }];
@@ -185,7 +200,6 @@ function addList() {
 
 function deleteList(id, e) {
   e.stopPropagation();
-  if (!confirm('Supprimer cette liste ?')) return;
   lists = lists.filter(function(l) { return l.id !== id; });
   delete collapsed[id];
   render(); save();
@@ -388,7 +402,6 @@ function renderCards() {
 
     card.innerHTML =
       '<div class="card-header" onclick="toggleCollapse(' + list.id + ')">' +
-        '<div class="card-number">' + (idx + 1) + '</div>' +
         '<input class="card-title-input" type="text" placeholder="Nom de la liste..." value="' + esc(list.name) + '"' +
         ' oninput="updateListName(' + list.id + ',this.value)" onclick="event.stopPropagation()">' +
         '<span class="card-meta">' + entriesLabel + ' \u00b7 ' + fmt(listTotal(list)) + '</span>' +
