@@ -7,10 +7,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Carnet">
 <meta name="theme-color" content="#FAF8F4">
-
-<!-- Icône pour l'écran d'accueil -->
-<link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxODAgMTgwIj48cmVjdCB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCIgcng9IjQwIiBmaWxsPSIjRkFGOEY0Ii8+PHJlY3QgeD0iMzAiIHk9IjM1IiB3aWR0aD0iMTIwIiBoZWlnaHQ9IjExMCIgcng9IjgiIGZpbGw9IndoaXRlIiBzdHJva2U9IiNFOEUwRDUiIHN0cm9rZS13aWR0aD0iMiIvPjxyZWN0IHg9IjMwIiB5PSIzNSIgd2lkdGg9IjEyMCIgaGVpZ2h0PSIyNSIgcng9IjgiIGZpbGw9IiNDNDcwNEEiLz48cmVjdCB4PSIzMCIgeT0iNTAiIHdpZHRoPSIxMjAiIGhlaWdodD0iMTAiIGZpbGw9IiNDNDcwNEEiLz48bGluZSB4MT0iNDUiIHkxPSI4MCIgeDI9IjEzNSIgeTI9IjgwIiBzdHJva2U9IiNFOEUwRDUiIHN0cm9rZS13aWR0aD0iMS41Ii8+PGxpbmUgeDE9IjQ1IiB5MT0iOTUiIHgyPSIxMzUiIHkyPSI5NSIgc3Ryb2tlPSIjRThFMEQ1IiBzdHJva2Utd2lkdGg9IjEuNSIvPjxsaW5lIHgxPSI0NSIgeTE9IjExMCIgeDI9IjEwNSIgeTI9IjExMCIgc3Ryb2tlPSIjRThFMEQ1IiBzdHJva2Utd2lkdGg9IjEuNSIvPjxjaXJjbGUgY3g9IjcwIiBjeT0iMTUwIiByPSIxMiIgZmlsbD0iI0M0NzA0QSIvPjx0ZXh0IHg9IjcwIiB5PSIxNTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IndoaXRlIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC13ZWlnaHQ9IjcwMCI+MDk8L3RleHQ+PGNpcmNsZSBjeD0iMTEwIiBjeT0iMTUwIiByPSIxMiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjQzQ3MDRBIiBzdHJva2Utd2lkdGg9IjIiLz48dGV4dCB4PSIxMTAiIHk9IjE1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSIxNCIgZmlsbD0iI0M0NzA0QSIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiPjE0PC90ZXh0Pjwvc3ZnPg==">
-
+<!-- Icône générée via canvas au chargement -->
 <title>Carnet</title>
 
 <style>
@@ -25,7 +22,6 @@
     --terra-light: #E8C4B0;
     --rule: #E8E0D5;
     --rule-dark: #D4C9BE;
-    --shadow: rgba(28,25,23,0.08);
     --safe-top: env(safe-area-inset-top, 44px);
     --safe-bottom: env(safe-area-inset-bottom, 34px);
   }
@@ -39,7 +35,6 @@
     color: var(--ink);
   }
 
-  /* ── LOCK SCREEN WIDGET ── */
   #app {
     height: 100dvh;
     display: flex;
@@ -47,7 +42,7 @@
     position: relative;
   }
 
-  /* ── HEADER CALENDRIER ── */
+  /* ── HEADER ── */
   #cal-header {
     background: var(--terra);
     padding: calc(var(--safe-top) + 12px) 20px 14px;
@@ -74,7 +69,7 @@
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    font-size: 16px;
+    font-size: 18px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -83,7 +78,7 @@
   }
   .nav-btn:active { background: rgba(255,255,255,0.35); }
 
-  /* ── GRILLE CALENDRIER ── */
+  /* ── CALENDRIER ── */
   #calendar-view {
     flex: 1;
     display: flex;
@@ -108,7 +103,6 @@
     color: var(--ink-light);
     text-transform: uppercase;
   }
-
   #weekdays span.weekend { color: var(--terra); }
 
   #days-grid {
@@ -132,14 +126,13 @@
     min-height: 0;
     gap: 4px;
   }
-
   .day-cell:active { background: #FFF5EF; }
-
   .day-cell.other-month .day-num { color: #C8BFB8; }
 
+  /* Aujourd'hui : cercle terracotta, texte BLANC (priorité max) */
   .day-cell.today .day-num {
     background: var(--terra);
-    color: white;
+    color: #fff !important;
     width: 28px;
     height: 28px;
     border-radius: 50%;
@@ -148,6 +141,7 @@
     justify-content: center;
   }
 
+  /* Point note */
   .day-cell.has-note::after {
     content: '';
     width: 5px;
@@ -171,12 +165,13 @@
 
   .day-cell.weekend .day-num { color: var(--terra); }
   .day-cell.other-month.weekend .day-num { color: var(--terra-light); }
+  /* today sur weekend : toujours blanc */
+  .day-cell.today.weekend .day-num { color: #fff !important; }
 
-  /* ── NOTE PANEL (dépli) ── */
+  /* ── NOTE PANEL ── */
   #note-panel {
     position: fixed;
-    left: 0; right: 0;
-    top: 0; bottom: 0;
+    left: 0; right: 0; top: 0; bottom: 0;
     z-index: 100;
     pointer-events: none;
     display: flex;
@@ -192,8 +187,7 @@
 
   #note-sheet {
     position: absolute;
-    left: 0; right: 0;
-    bottom: 0;
+    left: 0; right: 0; bottom: 0;
     height: calc(100dvh - 60px - var(--safe-top));
     background: var(--white);
     border-radius: 20px 20px 0 0;
@@ -205,23 +199,24 @@
     overflow: hidden;
   }
 
-  #note-panel.open {
-    pointer-events: all;
-  }
+  #note-panel.open { pointer-events: all; }
+  #note-panel.open #note-backdrop { background: rgba(28,25,23,0.25); }
+  #note-panel.open #note-sheet { transform: translateY(0); }
 
-  #note-panel.open #note-backdrop {
-    background: rgba(28,25,23,0.25);
-  }
-
-  #note-panel.open #note-sheet {
-    transform: translateY(0);
+  /* Drag handle */
+  #drag-handle {
+    width: 36px; height: 4px;
+    background: var(--rule-dark);
+    border-radius: 2px;
+    margin: 10px auto 0;
+    flex-shrink: 0;
   }
 
   /* Sheet header */
   #note-sheet-header {
     background: var(--terra);
     color: white;
-    padding: 16px 20px 14px;
+    padding: 12px 20px 12px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -238,10 +233,9 @@
     background: rgba(255,255,255,0.2);
     border: none;
     color: white;
-    width: 30px;
-    height: 30px;
+    width: 30px; height: 30px;
     border-radius: 50%;
-    font-size: 18px;
+    font-size: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -250,24 +244,7 @@
   }
   #close-note-btn:active { background: rgba(255,255,255,0.35); }
 
-  /* Drag handle */
-  #note-sheet::before {
-    content: '';
-    display: block;
-    width: 36px;
-    height: 4px;
-    background: var(--rule-dark);
-    border-radius: 2px;
-    margin: 10px auto 0;
-    flex-shrink: 0;
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 1;
-  }
-
-  /* Textarea zone */
+  /* Zone note */
   #note-body {
     flex: 1;
     overflow-y: auto;
@@ -276,11 +253,10 @@
     position: relative;
   }
 
-  /* Ruled paper effect */
   #note-textarea {
     width: 100%;
     min-height: 100%;
-    padding: 16px 20px 40px 52px;
+    padding: 16px 20px 80px 52px;
     font-size: 16px;
     line-height: 32px;
     font-family: -apple-system, 'SF Pro Text', sans-serif;
@@ -311,7 +287,39 @@
     pointer-events: none;
   }
 
-  /* ── BARRE DU BAS ── */
+  /* Placeholder */
+  .note-hint {
+    position: absolute;
+    top: 20px;
+    left: 52px;
+    right: 20px;
+    color: var(--rule-dark);
+    font-size: 15px;
+    pointer-events: none;
+    line-height: 32px;
+  }
+
+  /* Bouton save flottant */
+  #save-note-btn {
+    position: absolute;
+    bottom: calc(var(--safe-bottom) + 16px);
+    right: 20px;
+    background: var(--terra);
+    color: white;
+    border: none;
+    width: 50px; height: 50px;
+    border-radius: 50%;
+    font-size: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 3px 14px rgba(196,112,74,0.45);
+    z-index: 10;
+  }
+  #save-note-btn:active { transform: scale(0.92); }
+
+  /* ── BARRE BAS ── */
   #bottom-bar {
     background: var(--white);
     border-top: 1px solid var(--rule);
@@ -322,69 +330,31 @@
     flex-shrink: 0;
   }
 
-  #today-display {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-  }
+  #today-display { display: flex; flex-direction: column; align-items: flex-start; }
 
   #today-display .today-label {
-    font-size: 10px;
-    letter-spacing: 0.08em;
-    font-weight: 600;
-    text-transform: uppercase;
-    color: var(--ink-light);
+    font-size: 10px; letter-spacing: 0.08em;
+    font-weight: 600; text-transform: uppercase; color: var(--ink-light);
   }
 
   #today-display .today-date {
-    font-size: 20px;
-    font-weight: 700;
-    color: var(--ink);
-    line-height: 1.1;
-    text-transform: capitalize;
+    font-size: 20px; font-weight: 700; color: var(--ink);
+    line-height: 1.1; text-transform: capitalize;
   }
 
   #today-display .today-time {
-    font-size: 12px;
-    color: var(--ink-light);
+    font-size: 12px; color: var(--ink-light);
     font-variant-numeric: tabular-nums;
   }
 
   #today-btn {
-    background: var(--terra);
-    color: white;
-    border: none;
-    padding: 10px 18px;
-    border-radius: 20px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    font-family: inherit;
+    background: var(--terra); color: white; border: none;
+    padding: 10px 18px; border-radius: 20px;
+    font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit;
   }
   #today-btn:active { opacity: 0.8; }
 
-  /* ── NOTE SAVE BTN ── */
-  #save-note-btn {
-    position: absolute;
-    bottom: calc(var(--safe-bottom) + 16px);
-    right: 20px;
-    background: var(--terra);
-    color: white;
-    border: none;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    font-size: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 3px 12px rgba(196,112,74,0.4);
-    z-index: 10;
-  }
-  #save-note-btn:active { transform: scale(0.94); }
-
-  /* ── MINI TOAST ── */
+  /* ── TOAST ── */
   #toast {
     position: fixed;
     top: calc(var(--safe-top) + 10px);
@@ -392,55 +362,32 @@
     transform: translateX(-50%) translateY(-80px);
     background: var(--ink);
     color: white;
-    font-size: 13px;
-    font-weight: 500;
-    padding: 8px 18px;
-    border-radius: 20px;
+    font-size: 13px; font-weight: 500;
+    padding: 8px 18px; border-radius: 20px;
     transition: transform 0.3s ease;
     z-index: 999;
     white-space: nowrap;
   }
   #toast.show { transform: translateX(-50%) translateY(0); }
-
-  /* No note state */
-  .note-empty-hint {
-    position: absolute;
-    top: 20px;
-    left: 52px;
-    right: 20px;
-    color: var(--rule-dark);
-    font-size: 15px;
-    pointer-events: none;
-    line-height: 32px;
-  }
 </style>
 </head>
 <body>
 
 <div id="app">
-
-  <!-- HEADER -->
   <div id="cal-header">
     <button class="nav-btn" id="prev-btn">‹</button>
     <h1 id="month-title">—</h1>
     <button class="nav-btn" id="next-btn">›</button>
   </div>
 
-  <!-- CALENDRIER -->
   <div id="calendar-view">
     <div id="weekdays">
-      <span>Lu</span>
-      <span>Ma</span>
-      <span>Me</span>
-      <span>Je</span>
-      <span>Ve</span>
-      <span class="weekend">Sa</span>
-      <span class="weekend">Di</span>
+      <span>Lu</span><span>Ma</span><span>Me</span><span>Je</span><span>Ve</span>
+      <span class="weekend">Sa</span><span class="weekend">Di</span>
     </div>
     <div id="days-grid"></div>
   </div>
 
-  <!-- BARRE BAS -->
   <div id="bottom-bar">
     <div id="today-display">
       <span class="today-label">Aujourd'hui</span>
@@ -449,61 +396,54 @@
     </div>
     <button id="today-btn">Ce jour</button>
   </div>
-
 </div>
 
-<!-- PANNEAU NOTE (dépli) -->
+<!-- PANNEAU NOTE -->
 <div id="note-panel">
   <div id="note-backdrop"></div>
   <div id="note-sheet">
+    <div id="drag-handle"></div>
     <div id="note-sheet-header">
       <span id="note-date-label">—</span>
       <button id="close-note-btn">×</button>
     </div>
     <div id="note-body">
-      <span class="note-empty-hint" id="note-hint">Écrivez votre note ici…</span>
+      <span class="note-hint" id="note-hint">Écrivez votre note ici…</span>
       <textarea id="note-textarea" spellcheck="true" autocorrect="on"></textarea>
     </div>
     <button id="save-note-btn" title="Enregistrer">✓</button>
   </div>
 </div>
 
-<!-- TOAST -->
-<div id="toast" id="toast">✓ Note enregistrée</div>
+<div id="toast"></div>
 
 <script>
 (function() {
   'use strict';
 
-  // ── STATE
   const STORE_KEY = 'carnet_notes_v1';
   let notes = {};
   let currentYear, currentMonth;
   let openDateKey = null;
-  let clockInterval;
 
   const today = new Date();
   const todayKey = fmtKey(today.getFullYear(), today.getMonth(), today.getDate());
 
-  // ── LOAD
   try { notes = JSON.parse(localStorage.getItem(STORE_KEY)) || {}; } catch(e) { notes = {}; }
 
-  function saveAll() {
-    localStorage.setItem(STORE_KEY, JSON.stringify(notes));
-  }
+  function saveAll() { localStorage.setItem(STORE_KEY, JSON.stringify(notes)); }
 
   function fmtKey(y, m, d) {
     return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
   }
 
-  // ── INIT
-  currentYear = today.getFullYear();
+  currentYear  = today.getFullYear();
   currentMonth = today.getMonth();
   renderCalendar();
   updateTodayDisplay();
   startClock();
 
-  // ── CALENDAR RENDER
+  // ── CALENDRIER
   function renderCalendar() {
     const months = ['Janvier','Février','Mars','Avril','Mai','Juin',
                     'Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
@@ -513,13 +453,11 @@
     const grid = document.getElementById('days-grid');
     grid.innerHTML = '';
 
-    // First day of month (ISO: Mon=1)
-    const firstDay = new Date(currentYear, currentMonth, 1).getDay(); // 0=Sun
+    const firstDay    = new Date(currentYear, currentMonth, 1).getDay();
     const startOffset = (firstDay === 0) ? 6 : firstDay - 1;
     const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
     const daysInPrev  = new Date(currentYear, currentMonth, 0).getDate();
-
-    const totalCells = Math.ceil((startOffset + daysInMonth) / 7) * 7;
+    const totalCells  = Math.ceil((startOffset + daysInMonth) / 7) * 7;
 
     for (let i = 0; i < totalCells; i++) {
       const cell = document.createElement('div');
@@ -527,28 +465,22 @@
       let d, m, y, other = false;
 
       if (i < startOffset) {
-        d = daysInPrev - startOffset + 1 + i;
-        m = currentMonth - 1;
-        y = currentYear;
+        d = daysInPrev - startOffset + 1 + i; m = currentMonth - 1; y = currentYear;
         if (m < 0) { m = 11; y--; }
         other = true;
       } else if (i >= startOffset + daysInMonth) {
-        d = i - startOffset - daysInMonth + 1;
-        m = currentMonth + 1;
-        y = currentYear;
+        d = i - startOffset - daysInMonth + 1; m = currentMonth + 1; y = currentYear;
         if (m > 11) { m = 0; y++; }
         other = true;
       } else {
-        d = i - startOffset + 1;
-        m = currentMonth;
-        y = currentYear;
+        d = i - startOffset + 1; m = currentMonth; y = currentYear;
       }
 
       const key = fmtKey(y, m, d);
-      const dow = (i % 7); // 0=Mon … 6=Sun
+      const dow = i % 7; // 0=Lun … 6=Dim
 
-      if (other) cell.classList.add('other-month');
-      if (dow >= 5) cell.classList.add('weekend');
+      if (other)        cell.classList.add('other-month');
+      if (dow >= 5)     cell.classList.add('weekend');
       if (key === todayKey) cell.classList.add('today');
       if (notes[key] && notes[key].trim()) cell.classList.add('has-note');
 
@@ -562,44 +494,41 @@
     }
   }
 
-  // ── NOTE PANEL
+  // ── NOTE
   function openNote(y, m, d, key) {
     openDateKey = key;
     const jours = ['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
     const mois  = ['janvier','février','mars','avril','mai','juin',
                    'juillet','août','septembre','octobre','novembre','décembre'];
     const date  = new Date(y, m, d);
-    const label = `${jours[date.getDay()]} ${d} ${mois[m]} ${y}`;
-    document.getElementById('note-date-label').textContent = label;
+    document.getElementById('note-date-label').textContent =
+      `${jours[date.getDay()]} ${d} ${mois[m]} ${y}`;
 
     const ta = document.getElementById('note-textarea');
     ta.value = notes[key] || '';
     document.getElementById('note-hint').style.display = ta.value ? 'none' : 'block';
 
-    const panel = document.getElementById('note-panel');
-    panel.classList.add('open');
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      ta.focus();
-    }));
+    document.getElementById('note-panel').classList.add('open');
+    requestAnimationFrame(() => requestAnimationFrame(() => ta.focus()));
+  }
+
+  function autoSave() {
+    if (!openDateKey) return;
+    const val = document.getElementById('note-textarea').value.trim();
+    if (val) { notes[openDateKey] = val; }
+    else     { delete notes[openDateKey]; }
+    saveAll();
+    renderCalendar();
   }
 
   function closeNote() {
-    const panel = document.getElementById('note-panel');
-    panel.classList.remove('open');
+    document.getElementById('note-panel').classList.remove('open');
     document.getElementById('note-textarea').blur();
     openDateKey = null;
   }
 
-  function saveNote() {
-    if (!openDateKey) return;
-    const val = document.getElementById('note-textarea').value.trim();
-    if (val) {
-      notes[openDateKey] = val;
-    } else {
-      delete notes[openDateKey];
-    }
-    saveAll();
-    renderCalendar(); // refresh dots
+  function saveAndClose() {
+    autoSave();
     showToast('Note enregistrée');
     closeNote();
   }
@@ -624,26 +553,13 @@
   });
 
   document.getElementById('close-note-btn').addEventListener('click', () => {
-    // auto-save on close
-    if (openDateKey) {
-      const val = document.getElementById('note-textarea').value.trim();
-      if (val) {
-        notes[openDateKey] = val;
-        saveAll();
-        renderCalendar();
-      }
-    }
-    closeNote();
+    autoSave(); closeNote();
   });
 
-  document.getElementById('save-note-btn').addEventListener('click', saveNote);
+  document.getElementById('save-note-btn').addEventListener('click', saveAndClose);
 
   document.getElementById('note-backdrop').addEventListener('click', () => {
-    if (openDateKey) {
-      const val = document.getElementById('note-textarea').value.trim();
-      if (val) { notes[openDateKey] = val; saveAll(); renderCalendar(); }
-    }
-    closeNote();
+    autoSave(); closeNote();
   });
 
   document.getElementById('note-textarea').addEventListener('input', () => {
@@ -651,40 +567,31 @@
     document.getElementById('note-hint').style.display = ta.value ? 'none' : 'block';
   });
 
-  // Swipe down to close
+  // Swipe bas pour fermer
   let touchStartY = 0;
   const sheet = document.getElementById('note-sheet');
   sheet.addEventListener('touchstart', e => { touchStartY = e.touches[0].clientY; }, {passive:true});
   sheet.addEventListener('touchend', e => {
-    const dy = e.changedTouches[0].clientY - touchStartY;
-    if (dy > 80) {
-      if (openDateKey) {
-        const val = document.getElementById('note-textarea').value.trim();
-        if (val) { notes[openDateKey] = val; saveAll(); renderCalendar(); }
-      }
-      closeNote();
-    }
+    if (e.changedTouches[0].clientY - touchStartY > 80) { autoSave(); closeNote(); }
   }, {passive:true});
 
-  // ── TODAY DISPLAY
+  // ── BARRE BAS
   function updateTodayDisplay() {
-    const jours = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
-    const mois  = ['jan','fév','mar','avr','mai','juin',
-                   'juil','août','sep','oct','nov','déc'];
+    const j = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
+    const mo = ['jan','fév','mar','avr','mai','juin','juil','août','sep','oct','nov','déc'];
     const t = new Date();
     document.getElementById('today-full').textContent =
-      `${jours[t.getDay()]} ${t.getDate()} ${mois[t.getMonth()]}`;
+      `${j[t.getDay()]} ${t.getDate()} ${mo[t.getMonth()]}`;
   }
 
   function startClock() {
     function tick() {
       const t = new Date();
-      const h = String(t.getHours()).padStart(2,'0');
-      const m = String(t.getMinutes()).padStart(2,'0');
-      document.getElementById('clock').textContent = `${h}:${m}`;
+      document.getElementById('clock').textContent =
+        `${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')}`;
     }
     tick();
-    clockInterval = setInterval(tick, 1000);
+    setInterval(tick, 1000);
   }
 
   // ── TOAST
@@ -694,8 +601,92 @@
     el.textContent = '✓ ' + msg;
     el.classList.add('show');
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => el.classList.remove('show'), 2000);
+    toastTimer = setTimeout(() => el.classList.remove('show'), 2200);
   }
+
+  // ── ICÔNE ÉCRAN D'ACCUEIL (PNG via Canvas — seul format accepté par iOS)
+  function generateAppleTouchIcon() {
+    try {
+      const S = 180;
+      const cv = document.createElement('canvas');
+      cv.width = cv.height = S;
+      const g = cv.getContext('2d');
+
+      function rrect(x, y, w, h, tl, tr, br, bl) {
+        g.beginPath();
+        g.moveTo(x + tl, y);
+        g.lineTo(x + w - tr, y);
+        g.quadraticCurveTo(x+w, y, x+w, y+tr);
+        g.lineTo(x+w, y+h-br);
+        g.quadraticCurveTo(x+w, y+h, x+w-br, y+h);
+        g.lineTo(x+bl, y+h);
+        g.quadraticCurveTo(x, y+h, x, y+h-bl);
+        g.lineTo(x, y+tl);
+        g.quadraticCurveTo(x, y, x+tl, y);
+        g.closePath();
+      }
+
+      // Fond crème
+      rrect(0,0,S,S,36,36,36,36);
+      g.fillStyle = '#FAF8F4';
+      g.fill();
+
+      // Carnet blanc avec ombre subtile
+      g.shadowColor = 'rgba(28,25,23,0.1)';
+      g.shadowBlur = 6;
+      g.shadowOffsetY = 2;
+      rrect(18,26,144,132, 10,10,10,10);
+      g.fillStyle = '#FFFFFF';
+      g.fill();
+      g.shadowColor = 'transparent';
+
+      // En-tête terracotta
+      rrect(18,26,144,36, 10,10,0,0);
+      g.fillStyle = '#C4704A';
+      g.fill();
+
+      // Texte "CARNET"
+      g.fillStyle = '#FFFFFF';
+      g.font = 'bold 13px sans-serif';
+      g.textAlign = 'center';
+      g.textBaseline = 'middle';
+      g.fillText('CARNET', S/2, 44);
+
+      // Lignes réglées
+      g.strokeStyle = '#E8E0D5';
+      g.lineWidth = 1;
+      for (let ly = 76; ly < 155; ly += 19) {
+        g.beginPath(); g.moveTo(30, ly); g.lineTo(150, ly); g.stroke();
+      }
+
+      // Marge rose
+      g.strokeStyle = '#E8C4B0';
+      g.lineWidth = 1.5;
+      g.beginPath(); g.moveTo(50, 62); g.lineTo(50, 155); g.stroke();
+
+      // Numéro du jour dans un cercle terracotta en bas
+      const dayNum = String(new Date().getDate());
+      g.beginPath();
+      g.arc(S/2, 153, 21, 0, Math.PI*2);
+      g.fillStyle = '#C4704A';
+      g.fill();
+
+      g.fillStyle = '#FFFFFF';
+      g.font = 'bold 22px sans-serif';
+      g.textAlign = 'center';
+      g.textBaseline = 'middle';
+      g.fillText(dayNum, S/2, 153);
+
+      // Injecter dans <head>
+      const link = document.createElement('link');
+      link.rel = 'apple-touch-icon';
+      link.setAttribute('sizes', '180x180');
+      link.href = cv.toDataURL('image/png');
+      document.head.appendChild(link);
+    } catch(e) { /* canvas indisponible */ }
+  }
+
+  generateAppleTouchIcon();
 
 })();
 </script>
