@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Carnet">
+<meta name="theme-color" content="#FAF8F4">
+
+<!-- Icône pour l'écran d'accueil -->
+<link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxODAgMTgwIj48cmVjdCB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCIgcng9IjQwIiBmaWxsPSIjRkFGOEY0Ii8+PHJlY3QgeD0iMzAiIHk9IjM1IiB3aWR0aD0iMTIwIiBoZWlnaHQ9IjExMCIgcng9IjgiIGZpbGw9IndoaXRlIiBzdHJva2U9IiNFOEUwRDUiIHN0cm9rZS13aWR0aD0iMiIvPjxyZWN0IHg9IjMwIiB5PSIzNSIgd2lkdGg9IjEyMCIgaGVpZ2h0PSIyNSIgcng9IjgiIGZpbGw9IiNDNDcwNEEiLz48cmVjdCB4PSIzMCIgeT0iNTAiIHdpZHRoPSIxMjAiIGhlaWdodD0iMTAiIGZpbGw9IiNDNDcwNEEiLz48bGluZSB4MT0iNDUiIHkxPSI4MCIgeDI9IjEzNSIgeTI9IjgwIiBzdHJva2U9IiNFOEUwRDUiIHN0cm9rZS13aWR0aD0iMS41Ii8+PGxpbmUgeDE9IjQ1IiB5MT0iOTUiIHgyPSIxMzUiIHkyPSI5NSIgc3Ryb2tlPSIjRThFMEQ1IiBzdHJva2Utd2lkdGg9IjEuNSIvPjxsaW5lIHgxPSI0NSIgeTE9IjExMCIgeDI9IjEwNSIgeTI9IjExMCIgc3Ryb2tlPSIjRThFMEQ1IiBzdHJva2Utd2lkdGg9IjEuNSIvPjxjaXJjbGUgY3g9IjcwIiBjeT0iMTUwIiByPSIxMiIgZmlsbD0iI0M0NzA0QSIvPjx0ZXh0IHg9IjcwIiB5PSIxNTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IndoaXRlIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC13ZWlnaHQ9IjcwMCI+MDk8L3RleHQ+PGNpcmNsZSBjeD0iMTEwIiBjeT0iMTUwIiByPSIxMiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjQzQ3MDRBIiBzdHJva2Utd2lkdGg9IjIiLz48dGV4dCB4PSIxMTAiIHk9IjE1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSIxNCIgZmlsbD0iI0M0NzA0QSIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiPjE0PC90ZXh0Pjwvc3ZnPg==">
+
+<title>Carnet</title>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  :root {
+    --cream: #FAF8F4;
+    --white: #FFFFFF;
+    --ink: #1C1917;
+    --ink-light: #78716C;
+    --terra: #C4704A;
+    --terra-light: #E8C4B0;
+    --rule: #E8E0D5;
+    --rule-dark: #D4C9BE;
+    --shadow: rgba(28,25,23,0.08);
+    --safe-top: env(safe-area-inset-top, 44px);
+    --safe-bottom: env(safe-area-inset-bottom, 34px);
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--cream);
+    font-family: -apple-system, 'SF Pro Text', sans-serif;
+    overflow: hidden;
+    overscroll-behavior: none;
+    color: var(--ink);
+  }
+
+  /* ── LOCK SCREEN WIDGET ── */
+  #app {
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  /* ── HEADER CALENDRIER ── */
+  #cal-header {
+    background: var(--terra);
+    padding: calc(var(--safe-top) + 12px) 20px 14px;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 10;
+  }
+
+  #cal-header h1 {
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    text-transform: capitalize;
+  }
+
+  .nav-btn {
+    background: rgba(255,255,255,0.2);
+    border: none;
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .nav-btn:active { background: rgba(255,255,255,0.35); }
+
+  /* ── GRILLE CALENDRIER ── */
+  #calendar-view {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--cream);
+  }
+
+  #weekdays {
+    display: grid;
+    grid-template-columns: repeat(7,1fr);
+    background: var(--white);
+    border-bottom: 1px solid var(--rule);
+    padding: 8px 6px 6px;
+  }
+
+  #weekdays span {
+    text-align: center;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: var(--ink-light);
+    text-transform: uppercase;
+  }
+
+  #weekdays span.weekend { color: var(--terra); }
+
+  #days-grid {
+    display: grid;
+    grid-template-columns: repeat(7,1fr);
+    gap: 1px;
+    background: var(--rule);
+    flex: 1;
+    overflow: hidden;
+  }
+
+  .day-cell {
+    background: var(--white);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px 2px 6px;
+    cursor: pointer;
+    position: relative;
+    transition: background 0.12s;
+    min-height: 0;
+    gap: 4px;
+  }
+
+  .day-cell:active { background: #FFF5EF; }
+
+  .day-cell.other-month .day-num { color: #C8BFB8; }
+
+  .day-cell.today .day-num {
+    background: var(--terra);
+    color: white;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .day-cell.has-note::after {
+    content: '';
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--terra);
+    display: block;
+    flex-shrink: 0;
+  }
+
+  .day-num {
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .day-cell.weekend .day-num { color: var(--terra); }
+  .day-cell.other-month.weekend .day-num { color: var(--terra-light); }
+
+  /* ── NOTE PANEL (dépli) ── */
+  #note-panel {
+    position: fixed;
+    left: 0; right: 0;
+    top: 0; bottom: 0;
+    z-index: 100;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+  }
+
+  #note-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(28,25,23,0);
+    transition: background 0.35s ease;
+  }
+
+  #note-sheet {
+    position: absolute;
+    left: 0; right: 0;
+    bottom: 0;
+    height: calc(100dvh - 60px - var(--safe-top));
+    background: var(--white);
+    border-radius: 20px 20px 0 0;
+    transform: translateY(100%);
+    transition: transform 0.4s cubic-bezier(0.32,0.72,0,1);
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 -4px 30px rgba(28,25,23,0.12);
+    overflow: hidden;
+  }
+
+  #note-panel.open {
+    pointer-events: all;
+  }
+
+  #note-panel.open #note-backdrop {
+    background: rgba(28,25,23,0.25);
+  }
+
+  #note-panel.open #note-sheet {
+    transform: translateY(0);
+  }
+
+  /* Sheet header */
+  #note-sheet-header {
+    background: var(--terra);
+    color: white;
+    padding: 16px 20px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+
+  #note-date-label {
+    font-size: 15px;
+    font-weight: 600;
+    text-transform: capitalize;
+  }
+
+  #close-note-btn {
+    background: rgba(255,255,255,0.2);
+    border: none;
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    line-height: 1;
+  }
+  #close-note-btn:active { background: rgba(255,255,255,0.35); }
+
+  /* Drag handle */
+  #note-sheet::before {
+    content: '';
+    display: block;
+    width: 36px;
+    height: 4px;
+    background: var(--rule-dark);
+    border-radius: 2px;
+    margin: 10px auto 0;
+    flex-shrink: 0;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1;
+  }
+
+  /* Textarea zone */
+  #note-body {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    background: var(--white);
+    position: relative;
+  }
+
+  /* Ruled paper effect */
+  #note-textarea {
+    width: 100%;
+    min-height: 100%;
+    padding: 16px 20px 40px 52px;
+    font-size: 16px;
+    line-height: 32px;
+    font-family: -apple-system, 'SF Pro Text', sans-serif;
+    color: var(--ink);
+    border: none;
+    outline: none;
+    resize: none;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 31px,
+      var(--rule) 31px,
+      var(--rule) 32px
+    );
+    background-size: 100% 32px;
+    background-position: 0 16px;
+    caret-color: var(--terra);
+  }
+
+  /* Marge rouge */
+  #note-body::before {
+    content: '';
+    position: absolute;
+    top: 0; bottom: 0;
+    left: 40px;
+    width: 1px;
+    background: var(--terra-light);
+    pointer-events: none;
+  }
+
+  /* ── BARRE DU BAS ── */
+  #bottom-bar {
+    background: var(--white);
+    border-top: 1px solid var(--rule);
+    padding: 10px 24px calc(var(--safe-bottom) + 6px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  #today-display {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  #today-display .today-label {
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--ink-light);
+  }
+
+  #today-display .today-date {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.1;
+    text-transform: capitalize;
+  }
+
+  #today-display .today-time {
+    font-size: 12px;
+    color: var(--ink-light);
+    font-variant-numeric: tabular-nums;
+  }
+
+  #today-btn {
+    background: var(--terra);
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  #today-btn:active { opacity: 0.8; }
+
+  /* ── NOTE SAVE BTN ── */
+  #save-note-btn {
+    position: absolute;
+    bottom: calc(var(--safe-bottom) + 16px);
+    right: 20px;
+    background: var(--terra);
+    color: white;
+    border: none;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 3px 12px rgba(196,112,74,0.4);
+    z-index: 10;
+  }
+  #save-note-btn:active { transform: scale(0.94); }
+
+  /* ── MINI TOAST ── */
+  #toast {
+    position: fixed;
+    top: calc(var(--safe-top) + 10px);
+    left: 50%;
+    transform: translateX(-50%) translateY(-80px);
+    background: var(--ink);
+    color: white;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 8px 18px;
+    border-radius: 20px;
+    transition: transform 0.3s ease;
+    z-index: 999;
+    white-space: nowrap;
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* No note state */
+  .note-empty-hint {
+    position: absolute;
+    top: 20px;
+    left: 52px;
+    right: 20px;
+    color: var(--rule-dark);
+    font-size: 15px;
+    pointer-events: none;
+    line-height: 32px;
+  }
+</style>
+</head>
+<body>
+
+<div id="app">
+
+  <!-- HEADER -->
+  <div id="cal-header">
+    <button class="nav-btn" id="prev-btn">‹</button>
+    <h1 id="month-title">—</h1>
+    <button class="nav-btn" id="next-btn">›</button>
+  </div>
+
+  <!-- CALENDRIER -->
+  <div id="calendar-view">
+    <div id="weekdays">
+      <span>Lu</span>
+      <span>Ma</span>
+      <span>Me</span>
+      <span>Je</span>
+      <span>Ve</span>
+      <span class="weekend">Sa</span>
+      <span class="weekend">Di</span>
+    </div>
+    <div id="days-grid"></div>
+  </div>
+
+  <!-- BARRE BAS -->
+  <div id="bottom-bar">
+    <div id="today-display">
+      <span class="today-label">Aujourd'hui</span>
+      <span class="today-date" id="today-full">—</span>
+      <span class="today-time" id="clock">—</span>
+    </div>
+    <button id="today-btn">Ce jour</button>
+  </div>
+
+</div>
+
+<!-- PANNEAU NOTE (dépli) -->
+<div id="note-panel">
+  <div id="note-backdrop"></div>
+  <div id="note-sheet">
+    <div id="note-sheet-header">
+      <span id="note-date-label">—</span>
+      <button id="close-note-btn">×</button>
+    </div>
+    <div id="note-body">
+      <span class="note-empty-hint" id="note-hint">Écrivez votre note ici…</span>
+      <textarea id="note-textarea" spellcheck="true" autocorrect="on"></textarea>
+    </div>
+    <button id="save-note-btn" title="Enregistrer">✓</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast" id="toast">✓ Note enregistrée</div>
+
+<script>
+(function() {
+  'use strict';
+
+  // ── STATE
+  const STORE_KEY = 'carnet_notes_v1';
+  let notes = {};
+  let currentYear, currentMonth;
+  let openDateKey = null;
+  let clockInterval;
+
+  const today = new Date();
+  const todayKey = fmtKey(today.getFullYear(), today.getMonth(), today.getDate());
+
+  // ── LOAD
+  try { notes = JSON.parse(localStorage.getItem(STORE_KEY)) || {}; } catch(e) { notes = {}; }
+
+  function saveAll() {
+    localStorage.setItem(STORE_KEY, JSON.stringify(notes));
+  }
+
+  function fmtKey(y, m, d) {
+    return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+  }
+
+  // ── INIT
+  currentYear = today.getFullYear();
+  currentMonth = today.getMonth();
+  renderCalendar();
+  updateTodayDisplay();
+  startClock();
+
+  // ── CALENDAR RENDER
+  function renderCalendar() {
+    const months = ['Janvier','Février','Mars','Avril','Mai','Juin',
+                    'Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+    document.getElementById('month-title').textContent =
+      `${months[currentMonth]} ${currentYear}`;
+
+    const grid = document.getElementById('days-grid');
+    grid.innerHTML = '';
+
+    // First day of month (ISO: Mon=1)
+    const firstDay = new Date(currentYear, currentMonth, 1).getDay(); // 0=Sun
+    const startOffset = (firstDay === 0) ? 6 : firstDay - 1;
+    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+    const daysInPrev  = new Date(currentYear, currentMonth, 0).getDate();
+
+    const totalCells = Math.ceil((startOffset + daysInMonth) / 7) * 7;
+
+    for (let i = 0; i < totalCells; i++) {
+      const cell = document.createElement('div');
+      cell.className = 'day-cell';
+      let d, m, y, other = false;
+
+      if (i < startOffset) {
+        d = daysInPrev - startOffset + 1 + i;
+        m = currentMonth - 1;
+        y = currentYear;
+        if (m < 0) { m = 11; y--; }
+        other = true;
+      } else if (i >= startOffset + daysInMonth) {
+        d = i - startOffset - daysInMonth + 1;
+        m = currentMonth + 1;
+        y = currentYear;
+        if (m > 11) { m = 0; y++; }
+        other = true;
+      } else {
+        d = i - startOffset + 1;
+        m = currentMonth;
+        y = currentYear;
+      }
+
+      const key = fmtKey(y, m, d);
+      const dow = (i % 7); // 0=Mon … 6=Sun
+
+      if (other) cell.classList.add('other-month');
+      if (dow >= 5) cell.classList.add('weekend');
+      if (key === todayKey) cell.classList.add('today');
+      if (notes[key] && notes[key].trim()) cell.classList.add('has-note');
+
+      const numEl = document.createElement('div');
+      numEl.className = 'day-num';
+      numEl.textContent = d;
+      cell.appendChild(numEl);
+
+      cell.addEventListener('click', () => openNote(y, m, d, key));
+      grid.appendChild(cell);
+    }
+  }
+
+  // ── NOTE PANEL
+  function openNote(y, m, d, key) {
+    openDateKey = key;
+    const jours = ['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
+    const mois  = ['janvier','février','mars','avril','mai','juin',
+                   'juillet','août','septembre','octobre','novembre','décembre'];
+    const date  = new Date(y, m, d);
+    const label = `${jours[date.getDay()]} ${d} ${mois[m]} ${y}`;
+    document.getElementById('note-date-label').textContent = label;
+
+    const ta = document.getElementById('note-textarea');
+    ta.value = notes[key] || '';
+    document.getElementById('note-hint').style.display = ta.value ? 'none' : 'block';
+
+    const panel = document.getElementById('note-panel');
+    panel.classList.add('open');
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      ta.focus();
+    }));
+  }
+
+  function closeNote() {
+    const panel = document.getElementById('note-panel');
+    panel.classList.remove('open');
+    document.getElementById('note-textarea').blur();
+    openDateKey = null;
+  }
+
+  function saveNote() {
+    if (!openDateKey) return;
+    const val = document.getElementById('note-textarea').value.trim();
+    if (val) {
+      notes[openDateKey] = val;
+    } else {
+      delete notes[openDateKey];
+    }
+    saveAll();
+    renderCalendar(); // refresh dots
+    showToast('Note enregistrée');
+    closeNote();
+  }
+
+  // ── EVENTS
+  document.getElementById('prev-btn').addEventListener('click', () => {
+    currentMonth--;
+    if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+    renderCalendar();
+  });
+
+  document.getElementById('next-btn').addEventListener('click', () => {
+    currentMonth++;
+    if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+    renderCalendar();
+  });
+
+  document.getElementById('today-btn').addEventListener('click', () => {
+    currentYear  = today.getFullYear();
+    currentMonth = today.getMonth();
+    renderCalendar();
+  });
+
+  document.getElementById('close-note-btn').addEventListener('click', () => {
+    // auto-save on close
+    if (openDateKey) {
+      const val = document.getElementById('note-textarea').value.trim();
+      if (val) {
+        notes[openDateKey] = val;
+        saveAll();
+        renderCalendar();
+      }
+    }
+    closeNote();
+  });
+
+  document.getElementById('save-note-btn').addEventListener('click', saveNote);
+
+  document.getElementById('note-backdrop').addEventListener('click', () => {
+    if (openDateKey) {
+      const val = document.getElementById('note-textarea').value.trim();
+      if (val) { notes[openDateKey] = val; saveAll(); renderCalendar(); }
+    }
+    closeNote();
+  });
+
+  document.getElementById('note-textarea').addEventListener('input', () => {
+    const ta = document.getElementById('note-textarea');
+    document.getElementById('note-hint').style.display = ta.value ? 'none' : 'block';
+  });
+
+  // Swipe down to close
+  let touchStartY = 0;
+  const sheet = document.getElementById('note-sheet');
+  sheet.addEventListener('touchstart', e => { touchStartY = e.touches[0].clientY; }, {passive:true});
+  sheet.addEventListener('touchend', e => {
+    const dy = e.changedTouches[0].clientY - touchStartY;
+    if (dy > 80) {
+      if (openDateKey) {
+        const val = document.getElementById('note-textarea').value.trim();
+        if (val) { notes[openDateKey] = val; saveAll(); renderCalendar(); }
+      }
+      closeNote();
+    }
+  }, {passive:true});
+
+  // ── TODAY DISPLAY
+  function updateTodayDisplay() {
+    const jours = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
+    const mois  = ['jan','fév','mar','avr','mai','juin',
+                   'juil','août','sep','oct','nov','déc'];
+    const t = new Date();
+    document.getElementById('today-full').textContent =
+      `${jours[t.getDay()]} ${t.getDate()} ${mois[t.getMonth()]}`;
+  }
+
+  function startClock() {
+    function tick() {
+      const t = new Date();
+      const h = String(t.getHours()).padStart(2,'0');
+      const m = String(t.getMinutes()).padStart(2,'0');
+      document.getElementById('clock').textContent = `${h}:${m}`;
+    }
+    tick();
+    clockInterval = setInterval(tick, 1000);
+  }
+
+  // ── TOAST
+  let toastTimer;
+  function showToast(msg) {
+    const el = document.getElementById('toast');
+    el.textContent = '✓ ' + msg;
+    el.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => el.classList.remove('show'), 2000);
+  }
+
+})();
+</script>
+</body>
+</html>
