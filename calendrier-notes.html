@@ -126,7 +126,7 @@
     min-height: 0;
     gap: 4px;
   }
-  .day-cell:active { background: #FFF5EF; }
+  .day-cell:active { background: #FFF0E8; }
   .day-cell.other-month .day-num { color: #C8BFB8; }
 
   /* Aujourd'hui : cercle terracotta, texte BLANC (priorité max) */
@@ -141,15 +141,14 @@
     justify-content: center;
   }
 
-  /* Point note */
-  .day-cell.has-note::after {
-    content: '';
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: var(--terra);
-    display: block;
-    flex-shrink: 0;
+  /* Case avec note : fond terracotta pâle + trait gauche */
+  .day-cell.has-note {
+    background: #FDF0E8;
+  }
+  .day-cell.has-note:active { background: #F7DDD0; }
+  /* Aujourd'hui + note : anneau blanc autour du cercle */
+  .day-cell.today.has-note .day-num {
+    box-shadow: 0 0 0 2px #fff;
   }
 
   .day-num {
