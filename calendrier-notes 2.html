@@ -106,6 +106,103 @@
   }
   .nav-btn:active { background: rgba(255,255,255,0.35); transform: scale(0.9); }
 
+  #header-actions {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    gap: 8px;
+  }
+
+  #sync-btn {
+    background: rgba(255,255,255,0.22);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(255,255,255,0.25);
+    color: white;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  #sync-btn:active { background: rgba(255,255,255,0.35); transform: scale(0.9); }
+
+  /* ── PANNEAU SYNCHRO (export/import) ── */
+  #sync-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: rgba(26,36,51,0.45);
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  #sync-overlay.open { display: flex; }
+
+  #sync-sheet {
+    background: var(--card);
+    width: 100%;
+    border-radius: 24px 24px 0 0;
+    padding: 22px 22px calc(var(--safe-bottom) + 22px);
+    box-shadow: 0 -10px 40px rgba(26,36,51,0.2);
+  }
+
+  #sync-sheet h2 {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+  #sync-sheet p {
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+    margin-bottom: 16px;
+  }
+
+  .sync-action-btn {
+    width: 100%;
+    background: linear-gradient(135deg, var(--terra-glow), var(--terra-deep));
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 14px;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    margin-bottom: 10px;
+  }
+  .sync-action-btn.secondary {
+    background: var(--line);
+    color: var(--terra-deep);
+  }
+  .sync-action-btn:active { opacity: 0.85; }
+
+  #sync-textarea {
+    width: 100%;
+    min-height: 90px;
+    border: 1.5px solid var(--line);
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-size: 13px;
+    font-family: monospace;
+    color: var(--ink);
+    margin-bottom: 12px;
+    resize: none;
+  }
+
+  #sync-close {
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    padding: 10px;
+    cursor: pointer;
+  }
+
   /* ── CALENDRIER ── */
   #calendar-view {
     flex: 1;
@@ -399,7 +496,10 @@
   <div id="cal-header">
     <button class="nav-btn" id="prev-btn">‹</button>
     <h1 id="month-title">—</h1>
-    <button class="nav-btn" id="next-btn">›</button>
+    <div id="header-actions">
+      <button id="sync-btn" title="Sauvegarder / Restaurer">⇅</button>
+      <button class="nav-btn" id="next-btn">›</button>
+    </div>
   </div>
 
   <div id="calendar-view">
@@ -438,6 +538,18 @@
 </div>
 
 <div id="toast"></div>
+
+<!-- PANNEAU SAUVEGARDE / RESTAURATION -->
+<div id="sync-overlay">
+  <div id="sync-sheet">
+    <h2>Sauvegarder / Restaurer</h2>
+    <p>Copiez vos notes pour les transférer vers une autre icône Carnet, ou collez une sauvegarde pour les restaurer ici.</p>
+    <button class="sync-action-btn" id="export-btn">📋 Copier mes notes</button>
+    <textarea id="sync-textarea" placeholder="Collez ici une sauvegarde à restaurer…"></textarea>
+    <button class="sync-action-btn secondary" id="import-btn">⬆️ Restaurer depuis le texte ci-dessus</button>
+    <div id="sync-close">Fermer</div>
+  </div>
+</div>
 
 <script>
 (function() {
@@ -610,7 +722,70 @@
     if (e.changedTouches[0].clientY - touchStartY > 80) { autoSave(); closeNote(); }
   }, {passive:true});
 
-  // ── BARRE BAS
+  // ── SAUVEGARDE / RESTAURATION
+  document.getElementById('sync-btn').addEventListener('click', () => {
+    document.getElementById('sync-overlay').classList.add('open');
+  });
+
+  document.getElementById('sync-close').addEventListener('click', () => {
+    document.getElementById('sync-overlay').classList.remove('open');
+  });
+
+  document.getElementById('sync-overlay').addEventListener('click', (e) => {
+    if (e.target.id === 'sync-overlay') {
+      document.getElementById('sync-overlay').classList.remove('open');
+    }
+  });
+
+  document.getElementById('export-btn').addEventListener('click', async () => {
+    const data = JSON.stringify(notes);
+    try {
+      await navigator.clipboard.writeText(data);
+      showToast('Notes copiées !');
+    } catch (e) {
+      // Fallback si l'API clipboard échoue : on affiche le texte dans la zone
+      const ta = document.getElementById('sync-textarea');
+      ta.value = data;
+      ta.select();
+      showToast('Sélectionnez et copiez le texte');
+    }
+  });
+
+  document.getElementById('import-btn').addEventListener('click', () => {
+    const raw = document.getElementById('sync-textarea').value.trim();
+    if (!raw) { showToast('Collez d\'abord une sauvegarde'); return; }
+    try {
+      const incoming = JSON.parse(raw);
+      if (typeof incoming !== 'object' || incoming === null) throw new Error('format invalide');
+
+      let added = 0, merged = 0;
+      Object.keys(incoming).forEach(key => {
+        let val = incoming[key];
+        if (val && typeof val === 'object') val = (val.text || '').toString();
+        val = (val || '').toString().trim();
+        if (!val) return;
+
+        if (notes[key] && notes[key].trim()) {
+          // Fusionne sans écraser : ajoute le contenu importé à la suite
+          if (!notes[key].includes(val)) {
+            notes[key] = notes[key] + '\n\n' + val;
+            merged++;
+          }
+        } else {
+          notes[key] = val;
+          added++;
+        }
+      });
+
+      saveAll();
+      renderCalendar();
+      document.getElementById('sync-textarea').value = '';
+      document.getElementById('sync-overlay').classList.remove('open');
+      showToast(`${added} ajoutée(s), ${merged} fusionnée(s)`);
+    } catch (e) {
+      showToast('Texte invalide, vérifiez le collage');
+    }
+  });
   function updateTodayDisplay() {
     const j = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
     const mo = ['jan','fév','mar','avr','mai','juin','juil','août','sep','oct','nov','déc'];
