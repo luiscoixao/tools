@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Extraction des notes</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, sans-serif;
+    background: #F2F6FB;
+    color: #1A2433;
+    padding: 24px 18px calc(env(safe-area-inset-bottom, 20px) + 24px);
+    min-height: 100vh;
+  }
+  h1 { font-size: 19px; font-weight: 800; margin-bottom: 6px; }
+  p { font-size: 13.5px; color: #6B7A8F; line-height: 1.5; margin-bottom: 16px; }
+  .box {
+    background: #fff;
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 14px;
+    box-shadow: 0 1px 4px rgba(26,36,51,0.08);
+  }
+  .box h2 { font-size: 14px; margin-bottom: 8px; color: #285E8E; }
+  textarea {
+    width: 100%;
+    min-height: 160px;
+    border: 1.5px solid #DEE9F4;
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 12px;
+    font-family: monospace;
+    color: #1A2433;
+    resize: vertical;
+  }
+  button {
+    width: 100%;
+    margin-top: 10px;
+    background: linear-gradient(135deg, #5FA8E0, #285E8E);
+    color: #fff;
+    border: none;
+    padding: 13px;
+    border-radius: 12px;
+    font-size: 14.5px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+  }
+  button:active { opacity: 0.85; }
+  .status {
+    font-size: 13px;
+    font-weight: 600;
+    padding: 10px 12px;
+    border-radius: 10px;
+    margin-bottom: 14px;
+  }
+  .status.ok { background: #E1F3E5; color: #1F7A3D; }
+  .status.empty { background: #FBEAEA; color: #B23A3A; }
+  .count { font-size: 28px; font-weight: 800; color: #285E8E; }
+  .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: #6B7A8F; font-weight: 700; }
+</style>
+</head>
+<body>
+
+<h1>📤 Extraction des notes</h1>
+<p>Cette page lit les notes stockées sur cet appareil, dans <strong>ce contexte précis</strong> (cette icône). Ouvrez-la depuis l'ancienne icône Carnet pour récupérer vos anciennes notes.</p>
+
+<div id="result"></div>
+
+<script>
+(function() {
+  const STORE_KEY = 'carnet_notes_v1';
+  let notes = {};
+  try { notes = JSON.parse(localStorage.getItem(STORE_KEY)) || {}; } catch(e) { notes = {}; }
+
+  // Normalise les anciens formats objet {text, expenses} vers texte simple
+  Object.keys(notes).forEach(key => {
+    const n = notes[key];
+    if (n && typeof n === 'object') {
+      notes[key] = (n.text || '').toString();
+      if (!notes[key].trim()) delete notes[key];
+    }
+  });
+
+  const keys = Object.keys(notes).filter(k => notes[k] && notes[k].trim());
+  const result = document.getElementById('result');
+
+  if (keys.length === 0) {
+    result.innerHTML = `
+      <div class="status empty">Aucune note trouvée dans ce contexte de stockage.</div>
+      <div class="box">
+        <p style="margin:0">Cela signifie que cette page n'a pas accès aux notes de votre ancienne icône. Essayez d'ouvrir cette page exactement depuis le même raccourci / la même app que celle qui affiche vos notes.</p>
+      </div>
+    `;
+    return;
+  }
+
+  const json = JSON.stringify(notes);
+  const dates = keys.sort();
+
+  result.innerHTML = `
+    <div class="status ok">✓ ${keys.length} note(s) trouvée(s) ici</div>
+    <div class="box">
+      <span class="label">Du</span>
+      <div style="font-size:14px;font-weight:700;margin-bottom:10px">${dates[0]} → ${dates[dates.length-1]}</div>
+      <h2>Copiez ce texte</h2>
+      <textarea id="out" readonly>${json.replace(/</g,'&lt;')}</textarea>
+      <button id="copy-btn">📋 Copier les notes</button>
+      <p style="margin-top:10px;margin-bottom:0">Collez ensuite ce texte dans le bouton ⇅ (Sauvegarder / Restaurer) de votre nouvelle app Carnet.</p>
+    </div>
+  `;
+
+  document.getElementById('copy-btn').addEventListener('click', async () => {
+    const ta = document.getElementById('out');
+    try {
+      await navigator.clipboard.writeText(json);
+      document.getElementById('copy-btn').textContent = '✓ Copié !';
+    } catch(e) {
+      ta.select();
+      ta.setSelectionRange(0, 999999);
+      document.getElementById('copy-btn').textContent = 'Sélectionné — copiez manuellement';
+    }
+  });
+})();
+</script>
+</body>
+</html>
