@@ -46,11 +46,10 @@
   /* ── HEADER ── */
   #cal-header {
     background: linear-gradient(135deg, var(--terra) 0%, var(--terra-deep) 100%);
-    padding: calc(var(--safe-top) + 16px) 20px 22px;
+    padding: calc(var(--safe-top) + 22px) 20px 22px;
     color: white;
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    flex-direction: column;
     flex-shrink: 0;
     position: relative;
     overflow: hidden;
@@ -73,6 +72,26 @@
     width: 180px; height: 180px;
     border-radius: 50%;
     background: radial-gradient(circle, rgba(127,196,217,0.18) 0%, transparent 70%);
+  }
+
+  #app-title {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.75);
+    margin-bottom: 10px;
+  }
+
+  #cal-header-row {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
 
   #cal-header h1 {
@@ -381,7 +400,7 @@
   /* ── TOAST ── */
   #toast {
     position: fixed;
-    top: calc(var(--safe-top) + 10px);
+    top: calc(var(--safe-top) + 22px);
     left: 50%;
     transform: translateX(-50%) translateY(-80px);
     background: var(--ink);
@@ -400,9 +419,12 @@
 
 <div id="app">
   <div id="cal-header">
-    <button class="nav-btn" id="prev-btn">‹</button>
-    <h1 id="month-title">—</h1>
-    <button class="nav-btn" id="next-btn">›</button>
+    <div id="app-title">Carnet</div>
+    <div id="cal-header-row">
+      <button class="nav-btn" id="prev-btn">‹</button>
+      <h1 id="month-title">—</h1>
+      <button class="nav-btn" id="next-btn">›</button>
+    </div>
   </div>
 
   <div id="calendar-view">
@@ -685,9 +707,15 @@
       g.fill();
       g.shadowColor = 'transparent';
 
-      rrect(26,34,128,14, 14,14,0,0);
+      rrect(26,34,128,26, 14,14,0,0);
       g.fillStyle = '#7FC4D9';
       g.fill();
+
+      g.fillStyle = '#FFFFFF';
+      g.font = '800 12px sans-serif';
+      g.textAlign = 'center';
+      g.textBaseline = 'middle';
+      g.fillText('CARNET', S/2, 47);
 
       const dayNum = String(new Date().getDate());
       g.fillStyle = '#285E8E';
