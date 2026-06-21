@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Carnet">
-<meta name="theme-color" content="#3E7CB1">
+<meta name="theme-color" content="#F2F6FB">
 <title>Carnet</title>
 
 <style>
@@ -46,7 +46,7 @@
   /* ── HEADER ── */
   #cal-header {
     background: linear-gradient(135deg, var(--terra) 0%, var(--terra-deep) 100%);
-    padding: calc(var(--safe-top) + 22px) 20px 22px;
+    padding: 16px 20px 22px;
     color: white;
     display: flex;
     flex-direction: column;
@@ -250,7 +250,7 @@
   #note-sheet {
     position: absolute;
     left: 0; right: 0; bottom: 0;
-    height: calc(100dvh - 60px - var(--safe-top));
+    height: calc(100dvh - 60px);
     background: var(--card);
     border-radius: 26px 26px 0 0;
     transform: translateY(100%);
@@ -329,6 +329,35 @@
     white-space: pre-wrap;
   }
 
+  /* Couche d'affichage avec liens cliquables, superposée au textarea */
+  #note-display {
+    width: 100%;
+    min-height: 100%;
+    padding: 22px 22px 80px;
+    font-size: 16.5px;
+    line-height: 1.7;
+    font-family: -apple-system, 'SF Pro Text', sans-serif;
+    color: var(--ink);
+    white-space: pre-wrap;
+    word-break: break-word;
+    cursor: text;
+  }
+  #note-display a {
+    color: var(--terra-deep);
+    text-decoration: underline;
+    text-decoration-color: var(--terra);
+    text-underline-offset: 2px;
+  }
+  /* Le textarea est masqué tant qu'on n'édite pas */
+  #note-textarea.editing-hidden {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  #note-display.editing-hidden {
+    display: none;
+  }
+
   .note-hint {
     position: absolute;
     top: 22px;
@@ -400,7 +429,7 @@
   /* ── TOAST ── */
   #toast {
     position: fixed;
-    top: calc(var(--safe-top) + 22px);
+    top: 14px;
     left: 50%;
     transform: translateX(-50%) translateY(-80px);
     background: var(--ink);
@@ -456,6 +485,7 @@
     </div>
     <div id="note-body">
       <span class="note-hint" id="note-hint">Écrivez votre note ici…</span>
+      <div id="note-display"></div>
       <textarea id="note-textarea" spellcheck="true" autocorrect="on"></textarea>
     </div>
     <button id="save-note-btn" title="Enregistrer">✓</button>
@@ -555,6 +585,44 @@
   }
 
   // ── NOTE
+  function escapeHtml(str) {
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+  // Détecte les URLs (http/https/www) et les transforme en liens cliquables
+  function linkify(text) {
+    const escaped = escapeHtml(text);
+    const urlPattern = /((https?:\/\/|www\.)[^\s<]+)/gi;
+    return escaped.replace(urlPattern, (match) => {
+      let href = match;
+      if (!/^https?:\/\//i.test(href)) href = 'https://' + href;
+      return `<a href="${href}" target="_blank" rel="noopener noreferrer">${match}</a>`;
+    });
+  }
+
+  function renderNoteDisplay(text) {
+    const display = document.getElementById('note-display');
+    display.innerHTML = text ? linkify(text) : '';
+  }
+
+  function showDisplayMode() {
+    const ta = document.getElementById('note-textarea');
+    const display = document.getElementById('note-display');
+    renderNoteDisplay(ta.value);
+    ta.classList.add('editing-hidden');
+    display.classList.remove('editing-hidden');
+  }
+
+  function showEditMode() {
+    const ta = document.getElementById('note-textarea');
+    const display = document.getElementById('note-display');
+    ta.classList.remove('editing-hidden');
+    display.classList.add('editing-hidden');
+  }
+
   function openNote(y, m, d, key) {
     openDateKey = key;
     const jours = ['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
@@ -568,8 +636,18 @@
     ta.value = notes[key] || '';
     document.getElementById('note-hint').style.display = ta.value ? 'none' : 'block';
 
+    // Si la note contient déjà du texte, on l'affiche d'abord en mode lecture
+    // (liens cliquables) ; sinon on ouvre directement en mode édition.
+    if (ta.value.trim()) {
+      showDisplayMode();
+    } else {
+      showEditMode();
+    }
+
     document.getElementById('note-panel').classList.add('open');
-    requestAnimationFrame(() => requestAnimationFrame(() => ta.focus()));
+    if (!ta.value.trim()) {
+      requestAnimationFrame(() => requestAnimationFrame(() => ta.focus()));
+    }
   }
 
   function autoSave() {
@@ -616,10 +694,22 @@
     autoSave(); closeNote();
   });
 
-  document.getElementById('save-note-btn').addEventListener('click', saveAndClose);
+  document.getElementById('save-note-btn').addEventListener('click', () => {
+    autoSave();
+    showDisplayMode();
+    showToast('Note enregistrée');
+  });
 
   document.getElementById('note-backdrop').addEventListener('click', () => {
     autoSave(); closeNote();
+  });
+
+  // Toucher la couche d'affichage (hors lien) bascule en mode édition
+  document.getElementById('note-display').addEventListener('click', (e) => {
+    if (e.target.tagName === 'A') return; // laisse le lien s'ouvrir normalement
+    const ta = document.getElementById('note-textarea');
+    showEditMode();
+    requestAnimationFrame(() => requestAnimationFrame(() => ta.focus()));
   });
 
   document.getElementById('note-textarea').addEventListener('input', () => {
