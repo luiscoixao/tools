@@ -347,6 +347,8 @@
     text-decoration: underline;
     text-decoration-color: var(--terra);
     text-underline-offset: 2px;
+    display: inline;
+    padding: 2px 0;
   }
   /* Le textarea est masqué tant qu'on n'édite pas */
   #note-textarea.editing-hidden {
@@ -706,7 +708,11 @@
 
   // Toucher la couche d'affichage (hors lien) bascule en mode édition
   document.getElementById('note-display').addEventListener('click', (e) => {
-    if (e.target.tagName === 'A') return; // laisse le lien s'ouvrir normalement
+    const link = e.target.closest('a');
+    if (link) {
+      // Le lien s'ouvre normalement (target="_blank"), on ne bascule pas en édition
+      return;
+    }
     const ta = document.getElementById('note-textarea');
     showEditMode();
     requestAnimationFrame(() => requestAnimationFrame(() => ta.focus()));
