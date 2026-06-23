@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Suno Prompt Builder — Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0D0D0F;
+    --surface: #161618;
+    --surface2: #1E1E22;
+    --surface3: #26262C;
+    --accent: #C45FFF;
+    --accent2: #FF7A2F;
+    --accent3: #3FD4A4;
+    --text: #E8E4F0;
+    --text-dim: #7A7589;
+    --text-mid: #B0AAC4;
+    --border: #2A2A32;
+    --radius: 10px;
+    --radius-sm: 6px;
+  }
+  body { background:var(--bg); color:var(--text); font-family:'Space Grotesk',sans-serif; min-height:100vh; display:flex; flex-direction:column; }
+
+  /* HEADER */
+  header { padding:16px 28px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border); position:sticky; top:0; background:rgba(13,13,15,0.94); backdrop-filter:blur(14px); z-index:100; }
+  .logo { display:flex; align-items:center; gap:10px; font-size:1.05rem; font-weight:700; letter-spacing:-0.02em; }
+  .logo-icon { width:36px; height:36px; display:flex; align-items:center; justify-content:center; }
+  .logo span { color:var(--text-dim); font-weight:400; margin-left:2px; font-size:0.9rem; }
+  .header-actions { display:flex; gap:8px; }
+
+  /* LAYOUT */
+  main { flex:1; display:grid; grid-template-columns:1fr 1fr 1fr; gap:0; }
+  .panel { border-right:1px solid var(--border); border-bottom:1px solid var(--border); padding:22px; overflow-y:auto; }
+  .panel:nth-child(3) { border-right:none; }
+  .panel-wide { grid-column:1/-1; border-right:none; padding:22px 28px; border-bottom:1px solid var(--border); }
+  .panel-label { font-size:0.62rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--text-dim); margin-bottom:14px; display:flex; align-items:center; gap:8px; }
+  .panel-label::after { content:''; flex:1; height:1px; background:var(--border); }
+
+  /* CHIPS */
+  .chip-grid { display:flex; flex-wrap:wrap; gap:6px; }
+  .chip { padding:5px 12px; border-radius:20px; border:1.5px solid var(--border); background:var(--surface2); color:var(--text-mid); font-size:0.76rem; font-weight:500; cursor:pointer; transition:all 0.15s; user-select:none; font-family:'Space Grotesk',sans-serif; }
+  .chip:hover { border-color:var(--accent); color:var(--text); }
+  .chip.active { background:linear-gradient(135deg,rgba(196,95,255,0.2),rgba(196,95,255,0.05)); border-color:var(--accent); color:var(--accent); }
+  .chip.active-orange { background:linear-gradient(135deg,rgba(255,122,47,0.2),rgba(255,122,47,0.05)); border-color:var(--accent2); color:var(--accent2); }
+  .chip.active-green { background:linear-gradient(135deg,rgba(63,212,164,0.2),rgba(63,212,164,0.05)); border-color:var(--accent3); color:var(--accent3); }
+
+  /* MODE TOGGLE */
+  .mode-toggle { display:flex; background:var(--surface2); border:1.5px solid var(--border); border-radius:24px; padding:3px; width:fit-content; margin-bottom:18px; }
+  .mode-btn { padding:6px 18px; border-radius:20px; font-size:0.78rem; font-weight:600; cursor:pointer; transition:all 0.2s; border:none; background:transparent; color:var(--text-dim); font-family:'Space Grotesk',sans-serif; }
+  .mode-btn.active { background:var(--accent); color:#fff; box-shadow:0 0 16px rgba(196,95,255,0.4); }
+  .mode-btn.active-inst { background:var(--accent3); color:#0D0D0F; box-shadow:0 0 16px rgba(63,212,164,0.35); }
+
+  /* INSTRUMENTS */
+  .instrument-list { display:flex; flex-direction:column; gap:9px; }
+  .instrument-row { display:flex; align-items:center; gap:10px; }
+  .instrument-name { font-size:0.75rem; color:var(--text-mid); width:108px; flex-shrink:0; font-weight:500; }
+  input[type=range] { width:100%; accent-color:var(--accent); cursor:pointer; height:4px; appearance:none; background:var(--surface3); border-radius:4px; outline:none; }
+  input[type=range]::-webkit-slider-thumb { appearance:none; width:13px; height:13px; border-radius:50%; background:var(--accent); box-shadow:0 0 7px rgba(196,95,255,0.6); cursor:pointer; transition:transform 0.1s; }
+  input[type=range]::-webkit-slider-thumb:hover { transform:scale(1.3); }
+  input[type=range]::-webkit-slider-runnable-track { height:4px; border-radius:4px; background:linear-gradient(to right,var(--accent) 0%,var(--accent) var(--pct,50%),var(--surface3) var(--pct,50%)); }
+  .slider-val { font-size:0.68rem; color:var(--text-dim); font-family:'Space Mono',monospace; width:26px; text-align:right; }
+  .inst-toggle { width:20px; height:20px; border:1.5px solid var(--border); border-radius:50%; background:var(--surface2); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:9px; color:var(--text-dim); transition:all 0.15s; flex-shrink:0; }
+  .inst-toggle.on { border-color:var(--accent2); background:rgba(255,122,47,0.15); color:var(--accent2); }
+
+  /* BPM */
+  .bpm-row { display:flex; align-items:center; gap:14px; margin-bottom:14px; }
+  .bpm-display { font-family:'Space Mono',monospace; font-size:1.9rem; font-weight:700; color:var(--accent2); line-height:1; min-width:58px; }
+  .bpm-unit { font-size:0.62rem; color:var(--text-dim); margin-top:2px; letter-spacing:0.1em; }
+  .tempo-chips { display:flex; flex-wrap:wrap; gap:5px; }
+
+  textarea { width:100%; background:var(--surface2); border:1.5px solid var(--border); border-radius:var(--radius-sm); color:var(--text); font-family:'Space Grotesk',sans-serif; font-size:0.8rem; padding:11px 13px; resize:vertical; min-height:60px; outline:none; transition:border-color 0.15s; line-height:1.55; }
+  textarea:focus { border-color:var(--accent); }
+  textarea::placeholder { color:var(--text-dim); }
+
+  /* ===================== STRUCTURE TIMELINE ===================== */
+  .timeline-zone { padding:22px 28px 18px; border-bottom:1px solid var(--border); background:var(--surface); }
+  .timeline-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+  .timeline-meta { display:flex; align-items:center; gap:14px; }
+  .total-dur { font-family:'Space Mono',monospace; font-size:1.1rem; color:var(--accent3); font-weight:700; }
+  .total-dur-label { font-size:0.6rem; color:var(--text-dim); letter-spacing:0.1em; text-transform:uppercase; }
+
+  /* Frise horizontale */
+  .timeline-track {
+    display:flex; align-items:stretch; gap:0; border-radius:10px; overflow:hidden;
+    border:1.5px solid var(--border); min-height:62px; margin-bottom:14px; position:relative;
+    background:var(--surface2);
+  }
+  .tl-block {
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding:6px 4px; cursor:pointer; transition:all 0.2s; position:relative;
+    border-right:1px solid var(--border); user-select:none; min-width:40px;
+    flex-shrink:0;
+  }
+  .tl-block:last-child { border-right:none; }
+  .tl-block:hover { filter:brightness(1.2); }
+  .tl-block.tl-selected { outline:2px solid #fff; outline-offset:-2px; z-index:2; }
+  .tl-block-label { font-size:0.62rem; font-weight:700; letter-spacing:0.05em; color:rgba(255,255,255,0.85); text-transform:uppercase; }
+  .tl-block-dur { font-size:0.58rem; font-family:'Space Mono',monospace; color:rgba(255,255,255,0.55); margin-top:2px; }
+  .tl-block-icon { font-size:14px; margin-bottom:2px; }
+
+  /* Couleurs par type */
+  .tl-intro    { background:linear-gradient(160deg,#1a1060,#2d1a80); }
+  .tl-verse    { background:linear-gradient(160deg,#1a2560,#1a3a8a); }
+  .tl-chorus   { background:linear-gradient(160deg,#4a1060,#7a1aaa); }
+  .tl-bridge   { background:linear-gradient(160deg,#1a4040,#1a7060); }
+  .tl-solo     { background:linear-gradient(160deg,#502010,#a04010); }
+  .tl-outro    { background:linear-gradient(160deg,#101040,#201a5a); }
+  .tl-break    { background:linear-gradient(160deg,#2a2a2a,#3a3a3a); }
+  .tl-pre      { background:linear-gradient(160deg,#1a3060,#1a50aa); }
+  .tl-build    { background:linear-gradient(160deg,#3a1030,#801a60); }
+
+  /* Controls de la frise */
+  .tl-controls { display:flex; gap:7px; flex-wrap:wrap; margin-bottom:14px; }
+  .tl-add-btn { padding:5px 12px; border-radius:16px; font-size:0.72rem; font-weight:600; cursor:pointer; border:1.5px solid var(--border); background:var(--surface2); color:var(--text-mid); font-family:'Space Grotesk',sans-serif; transition:all 0.15s; }
+  .tl-add-btn:hover { border-color:var(--accent); color:var(--accent); }
+
+  /* Editeur de section sélectionnée */
+  .section-editor {
+    background:var(--surface2); border:1.5px solid var(--border); border-radius:var(--radius);
+    padding:14px 16px; display:none; margin-top:4px;
+  }
+  .section-editor.open { display:block; animation:fadeIn 0.2s ease; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(-4px)} to{opacity:1;transform:translateY(0)} }
+  .se-row { display:flex; align-items:center; gap:12px; margin-bottom:10px; flex-wrap:wrap; }
+  .se-label { font-size:0.68rem; color:var(--text-dim); font-weight:600; letter-spacing:0.08em; text-transform:uppercase; min-width:70px; }
+  .se-dur-btn { padding:4px 10px; border-radius:14px; font-size:0.72rem; font-weight:600; cursor:pointer; border:1.5px solid var(--border); background:var(--surface3); color:var(--text-mid); font-family:'Space Grotesk',sans-serif; transition:all 0.12s; }
+  .se-dur-btn.sel { border-color:var(--accent3); color:var(--accent3); background:rgba(63,212,164,0.12); }
+  .se-desc-input { flex:1; min-width:160px; background:var(--surface3); border:1.5px solid var(--border); border-radius:6px; color:var(--text); font-family:'Space Grotesk',sans-serif; font-size:0.78rem; padding:6px 10px; outline:none; transition:border-color 0.15s; }
+  .se-desc-input:focus { border-color:var(--accent); }
+  .se-desc-input::placeholder { color:var(--text-dim); }
+  .se-del-btn { padding:4px 10px; border-radius:14px; font-size:0.72rem; font-weight:600; cursor:pointer; border:1.5px solid rgba(255,80,80,0.3); background:transparent; color:rgba(255,100,100,0.7); font-family:'Space Grotesk',sans-serif; transition:all 0.12s; }
+  .se-del-btn:hover { border-color:rgba(255,80,80,0.8); color:rgba(255,100,100,1); }
+  .se-move-btn { padding:4px 9px; border-radius:14px; font-size:0.72rem; cursor:pointer; border:1.5px solid var(--border); background:var(--surface3); color:var(--text-mid); font-family:'Space Grotesk',sans-serif; transition:all 0.12s; }
+  .se-move-btn:hover { border-color:var(--accent2); color:var(--accent2); }
+
+  /* PROMPT OUTPUT */
+  .prompt-output-zone { background:var(--surface); border-top:1px solid var(--border); padding:20px 28px 24px; position:sticky; bottom:0; }
+  .prompt-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+  .prompt-label { font-size:0.62rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--text-dim); }
+  .prompt-box { background:var(--surface2); border:1.5px solid var(--border); border-radius:var(--radius); padding:14px 16px; font-size:0.82rem; line-height:1.6; color:var(--text); font-family:'Space Mono',monospace; min-height:54px; word-break:break-word; transition:border-color 0.3s; }
+  .prompt-box.has-content { border-color:rgba(196,95,255,0.4); }
+  .prompt-tag { color:var(--accent); }
+  .prompt-struct { color:var(--accent3); font-weight:700; }
+  .prompt-empty { color:var(--text-dim); font-family:'Space Grotesk',sans-serif; font-size:0.8rem; font-style:italic; }
+  .waveform { height:26px; display:flex; align-items:center; gap:2px; margin-top:10px; }
+  .wave-bar { width:3px; background:var(--accent); border-radius:2px; opacity:0.2; transition:height 0.35s ease,opacity 0.35s ease; }
+
+  /* BUTTONS */
+  .btn { padding:8px 18px; border-radius:var(--radius-sm); font-size:0.78rem; font-weight:600; cursor:pointer; transition:all 0.15s; border:none; font-family:'Space Grotesk',sans-serif; letter-spacing:0.02em; display:inline-flex; align-items:center; gap:6px; }
+  .btn-primary { background:linear-gradient(135deg,var(--accent),#9B3DD4); color:#fff; box-shadow:0 4px 14px rgba(196,95,255,0.3); }
+  .btn-primary:hover { box-shadow:0 6px 22px rgba(196,95,255,0.5); transform:translateY(-1px); }
+  .btn-ghost { background:var(--surface2); border:1.5px solid var(--border); color:var(--text-mid); }
+  .btn-ghost:hover { border-color:var(--accent); color:var(--text); }
+  .section-dot { width:7px; height:7px; border-radius:50%; display:inline-block; margin-right:5px; vertical-align:middle; }
+  .dot-purple { background:var(--accent); box-shadow:0 0 6px rgba(196,95,255,0.8); }
+  .dot-orange { background:var(--accent2); box-shadow:0 0 6px rgba(255,122,47,0.8); }
+  .dot-green { background:var(--accent3); box-shadow:0 0 6px rgba(63,212,164,0.8); }
+  .divider { height:1px; background:var(--border); margin:10px 0 14px; }
+  .preset-row { display:flex; gap:7px; flex-wrap:wrap; margin-bottom:14px; }
+  .preset-btn { padding:5px 11px; border-radius:16px; font-size:0.7rem; font-weight:600; cursor:pointer; border:1.5px solid var(--border); background:var(--surface2); color:var(--text-dim); font-family:'Space Grotesk',sans-serif; transition:all 0.15s; }
+  .preset-btn:hover { border-color:var(--accent2); color:var(--accent2); }
+  .toast { position:fixed; bottom:110px; right:28px; background:var(--accent3); color:#0D0D0F; font-size:0.76rem; font-weight:700; padding:8px 16px; border-radius:20px; opacity:0; transform:translateY(10px); transition:all 0.3s; z-index:200; pointer-events:none; }
+  .toast.show { opacity:1; transform:translateY(0); }
+
+  @media(max-width:860px) { main { grid-template-columns:1fr 1fr; } .panel:nth-child(2){border-right:none;} .panel:nth-child(3){border-right:1px solid var(--border);} }
+  @media(max-width:560px) { main{grid-template-columns:1fr;} .panel{border-right:none;} header{padding:12px 14px;} .timeline-zone{padding:16px;} .prompt-output-zone{padding:14px;} }
+  ::-webkit-scrollbar{width:4px;} ::-webkit-scrollbar-track{background:var(--bg);} ::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:4px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">
+      <!-- SVG icon : onde sonore stylisée -->
+      <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="36" height="36" rx="9" fill="url(#grad)"/>
+        <defs>
+          <linearGradient id="grad" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#C45FFF"/>
+            <stop offset="100%" stop-color="#FF7A2F"/>
+          </linearGradient>
+        </defs>
+        <!-- barres waveform -->
+        <rect x="5"  y="15" width="3" height="6"  rx="1.5" fill="white" opacity="0.6"/>
+        <rect x="10" y="11" width="3" height="14" rx="1.5" fill="white" opacity="0.85"/>
+        <rect x="15" y="7"  width="3" height="22" rx="1.5" fill="white"/>
+        <rect x="20" y="11" width="3" height="14" rx="1.5" fill="white" opacity="0.85"/>
+        <rect x="25" y="15" width="3" height="6"  rx="1.5" fill="white" opacity="0.55"/>
+        <!-- point central lumineux -->
+        <circle cx="16.5" cy="18" r="1.5" fill="white" opacity="0.4"/>
+      </svg>
+    </div>
+    Suno Builder <span>prompt studio</span>
+  </div>
+  <div class="header-actions">
+    <button class="btn btn-ghost" onclick="resetAll()">↺ Reset</button>
+    <button class="btn btn-primary" onclick="copyPrompt()">⎘ Copier le prompt</button>
+  </div>
+</header>
+
+<main id="mainGrid">
+
+  <!-- PANEL 1 : GENRE -->
+  <div class="panel">
+    <div class="panel-label"><span class="section-dot dot-purple"></span>Genre musical</div>
+    <div class="panel-label" style="margin-top:0;font-size:0.58rem;">Électronique &amp; Dance</div>
+    <div class="chip-grid">
+      <div class="chip" onclick="toggleChip(this,'genre')">Ambient</div>
+      <div class="chip" onclick="toggleChip(this,'genre')">Synthwave</div>
+      <div class="chip" onclick="toggleChip(this,'genre')">Lo-fi</div>
+      <div class="chip" onclick="toggleChip(this,'genre')">House</div>
+      <div class="chip" onclick="toggleChip(this,'genre')">Techno</div>
+      <div class="chip" onclick="toggleChip(this,'genre')">Chillwave</div>
+      <div class="chip" onclick="toggleChip(this,'genre')">Drum &amp; Bass</div>
+      <div class="chip" onclick="toggleChip(this,'genre')">Trance</div>
+    </div>
+    <div class="divider"></div>
+    <div class="panel-label" style="margin-top:0;font-size:0.58rem;">Acoustique &amp; Folk</div>
+    <div class="chip-grid">
+      <div class="chip" onclick="toggleChip(this,'genre')">Folk acoustique</div>
+      <div class="chip" onclick="toggleChip(this,'genre')">Indie folk</div>
+      <div class="chip" onclick="toggleChip(this,'genre')">Singer-songwriter</div>
+      <div class="chip" onclick="toggleChip(this,'genre')">Americana</div>
+      <div class="chip" onclick="toggleChip(this,'genre')">Bluegrass</div>
+    </div>
+    <div class="divider"></div>
+    <div class="panel-label" style="margin-top:0;font-size:0.58rem;">Rock &amp; Urbain</div>
+    <div class="chip-grid">
+      <div class="chip" onclick="toggleChip(this,'genre')">Indie rock</div>
+      <div class="chip" onclick="toggleChip(this,'genre')">Alternative</div>
+      <div class="chip" onclick="toggleChip(this,'genre')">Hip-hop</div>
+      <div class="chip" onclick="toggleChip(this,'genre')">R&amp;B</div>
+      <div class="chip" onclick="toggleChip(this,'genre')">Trap</div>
+      <div class="chip" onclick="toggleChip(this,'genre')">Post-rock</div>
+    </div>
+    <div class="divider"></div>
+    <div class="panel-label" style="margin-top:0;font-size:0.58rem;">Monde &amp; Traditionnel</div>
+    <div class="chip-grid">
+      <div class="chip" onclick="toggleChip(this,'genre')">Fado</div>
+      <div class="chip" onclick="toggleChip(this,'genre')">Bossa nova</div>
+      <div class="chip" onclick="toggleChip(this,'genre')">Flamenco</div>
+      <div class="chip" onclick="toggleChip(this,'genre')">Jazz</div>
+      <div class="chip" onclick="toggleChip(this,'genre')">Blues</div>
+      <div class="chip" onclick="toggleChip(this,'genre')">Soul</div>
+      <div class="chip" onclick="toggleChip(this,'genre')">Afrobeat</div>
+      <div class="chip" onclick="toggleChip(this,'genre')">Celtic</div>
+      <div class="chip" onclick="toggleChip(this,'genre')">Reggae</div>
+    </div>
+    <div class="divider"></div>
+    <div class="panel-label" style="margin-top:0;font-size:0.58rem;">Classique &amp; Cinéma</div>
+    <div class="chip-grid">
+      <div class="chip" onclick="toggleChip(this,'genre')">Orchestral</div>
+      <div class="chip" onclick="toggleChip(this,'genre')">Néoclassique</div>
+      <div class="chip" onclick="toggleChip(this,'genre')">Soundtrack</div>
+      <div class="chip" onclick="toggleChip(this,'genre')">Dark ambient</div>
+      <div class="chip" onclick="toggleChip(this,'genre')">Épique</div>
+    </div>
+  </div>
+
+  <!-- PANEL 2 : VOIX & INSTRUMENTS -->
+  <div class="panel">
+    <div class="panel-label"><span class="section-dot dot-orange"></span>Mode &amp; Voix</div>
+    <div class="mode-toggle">
+      <button class="mode-btn active" id="modeVocal" onclick="setMode('vocal')">🎤 Vocal</button>
+      <button class="mode-btn" id="modeInst" onclick="setMode('instrumental')">🎹 Instrumental</button>
+    </div>
+    <div id="voiceSection">
+      <div class="panel-label" style="font-size:0.58rem;margin-bottom:9px;">Type de voix</div>
+      <div class="chip-grid" style="margin-bottom:12px;">
+        <div class="chip" onclick="toggleChip(this,'voice')">Féminine douce</div>
+        <div class="chip" onclick="toggleChip(this,'voice')">Féminine puissante</div>
+        <div class="chip" onclick="toggleChip(this,'voice')">Masculine grave</div>
+        <div class="chip" onclick="toggleChip(this,'voice')">Masculine doux</div>
+        <div class="chip" onclick="toggleChip(this,'voice')">Androgyne</div>
+        <div class="chip" onclick="toggleChip(this,'voice')">Chorale</div>
+        <div class="chip" onclick="toggleChip(this,'voice')">Rap / Spoken</div>
+      </div>
+      <div class="panel-label" style="font-size:0.58rem;margin-bottom:9px;">Style vocal</div>
+      <div class="chip-grid" style="margin-bottom:12px;">
+        <div class="chip" onclick="toggleChip(this,'vstyle')">Breathy</div>
+        <div class="chip" onclick="toggleChip(this,'vstyle')">Raspy</div>
+        <div class="chip" onclick="toggleChip(this,'vstyle')">Operatic</div>
+        <div class="chip" onclick="toggleChip(this,'vstyle')">Falsetto</div>
+        <div class="chip" onclick="toggleChip(this,'vstyle')">Melismatic</div>
+        <div class="chip" onclick="toggleChip(this,'vstyle')">Spoken word</div>
+        <div class="chip" onclick="toggleChip(this,'vstyle')">Whispering</div>
+        <div class="chip" onclick="toggleChip(this,'vstyle')">Vibrato fort</div>
+      </div>
+      <div class="panel-label" style="font-size:0.58rem;margin-bottom:9px;">Langue</div>
+      <div class="chip-grid">
+        <div class="chip" onclick="toggleChip(this,'lang')">Français</div>
+        <div class="chip" onclick="toggleChip(this,'lang')">Anglais</div>
+        <div class="chip" onclick="toggleChip(this,'lang')">Portugais</div>
+        <div class="chip" onclick="toggleChip(this,'lang')">Espagnol</div>
+        <div class="chip" onclick="toggleChip(this,'lang')">Italien</div>
+        <div class="chip" onclick="toggleChip(this,'lang')">Sans paroles</div>
+      </div>
+    </div>
+    <div class="divider" style="margin-top:16px;"></div>
+    <div class="panel-label"><span class="section-dot dot-green"></span>Instruments</div>
+    <div class="preset-row">
+      <button class="preset-btn" onclick="applyPreset('fado')">Fado</button>
+      <button class="preset-btn" onclick="applyPreset('jazz')">Jazz</button>
+      <button class="preset-btn" onclick="applyPreset('synth')">Synth</button>
+      <button class="preset-btn" onclick="applyPreset('orche')">Orchestral</button>
+      <button class="preset-btn" onclick="applyPreset('lofi')">Lo-fi</button>
+      <button class="preset-btn" onclick="applyPreset('none')">× Vider</button>
+    </div>
+    <div class="instrument-list" id="instrumentList"></div>
+  </div>
+
+  <!-- PANEL 3 : AMBIANCE -->
+  <div class="panel">
+    <div class="panel-label"><span class="section-dot dot-purple"></span>Ambiance &amp; Émotion</div>
+    <div class="chip-grid" style="margin-bottom:16px;">
+      <div class="chip" onclick="toggleChip(this,'mood')">Mélancolique</div>
+      <div class="chip" onclick="toggleChip(this,'mood')">Nostalgique</div>
+      <div class="chip" onclick="toggleChip(this,'mood')">Joyeux</div>
+      <div class="chip" onclick="toggleChip(this,'mood')">Romantique</div>
+      <div class="chip" onclick="toggleChip(this,'mood')">Mystérieux</div>
+      <div class="chip" onclick="toggleChip(this,'mood')">Épique</div>
+      <div class="chip" onclick="toggleChip(this,'mood')">Sombre</div>
+      <div class="chip" onclick="toggleChip(this,'mood')">Onirique</div>
+      <div class="chip" onclick="toggleChip(this,'mood')">Sensuel</div>
+      <div class="chip" onclick="toggleChip(this,'mood')">Énergique</div>
+      <div class="chip" onclick="toggleChip(this,'mood')">Paisible</div>
+      <div class="chip" onclick="toggleChip(this,'mood')">Dramatique</div>
+      <div class="chip" onclick="toggleChip(this,'mood')">Intimiste</div>
+      <div class="chip" onclick="toggleChip(this,'mood')">Euphorique</div>
+    </div>
+    <div class="panel-label"><span class="section-dot dot-orange"></span>Tempo</div>
+    <div class="bpm-row">
+      <div><div class="bpm-display" id="bpmDisplay">120</div><div class="bpm-unit">BPM</div></div>
+      <div style="flex:1;"><input type="range" min="40" max="200" value="120" id="bpmSlider" oninput="updateBpm(this.value)"></div>
+    </div>
+    <div class="tempo-chips" style="margin-bottom:14px;">
+      <div class="chip" onclick="setBpm(60)">Lent ♩60</div>
+      <div class="chip" onclick="setBpm(90)">Modéré ♩90</div>
+      <div class="chip" onclick="setBpm(120)">Standard ♩120</div>
+      <div class="chip" onclick="setBpm(140)">Rapide ♩140</div>
+      <div class="chip" onclick="setBpm(170)">Très rapide ♩170</div>
+    </div>
+    <div class="divider"></div>
+    <div class="panel-label"><span class="section-dot dot-green"></span>Production &amp; Texture</div>
+    <div class="chip-grid" style="margin-bottom:12px;">
+      <div class="chip" onclick="toggleChip(this,'prod')">Reverb profonde</div>
+      <div class="chip" onclick="toggleChip(this,'prod')">Lo-fi tape</div>
+      <div class="chip" onclick="toggleChip(this,'prod')">Delay psychédélique</div>
+      <div class="chip" onclick="toggleChip(this,'prod')">Distorsion</div>
+      <div class="chip" onclick="toggleChip(this,'prod')">Vinyl crackle</div>
+      <div class="chip" onclick="toggleChip(this,'prod')">Binaural</div>
+      <div class="chip" onclick="toggleChip(this,'prod')">Clean &amp; crisp</div>
+      <div class="chip" onclick="toggleChip(this,'prod')">Walls of sound</div>
+      <div class="chip" onclick="toggleChip(this,'prod')">Minimal production</div>
+    </div>
+    <div class="panel-label"><span class="section-dot dot-purple"></span>Tonalité</div>
+    <div class="chip-grid">
+      <div class="chip" onclick="toggleChip(this,'key')">Majeur</div>
+      <div class="chip" onclick="toggleChip(this,'key')">Mineur</div>
+      <div class="chip" onclick="toggleChip(this,'key')">Mineur modal</div>
+      <div class="chip" onclick="toggleChip(this,'key')">Pentatonique</div>
+      <div class="chip" onclick="toggleChip(this,'key')">Dorien</div>
+      <div class="chip" onclick="toggleChip(this,'key')">Phrygien</div>
+      <div class="chip" onclick="toggleChip(this,'key')">Lydien</div>
+    </div>
+  </div>
+
+  <!-- PANEL WIDE : Notes -->
+  <div class="panel panel-wide">
+    <div class="panel-label"><span class="section-dot dot-green"></span>Notes libres / Instructions spécifiques</div>
+    <textarea id="customNotes" placeholder="Ex : guitarra portuguesa plaintive, saudade émigrant, plein air nocturne, pont atmosphérique avec silence…" rows="2"></textarea>
+  </div>
+
+</main>
+
+<!-- ===================== STRUCTURE TIMELINE ===================== -->
+<div class="timeline-zone">
+  <div class="timeline-top">
+    <div class="panel-label" style="margin-bottom:0; flex:1;">
+      <span class="section-dot dot-green"></span>Structure du morceau
+      <span style="margin-left:8px; font-size:0.58rem; color:var(--text-dim); text-transform:none; letter-spacing:0; font-weight:400;">Clic sur un bloc pour l'éditer · glisser pour réordonner</span>
+    </div>
+    <div class="timeline-meta">
+      <div>
+        <div class="total-dur" id="totalDurDisplay">0:00</div>
+        <div class="total-dur-label">durée totale</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Boutons d'ajout -->
+  <div class="tl-controls">
+    <button class="tl-add-btn" onclick="addSection('intro')">+ Intro</button>
+    <button class="tl-add-btn" onclick="addSection('verse')">+ Verse</button>
+    <button class="tl-add-btn" onclick="addSection('pre')">+ Pre-Chorus</button>
+    <button class="tl-add-btn" onclick="addSection('chorus')">+ Chorus</button>
+    <button class="tl-add-btn" onclick="addSection('bridge')">+ Bridge</button>
+    <button class="tl-add-btn" onclick="addSection('solo')">+ Solo</button>
+    <button class="tl-add-btn" onclick="addSection('build')">+ Build-up</button>
+    <button class="tl-add-btn" onclick="addSection('break')">+ Break</button>
+    <button class="tl-add-btn" onclick="addSection('outro')">+ Outro</button>
+    <button class="tl-add-btn" style="border-color:rgba(255,80,80,0.3);color:rgba(255,100,100,0.6);" onclick="clearStructure()">× Vider</button>
+  </div>
+
+  <!-- Frise -->
+  <div class="timeline-track" id="timelineTrack">
+    <div style="display:flex;align-items:center;justify-content:center;width:100%;color:var(--text-dim);font-size:0.78rem;font-style:italic;padding:10px;">
+      Ajoute des sections pour construire la structure…
+    </div>
+  </div>
+
+  <!-- Éditeur section -->
+  <div class="section-editor" id="sectionEditor">
+    <div class="se-row">
+      <span class="se-label">Section</span>
+      <span id="seTitle" style="font-weight:700;font-size:0.88rem;color:var(--text);"></span>
+      <button class="se-move-btn" onclick="moveSection(-1)">← Gauche</button>
+      <button class="se-move-btn" onclick="moveSection(1)">Droite →</button>
+      <button class="se-del-btn" onclick="deleteSection()">✕ Supprimer</button>
+    </div>
+    <div class="se-row">
+      <span class="se-label">Durée</span>
+      <button class="se-dur-btn" onclick="setSecDur(15)">0:15</button>
+      <button class="se-dur-btn" onclick="setSecDur(30)">0:30</button>
+      <button class="se-dur-btn sel" onclick="setSecDur(45)">0:45</button>
+      <button class="se-dur-btn" onclick="setSecDur(60)">1:00</button>
+      <button class="se-dur-btn" onclick="setSecDur(90)">1:30</button>
+      <button class="se-dur-btn" onclick="setSecDur(120)">2:00</button>
+    </div>
+    <div class="se-row">
+      <span class="se-label">Description</span>
+      <input class="se-desc-input" id="seDesc" type="text" placeholder="Ex : guitare seule, voix plaintive, montée dramatique…" oninput="updateSecDesc(this.value)">
+    </div>
+  </div>
+</div>
+
+<!-- PROMPT OUTPUT -->
+<div class="prompt-output-zone">
+  <div class="prompt-header">
+    <div class="prompt-label">⬡ Prompt Suno généré</div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <span id="charCount" style="font-size:0.66rem;color:var(--text-dim);font-family:'Space Mono',monospace;">0 chars</span>
+      <button class="btn btn-ghost" style="padding:5px 13px;font-size:0.73rem;" onclick="copyPrompt()">⎘ Copier</button>
+    </div>
+  </div>
+  <div class="prompt-box" id="promptBox">
+    <span class="prompt-empty">Ton prompt apparaît ici au fil de tes sélections…</span>
+  </div>
+  <div class="waveform" id="waveform"></div>
+</div>
+
+<div class="toast" id="toast">✓ Prompt copié !</div>
+
+<script>
+// ======== STATE ========
+var state = {
+  genre:[], voice:[], vstyle:[], lang:[], mood:[], prod:[], key:[], form:[],
+  mode:'vocal', bpm:120, instruments:{},
+  structure: [] // [{type, label, icon, dur, desc}]
+};
+
+// ======== SECTION DEFS ========
+var sectionDefs = {
+  intro:  { label:'Intro',      icon:'🌅', cls:'tl-intro',  sunoTag:'[Intro]',       defaultDur:30  },
+  verse:  { label:'Verse',      icon:'📖', cls:'tl-verse',  sunoTag:'[Verse]',        defaultDur:45  },
+  pre:    { label:'Pre-Chorus', icon:'⬆️', cls:'tl-pre',   sunoTag:'[Pre-Chorus]',   defaultDur:20  },
+  chorus: { label:'Chorus',     icon:'🔥', cls:'tl-chorus', sunoTag:'[Chorus]',       defaultDur:45  },
+  bridge: { label:'Bridge',     icon:'🌉', cls:'tl-bridge', sunoTag:'[Bridge]',       defaultDur:30  },
+  solo:   { label:'Solo',       icon:'⭐', cls:'tl-solo',   sunoTag:'[Solo]',         defaultDur:30  },
+  build:  { label:'Build-up',   icon:'📈', cls:'tl-build',  sunoTag:'[Build-up]',     defaultDur:25  },
+  break:  { label:'Break',      icon:'⏸',  cls:'tl-break',  sunoTag:'[Break]',        defaultDur:20  },
+  outro:  { label:'Outro',      icon:'🌙', cls:'tl-outro',  sunoTag:'[Outro]',        defaultDur:30  },
+};
+
+var selectedIdx = -1;
+
+// ======== STRUCTURE FUNCTIONS ========
+function addSection(type) {
+  var def = sectionDefs[type];
+  state.structure.push({ type:type, label:def.label, icon:def.icon, dur:def.defaultDur, desc:'' });
+  renderTimeline();
+  selectSection(state.structure.length - 1);
+  updatePrompt();
+}
+
+function clearStructure() {
+  state.structure = [];
+  selectedIdx = -1;
+  renderTimeline();
+  document.getElementById('sectionEditor').className = 'section-editor';
+  updatePrompt();
+}
+
+function deleteSection() {
+  if (selectedIdx < 0 || selectedIdx >= state.structure.length) return;
+  state.structure.splice(selectedIdx, 1);
+  selectedIdx = Math.min(selectedIdx, state.structure.length - 1);
+  renderTimeline();
+  if (state.structure.length > 0 && selectedIdx >= 0) selectSection(selectedIdx);
+  else document.getElementById('sectionEditor').className = 'section-editor';
+  updatePrompt();
+}
+
+function moveSection(dir) {
+  var i = selectedIdx;
+  var j = i + dir;
+  if (j < 0 || j >= state.structure.length) return;
+  var tmp = state.structure[i];
+  state.structure[i] = state.structure[j];
+  state.structure[j] = tmp;
+  selectedIdx = j;
+  renderTimeline();
+  selectSection(selectedIdx);
+  updatePrompt();
+}
+
+function setSecDur(secs) {
+  if (selectedIdx < 0) return;
+  state.structure[selectedIdx].dur = secs;
+  // update dur buttons
+  document.querySelectorAll('.se-dur-btn').forEach(function(b){
+    b.className = b.textContent === formatDur(secs) ? 'se-dur-btn sel' : 'se-dur-btn';
+  });
+  renderTimeline();
+  updatePrompt();
+}
+
+function updateSecDesc(val) {
+  if (selectedIdx < 0) return;
+  state.structure[selectedIdx].desc = val;
+  updatePrompt();
+}
+
+function selectSection(idx) {
+  selectedIdx = idx;
+  renderTimeline();
+  var sec = state.structure[idx];
+  if (!sec) return;
+  var ed = document.getElementById('sectionEditor');
+  ed.className = 'section-editor open';
+  document.getElementById('seTitle').textContent = sec.icon + ' ' + sec.label;
+  document.getElementById('seDesc').value = sec.desc || '';
+  // highlight dur button
+  document.querySelectorAll('.se-dur-btn').forEach(function(b){
+    b.className = b.textContent === formatDur(sec.dur) ? 'se-dur-btn sel' : 'se-dur-btn';
+  });
+}
+
+function formatDur(secs) {
+  var m = Math.floor(secs/60);
+  var s = secs % 60;
+  return m + ':' + (s < 10 ? '0' : '') + s;
+}
+
+function getTotalDur() {
+  return state.structure.reduce(function(acc,s){ return acc + (s.dur||0); }, 0);
+}
+
+function renderTimeline() {
+  var track = document.getElementById('timelineTrack');
+  var total = getTotalDur();
+  document.getElementById('totalDurDisplay').textContent = formatDur(total);
+
+  if (state.structure.length === 0) {
+    track.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;width:100%;color:var(--text-dim);font-size:0.78rem;font-style:italic;padding:10px;">Ajoute des sections pour construire la structure…</div>';
+    return;
+  }
+
+  track.innerHTML = '';
+  var minW = 48; // px min par bloc
+  var trackW = track.offsetWidth || 700;
+  var availW = Math.max(trackW - 4, 200);
+
+  state.structure.forEach(function(sec, i) {
+    var def = sectionDefs[sec.type];
+    var pct = total > 0 ? (sec.dur / total) : (1 / state.structure.length);
+    var w = Math.max(minW, Math.floor(pct * availW));
+
+    var div = document.createElement('div');
+    div.className = 'tl-block ' + def.cls + (i === selectedIdx ? ' tl-selected' : '');
+    div.style.width = w + 'px';
+    div.innerHTML =
+      '<div class="tl-block-icon">' + sec.icon + '</div>' +
+      '<div class="tl-block-label">' + sec.label + '</div>' +
+      '<div class="tl-block-dur">' + formatDur(sec.dur) + '</div>';
+    div.onclick = (function(idx){ return function(){ selectSection(idx); }; })(i);
+
+    // Drag support
+    div.draggable = true;
+    div.ondragstart = (function(idx){ return function(e){ e.dataTransfer.setData('text/plain', idx); }; })(i);
+    div.ondragover = function(e){ e.preventDefault(); };
+    div.ondrop = (function(idx){ return function(e){
+      e.preventDefault();
+      var from = parseInt(e.dataTransfer.getData('text/plain'));
+      if (from === idx) return;
+      var tmp = state.structure[from];
+      state.structure.splice(from,1);
+      state.structure.splice(idx,0,tmp);
+      selectedIdx = idx;
+      renderTimeline();
+      selectSection(idx);
+      updatePrompt();
+    }; })(i);
+
+    track.appendChild(div);
+  });
+}
+
+// ======== INSTRUMENTS ========
+var instruments = [
+  {id:'guitar_ac',label:'Guitare acoustique',emoji:'🎸'},
+  {id:'guitar_el',label:'Guitare électrique',emoji:'⚡'},
+  {id:'guitarra_port',label:'Guitarra portuguesa',emoji:'🎼'},
+  {id:'piano',label:'Piano',emoji:'🎹'},
+  {id:'strings',label:'Cordes (orchestre)',emoji:'🎻'},
+  {id:'violin',label:'Violon solo',emoji:'🎻'},
+  {id:'cello',label:'Violoncelle',emoji:'🎵'},
+  {id:'drums',label:'Batterie',emoji:'🥁'},
+  {id:'percussion',label:'Percussions',emoji:'🪘'},
+  {id:'bass',label:'Basse',emoji:'🎸'},
+  {id:'synth',label:'Synthétiseur',emoji:'🎛️'},
+  {id:'pad',label:'Pad atmosphérique',emoji:'🌊'},
+  {id:'trumpet',label:'Trompette',emoji:'🎺'},
+  {id:'saxophone',label:'Saxophone',emoji:'🎷'},
+  {id:'flute',label:'Flûte',emoji:'🪈'},
+  {id:'accordion',label:'Accordéon',emoji:'🪗'},
+  {id:'choir',label:'Chœurs',emoji:'👥'},
+];
+var presets = {
+  fado:{guitarra_port:90,violin:60,cello:50,guitar_ac:40,choir:20},
+  jazz:{piano:80,saxophone:90,trumpet:60,bass:70,drums:50},
+  synth:{synth:90,pad:80,bass:70,drums:60},
+  orche:{strings:90,cello:80,violin:70,piano:60,trumpet:50},
+  lofi:{piano:70,drums:60,guitar_ac:50,bass:40},
+  none:{}
+};
+
+function initInstruments() {
+  var list = document.getElementById('instrumentList');
+  list.innerHTML='';
+  instruments.forEach(function(inst){
+    var val = state.instruments[inst.id]||0;
+    var isOn = val>0;
+    var row = document.createElement('div');
+    row.className='instrument-row';
+    row.innerHTML=
+      '<div class="inst-toggle '+(isOn?'on':'')+'" id="tog_'+inst.id+'" onclick="toggleInst(\''+inst.id+'\')">'+(isOn?'●':'○')+'</div>'+
+      '<div class="instrument-name">'+inst.emoji+' '+inst.label+'</div>'+
+      '<input type="range" min="0" max="100" value="'+val+'" id="sl_'+inst.id+'" oninput="setInst(\''+inst.id+'\',this.value)" style="flex:1;--pct:'+val+'%">'+
+      '<div class="slider-val" id="sv_'+inst.id+'">'+(isOn?val:'--')+'</div>';
+    list.appendChild(row);
+    state.instruments[inst.id]=val;
+  });
+}
+function toggleInst(id){
+  state.instruments[id]=(state.instruments[id]||0)>0?0:75;
+  initInstruments(); updatePrompt();
+}
+function setInst(id,val){
+  state.instruments[id]=parseInt(val);
+  var isOn=parseInt(val)>0;
+  var tog=document.getElementById('tog_'+id);
+  var sv=document.getElementById('sv_'+id);
+  var sl=document.getElementById('sl_'+id);
+  tog.className='inst-toggle'+(isOn?' on':'');
+  tog.textContent=isOn?'●':'○';
+  sv.textContent=isOn?val:'--';
+  if(sl) sl.style.setProperty('--pct',val+'%');
+  updatePrompt();
+}
+function applyPreset(name){
+  instruments.forEach(function(inst){state.instruments[inst.id]=0;});
+  var p=presets[name]||{};
+  Object.keys(p).forEach(function(k){state.instruments[k]=p[k];});
+  initInstruments(); updatePrompt();
+}
+
+// ======== CHIPS ========
+function toggleChip(el,cat){
+  var val=el.textContent.trim();
+  var arr=state[cat];
+  var idx=arr.indexOf(val);
+  if(idx>=0){arr.splice(idx,1);el.className='chip';}
+  else{
+    arr.push(val);
+    var cls='chip active';
+    if(cat==='mood'||cat==='prod') cls='chip active-orange';
+    if(cat==='key'||cat==='form'||cat==='vstyle') cls='chip active-green';
+    el.className=cls;
+  }
+  updatePrompt();
+}
+
+// ======== MODE ========
+function setMode(m){
+  state.mode=m;
+  var vBtn=document.getElementById('modeVocal');
+  var iBtn=document.getElementById('modeInst');
+  var vSec=document.getElementById('voiceSection');
+  if(m==='vocal'){vBtn.className='mode-btn active';iBtn.className='mode-btn';vSec.style.display='block';}
+  else{vBtn.className='mode-btn';iBtn.className='mode-btn active-inst';vSec.style.display='none';}
+  updatePrompt();
+}
+
+// ======== BPM ========
+function updateBpm(val){
+  state.bpm=parseInt(val);
+  document.getElementById('bpmDisplay').textContent=val;
+  document.getElementById('bpmSlider').value=val;
+  updatePrompt();
+}
+function setBpm(val){ updateBpm(val); document.getElementById('bpmSlider').value=val; }
+
+// ======== PROMPT GENERATION ========
+function buildPrompt(){
+  var parts=[];
+
+  // Mode
+  if(state.mode==='instrumental') parts.push('instrumental');
+
+  // Genre
+  if(state.genre.length) parts.push(state.genre.join(', '));
+
+  // Mood
+  if(state.mood.length) parts.push(state.mood.join(', '));
+
+  // Tonalité
+  if(state.key.length) parts.push(state.key.join(', '));
+
+  // Instruments actifs
+  var activeInst=[];
+  instruments.forEach(function(inst){
+    var v=state.instruments[inst.id]||0;
+    if(v>0){
+      var lbl=inst.label.toLowerCase();
+      if(v>=80) lbl='prominent '+lbl;
+      else if(v<=30) lbl='subtle '+lbl;
+      activeInst.push(lbl);
+    }
+  });
+  if(activeInst.length) parts.push(activeInst.join(', '));
+
+  // Production
+  if(state.prod.length) parts.push(state.prod.join(', '));
+
+  // Voix
+  if(state.mode==='vocal'){
+    if(state.voice.length) parts.push(state.voice.join(', '));
+    if(state.vstyle.length) parts.push(state.vstyle.join(', '));
+    if(state.lang.length){
+      var langMap={'Français':'french lyrics','Anglais':'english lyrics','Portugais':'portuguese lyrics','Espagnol':'spanish lyrics','Italien':'italian lyrics','Sans paroles':'no lyrics, vocalise'};
+      state.lang.forEach(function(l){ parts.push(langMap[l]||l); });
+    }
+  }
+
+  // BPM
+  if(state.bpm!==120) parts.push(state.bpm+' bpm');
+
+  // Notes libres
+  var notes=document.getElementById('customNotes');
+  if(notes&&notes.value.trim()) parts.push(notes.value.trim());
+
+  var base = parts.join(', ');
+
+  // Structure : générer les tags Suno [Section] description
+  if(state.structure.length){
+    var structParts=[];
+    state.structure.forEach(function(sec){
+      var def=sectionDefs[sec.type];
+      var tag=def.sunoTag;
+      if(sec.desc && sec.desc.trim()) tag+=' '+sec.desc.trim();
+      structParts.push(tag);
+    });
+    return (base ? base + '\n\n' : '') + structParts.join('\n');
+  }
+
+  return base;
+}
+
+function updatePrompt(){
+  var prompt=buildPrompt();
+  var box=document.getElementById('promptBox');
+  var count=document.getElementById('charCount');
+
+  if(!prompt){
+    box.innerHTML='<span class="prompt-empty">Ton prompt apparaît ici au fil de tes sélections…</span>';
+    box.className='prompt-box';
+  } else {
+    // Colorize: [Tags] en vert, reste en violet
+    var escaped=prompt
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/\[([^\]]+)\]/g,'<span class="prompt-struct">[$1]</span>');
+    box.innerHTML=escaped;
+    box.className='prompt-box has-content';
+  }
+
+  var len=prompt.length;
+  var color=len>400?'#FF6060':len>200?'#FF7A2F':'#7A7589';
+  count.textContent=len+' chars';
+  count.style.color=color;
+  updateWaveform(len);
+}
+
+// ======== WAVEFORM ========
+function initWaveform(){
+  var wv=document.getElementById('waveform');
+  wv.innerHTML='';
+  for(var i=0;i<52;i++){
+    var bar=document.createElement('div');
+    bar.className='wave-bar';
+    bar.style.height='4px';
+    wv.appendChild(bar);
+  }
+}
+setInterval(function(){
+  var bars=document.querySelectorAll('.wave-bar');
+  var len=document.getElementById('promptBox').textContent.length;
+  if(len>0){
+    var active=Math.floor((Math.min(len,400)/400)*bars.length);
+    bars.forEach(function(bar,i){
+      if(i<active){
+        var h=4+Math.abs(Math.sin(i*0.5+Date.now()*0.003))*16;
+        bar.style.height=h+'px';
+        bar.style.opacity='0.75';
+      }
+    });
+  }
+},80);
+
+// ======== COPY ========
+function copyPrompt(){
+  var prompt=buildPrompt();
+  if(!prompt) return;
+  if(navigator.clipboard){navigator.clipboard.writeText(prompt);}
+  else{var ta=document.createElement('textarea');ta.value=prompt;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);}
+  var t=document.getElementById('toast');
+  t.className='toast show';
+  setTimeout(function(){t.className='toast';},2200);
+}
+
+// ======== RESET ========
+function resetAll(){
+  state.genre=[];state.voice=[];state.vstyle=[];state.lang=[];state.mood=[];
+  state.prod=[];state.key=[];state.form=[];state.mode='vocal';state.bpm=120;
+  state.instruments={};state.structure=[];
+  selectedIdx=-1;
+  document.querySelectorAll('.chip').forEach(function(c){c.className='chip';});
+  setMode('vocal');updateBpm(120);
+  document.getElementById('customNotes').value='';
+  document.getElementById('sectionEditor').className='section-editor';
+  initInstruments();renderTimeline();updatePrompt();
+}
+
+// ======== INIT ========
+document.addEventListener('DOMContentLoaded',function(){
+  document.getElementById('customNotes').addEventListener('input',updatePrompt);
+});
+initInstruments();
+initWaveform();
+renderTimeline();
+updatePrompt();
+</script>
+</body>
+</html>
