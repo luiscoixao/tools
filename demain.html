@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Demain</title>
+<style>
+  :root {
+    --bg: #f2f2f7;
+    --card: #ffffff;
+    --accent: #ff9500;
+    --text: #1c1c1e;
+    --sub: #8e8e93;
+    --sep: rgba(60,60,67,0.29);
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    background: var(--bg);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    color: var(--text);
+  }
+  .screen { width: 100%; max-width: 430px; padding: 20px 16px 40px; }
+
+  .topbar { display: flex; justify-content: space-between; align-items: center; padding: 4px 4px 2px; }
+  .topbar .label { font-size: 13px; color: var(--accent); font-weight: 590; }
+  .bell-btn {
+    display: flex; align-items: center; justify-content: center;
+    width: 30px; height: 30px; border-radius: 50%; border: none;
+    background: rgba(255,149,0,0.12); color: var(--accent); cursor: pointer;
+  }
+  .bell-btn.active { background: var(--accent); color: #fff; }
+
+  h1.title { font-size: 34px; font-weight: 700; letter-spacing: -0.02em; margin: 4px 0 2px; }
+  .subtitle { font-size: 13px; color: var(--sub); margin: 0 0 18px; }
+
+  .alert-banner {
+    display: none; align-items: center; gap: 10px;
+    background: rgba(255,149,0,0.1); border: 1px solid rgba(255,149,0,0.25);
+    color: #9a5b00; border-radius: 14px; padding: 11px 14px; margin-bottom: 16px;
+    font-size: 13px; cursor: pointer; text-align: left; width: 100%;
+  }
+  .alert-banner.denied { background: rgba(255,59,48,0.08); border-color: rgba(255,59,48,0.25); color: #c0281c; }
+
+  .progress-wrap { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+  .progress-track { flex: 1; height: 6px; border-radius: 3px; background: rgba(60,60,67,0.12); overflow: hidden; }
+  .progress-fill { height: 100%; width: 0%; background: var(--accent); border-radius: 3px; transition: width 400ms ease; }
+  .progress-count { font-size: 13px; color: var(--sub); font-variant-numeric: tabular-nums; flex-shrink: 0; }
+
+  .card { background: var(--card); border-radius: 14px; overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
+  .empty, .loading { padding: 34px 20px; text-align: center; color: var(--sub); font-size: 14px; }
+
+  ul#list { list-style: none; margin: 0; padding: 0; }
+  li.item { display: flex; align-items: flex-start; gap: 12px; padding: 11px 14px; border-bottom: 1px solid var(--sep); }
+  li.item:last-child { border-bottom: none; }
+
+  .check {
+    width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0; margin-top: 1px;
+    border: 1.6px solid rgba(60,60,67,0.3); background: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; padding: 0;
+  }
+  .check.done { background: var(--accent); border-color: var(--accent); animation: pop 220ms ease; }
+  @keyframes pop { 0% { transform: scale(1); } 40% { transform: scale(1.25); } 100% { transform: scale(1); } }
+  @media (prefers-reduced-motion: reduce) { .check.done { animation: none; } }
+
+  .item-body { flex: 1; min-width: 0; }
+  .item-text { font-size: 16.5px; line-height: 1.3; color: var(--text); word-break: break-word; }
+  .item-text.done { color: var(--sub); text-decoration: line-through; }
+  .item-time { font-size: 13px; color: var(--accent); margin-top: 2px; }
+  .item-time.done { color: var(--sub); }
+
+  .del { opacity: 0; background: none; border: none; cursor: pointer; padding: 4px; color: #c7c7cc; flex-shrink: 0; transition: opacity 120ms ease; }
+  li.item:hover .del { opacity: 1; }
+
+  .add-row { display: flex; align-items: center; gap: 10px; padding: 11px 14px; }
+  .add-row .plus-icon { color: var(--accent); flex-shrink: 0; display: flex; }
+  input#draft { flex: 1; border: none; outline: none; background: transparent; font-size: 16.5px; color: var(--text); font-family: inherit; padding: 4px 0; }
+  input#draft::placeholder { color: #c7c7cc; }
+  input[type="time"] { border: none; outline: none; background: rgba(60,60,67,0.06); border-radius: 8px; font-size: 13px; color: var(--text); padding: 5px 7px; flex-shrink: 0; font-family: inherit; }
+
+  .error { margin-top: 10px; text-align: center; font-size: 12px; color: #ff3b30; }
+</style>
+</head>
+<body>
+
+<div class="screen">
+  <div class="topbar">
+    <span class="label" id="dateLabel">DEMAIN</span>
+    <button id="bellBtn" class="bell-btn" aria-label="Alertes">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+        <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+      </svg>
+    </button>
+  </div>
+
+  <h1 class="title">Demain</h1>
+  <p class="subtitle" id="dateFull"></p>
+
+  <button id="alertBanner" class="alert-banner">
+    <span id="alertBannerText">Activer les alertes pour ne rien oublier demain</span>
+  </button>
+
+  <div class="progress-wrap">
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <span class="progress-count" id="progressCount">0/0</span>
+  </div>
+
+  <div class="card">
+    <div id="listArea"><div class="loading">Chargement…</div></div>
+    <div id="addRow" class="add-row" style="display:none">
+      <span class="plus-icon">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9.5" />
+          <line x1="12" y1="8" x2="12" y2="16" />
+          <line x1="8" y1="12" x2="16" y2="12" />
+        </svg>
+      </span>
+      <input type="text" id="draft" placeholder="Nouveau rappel" />
+      <input type="time" id="draftTime" value="09:00" />
+    </div>
+  </div>
+
+  <div class="error" id="errorMsg" style="display:none"></div>
+</div>
+
+<script>
+const MAX_ITEMS = 10;
+const STORAGE_KEY = "demain-items";
+const DEFAULT_TIME = "09:00";
+
+let items = [];
+let loaded = false;
+let permission = (typeof Notification !== "undefined") ? Notification.permission : "unsupported";
+let scheduledTimers = [];
+
+const listArea = document.getElementById("listArea");
+const addRow = document.getElementById("addRow");
+const draftInput = document.getElementById("draft");
+const draftTimeInput = document.getElementById("draftTime");
+const progressFill = document.getElementById("progressFill");
+const progressCount = document.getElementById("progressCount");
+const errorMsg = document.getElementById("errorMsg");
+const bellBtn = document.getElementById("bellBtn");
+const alertBanner = document.getElementById("alertBanner");
+const alertBannerText = document.getElementById("alertBannerText");
+const dateFull = document.getElementById("dateFull");
+
+const tomorrow = new Date(Date.now() + 86400000);
+dateFull.textContent = tomorrow.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" });
+
+async function persist() {
+  try {
+    await window.storage.set(STORAGE_KEY, JSON.stringify(items));
+  } catch (e) {
+    errorMsg.style.display = "block";
+    errorMsg.textContent = "La sauvegarde a échoué.";
+  }
+}
+
+function render() {
+  listArea.innerHTML = "";
+  if (!loaded) {
+    listArea.innerHTML = '<div class="loading">Chargement…</div>';
+  } else if (items.length === 0) {
+    listArea.innerHTML = '<div class="empty">Aucun rappel pour demain.</div>';
+  } else {
+    const ul = document.createElement("ul");
+    ul.id = "list";
+    items.forEach(item => {
+      const li = document.createElement("li");
+      li.className = "item";
+
+      const check = document.createElement("button");
+      check.className = "check" + (item.done ? " done" : "");
+      check.setAttribute("aria-label", item.done ? "Marquer comme non fait" : "Marquer comme fait");
+      if (item.done) {
+        check.innerHTML = '<svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.3L4 7.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      }
+      check.onclick = () => { item.done = !item.done; persist(); render(); scheduleAlerts(); };
+
+      const body = document.createElement("div");
+      body.className = "item-body";
+
+      const text = document.createElement("div");
+      text.className = "item-text" + (item.done ? " done" : "");
+      text.textContent = item.text;
+      body.appendChild(text);
+
+      if (item.time) {
+        const time = document.createElement("div");
+        time.className = "item-time" + (item.done ? " done" : "");
+        time.textContent = item.time;
+        body.appendChild(time);
+      }
+
+      const del = document.createElement("button");
+      del.className = "del";
+      del.setAttribute("aria-label", "Supprimer");
+      del.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+      del.onclick = () => { items = items.filter(i => i.id !== item.id); persist(); render(); scheduleAlerts(); };
+
+      li.appendChild(check);
+      li.appendChild(body);
+      li.appendChild(del);
+      ul.appendChild(li);
+    });
+    listArea.appendChild(ul);
+  }
+
+  addRow.style.display = (items.length < MAX_ITEMS && loaded) ? "flex" : "none";
+
+  const doneCount = items.filter(i => i.done).length;
+  const progress = items.length ? doneCount / items.length : 0;
+  progressFill.style.width = (progress * 100) + "%";
+  progressCount.textContent = doneCount + "/" + items.length;
+}
+
+function addItem() {
+  const text = draftInput.value.trim();
+  if (!text || items.length >= MAX_ITEMS) return;
+  items.push({ id: Date.now(), text, done: false, time: draftTimeInput.value || DEFAULT_TIME });
+  draftInput.value = "";
+  persist();
+  render();
+  scheduleAlerts();
+  draftInput.focus();
+}
+
+draftInput.addEventListener("keydown", e => { if (e.key === "Enter") addItem(); });
+draftInput.addEventListener("blur", () => { if (draftInput.value.trim()) addItem(); });
+
+function updateAlertUI() {
+  if (permission === "granted") {
+    alertBanner.style.display = "none";
+    bellBtn.classList.add("active");
+  } else if (permission === "unsupported") {
+    alertBanner.style.display = "none";
+    bellBtn.style.display = "none";
+  } else {
+    bellBtn.classList.remove("active");
+    alertBanner.style.display = "flex";
+    alertBanner.classList.toggle("denied", permission === "denied");
+    alertBannerText.textContent = permission === "denied"
+      ? "Alertes bloquées — autorisez-les dans les réglages du navigateur"
+      : "Activer les alertes pour ne rien oublier demain";
+  }
+}
+
+async function requestAlerts() {
+  if (typeof Notification === "undefined") { permission = "unsupported"; updateAlertUI(); return; }
+  try {
+    permission = await Notification.requestPermission();
+  } catch (e) {
+    permission = "denied";
+  }
+  updateAlertUI();
+  scheduleAlerts();
+}
+
+alertBanner.addEventListener("click", requestAlerts);
+bellBtn.addEventListener("click", () => {
+  if (permission !== "granted") requestAlerts();
+});
+
+function scheduleAlerts() {
+  scheduledTimers.forEach(clearTimeout);
+  scheduledTimers = [];
+  if (permission !== "granted") return;
+  const t = new Date(Date.now() + 86400000);
+
+  items.forEach(item => {
+    if (item.done || !item.time) return;
+    const [h, m] = item.time.split(":").map(Number);
+    const target = new Date(t.getFullYear(), t.getMonth(), t.getDate(), h, m, 0);
+    const delay = target.getTime() - Date.now();
+    if (delay <= 0 || delay > 2147000000) return;
+    const timer = setTimeout(() => {
+      try { new Notification("Demain — " + item.time, { body: item.text }); } catch (e) {}
+    }, delay);
+    scheduledTimers.push(timer);
+  });
+}
+
+(async function init() {
+  try {
+    const res = await window.storage.get(STORAGE_KEY);
+    if (res && res.value) items = JSON.parse(res.value);
+  } catch (e) {
+    // no saved data yet
+  } finally {
+    loaded = true;
+    render();
+    updateAlertUI();
+    scheduleAlerts();
+  }
+})();
+</script>
+</body>
+</html>
