@@ -19,7 +19,14 @@
       "predictiveBackGestureEnabled": false
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/favicon.png",
+      "name": "Budget",
+      "shortName": "Budget",
+      "themeColor": "#2F6FEB",
+      "backgroundColor": "#F4F5F7"
+    },
+    "experiments": {
+      "baseUrl": "/tools/budget-web"
     }
   }
 }
