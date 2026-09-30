@@ -175,7 +175,7 @@ canvas#rc{display:none}
   </div>
   <canvas id="rc"></canvas>
 </section>
-<div id="hold" style="position:fixed;left:0;top:0;width:2px;height:2px;opacity:.01;pointer-events:none;overflow:hidden"></div>
+<div id="hold" style="position:fixed;left:0;bottom:0;width:160px;height:90px;opacity:.02;pointer-events:none;overflow:hidden;z-index:-1"></div>
 
 <script>
 'use strict';
@@ -361,7 +361,7 @@ async function startFilm(){
   const mime=pickMime(); if(!mime){ alert('Cet appareil ne sait pas enregistrer de vidéo.'); return; }
   /* tout ce qui demande un geste de l'utilisateur est fait ici, tout de suite */
   const ac=new (window.AudioContext||window.webkitAudioContext)(); ac.resume();
-  const pool2=[0].map(()=>{ const el=document.createElement('video'); el.playsInline=true; el.preload='auto'; el.setAttribute('playsinline',''); $('#hold').appendChild(el); return el; });  /* un seul lecteur : moins de mémoire */
+  const pool2=[0].map(()=>{ const el=document.createElement('video'); el.playsInline=true; el.preload='auto'; el.setAttribute('playsinline',''); el.style.cssText='width:160px;height:90px'; $('#hold').appendChild(el); return el; });  /* un seul lecteur : moins de mémoire */
   const urls=list.map(v=>URL.createObjectURL(v.file));
   /* musique lue en continu (pas chargée entièrement en mémoire) */
   let mEl=null;  /* la musique est décodée par l'AudioContext (méthode fiable sur iPhone) */
@@ -385,21 +385,21 @@ async function startFilm(){
   const prep=(el,i)=>new Promise(res=>{ const c=clips[i]; if(el.src!==urls[i]){ el.pause(); el.removeAttribute('src'); el.load(); el.src=urls[i]; } const go=()=>{ el.addEventListener('seeked',()=>res(),{once:true}); el.currentTime=Math.max(0.01,c.in); }; if(el.readyState>=1) go(); else el.addEventListener('loadedmetadata',go,{once:true}); setTimeout(res,8000); });
   if(S.titleOn) await card(S.title||'Mon film',S.subtitle,+S.titleDur);
   const el=pool2[0], g=gains[0];
+  /* contrôle d'image : sur iPhone, une vidéo qui démarre peut donner des images noires ; on ne les dessine jamais */
+  const tc=document.createElement('canvas'); tc.width=tc.height=6; const tx=tc.getContext('2d',{willReadFrequently:true});
+  const frameOK=()=>{ try{ tx.clearRect(0,0,6,6); tx.drawImage(el,0,0,6,6); const d=tx.getImageData(0,0,6,6).data; let s=0; for(let k=0;k<d.length;k+=4) s+=d[k]+d[k+1]+d[k+2]+(d[k+3]<250?0:1); return s>d.length/4; }catch(e){ return true; } };
   for(let i=0;i<clips.length&&!cancel;i++){
     const c=clips[i], d=c.out-c.in;
-    /* pendant le chargement de la vidéo suivante, l'enregistrement et la musique sont mis en pause : pas d'image figée */
-    if(rec.state==='recording') rec.pause(); await ac.suspend().catch(()=>{});
+    /* pendant le chargement de la vidéo suivante, la dernière image reste affichée (jamais d'écran noir) */
+    g.gain.setTargetAtTime(0,ac.currentTime,0.02);
     await prep(el,i);
-    /* on attend que la première image soit vraiment décodée, puis on la dessine avant de reprendre l'enregistrement : pas d'écran noir */
-    for(let w=0;w<60&&el.readyState<2;w++) await sleep(50);
-    if(el.readyState>=2&&el.videoWidth){ const r=cropRect(c.crop,el.videoWidth,el.videoHeight,W/H); ctx.globalAlpha=i===0?0:1; ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H); ctx.drawImage(el,r.sx,r.sy,r.sw,r.sh,0,0,W,H); ctx.globalAlpha=1; }
-    await ac.resume().catch(()=>{}); if(rec.state==='paused') rec.resume();
     el.muted=false; try{ await el.play(); }catch(e){ el.muted=true; await el.play().catch(()=>{}); }
-    const first=i===0, lastC=i===clips.length-1&&!S.endOn;
+    const first=i===0, lastC=i===clips.length-1&&!S.endOn; let started=false; const tw=performance.now();
     while(!cancel){ const u=el.currentTime-c.in; if(u>=d-0.02||el.ended) break;
       const a=clamp01(Math.min(first?u/0.5:1,lastC?(d-u)/1:1)), vw=el.videoWidth, vh=el.videoHeight;
-      if(vw&&el.readyState>=2){ const r=cropRect(c.crop,vw,vh,W/H); if(a<1){ ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H); ctx.globalAlpha=a; } ctx.drawImage(el,r.sx,r.sy,r.sw,r.sh,0,0,W,H); ctx.globalAlpha=1; }
-      g.gain.setTargetAtTime(S.origVol/100*a,ac.currentTime,0.03); if(mGain) mGain.gain.setTargetAtTime(musicLevel(elapsed+u),ac.currentTime,0.05);
+      if(vw&&el.readyState>=2&&(el.currentTime>c.in+0.02||performance.now()-tw>1500)&&frameOK()){ started=true;
+        const r=cropRect(c.crop,vw,vh,W/H); if(a<1){ ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H); ctx.globalAlpha=a; } ctx.drawImage(el,r.sx,r.sy,r.sw,r.sh,0,0,W,H); ctx.globalAlpha=1; }
+      g.gain.setTargetAtTime(started?S.origVol/100*a:0,ac.currentTime,0.03); if(mGain) mGain.gain.setTargetAtTime(musicLevel(elapsed+u),ac.currentTime,0.05);
       if(Math.random()<0.1){ $('#rBar').style.width=Math.min(100,(elapsed+u)/total*100)+'%'; $('#rInfo').textContent=`${fmtDur(elapsed+u)} / ${fmtDur(total)} · vidéo ${i+1} / ${clips.length}`; }
       await frame(); }
     el.pause(); g.gain.setTargetAtTime(0,ac.currentTime,0.02); elapsed+=d; prog();
