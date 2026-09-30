@@ -115,7 +115,7 @@ canvas#rc{display:none}
   <p class="hint" style="margin-top:22px">Tout reste sur ton iPhone : les vidéos ne sont envoyées nulle part.</p>
 </section>
 <input type="file" id="fileIn" accept="video/*" multiple hidden>
-<input type="file" id="musicIn" accept="audio/*" hidden>
+<input type="file" id="musicIn" accept=".mp3,.m4a,.aac,.wav,.aif,.aiff,.caf,audio/mpeg,audio/mp3,audio/mp4,audio/x-m4a,audio/aac,audio/wav,audio/*" hidden>
 
 <main id="grid" hidden></main>
 
@@ -189,9 +189,10 @@ const toast=t=>{ const d=document.createElement('div'); d.className='toast'; d.t
 async function pool(items,n,fn){ let i=0; const w=async()=>{ while(i<items.length){ const it=items[i++]; try{ await fn(it); }catch(e){ console.warn(e); } } }; await Promise.all(Array.from({length:Math.min(n,items.length)},w)); }
 
 /* ---------- état (mémorisé sur l'iPhone) ---------- */
-const DEF={format:'9:16',quality:'1080',quickOn:true,quickDur:10,minOn:true,minDur:5,titleOn:true,titleDur:3,title:'',subtitle:'',font:'Didot',endOn:false,endText:'Fin',origVol:100,musicVol:70};
+const DEF={v:2,format:'9:16',quality:'720',quickOn:true,quickDur:10,minOn:true,minDur:5,titleOn:true,titleDur:3,title:'',subtitle:'',font:'Didot',endOn:false,endText:'Fin',origVol:100,musicVol:70};
 let S=Object.assign({},DEF), CL={};   /* CL : passages et cadrages par vidéo */
 try{ Object.assign(S,JSON.parse(localStorage.getItem('sv-set')||'{}')); CL=JSON.parse(localStorage.getItem('sv-clips')||'{}'); }catch(e){}
+if(!(S.v>=2)){ S.quality='720'; S.v=2; }  /* 720p par défaut : bien plus léger pour l'iPhone */
 let saveT=null; const save=()=>{ clearTimeout(saveT); saveT=setTimeout(()=>{ try{ localStorage.setItem('sv-set',JSON.stringify(S)); localStorage.setItem('sv-clips',JSON.stringify(CL)); }catch(e){} },300); };
 let videos=[], music=null;
 const key=v=>v.name+'|'+v.file.size;
@@ -360,8 +361,10 @@ async function startFilm(){
   const mime=pickMime(); if(!mime){ alert('Cet appareil ne sait pas enregistrer de vidéo.'); return; }
   /* tout ce qui demande un geste de l'utilisateur est fait ici, tout de suite */
   const ac=new (window.AudioContext||window.webkitAudioContext)(); ac.resume();
-  const pool2=[0,1].map(()=>{ const el=document.createElement('video'); el.playsInline=true; el.preload='auto'; el.setAttribute('playsinline',''); $('#hold').appendChild(el); return el; });
+  const pool2=[0].map(()=>{ const el=document.createElement('video'); el.playsInline=true; el.preload='auto'; el.setAttribute('playsinline',''); $('#hold').appendChild(el); return el; });  /* un seul lecteur : moins de mémoire */
   const urls=list.map(v=>URL.createObjectURL(v.file));
+  /* musique lue en continu (pas chargée entièrement en mémoire) */
+  let mEl=null; if(music){ mEl=new Audio(); mEl.loop=true; mEl.preload='auto'; mEl.src=URL.createObjectURL(music); const mp=mEl.play(); if(mp) mp.then(()=>{ mEl.pause(); mEl.currentTime=0; }).catch(()=>{}); }
   pool2.forEach((el,k)=>{ el.src=urls[Math.min(k,urls.length-1)]; const p=el.play(); if(p) p.then(()=>el.pause()).catch(()=>{}); });
   let wl=null; try{ wl=await navigator.wakeLock?.request('screen'); }catch(e){}
   $('#render').hidden=false; cancel=false; outBlob=null; ['#result','#rShare','#rDown','#rClose'].forEach(s=>$(s).hidden=true); $('#rCancel').hidden=false; $('#rHint').hidden=false; $('#rTitle').textContent='Création du film';
@@ -371,20 +374,23 @@ async function startFilm(){
   const gains=pool2.map(el=>{ const g=ac.createGain(); g.gain.value=0; try{ ac.createMediaElementSource(el).connect(g).connect(master); }catch(e){ console.warn(e); } return g; });
   let mSrc=null, mGain=null; const clips=list.map(v=>({v,...clipOf(v),crop:getCrop(v,S.format)}));
   const total=clips.reduce((a,c)=>a+c.out-c.in,0)+(S.titleOn?+S.titleDur:0)+(S.endOn?2.5:0);
-  if(music){ try{ const buf=await ac.decodeAudioData(await music.arrayBuffer()); mSrc=ac.createBufferSource(); mSrc.buffer=buf; mSrc.loop=true; mGain=ac.createGain(); mGain.gain.value=0; mSrc.connect(mGain).connect(master); }catch(e){ toast('Musique illisible'); } }
+  if(mEl){ try{ mSrc=ac.createMediaElementSource(mEl); mGain=ac.createGain(); mGain.gain.value=0; mSrc.connect(mGain).connect(master); }catch(e){ toast('Musique illisible'); mEl=null; } }
   const stream=new MediaStream([...cv.captureStream(FPS).getVideoTracks(),...dest.stream.getAudioTracks()]);
-  const rec=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:s>=1080?10e6:5e6,audioBitsPerSecond:160000}); const chunks=[]; rec.ondataavailable=e=>{ if(e.data.size) chunks.push(e.data); }; const stopped=new Promise(r=>rec.onstop=r);
+  const rec=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:s>=1080?8e6:4e6,audioBitsPerSecond:160000}); const chunks=[]; rec.ondataavailable=e=>{ if(e.data.size) chunks.push(e.data); }; const stopped=new Promise(r=>rec.onstop=r);
   let elapsed=0; const t0=performance.now(); const prog=()=>{ $('#rBar').style.width=Math.min(100,elapsed/total*100)+'%'; $('#rInfo').textContent=`${fmtDur(elapsed)} / ${fmtDur(total)}`; };
   const musicLevel=t=>S.musicVol/100*clamp01(Math.min(t/1.2,(total-t)/2.5));
   const frame=()=>new Promise(r=>requestAnimationFrame(r));
-  rec.start(1000); if(mSrc) mSrc.start();
+  rec.start(1000); if(mEl) mEl.play().catch(()=>toast('Musique non lue'));
   const card=async(text,sub,dur)=>{ const st=performance.now(); while(!cancel){ const u=(performance.now()-st)/1000; if(u>=dur) break; drawCard(ctx,text,sub,W,H,clamp01(Math.min(u/0.7,(dur-u)/0.7))); if(mGain) mGain.gain.setTargetAtTime(musicLevel(elapsed+u),ac.currentTime,0.05); await frame(); } elapsed+=dur; prog(); };
-  const prep=(el,i)=>new Promise(res=>{ const c=clips[i]; if(el.src!==urls[i]) el.src=urls[i]; const go=()=>{ el.addEventListener('seeked',()=>res(),{once:true}); el.currentTime=Math.max(0.01,c.in); }; if(el.readyState>=1) go(); else el.addEventListener('loadedmetadata',go,{once:true}); setTimeout(res,8000); });
+  const prep=(el,i)=>new Promise(res=>{ const c=clips[i]; if(el.src!==urls[i]){ el.pause(); el.removeAttribute('src'); el.load(); el.src=urls[i]; } const go=()=>{ el.addEventListener('seeked',()=>res(),{once:true}); el.currentTime=Math.max(0.01,c.in); }; if(el.readyState>=1) go(); else el.addEventListener('loadedmetadata',go,{once:true}); setTimeout(res,8000); });
   if(S.titleOn) await card(S.title||'Mon film',S.subtitle,+S.titleDur);
-  let ready=prep(pool2[0],0);
+  const el=pool2[0], g=gains[0];
   for(let i=0;i<clips.length&&!cancel;i++){
-    const el=pool2[i%2], g=gains[i%2], c=clips[i], d=c.out-c.in; await ready;
-    if(i+1<clips.length) ready=prep(pool2[(i+1)%2],i+1);
+    const c=clips[i], d=c.out-c.in;
+    /* pendant le chargement de la vidéo suivante, l'enregistrement et la musique sont mis en pause : pas d'image figée */
+    if(rec.state==='recording') rec.pause(); if(mEl) mEl.pause(); await ac.suspend().catch(()=>{});
+    await prep(el,i);
+    await ac.resume().catch(()=>{}); if(mEl) mEl.play().catch(()=>{}); if(rec.state==='paused') rec.resume();
     el.muted=false; try{ await el.play(); }catch(e){ el.muted=true; await el.play().catch(()=>{}); }
     const first=i===0, lastC=i===clips.length-1&&!S.endOn;
     while(!cancel){ const u=el.currentTime-c.in; if(u>=d-0.02||el.ended) break;
@@ -396,7 +402,7 @@ async function startFilm(){
     el.pause(); g.gain.setTargetAtTime(0,ac.currentTime,0.02); elapsed+=d; prog();
   }
   if(S.endOn&&!cancel) await card(S.endText,'',2.5);
-  await sleep(200); rec.stop(); await stopped; try{ mSrc&&mSrc.stop(); }catch(e){} ac.close(); pool2.forEach(el=>{ el.pause(); el.removeAttribute('src'); el.load(); el.remove(); }); urls.forEach(u=>URL.revokeObjectURL(u));
+  await sleep(200); rec.stop(); await stopped; if(mEl){ mEl.pause(); URL.revokeObjectURL(mEl.src); mEl.removeAttribute('src'); } ac.close(); pool2.forEach(el=>{ el.pause(); el.removeAttribute('src'); el.load(); el.remove(); }); urls.forEach(u=>URL.revokeObjectURL(u));
   try{ wl&&wl.release(); }catch(e){}
   if(cancel){ $('#render').hidden=true; return; }
   const ext=mime.startsWith('video/mp4')?'mp4':'webm'; const d=new Date();
