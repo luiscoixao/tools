@@ -1,0 +1,17 @@
+{
+  "name": "SMARTDIAPO",
+  "short_name": "SMARTDIAPO",
+  "description": "Diaporamas vidéo à partir de tes photos : cadrage 9:16 ou 16:9, transitions, titre et musique.",
+  "lang": "fr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#131518",
+  "theme_color": "#131518",
+  "icons": [
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}
