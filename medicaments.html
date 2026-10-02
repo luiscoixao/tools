@@ -136,7 +136,7 @@ h1{margin:4px 0 0;font-size:34px;letter-spacing:-.03em;font-weight:700}
   <header>
     <div>
       <div class="date" id="date"></div>
-      <h1 id="title">Aujourd'hui</h1>
+      <h1 id="title">Médicaments</h1>
     </div>
     <button class="icon-btn" id="openSettings" aria-label="Réglages">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>
@@ -232,7 +232,7 @@ function render(){
       cfg.time + (cfg.name ? ` · ${cfg.name}` : '');
     el.setAttribute('aria-pressed', !!taken);
   }
-  $('#title').textContent = done === 2 ? 'Tout est pris' : 'Aujourd’hui';
+  $('#title').textContent = done === 2 ? 'Tout est pris' : 'Médicaments';
 
   const week = $('#week'); week.innerHTML = '';
   for(let i=6;i>=0;i--){
