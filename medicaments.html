@@ -118,6 +118,9 @@ h1{margin:4px 0 0;font-size:34px;letter-spacing:-.03em;font-weight:700}
 .phrase{flex:1;font-size:15px;line-height:1.4}
 .copy{border:0;border-radius:10px;padding:8px 12px;font:inherit;font-size:14px;font-weight:600;
   background:var(--bg);color:var(--ink);cursor:pointer;flex:none}
+.steps{margin:0;padding:14px 16px 14px 36px;font-size:15px;line-height:1.5}
+.steps li{margin:4px 0}
+.steps b{font-weight:600}
 .toast{
   position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 24px);transform:translate(-50%,120px);
   background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:14px;font-size:14px;font-weight:500;
@@ -171,6 +174,13 @@ h1{margin:4px 0 0;font-size:34px;letter-spacing:-.03em;font-weight:700}
     <div class="siri" id="siri">
       <p class="siri-tip">Dites à Siri (ou tapez-lui) chaque phrase. Elle crée un rappel qui revient tous les jours.</p>
       <div class="group" id="phrases"></div>
+    </div>
+    <button class="btn" id="voice">Rappel à voix haute</button>
+    <div class="siri" id="voiceBox">
+      <p class="siri-tip">L’iPhone annonce le message tout seul, à l’heure dite. À régler une fois dans l’app Raccourcis.</p>
+      <div class="group"><ol class="steps" id="steps"></ol></div>
+      <div class="group" id="speech"></div>
+      <p class="siri-tip">Si le mode silencieux est activé, il est possible que l’iPhone ne parle pas.</p>
     </div>
     <button class="btn" id="ics">Ajouter au calendrier</button>
     <button class="btn" id="notif">Activer les notifications</button>
@@ -259,7 +269,7 @@ function openSheet(){
   $('#tm').value = state.cfg.m.time; $('#te').value = state.cfg.e.time;
   $('#lm').value = state.cfg.m.name; $('#le').value = state.cfg.e.name;
   updateNotifBtn();
-  $('#siri').classList.remove('show');
+  $('#siri').classList.remove('show'); $('#voiceBox').classList.remove('show');
   wrap.classList.add('open');
 }
 function closeSheet(){ wrap.classList.remove('open'); }
@@ -270,7 +280,7 @@ $('#close').onclick = closeSheet;
   $(sel).addEventListener('input', e => {
     if(f === 'time' && !e.target.value) return;
     state.cfg[slot][f] = e.target.value;
-    save(); render(); renderPhrases();
+    save(); render(); renderPhrases(); renderVoice();
   });
 });
 
@@ -301,6 +311,33 @@ function renderPhrases(){
   });
 }
 $('#rem').onclick = () => { renderPhrases(); $('#siri').classList.toggle('show'); };
+
+/* ---- Rappel à voix haute : automatisation Raccourcis ---- */
+function speech(slot){
+  const c = state.cfg[slot];
+  return `C’est l’heure de prendre ${c.name || `vos médicaments du ${slot === 'm' ? 'matin' : 'soir'}`}`;
+}
+function copyRow(label, txt){
+  const row = document.createElement('div'); row.className = 'row';
+  const p = document.createElement('span'); p.className = 'phrase'; p.textContent = label;
+  const b = document.createElement('button'); b.className = 'copy'; b.textContent = 'Copier';
+  b.onclick = async () => {
+    try{ await navigator.clipboard.writeText(txt); toast('Texte copié'); }catch(e){ toast('Copie impossible'); }
+  };
+  row.append(p, b); return row;
+}
+function renderVoice(){
+  const m = state.cfg.m.time, e = state.cfg.e.time;
+  $('#steps').innerHTML = `
+    <li>Ouvrez <b>Raccourcis</b>, onglet <b>Automatisation</b>, puis <b>+</b></li>
+    <li>Choisissez <b>Heure de la journée</b> : <b>${m}</b>, <b>Tous les jours</b></li>
+    <li>Cochez <b>Exécuter immédiatement</b></li>
+    <li>Ajoutez l’action <b>Énoncer le texte</b> et collez le message du matin</li>
+    <li>Recommencez pour <b>${e}</b> avec le message du soir</li>`;
+  const box = $('#speech'); box.innerHTML = '';
+  box.append(copyRow(`Matin · « ${speech('m')} »`, speech('m')), copyRow(`Soir · « ${speech('e')} »`, speech('e')));
+}
+$('#voice').onclick = () => { renderVoice(); $('#voiceBox').classList.toggle('show'); };
 
 /* ---- Calendrier : rappels fiables même app fermée ---- */
 $('#ics').onclick = () => {
