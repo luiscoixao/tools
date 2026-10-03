@@ -234,7 +234,11 @@ $("btnClear").onclick=()=>{ items=[]; queue.length=0; render(); };
 $("vClose").onclick=closeViewer; $("vPrev").onclick=()=>step(-1); $("vNext").onclick=()=>step(1);
 $("vSel").onclick=()=>{ const it=view()[vIndex]; if(it){ it.sel=!it.sel; update(); } };
 update();
-if('serviceWorker' in navigator&&location.protocol==='https:') navigator.serviceWorker.register('sw.js').catch(()=>{});
+if('serviceWorker' in navigator&&location.protocol==='https:'){
+  navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(r=>r.update()).catch(()=>{});
+  let reloaded=false;
+  navigator.serviceWorker.addEventListener('controllerchange',()=>{ if(!reloaded){ reloaded=true; location.reload(); } });
+}
 </script>
 </body>
 </html>
