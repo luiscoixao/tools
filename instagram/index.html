@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Instagram">
+<meta name="theme-color" content="#111214">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-192.png">
+<link rel="manifest" href="manifest.json">
+<title>Instagram</title>
+<style>
+  :root{--bg:#111214;--panel:#1c1e22;--line:#2c2f35;--text:#ecedef;--muted:#9a9ea6;--accent:#e8b04a;--ink:#1a1408;--ok:#5cc28a}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;background:var(--bg);color:var(--text);
+    font:16px/1.4 -apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;-webkit-user-select:none;user-select:none}
+  header{position:sticky;top:0;z-index:5;background:rgba(17,18,20,.92);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+    padding:calc(env(safe-area-inset-top) + 10px) 16px 10px;border-bottom:1px solid var(--line)}
+  .row{display:flex;align-items:center;gap:10px}
+  h1{font-size:20px;margin:0;flex:1}
+  h1 span{color:var(--accent)}
+  .sub{color:var(--muted);font-size:13px;margin-top:4px;min-height:18px}
+  button{font:inherit;color:inherit;border:0;cursor:pointer}
+  .chip{background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:7px 13px;font-size:14px}
+  .chip.on{background:var(--accent);color:var(--ink);border-color:var(--accent)}
+  .bar2{display:flex;gap:8px;margin-top:10px;overflow-x:auto;scrollbar-width:none}
+  .bar2::-webkit-scrollbar{display:none}
+  #grid{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;padding:3px 3px calc(120px + env(safe-area-inset-bottom))}
+  .cell{position:relative;aspect-ratio:1;background:var(--panel);overflow:hidden}
+  .cell canvas{width:100%;height:100%;object-fit:cover;display:block;transition:transform .12s}
+  .cell.sel canvas{transform:scale(.88);border-radius:6px}
+  .cell .check{position:absolute;top:6px;right:6px;width:24px;height:24px;border-radius:50%;border:2px solid #fff;
+    background:rgba(0,0,0,.25);display:grid;place-items:center;font-size:14px;font-weight:800;color:transparent;box-shadow:0 1px 3px rgba(0,0,0,.4)}
+  .cell.sel .check{background:var(--accent);border-color:var(--accent);color:var(--ink)}
+  .cell .sent{position:absolute;left:0;right:0;bottom:0;background:rgba(92,194,138,.95);color:#06200f;font-size:11px;font-weight:800;text-align:center;padding:3px}
+  .cell.isSent canvas{opacity:.55}
+  .empty{text-align:center;padding:70px 28px;color:var(--muted)}
+  .empty .big{color:var(--text);font-size:19px;margin-bottom:8px}
+  .pick{display:inline-block;margin-top:22px;background:var(--accent);color:var(--ink);font-weight:700;border-radius:14px;padding:15px 24px;font-size:17px}
+  footer{position:fixed;left:0;right:0;bottom:0;z-index:6;background:rgba(28,30,34,.97);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+    border-top:1px solid var(--line);padding:10px 12px calc(10px + env(safe-area-inset-bottom));display:flex;gap:8px}
+  footer .add{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;font-size:22px;line-height:1}
+  footer .go{flex:1;background:var(--accent);color:var(--ink);font-weight:700;border-radius:14px;padding:14px;font-size:16px}
+  footer .go:disabled{opacity:.35}
+  #viewer{position:fixed;inset:0;z-index:20;background:#000;display:none;flex-direction:column}
+  #viewer.open{display:flex}
+  #viewer .top{display:flex;justify-content:space-between;align-items:center;padding:calc(env(safe-area-inset-top) + 8px) 14px 8px;color:var(--muted);font-size:13px}
+  #viewer .stage{flex:1;display:grid;place-items:center;min-height:0}
+  #viewer img{max-width:100%;max-height:100%;object-fit:contain}
+  #viewer .bottom{padding:10px 14px calc(14px + env(safe-area-inset-bottom));display:flex;gap:10px}
+  #viewer .bottom button{flex:1;border-radius:14px;padding:13px;background:var(--panel);font-weight:600}
+  #viewer .bottom button.on{background:var(--accent);color:var(--ink)}
+  #toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translateX(-50%);background:#2a2d33;border:1px solid var(--line);
+    padding:10px 16px;border-radius:12px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:30;width:max-content;max-width:90vw;text-align:center;font-size:14px}
+  #toast.show{opacity:1}
+  input[type=file]{display:none}
+</style>
+</head>
+<body>
+<header>
+  <div class="row">
+    <h1>📸 <span>Instagram</span></h1>
+    <button class="chip" id="btnClear" hidden>Vider</button>
+  </div>
+  <div class="sub" id="info"></div>
+  <div class="bar2" id="tools" hidden>
+    <button class="chip" id="btnAll">Tout</button>
+    <button class="chip" id="btnNone">Aucune</button>
+    <button class="chip" id="btnHide">Masquer les envoyées</button>
+  </div>
+</header>
+
+<main id="grid"></main>
+<div class="empty" id="empty">
+  <div class="big">Choisis des photos dans ta photothèque</div>
+  <div>Touche une photo pour la sélectionner ou non.<br>Appui long pour la voir en grand.</div>
+  <button class="pick" id="btnPickBig">Choisir des photos</button>
+</div>
+
+<footer>
+  <button class="add" id="btnPick" aria-label="Ajouter des photos">＋</button>
+  <button class="go" id="btnGo" disabled>Enregistrer dans Instagram</button>
+</footer>
+
+<input type="file" id="file" accept="image/*" multiple>
+
+<div id="viewer">
+  <div class="top"><span id="vName"></span><button class="chip" id="vClose">Fermer</button></div>
+  <div class="stage" id="vStage"><img id="vImg" alt=""></div>
+  <div class="bottom">
+    <button id="vPrev">‹</button>
+    <button id="vSel" style="flex:3"></button>
+    <button id="vNext">›</button>
+  </div>
+</div>
+<div id="toast"></div>
+
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+const KEY="instagram-envoyees";
+const stem=n=>n.replace(/\.[^.]+$/,"").replace(/ \(\d+\)$/,"").toLowerCase();
+
+let sent=new Set();
+try{ sent=new Set(JSON.parse(localStorage.getItem(KEY)||"[]")); }catch(e){}
+function saveSent(){ try{ localStorage.setItem(KEY,JSON.stringify([...sent].slice(-3000))); }catch(e){} }
+
+let items=[];        // {file,key,sel,el,sent}
+let hideSent=false, vIndex=-1, vUrl=null;
+const view=()=>items.filter(it=>!(hideSent&&it.sent));
+const keyOf=f=>stem(f.name)+"|"+f.size;
+
+/* ---------- miniatures, une à la fois pour ménager la mémoire de l'iPhone ---------- */
+const queue=[]; let busy=false;
+async function pump(){
+  if(busy) return; busy=true;
+  while(queue.length){
+    const it=queue.shift(); if(it.thumb) continue;
+    const url=URL.createObjectURL(it.file);
+    try{
+      const img=new Image(); img.src=url; await img.decode();
+      const s=320, r=Math.max(s/img.naturalWidth, s/img.naturalHeight);
+      const w=Math.round(img.naturalWidth*r), h=Math.round(img.naturalHeight*r);
+      const c=document.createElement("canvas"); c.width=s; c.height=s;
+      c.getContext("2d").drawImage(img,(s-w)/2,(s-h)/2,w,h);
+      it.thumb=c; if(it.el) it.el.prepend(c);
+    }catch(e){ it.thumb=document.createElement("canvas"); }
+    URL.revokeObjectURL(url);
+  }
+  busy=false;
+}
+
+function render(){
+  const g=$("grid"); g.innerHTML="";
+  const v=view();
+  v.forEach((it,i)=>{
+    const d=document.createElement("div");
+    d.className="cell"+(it.sel?" sel":"")+(it.sent?" isSent":"");
+    d.innerHTML='<div class="check">✓</div>'+(it.sent?'<div class="sent">✓ DÉJÀ ENVOYÉE</div>':"");
+    if(it.thumb) d.prepend(it.thumb);
+    it.el=d;
+    let timer=null, long=false;
+    d.addEventListener("touchstart",()=>{ long=false; timer=setTimeout(()=>{ long=true; openViewer(i); },450); },{passive:true});
+    d.addEventListener("touchmove",()=>clearTimeout(timer),{passive:true});
+    d.addEventListener("touchend",()=>clearTimeout(timer));
+    d.addEventListener("contextmenu",e=>e.preventDefault());
+    d.addEventListener("click",()=>{ if(long){ long=false; return; } it.sel=!it.sel; d.classList.toggle("sel",it.sel); update(); });
+    g.appendChild(d);
+  });
+  update();
+}
+function update(){
+  const n=items.length, s=items.filter(i=>i.sel).length, done=items.filter(i=>i.sent).length;
+  $("empty").style.display = n ? "none" : "";
+  $("tools").hidden = !n; $("btnClear").hidden = !n;
+  $("info").textContent = n ? `${n} photo${n>1?"s":""} · ${s} sélectionnée${s>1?"s":""}${done?` · ${done} déjà envoyée${done>1?"s":""}`:""}` : "";
+  $("btnGo").disabled = !s;
+  $("btnGo").textContent = s ? `Enregistrer ${s} photo${s>1?"s":""} dans Instagram` : "Enregistrer dans Instagram";
+  $("btnHide").classList.toggle("on",hideSent);
+  if(vIndex>=0){ const it=view()[vIndex]; if(it){ $("vSel").textContent = it.sel ? "✓ Sélectionnée" : "Sélectionner"; $("vSel").classList.toggle("on",it.sel); } }
+}
+
+function addFiles(list){
+  const known=new Set(items.map(i=>i.key));
+  for(const f of list){
+    if(!f.type.startsWith("image/") && !/\.(jpe?g|png|heic|heif|webp)$/i.test(f.name)) continue;
+    const k=keyOf(f); if(known.has(k)) continue; known.add(k);
+    const s=sent.has(k);
+    items.push({file:f,key:k,sel:!s,sent:s});
+  }
+  render();
+  items.forEach(it=>{ if(!it.thumb) queue.push(it); }); pump();
+}
+
+/* ---------- visionneuse ---------- */
+function openViewer(i){
+  const v=view(); if(!v[i]) return; vIndex=i;
+  if(vUrl) URL.revokeObjectURL(vUrl);
+  vUrl=URL.createObjectURL(v[i].file); $("vImg").src=vUrl;
+  $("vName").textContent=`${i+1} / ${v.length}`;
+  $("viewer").classList.add("open"); update();
+}
+function closeViewer(){ $("viewer").classList.remove("open"); vIndex=-1; if(vUrl){URL.revokeObjectURL(vUrl);vUrl=null;} $("vImg").removeAttribute("src"); render(); }
+function step(d){ const n=view().length; if(n) openViewer((vIndex+d+n)%n); }
+let sx=0;
+$("vStage").addEventListener("touchstart",e=>{ sx=e.touches[0].clientX; },{passive:true});
+$("vStage").addEventListener("touchend",e=>{ const dx=e.changedTouches[0].clientX-sx; if(Math.abs(dx)>50) step(dx<0?1:-1); });
+
+/* ---------- enregistrement via la feuille de partage ---------- */
+async function go(){
+  const chosen=items.filter(i=>i.sel); if(!chosen.length) return;
+  const files=chosen.map(i=>i.file);
+  if(navigator.canShare && navigator.canShare({files})){
+    try{
+      await navigator.share({files});
+      chosen.forEach(it=>{ it.sent=true; it.sel=false; sent.add(it.key); });
+      saveSent(); render();
+      toast(`${chosen.length} photo${chosen.length>1?"s":""} marquée${chosen.length>1?"s":""} comme envoyée${chosen.length>1?"s":""}`);
+    }catch(e){ if(e.name!=="AbortError") toast("Partage impossible : "+e.message); }
+  } else {
+    // repli : téléchargement fichier par fichier
+    for(const f of files){ const a=document.createElement("a"); a.href=URL.createObjectURL(f); a.download=f.name; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),4000); }
+    chosen.forEach(it=>{ it.sent=true; it.sel=false; sent.add(it.key); }); saveSent(); render();
+  }
+}
+
+let tt; function toast(m){ const t=$("toast"); t.textContent=m; t.classList.add("show"); clearTimeout(tt); tt=setTimeout(()=>t.classList.remove("show"),3000); }
+
+/* ---------- événements ---------- */
+const pick=()=>$("file").click();
+$("btnPick").onclick=pick; $("btnPickBig").onclick=pick;
+$("file").onchange=e=>{ addFiles([...e.target.files]); e.target.value=""; };
+$("btnGo").onclick=go;
+$("btnAll").onclick=()=>{ view().forEach(i=>i.sel=true); render(); };
+$("btnNone").onclick=()=>{ items.forEach(i=>i.sel=false); render(); };
+$("btnHide").onclick=()=>{ hideSent=!hideSent; render(); };
+$("btnClear").onclick=()=>{ items=[]; queue.length=0; render(); };
+$("vClose").onclick=closeViewer; $("vPrev").onclick=()=>step(-1); $("vNext").onclick=()=>step(1);
+$("vSel").onclick=()=>{ const it=view()[vIndex]; if(it){ it.sel=!it.sel; update(); } };
+update();
+if('serviceWorker' in navigator&&location.protocol==='https:') navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body>
+</html>
