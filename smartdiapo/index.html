@@ -68,6 +68,12 @@ header{position:sticky;top:0;z-index:10;background:rgba(19,21,24,.96);-webkit-ba
 .bar{height:10px;background:var(--panel2);border-radius:5px;overflow:hidden}.bar i{display:block;height:100%;width:0;background:var(--accent)}
 #rPrev,#result{max-width:100%;max-height:52vh;border-radius:12px;background:#000;align-self:center}
 .toast{position:fixed;left:50%;top:calc(var(--st) + 60px);transform:translateX(-50%);z-index:60;background:#000c;padding:9px 14px;border-radius:10px;font-size:13px;max-width:90vw;text-align:center}
+.pl{display:flex;align-items:center;gap:6px;padding:6px 0;border-bottom:1px solid var(--line)}
+.pl .pn{width:22px;text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
+.pl .pt{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pl .pd{font-variant-numeric:tabular-nums;font-size:13px}
+.pl button{padding:5px 10px}
+.pl-empty,.pl-tot{font-size:13px;padding:6px 0}
 </style>
 </head>
 <body>
@@ -85,7 +91,7 @@ header{position:sticky;top:0;z-index:10;background:rgba(19,21,24,.96);-webkit-ba
   <p class="hint" style="margin-top:22px">Tout reste sur ton iPhone : les photos ne sont envoyées nulle part.</p>
 </section>
 <input type="file" id="fileIn" accept="image/*" multiple hidden>
-<input type="file" id="musicIn" accept=".mp3,.m4a,.aac,.wav,.aif,.aiff,.caf,audio/mpeg,audio/mp3,audio/mp4,audio/x-m4a,audio/aac,audio/wav,audio/*" hidden>
+<input type="file" id="musicIn" multiple accept=".mp3,.m4a,.aac,.wav,.aif,.aiff,.caf,audio/mpeg,audio/mp3,audio/mp4,audio/x-m4a,audio/aac,audio/wav,audio/*" hidden>
 <main id="grid" hidden></main>
 <div id="bottom" hidden><div class="info" id="info"></div><button id="selAll">Tout</button><button class="primary" id="btnMake">🎬 Créer</button></div>
 
@@ -119,10 +125,13 @@ header{position:sticky;top:0;z-index:10;background:rgba(19,21,24,.96);-webkit-ba
     <div class="row"><input type="text" data-k="t3" placeholder="Signature"></div>
     <p class="hint">Fond : la photo choisie avec « Fond du titre » dans le cadrage, sinon la première photo cochée.</p>
     <div class="sec">Musique</div>
-    <div class="row"><label>Fichier</label><span id="musicName" class="muted">aucune</span><button id="musicPick">Choisir…</button><button id="musicClear">✕</button></div>
+    <div class="row" style="flex-wrap:nowrap"><label style="min-width:0">Playlist</label><button id="musicPick">＋ Ajouter…</button><button id="musicShuffle" aria-label="Mélanger">🔀</button><button id="musicClear" aria-label="Vider la playlist">🗑</button></div>
+    <div id="plist"></div>
     <div class="row"><label>Volume</label><input type="range" data-k="musicVol" min="0" max="100" step="5" style="flex:1"><span id="v_musicVol" style="width:44px"></span></div>
+    <div class="row"><label>Fondu entre morceaux</label><input type="range" data-k="xfade" min="0" max="8" step="0.5" style="flex:1"><span id="v_xfade" style="width:44px"></span></div>
+    <div class="row"><label>Fondu final</label><input type="range" data-k="musicFadeOut" min="0.5" max="8" step="0.5" style="flex:1"><span id="v_musicFadeOut" style="width:44px"></span></div>
     <div class="row"><label>Méthode de création</label><select data-k="engine"><option value="auto">Rapide (automatique)</option><option value="rt">Temps réel (si la musique manque)</option></select></div>
-    <p class="hint">MP3 ou M4A depuis l'app Fichiers. La musique est répétée ou coupée pour suivre le diaporama, avec un fondu à la fin.</p>
+    <p class="hint">Ajoute un ou plusieurs morceaux depuis l'app Fichiers (MP3, M4A…), dans l'ordre voulu (↑ ↓). Ils s'enchaînent en fondu, sans les silences de début et de fin ; la playlist recommence si le diaporama est plus long et se termine en fondu.</p>
   </div>
 </section>
 
@@ -151,11 +160,11 @@ const toast=t=>{ const d=document.createElement('div'); d.className='toast'; d.t
 async function pool(items,n,fn){ let i=0; const w=async()=>{ while(i<items.length){ const it=items[i++]; try{ await fn(it); }catch(e){ console.warn(e); } } }; await Promise.all(Array.from({length:Math.min(n,items.length)},w)); }
 
 /* ---------- état mémorisé ---------- */
-const DEF={order:'date',engine:'auto',format:'9:16',quality:'1080',dur:3.5,trans:'fade',transDur:0.8,kb:'kb',titleOn:true,titleDur:3.5,t1:'',t2:'',t3:'',musicVol:80};
+const DEF={order:'date',engine:'auto',format:'9:16',quality:'1080',dur:3.5,trans:'fade',transDur:0.8,kb:'kb',titleOn:true,titleDur:3.5,t1:'',t2:'',t3:'',musicVol:80,xfade:3,musicFadeOut:3};
 let S=Object.assign({},DEF), CL={};
 try{ Object.assign(S,JSON.parse(localStorage.getItem('sd-set')||'{}')); CL=JSON.parse(localStorage.getItem('sd-photos')||'{}'); }catch(e){}
 let saveT=null; const save=()=>{ clearTimeout(saveT); saveT=setTimeout(()=>{ try{ localStorage.setItem('sd-set',JSON.stringify(S)); localStorage.setItem('sd-photos',JSON.stringify(CL)); }catch(e){} },300); };
-let photos=[], music=null;
+let photos=[];
 const key=p=>p.name+'|'+p.file.size;
 const cd=p=>CL[key(p)]||(CL[key(p)]={});
 const cr=p=>{ const c=cd(p); c.crop=c.crop||{}; return c.crop[S.format]||(c.crop[S.format]={mode:'fill',z:1,cx:.5,cy:.5}); };
@@ -278,12 +287,51 @@ $('#edPrev').onclick=()=>{ if(edI>0){ edI--; edLoad(); } };
 $('#edNext').onclick=()=>{ if(edI<photos.length-1){ edI++; edLoad(); } };
 
 /* ---------- réglages ---------- */
-$('#btnSet').onclick=()=>{ $$('#settings [data-k]').forEach(i=>{ const v=S[i.dataset.k]; if(i.type==='checkbox') i.checked=!!v; else i.value=v; }); $('#v_musicVol').textContent=S.musicVol+' %'; $('#musicName').textContent=music?music.name:'aucune'; $('#settings').hidden=false; };
+$('#btnSet').onclick=()=>{ $$('#settings [data-k]').forEach(i=>{ const v=S[i.dataset.k]; if(i.type==='checkbox') i.checked=!!v; else i.value=v; }); $('#v_musicVol').textContent=S.musicVol+' %'; plVals(); plRender(); $('#settings').hidden=false; };
 $('#setClose').onclick=()=>{ $('#settings').hidden=true; if(S.order==='perso'){ renumber(); } updateInfo(); save(); };
 $$('#settings [data-k]').forEach(i=>i.addEventListener(i.type==='checkbox'||i.tagName==='SELECT'?'change':'input',()=>{ const k=i.dataset.k; S[k]=i.type==='checkbox'?i.checked:(i.type==='number'||i.type==='range')?+i.value:i.value; $('#v_musicVol').textContent=S.musicVol+' %'; save(); }));
+/* ---------- playlist musicale ---------- */
+let playlist=[];  /* {file,name,dur} — dans l'ordre de lecture */
+function trackDur(file){ return new Promise(res=>{ const a=document.createElement('audio'), u=URL.createObjectURL(file); let fin=false;
+  const end=d=>{ if(fin) return; fin=true; URL.revokeObjectURL(u); a.removeAttribute('src'); res(d); };
+  a.preload='metadata'; a.onloadedmetadata=()=>end(isFinite(a.duration)?a.duration:0); a.onerror=()=>end(0); setTimeout(()=>end(0),8000); a.src=u; }); }
+function plVals(){ const x=$('#v_xfade'), f=$('#v_musicFadeOut'); if(x) x.textContent=(+S.xfade?S.xfade+' s':'non'); if(f) f.textContent=S.musicFadeOut+' s'; }
+function plRender(){ const box=$('#plist'); if(!box) return; box.innerHTML='';
+  if(!playlist.length){ box.innerHTML='<div class="pl-empty muted">Aucune musique</div>'; return; }
+  let tot=0;
+  playlist.forEach((m,i)=>{ tot+=m.dur||0; const r=document.createElement('div'); r.className='pl';
+    r.innerHTML=`<span class="pn">${i+1}</span><span class="pt"></span><span class="pd muted">${m.dur?fmtDur(m.dur):''}</span><button data-a="up"${i?'':' disabled'}>↑</button><button data-a="dn"${i<playlist.length-1?'':' disabled'}>↓</button><button data-a="rm">✕</button>`;
+    $('.pt',r).textContent=m.name;
+    r.onclick=e=>{ const a=e.target.dataset&&e.target.dataset.a; if(!a) return;
+      if(a==='rm') playlist.splice(i,1); else { const j=a==='up'?i-1:i+1; [playlist[i],playlist[j]]=[playlist[j],playlist[i]]; } plRender(); };
+    box.appendChild(r); });
+  const f=document.createElement('div'); f.className='pl-tot muted'; f.textContent=`${playlist.length} morceau${playlist.length>1?'x':''} · ${fmtDur(tot)}`; box.appendChild(f); }
 $('#musicPick').onclick=()=>$('#musicIn').click();
-$('#musicIn').onchange=e=>{ music=e.target.files[0]||null; e.target.value=''; $('#musicName').textContent=music?music.name:'aucune'; };
-$('#musicClear').onclick=()=>{ music=null; $('#musicName').textContent='aucune'; };
+$('#musicIn').onchange=async e=>{ const fs=[...e.target.files]; e.target.value=''; const add=fs.map(f=>({file:f,name:f.name.replace(/\.[^.]+$/,''),dur:0}));
+  playlist.push(...add); plRender(); for(const m of add){ m.dur=await trackDur(m.file); plRender(); } };
+$('#musicShuffle').onclick=()=>{ for(let i=playlist.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [playlist[i],playlist[j]]=[playlist[j],playlist[i]]; } plRender(); };
+$('#musicClear').onclick=()=>{ playlist=[]; plRender(); };
+$$('[data-k="xfade"],[data-k="musicFadeOut"]').forEach(i=>i.addEventListener('input',()=>setTimeout(plVals,0)));
+/* Assemble la playlist en une seule piste de `seconds` secondes :
+   silences de début/fin retirés, fondu enchaîné à puissance constante de `xf` s entre morceaux,
+   playlist reprise au début si le film est plus long. Un seul morceau décodé à la fois (mémoire). */
+async function buildMix(tracks,seconds,sr,xf,decode,info){
+  const OAC=window.OfflineAudioContext||window.webkitOfflineAudioContext;
+  const len=Math.max(1,Math.ceil(seconds*sr)), out=new OAC(2,1,sr).createBuffer(2,len,sr), L=out.getChannelData(0), R=out.getChannelData(1);
+  const bad=new Set(); let pos=0, k=0, placed=0; const th=0.003;
+  while(pos<len&&bad.size<tracks.length){
+    const i=k%tracks.length; k++; if(bad.has(i)) continue;
+    info&&info(tracks[i].name, i, tracks.length);
+    let b=null; try{ b=await decode(await tracks[i].file.arrayBuffer()); }catch(e){ console.warn('musique',tracks[i].name,e); bad.add(i); toast('Morceau illisible : '+tracks[i].name); continue; }
+    const c0=b.getChannelData(0), c1=b.numberOfChannels>1?b.getChannelData(1):c0;
+    let a=0, z=b.length; while(a<z&&Math.abs(c0[a])<th&&Math.abs(c1[a])<th) a++; while(z>a&&Math.abs(c0[z-1])<th&&Math.abs(c1[z-1])<th) z--;
+    const n=z-a; if(n<sr){ bad.add(i); continue; }   /* trop court ou silencieux */
+    const X=Math.min(Math.round(xf*sr),Math.floor(n/3)), fin=placed?X:0, m=Math.min(n,len-pos), H=Math.PI/2;
+    for(let j=0;j<m;j++){ let g=1; if(j<fin) g=Math.sin(j/fin*H); const r=n-j; if(r<X) g*=Math.sin(r/X*H); L[pos+j]+=c0[a+j]*g; R[pos+j]+=c1[a+j]*g; }
+    pos+=n-X; placed++; b=null; await new Promise(r=>setTimeout(r,0));
+  }
+  return placed?out:null;
+}
 
 /* ---------- MP4 (repris de Diaporama) ---------- */
 /* Minimal streaming MP4 muxer: one video track (avc1 or vp09) + optional audio (mp4a or Opus).
@@ -429,7 +477,11 @@ async function makeVideo(){
   $('#render').hidden=false; cancelV=false; outBlob=null; ['#result','#rShare','#rDown','#rClose'].forEach(s=>$(s).hidden=true); $('#rCancel').hidden=false; $('#rPrev').hidden=false; $('#rTitle').textContent='Création du diaporama'; $('#rBar').style.width='0';
   const pw=S.format==='9:16'?270:480, ph=S.format==='9:16'?480:270; $('#rPrev').width=pw; $('#rPrev').height=ph; const prev=$('#rPrev').getContext('2d');
   let wl=null; try{ wl=await navigator.wakeLock?.request('screen'); }catch(e){}
-  let musicBuf=null; if(music){ $('#rInfo').textContent='Préparation de la musique…'; try{ const OAC=window.OfflineAudioContext||window.webkitOfflineAudioContext; musicBuf=await new OAC(2,48000,48000).decodeAudioData(await music.arrayBuffer()); }catch(e){ toast('Musique illisible : diaporama sans musique'); } }
+  let musicBuf=null; if(playlist.length){ $('#rInfo').textContent='Préparation de la musique…'; try{ const OAC=window.OfflineAudioContext||window.webkitOfflineAudioContext;
+      const dec=ab=>new Promise((res,rej)=>{ const p=new OAC(2,48000,48000).decodeAudioData(ab,res,rej); if(p&&p.then) p.then(res,rej); });
+      musicBuf=await buildMix(playlist,total+1,48000,+S.xfade,dec,(n,i,N)=>{ $('#rInfo').textContent=`Préparation de la musique… ${N>1?(i+1)+'/'+N+' · ':''}${n}`; });
+      if(!musicBuf) toast('Musique illisible : diaporama sans musique');
+    }catch(e){ console.warn(e); toast('Musique illisible : diaporama sans musique'); } }
   const codec=await pickCodec(W,H);
   const cache=new Map(); const getSlide=i=>{ if(!cache.has(i)) cache.set(i,slides[i].title?renderTitle(RW,RH,1,bg):renderSlide(slides[i].p,RW,RH,OVER)); return cache.get(i); };
   const cv=new OffscreenCanvas(W,H), ctx=cv.getContext('2d');
@@ -472,7 +524,7 @@ async function makeVideo(){
     const chunks=[]; rec.ondataavailable=e=>{ if(e.data.size) chunks.push(e.data); }; const stopped=new Promise(r=>rec.onstop=r);
     await frameAt(0,0); rctx.drawImage(cv,0,0); rec.start(1000); if(src) src.start(); const st=performance.now();
     while(!cancelV){ const t=(performance.now()-st)/1000; if(t>=total) break; await frameAt(t,0); rctx.drawImage(cv,0,0);
-      if(mg){ const lv=S.musicVol/100*clamp01(Math.min(t/0.4,(total-t)/Math.min(3,total/3))); mg.gain.setTargetAtTime(lv,acRT.currentTime,0.05); }
+      if(mg){ const lv=S.musicVol/100*clamp01(Math.min(t/0.4,(total-t)/Math.min(+S.musicFadeOut,total/3))); mg.gain.setTargetAtTime(lv,acRT.currentTime,0.05); }
       prev.drawImage(cv,0,0,pw,ph); $('#rBar').style.width=(100*t/total)+'%'; $('#rInfo').textContent=`${fmtDur(t)} / ${fmtDur(total)} (temps réel)`; await new Promise(r=>requestAnimationFrame(r)); }
     await sleep(150); rec.stop(); await stopped; try{ src&&src.stop(); }catch(e){} acRT.close();
     if(cancelV) return done(wl,true);
@@ -485,7 +537,7 @@ async function makeVideo(){
 function done(wl,closeIt){ try{ wl&&wl.release(); }catch(e){} if(closeIt) $('#render').hidden=true; }
 async function encodeAudio(mux,music,total){
   const SR=48000, N=Math.round(total*SR), src=[music.getChannelData(0),music.numberOfChannels>1?music.getChannelData(1):music.getChannelData(0)];
-  const L=src[0].length, fadeOut=Math.min(3,total/3)*SR, fadeIn=.4*SR, vol=S.musicVol/100; let err=null;
+  const L=src[0].length, fadeOut=Math.min(+S.musicFadeOut,total/3)*SR, fadeIn=.4*SR, vol=S.musicVol/100; let err=null;
   const ae=new AudioEncoder({output:(ch,meta)=>{ const b=new Uint8Array(ch.byteLength); ch.copyTo(b); mux.addAudio(b,Math.round(ch.timestamp*SR/1e6),(Math.round((ch.duration||0)*SR/1e6)||1024),meta&&meta.decoderConfig&&meta.decoderConfig.description); },error:e=>{ err=e; }});
   ae.configure({codec:'mp4a.40.2',sampleRate:SR,numberOfChannels:2,bitrate:192000});
   const BLK=4800;

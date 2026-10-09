@@ -97,6 +97,12 @@ header{position:sticky;top:0;z-index:10;background:rgba(19,21,24,.96);-webkit-ba
 canvas#rc{display:none}
 .hint{font-size:13px;color:var(--muted)}
 .toast{position:fixed;left:50%;top:calc(var(--st) + 60px);transform:translateX(-50%);z-index:60;background:#000c;padding:9px 14px;border-radius:10px;font-size:13px}
+.pl{display:flex;align-items:center;gap:6px;padding:6px 0;border-bottom:1px solid var(--line)}
+.pl .pn{width:22px;text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
+.pl .pt{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pl .pd{font-variant-numeric:tabular-nums;font-size:13px}
+.pl button{padding:5px 10px}
+.pl-empty,.pl-tot{font-size:13px;padding:6px 0}
 </style>
 </head>
 <body>
@@ -115,7 +121,7 @@ canvas#rc{display:none}
   <p class="hint" style="margin-top:22px">Tout reste sur ton iPhone : les vidéos ne sont envoyées nulle part.</p>
 </section>
 <input type="file" id="fileIn" accept="video/*" multiple hidden>
-<input type="file" id="musicIn" accept=".mp3,.m4a,.aac,.wav,.aif,.aiff,.caf,audio/mpeg,audio/mp3,audio/mp4,audio/x-m4a,audio/aac,audio/wav,audio/*" hidden>
+<input type="file" id="musicIn" multiple accept=".mp3,.m4a,.aac,.wav,.aif,.aiff,.caf,audio/mpeg,audio/mp3,audio/mp4,audio/x-m4a,audio/aac,audio/wav,audio/*" hidden>
 
 <main id="grid" hidden></main>
 
@@ -155,9 +161,12 @@ canvas#rc{display:none}
     <div class="row"><label><input type="checkbox" data-k="endOn"> Page de fin</label><input type="text" data-k="endText" style="flex:1;min-width:100px"></div>
     <div class="sec">Son</div>
     <div class="row"><label>Son des vidéos</label><input type="range" data-k="origVol" min="0" max="100" step="5" style="flex:1"><span id="v_origVol" style="width:44px"></span></div>
-    <div class="row"><label>Musique</label><span id="musicName" class="muted">aucune</span><button id="musicPick">Choisir…</button><button id="musicClear">✕</button></div>
+    <div class="row" style="flex-wrap:nowrap"><label style="min-width:0">Playlist</label><button id="musicPick">＋ Ajouter…</button><button id="musicShuffle" aria-label="Mélanger">🔀</button><button id="musicClear" aria-label="Vider la playlist">🗑</button></div>
+    <div id="plist"></div>
     <div class="row"><label>Volume musique</label><input type="range" data-k="musicVol" min="0" max="100" step="5" style="flex:1"><span id="v_musicVol" style="width:44px"></span></div>
-    <p class="hint">La musique se choisit dans l'app Fichiers (MP3, M4A…). Les morceaux protégés d'Apple Music ne peuvent pas être utilisés.</p>
+    <div class="row"><label>Fondu entre morceaux</label><input type="range" data-k="xfade" min="0" max="8" step="0.5" style="flex:1"><span id="v_xfade" style="width:44px"></span></div>
+    <div class="row"><label>Fondu final</label><input type="range" data-k="musicFadeOut" min="0.5" max="8" step="0.5" style="flex:1"><span id="v_musicFadeOut" style="width:44px"></span></div>
+    <p class="hint">Ajoute un ou plusieurs morceaux depuis l'app Fichiers (MP3, M4A…), dans l'ordre voulu (↑ ↓). Ils s'enchaînent en fondu, sans les silences de début et de fin ; la playlist recommence si le film est plus long. Les morceaux protégés d'Apple Music ne peuvent pas être utilisés.</p>
   </div>
 </section>
 
@@ -189,12 +198,12 @@ const toast=t=>{ const d=document.createElement('div'); d.className='toast'; d.t
 async function pool(items,n,fn){ let i=0; const w=async()=>{ while(i<items.length){ const it=items[i++]; try{ await fn(it); }catch(e){ console.warn(e); } } }; await Promise.all(Array.from({length:Math.min(n,items.length)},w)); }
 
 /* ---------- état (mémorisé sur l'iPhone) ---------- */
-const DEF={v:2,format:'9:16',quality:'720',quickOn:true,quickDur:10,minOn:true,minDur:5,titleOn:true,titleDur:3,title:'',subtitle:'',font:'Didot',endOn:false,endText:'Fin',origVol:100,musicVol:70};
+const DEF={v:2,format:'9:16',quality:'720',quickOn:true,quickDur:10,minOn:true,minDur:5,titleOn:true,titleDur:3,title:'',subtitle:'',font:'Didot',endOn:false,endText:'Fin',origVol:100,musicVol:70,xfade:3,musicFadeOut:3};
 let S=Object.assign({},DEF), CL={};   /* CL : passages et cadrages par vidéo */
 try{ Object.assign(S,JSON.parse(localStorage.getItem('sv-set')||'{}')); CL=JSON.parse(localStorage.getItem('sv-clips')||'{}'); }catch(e){}
 if(!(S.v>=2)){ S.quality='720'; S.v=2; }  /* 720p par défaut : bien plus léger pour l'iPhone */
 let saveT=null; const save=()=>{ clearTimeout(saveT); saveT=setTimeout(()=>{ try{ localStorage.setItem('sv-set',JSON.stringify(S)); localStorage.setItem('sv-clips',JSON.stringify(CL)); }catch(e){} },300); };
-let videos=[], music=null;
+let videos=[];
 const key=v=>v.name+'|'+v.file.size;
 const cd=v=>CL[key(v)]||(CL[key(v)]={});
 
@@ -278,11 +287,50 @@ $('#fmt').onclick=e=>{ const b=e.target.closest('button'); if(!b) return; S.form
 /* ---------- réglages ---------- */
 $('#btnSet').onclick=()=>{ fillSet(); $('#settings').hidden=false; };
 $('#setClose').onclick=()=>{ $('#settings').hidden=true; enforceMin(); videos.forEach(updateTile); updateInfo(); save(); };
-function fillSet(){ $$('#settings [data-k]').forEach(i=>{ const v=S[i.dataset.k]; if(i.type==='checkbox') i.checked=!!v; else i.value=v; }); $('#v_origVol').textContent=S.origVol+' %'; $('#v_musicVol').textContent=S.musicVol+' %'; $('#musicName').textContent=music?music.name:'aucune'; }
+function fillSet(){ $$('#settings [data-k]').forEach(i=>{ const v=S[i.dataset.k]; if(i.type==='checkbox') i.checked=!!v; else i.value=v; }); $('#v_origVol').textContent=S.origVol+' %'; $('#v_musicVol').textContent=S.musicVol+' %'; plVals(); plRender(); }
 $$('#settings [data-k]').forEach(i=>i.addEventListener(i.type==='checkbox'||i.tagName==='SELECT'?'change':'input',()=>{ const k=i.dataset.k; S[k]=i.type==='checkbox'?i.checked:(i.type==='number'||i.type==='range')?+i.value:i.value; $('#v_origVol').textContent=S.origVol+' %'; $('#v_musicVol').textContent=S.musicVol+' %'; save(); }));
+/* ---------- playlist musicale ---------- */
+let playlist=[];  /* {file,name,dur} — dans l'ordre de lecture */
+function trackDur(file){ return new Promise(res=>{ const a=document.createElement('audio'), u=URL.createObjectURL(file); let fin=false;
+  const end=d=>{ if(fin) return; fin=true; URL.revokeObjectURL(u); a.removeAttribute('src'); res(d); };
+  a.preload='metadata'; a.onloadedmetadata=()=>end(isFinite(a.duration)?a.duration:0); a.onerror=()=>end(0); setTimeout(()=>end(0),8000); a.src=u; }); }
+function plVals(){ const x=$('#v_xfade'), f=$('#v_musicFadeOut'); if(x) x.textContent=(+S.xfade?S.xfade+' s':'non'); if(f) f.textContent=S.musicFadeOut+' s'; }
+function plRender(){ const box=$('#plist'); if(!box) return; box.innerHTML='';
+  if(!playlist.length){ box.innerHTML='<div class="pl-empty muted">Aucune musique</div>'; return; }
+  let tot=0;
+  playlist.forEach((m,i)=>{ tot+=m.dur||0; const r=document.createElement('div'); r.className='pl';
+    r.innerHTML=`<span class="pn">${i+1}</span><span class="pt"></span><span class="pd muted">${m.dur?fmtDur(m.dur):''}</span><button data-a="up"${i?'':' disabled'}>↑</button><button data-a="dn"${i<playlist.length-1?'':' disabled'}>↓</button><button data-a="rm">✕</button>`;
+    $('.pt',r).textContent=m.name;
+    r.onclick=e=>{ const a=e.target.dataset&&e.target.dataset.a; if(!a) return;
+      if(a==='rm') playlist.splice(i,1); else { const j=a==='up'?i-1:i+1; [playlist[i],playlist[j]]=[playlist[j],playlist[i]]; } plRender(); };
+    box.appendChild(r); });
+  const f=document.createElement('div'); f.className='pl-tot muted'; f.textContent=`${playlist.length} morceau${playlist.length>1?'x':''} · ${fmtDur(tot)}`; box.appendChild(f); }
 $('#musicPick').onclick=()=>$('#musicIn').click();
-$('#musicIn').onchange=e=>{ music=e.target.files[0]||null; e.target.value=''; $('#musicName').textContent=music?music.name:'aucune'; };
-$('#musicClear').onclick=()=>{ music=null; $('#musicName').textContent='aucune'; };
+$('#musicIn').onchange=async e=>{ const fs=[...e.target.files]; e.target.value=''; const add=fs.map(f=>({file:f,name:f.name.replace(/\.[^.]+$/,''),dur:0}));
+  playlist.push(...add); plRender(); for(const m of add){ m.dur=await trackDur(m.file); plRender(); } };
+$('#musicShuffle').onclick=()=>{ for(let i=playlist.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [playlist[i],playlist[j]]=[playlist[j],playlist[i]]; } plRender(); };
+$('#musicClear').onclick=()=>{ playlist=[]; plRender(); };
+$$('[data-k="xfade"],[data-k="musicFadeOut"]').forEach(i=>i.addEventListener('input',()=>setTimeout(plVals,0)));
+/* Assemble la playlist en une seule piste de `seconds` secondes :
+   silences de début/fin retirés, fondu enchaîné à puissance constante de `xf` s entre morceaux,
+   playlist reprise au début si le film est plus long. Un seul morceau décodé à la fois (mémoire). */
+async function buildMix(tracks,seconds,sr,xf,decode,info){
+  const OAC=window.OfflineAudioContext||window.webkitOfflineAudioContext;
+  const len=Math.max(1,Math.ceil(seconds*sr)), out=new OAC(2,1,sr).createBuffer(2,len,sr), L=out.getChannelData(0), R=out.getChannelData(1);
+  const bad=new Set(); let pos=0, k=0, placed=0; const th=0.003;
+  while(pos<len&&bad.size<tracks.length){
+    const i=k%tracks.length; k++; if(bad.has(i)) continue;
+    info&&info(tracks[i].name, i, tracks.length);
+    let b=null; try{ b=await decode(await tracks[i].file.arrayBuffer()); }catch(e){ console.warn('musique',tracks[i].name,e); bad.add(i); toast('Morceau illisible : '+tracks[i].name); continue; }
+    const c0=b.getChannelData(0), c1=b.numberOfChannels>1?b.getChannelData(1):c0;
+    let a=0, z=b.length; while(a<z&&Math.abs(c0[a])<th&&Math.abs(c1[a])<th) a++; while(z>a&&Math.abs(c0[z-1])<th&&Math.abs(c1[z-1])<th) z--;
+    const n=z-a; if(n<sr){ bad.add(i); continue; }   /* trop court ou silencieux */
+    const X=Math.min(Math.round(xf*sr),Math.floor(n/3)), fin=placed?X:0, m=Math.min(n,len-pos), H=Math.PI/2;
+    for(let j=0;j<m;j++){ let g=1; if(j<fin) g=Math.sin(j/fin*H); const r=n-j; if(r<X) g*=Math.sin(r/X*H); L[pos+j]+=c0[a+j]*g; R[pos+j]+=c1[a+j]*g; }
+    pos+=n-X; placed++; b=null; await new Promise(r=>setTimeout(r,0));
+  }
+  return placed?out:null;
+}
 
 /* ---------- éditeur ---------- */
 const edV=$('#edV'); const ed={i:-1,url:null,vw:0,vh:0,k:1,tmp:null,range:false,raf:0};
@@ -374,11 +422,15 @@ async function startFilm(){
   const gains=pool2.map(el=>{ const g=ac.createGain(); g.gain.value=0; try{ ac.createMediaElementSource(el).connect(g).connect(master); }catch(e){ console.warn(e); } return g; });
   let mSrc=null, mGain=null; const clips=list.map(v=>({v,...clipOf(v),crop:getCrop(v,S.format)}));
   const total=clips.reduce((a,c)=>a+c.out-c.in,0)+(S.titleOn?+S.titleDur:0)+(S.endOn?2.5:0);
-  if(music){ try{ $('#rInfo').textContent='Préparation de la musique…'; const buf=await ac.decodeAudioData(await music.arrayBuffer()); mSrc=ac.createBufferSource(); mSrc.buffer=buf; mSrc.loop=true; mGain=ac.createGain(); mGain.gain.value=0; mSrc.connect(mGain).connect(master); }catch(e){ console.warn(e); toast('Musique illisible : film créé sans musique'); mSrc=null; mGain=null; } }
+  if(playlist.length){ try{
+      const dec=ab=>new Promise((res,rej)=>{ const p=ac.decodeAudioData(ab,res,rej); if(p&&p.then) p.then(res,rej); });
+      const buf=await buildMix(playlist,total+20,ac.sampleRate,+S.xfade,dec,(n,i,N)=>{ $('#rInfo').textContent=`Préparation de la musique… ${N>1?(i+1)+'/'+N+' · ':''}${n}`; });
+      if(buf){ mSrc=ac.createBufferSource(); mSrc.buffer=buf; mSrc.loop=true; mGain=ac.createGain(); mGain.gain.value=0; mSrc.connect(mGain).connect(master); } else toast('Musique illisible : film créé sans musique');
+    }catch(e){ console.warn(e); toast('Musique illisible : film créé sans musique'); mSrc=null; mGain=null; } }
   const stream=new MediaStream([...cv.captureStream(FPS).getVideoTracks(),...dest.stream.getAudioTracks()]);
   const rec=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:s>=1080?8e6:4e6,audioBitsPerSecond:160000}); const chunks=[]; rec.ondataavailable=e=>{ if(e.data.size) chunks.push(e.data); }; const stopped=new Promise(r=>rec.onstop=r);
   let elapsed=0; const t0=performance.now(); const prog=()=>{ $('#rBar').style.width=Math.min(100,elapsed/total*100)+'%'; $('#rInfo').textContent=`${fmtDur(elapsed)} / ${fmtDur(total)}`; };
-  const musicLevel=t=>S.musicVol/100*clamp01(Math.min(t/1.2,(total-t)/2.5));
+  const musicLevel=t=>S.musicVol/100*clamp01(Math.min(t/1.2,(total-t)/Math.max(0.1,+S.musicFadeOut)));
   const frame=()=>new Promise(r=>requestAnimationFrame(r));
   rec.start(1000); if(mSrc) mSrc.start();
   const card=async(text,sub,dur)=>{ const st=performance.now(); while(!cancel){ const u=(performance.now()-st)/1000; if(u>=dur) break; drawCard(ctx,text,sub,W,H,clamp01(Math.min(u/0.7,(dur-u)/0.7))); if(mGain) mGain.gain.setTargetAtTime(musicLevel(elapsed+u),ac.currentTime,0.05); await frame(); } elapsed+=dur; prog(); };
