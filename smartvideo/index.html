@@ -127,6 +127,8 @@ canvas#rc{display:none}
   <h1>SMARTVIDEO</h1>
   <p>Choisis des vidéos dans ta photothèque, garde le meilleur passage de chacune, recadre en 9:16 ou 16:9, et crée un petit film MP4 avec titre et musique.</p>
   <button class="primary" id="btnPick">＋ Choisir des vidéos</button>
+  <div style="margin-top:12px"><button id="btnPickMagic" style="font-size:17px;padding:14px 22px;background:#2b2440;border-color:#5b4a8f;color:#e8ddff;font-weight:700">✨ Film magique</button></div>
+  <p class="hint" style="margin-top:10px">Film magique : choisis tes vidéos, une durée, et SMARTVIDEO garde tout seul les meilleurs moments.</p>
   <p class="hint" style="margin-top:22px">Tout reste sur ton iPhone : les vidéos ne sont envoyées nulle part.</p>
 </section>
 <input type="file" id="fileIn" accept="video/*" multiple hidden>
@@ -248,7 +250,9 @@ async function shootingDate(file){
 }
 
 /* ---------- import ---------- */
-$('#btnPick').onclick=$('#btnAdd').onclick=()=>$('#fileIn').click();
+let magicAfterPick=false;
+$('#btnPick').onclick=$('#btnAdd').onclick=()=>{ magicAfterPick=false; $('#fileIn').click(); };
+$('#btnPickMagic').onclick=()=>{ magicAfterPick=true; $('#fileIn').click(); };
 $('#fileIn').onchange=async e=>{
   const files=[...e.target.files]; e.target.value=''; if(!files.length) return;
   $('#empty').hidden=true; $('#grid').hidden=false; $('#bottom').hidden=false;
@@ -259,6 +263,7 @@ $('#fileIn').onchange=async e=>{
   videos.push(...add); videos.sort((a,b)=>a.date-b.date||a.name.localeCompare(b.name));
   add.forEach(v=>{ if(cd(v).sel===undefined) cd(v).sel=true; });
   render(); await pool(add,2,makeThumb); enforceMin(); save();
+  if(magicAfterPick){ magicAfterPick=false; $('#btnMagic').click(); }
 };
 function makeThumb(v){
   return new Promise(res=>{ const el=document.createElement('video'); el.muted=true; el.playsInline=true; el.preload='metadata'; const u=URL.createObjectURL(v.file); let done=false;
