@@ -488,17 +488,9 @@ function magicPlan(list,target,S0){
     while(tot<N&&guard++<1000){ let bi=-1,bv=-1; [...days.values()].forEach((a,i)=>{ if(quota[i]<a.length){ const v=w[i]/(quota[i]+1); if(v>bv){ bv=v; bi=i; } } }); if(bi<0) break; quota[bi]++; tot++; }
     [...days.values()].forEach((a,i)=>{ a.slice().sort((x,y)=>y.Q-x.Q).slice(0,quota[i]).forEach(c=>shots.push({x:c,st:c.st,L:c.L})); });
   } else {
-    shots=cands.map(c=>({x:c,st:c.st,L:c.L}));
-    /* pas assez de vidéos : d'autres moments des vidéos les plus longues */
-    let total=shots.reduce((a,s)=>a+s.L,0), guard=0;
-    while(total<bud-S0*0.5&&guard++<400){
-      let best=null;
-      for(const c of cands){ const taken=shots.filter(s=>s.x===c).map(s=>[s.st,s.st+s.L]); if(taken.length*S0>c.an.dur*0.6) continue;
-        const b=bestWin(c,S0,taken); if(b&&b.sc>0.3){ const sc=b.sc-0.08*taken.length; if(!best||sc>best.sc) best={c,st:b.st,sc}; } }
-      if(!best) break; shots.push({x:best.c,st:best.st,L:Math.min(S0,best.c.an.dur)}); total+=Math.min(S0,best.c.an.dur);
-    }
-    /* encore court : on allonge un peu les plans */
-    if(total<bud*0.9){ const f=Math.min(1.6,bud/Math.max(1,total)); shots.forEach(s=>{ const L2=Math.min(s.x.an.dur,s.L*f), st2=Math.max(0,Math.min(s.x.an.dur-L2,s.st-(L2-s.L)/2)); s.L=L2; s.st=st2; }); }
+    /* pas assez de vidéos : jamais deux fois la même vidéo ; on allonge plutôt les plans (jusqu'à 2,2 fois le rythme) */
+    const base=cands.reduce((a,c)=>a+c.L,0), f=Math.min(2.2,Math.max(1,bud/Math.max(1,base)));
+    shots=cands.map(c=>{ const L2=Math.min(c.an.dur,Math.max(c.L,S0*f)); if(L2<=c.L+0.05) return {x:c,st:c.st,L:c.L}; const b=bestWin(c,L2); return {x:c,st:b.st,L:Math.min(L2,c.an.dur-b.st)}; });
   }
   shots.sort((a,b)=>(a.x.v.date-b.x.v.date)||a.x.v.name.localeCompare(b.x.v.name)||(a.st-b.st));
   return shots.map(s=>({v:s.x.v,in:s.st,out:s.st+s.L}));
@@ -535,6 +527,7 @@ $('#mgGo').onclick=async()=>{
   MAGIC.last=plan; videos.forEach(updateTile);
   const nv=new Set(plan.map(p=>p.v)).size, dur=plan.reduce((a,p)=>a+p.out-p.in,0);
   $('#mgProg').textContent=`${plan.length} plans choisis dans ${nv} vidéo${nv>1?'s':''} · ${fmtDur(dur)}`;
+  if(dur<+S.magicMin*60*0.85) toast(`Film de ${fmtDur(dur)} : chaque vidéo n'est utilisée qu'une fois, ajoute des vidéos pour un film plus long`);
   $('#magic').hidden=true;
   startFilm(plan,pre).catch(err=>{ console.error(err); $('#rInfo').innerHTML=`<span style="color:var(--danger)">Erreur : ${err.message}</span>`; $('#rClose').hidden=false; $('#rCancel').hidden=true; });
 };
@@ -560,14 +553,15 @@ $('#btnFilm').onclick=()=>{ startFilm().catch(err=>{ console.error(err); $('#rIn
 function primeMedia(firstFile){
   const ac=new (window.AudioContext||window.webkitAudioContext)(); ac.resume();
   const el=document.createElement('video'); el.playsInline=true; el.preload='auto'; el.setAttribute('playsinline',''); el.style.cssText='width:160px;height:90px'; $('#hold').appendChild(el);
-  const u=URL.createObjectURL(firstFile); el.src=u; const p=el.play(); if(p) p.then(()=>el.pause()).catch(()=>{});
-  return {ac,el,u};
+  const el2=el.cloneNode(); $('#hold').appendChild(el2);
+  const u=URL.createObjectURL(firstFile); [el,el2].forEach(x=>{ x.src=u; const p=x.play(); if(p) p.then(()=>x.pause()).catch(()=>{}); });
+  return {ac,el,el2,u};
 }
 async function startFilm(plan,pre){
   const clipsIn=plan||videos.filter(v=>isSel(v)&&v.dur).map(v=>({v,...clipOf(v)})); if(!clipsIn.length) return;
   const mime=pickMime(); if(!mime){ alert('Cet appareil ne sait pas enregistrer de vidéo.'); return; }
   if(!pre) pre=primeMedia(clipsIn[0].v.file);
-  const ac=pre.ac, pool2=[pre.el];  /* un seul lecteur : moins de mémoire */
+  const ac=pre.ac, pool2=[pre.el,pre.el2];  /* deux lecteurs : le plan suivant est prêt pendant que le précédent joue */
   const urlOf=new Map(); clipsIn.forEach(c=>{ if(!urlOf.has(c.v)) urlOf.set(c.v,URL.createObjectURL(c.v.file)); });
   let wl=null; try{ wl=await navigator.wakeLock?.request('screen'); }catch(e){}
   $('#render').hidden=false; cancel=false; outBlob=null; ['#result','#rShare','#rDown','#rClose'].forEach(s=>$(s).hidden=true); $('#rCancel').hidden=false; $('#rHint').hidden=false; $('#rTitle').textContent='Création du film';
@@ -576,7 +570,9 @@ async function startFilm(plan,pre){
   const dest=ac.createMediaStreamDestination(); const master=ac.createGain(); master.connect(dest);
   const gains=pool2.map(el=>{ const g=ac.createGain(); g.gain.value=0; try{ ac.createMediaElementSource(el).connect(g).connect(master); }catch(e){ console.warn(e); } return g; });
   let mSrc=null, mGain=null; const clips=clipsIn.map(c=>({...c,crop:getCrop(c.v,S.format),url:urlOf.get(c.v)}));
-  const total=clips.reduce((a,c)=>a+c.out-c.in,0)+(S.titleOn?+S.titleDur:0)+(S.endOn?2.5:0);
+  /* fondu enchaîné entre les plans (0,5 s) : chaque plan commence pendant les dernières images du précédent */
+  const XF=clips.map((c,i)=>i<clips.length-1&&c.out-c.in>=1.4&&clips[i+1].out-clips[i+1].in>=1.4?0.5:0);
+  const total=clips.reduce((a,c)=>a+c.out-c.in,0)-XF.reduce((a,b)=>a+b,0)+(S.titleOn?+S.titleDur:0)+(S.endOn?2.5:0);
   if(playlist.length){ try{
       const dec=ab=>new Promise((res,rej)=>{ const p=ac.decodeAudioData(ab,res,rej); if(p&&p.then) p.then(res,rej); });
       const buf=await buildMix(playlist,total+20,ac.sampleRate,+S.xfade,dec,(n,i,N)=>{ $('#rInfo').textContent=`Préparation de la musique… ${N>1?(i+1)+'/'+N+' · ':''}${n}`; });
@@ -591,25 +587,38 @@ async function startFilm(plan,pre){
   const card=async(text,sub,dur)=>{ const st=performance.now(); while(!cancel){ const u=(performance.now()-st)/1000; if(u>=dur) break; drawCard(ctx,text,sub,W,H,clamp01(Math.min(u/0.7,(dur-u)/0.7))); if(mGain) mGain.gain.setTargetAtTime(musicLevel(elapsed+u),ac.currentTime,0.05); await frame(); } elapsed+=dur; prog(); };
   const prep=(el,i)=>new Promise(res=>{ const c=clips[i]; if(el.src!==c.url){ el.pause(); el.removeAttribute('src'); el.load(); el.src=c.url; } const go=()=>{ el.addEventListener('seeked',()=>res(),{once:true}); el.currentTime=Math.max(0.01,c.in); }; if(el.readyState>=1) go(); else el.addEventListener('loadedmetadata',go,{once:true}); setTimeout(res,8000); });
   if(S.titleOn) await card(S.title||'Mon film',S.subtitle,+S.titleDur);
-  const el=pool2[0], g=gains[0];
   /* contrôle d'image : sur iPhone, une vidéo qui démarre peut donner des images noires ; on ne les dessine jamais */
   const tc=document.createElement('canvas'); tc.width=tc.height=6; const tx=tc.getContext('2d',{willReadFrequently:true});
-  const frameOK=()=>{ try{ tx.clearRect(0,0,6,6); tx.drawImage(el,0,0,6,6); const d=tx.getImageData(0,0,6,6).data; let s=0; for(let k=0;k<d.length;k+=4) s+=d[k]+d[k+1]+d[k+2]+(d[k+3]<250?0:1); return s>d.length/4; }catch(e){ return true; } };
+  const frameOK=el=>{ try{ tx.clearRect(0,0,6,6); tx.drawImage(el,0,0,6,6); const d=tx.getImageData(0,0,6,6).data; let s=0; for(let k=0;k<d.length;k+=4) s+=d[k]+d[k+1]+d[k+2]+(d[k+3]<250?0:1); return s>d.length/4; }catch(e){ return true; } };
+  const ready=new Map();   /* lecteur -> promesse « placé au début du plan » */
+  const load=(el,i)=>{ const p=prep(el,i); ready.set(el,p); return p; };
+  const draw=(el,c,alpha)=>{ const vw=el.videoWidth, vh=el.videoHeight; if(!vw||el.readyState<2) return false;
+    const r=cropRect(c.crop,vw,vh,W/H); ctx.globalAlpha=alpha; ctx.drawImage(el,r.sx,r.sy,r.sw,r.sh,0,0,W,H); ctx.globalAlpha=1; return true; };
+  const playEl=async el=>{ el.muted=false; try{ await el.play(); }catch(e){ el.muted=true; await el.play().catch(()=>{}); } };
+  await load(pool2[0],0);
+  let inXf=false;   /* le plan courant a déjà démarré pendant le fondu précédent */
   for(let i=0;i<clips.length&&!cancel;i++){
-    const c=clips[i], d=c.out-c.in;
-    /* pendant le chargement de la vidéo suivante, la dernière image reste affichée (jamais d'écran noir) */
-    g.gain.setTargetAtTime(0,ac.currentTime,0.02);
-    await prep(el,i);
-    el.muted=false; try{ await el.play(); }catch(e){ el.muted=true; await el.play().catch(()=>{}); }
-    const first=i===0, lastC=i===clips.length-1&&!S.endOn; let started=false; const tw=performance.now();
+    const c=clips[i], d=c.out-c.in, el=pool2[i%2], g=gains[i%2], nx=pool2[(i+1)%2], gn=gains[(i+1)%2], cn=clips[i+1];
+    await ready.get(el);
+    if(el.paused) await playEl(el);
+    if(cn) load(nx,i+1);   /* le plan suivant se prépare pendant que celui-ci joue */
+    const first=i===0, lastC=i===clips.length-1&&!S.endOn, xf=XF[i]; let started=inXf, nStarted=false; const tw=performance.now();
     while(!cancel){ const u=el.currentTime-c.in; if(u>=d-0.02||el.ended) break;
-      const a=clamp01(Math.min(first?u/0.5:1,lastC?(d-u)/1:1)), vw=el.videoWidth, vh=el.videoHeight;
-      if(vw&&el.readyState>=2&&(el.currentTime>c.in+0.02||performance.now()-tw>1500)&&frameOK()){ started=true;
-        const r=cropRect(c.crop,vw,vh,W/H); if(a<1){ ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H); ctx.globalAlpha=a; } ctx.drawImage(el,r.sx,r.sy,r.sw,r.sh,0,0,W,H); ctx.globalAlpha=1; }
-      g.gain.setTargetAtTime(started?S.origVol/100*a:0,ac.currentTime,0.03); if(mGain) mGain.gain.setTargetAtTime(musicLevel(elapsed+u),ac.currentTime,0.05);
-      if(Math.random()<0.1){ $('#rBar').style.width=Math.min(100,(elapsed+u)/total*100)+'%'; $('#rInfo').textContent=`${fmtDur(elapsed+u)} / ${fmtDur(total)} · vidéo ${i+1} / ${clips.length}`; }
+      const a=clamp01(Math.min(first?u/0.5:1,lastC?(d-u)/1:1));
+      if(!started&&el.videoWidth&&el.readyState>=2&&(el.currentTime>c.in+0.02||performance.now()-tw>1500)&&frameOK(el)) started=true;
+      /* fondu enchaîné : le plan suivant démarre sous le plan courant */
+      if(xf&&u>=d-xf&&!nStarted){ nStarted=true; await Promise.race([ready.get(nx),sleep(300)]); playEl(nx); }
+      const k=nStarted?clamp01((u-(d-xf))/xf):0;
+      if(started){ if(a<1&&!nStarted){ ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H); } draw(el,c,a); }
+      if(nStarted&&k>0&&nx.currentTime>cn.in+0.02&&frameOK(nx)) draw(nx,{...cn,crop:cn.crop},k);
+      g.gain.setTargetAtTime(started?S.origVol/100*a*(1-k):0,ac.currentTime,0.03);
+      if(nStarted) gn.gain.setTargetAtTime(S.origVol/100*k,ac.currentTime,0.03);
+      if(mGain) mGain.gain.setTargetAtTime(musicLevel(elapsed+u),ac.currentTime,0.05);
+      if(Math.random()<0.1){ $('#rBar').style.width=Math.min(100,(elapsed+u)/total*100)+'%'; $('#rInfo').textContent=`${fmtDur(elapsed+u)} / ${fmtDur(total)} · plan ${i+1} / ${clips.length}`; }
       await frame(); }
-    el.pause(); g.gain.setTargetAtTime(0,ac.currentTime,0.02); elapsed+=d; prog();
+    el.pause(); g.gain.setTargetAtTime(0,ac.currentTime,0.02);
+    elapsed+=d-(nStarted?xf:0); inXf=nStarted; prog();
+    if(cn&&!nStarted){ await ready.get(nx); }
   }
   if(S.endOn&&!cancel) await card(S.endText,'',2.5);
   await sleep(200); rec.stop(); await stopped; try{ mSrc&&mSrc.stop(); }catch(e){} ac.close(); pool2.forEach(el=>{ el.pause(); el.removeAttribute('src'); el.load(); el.remove(); }); urlOf.forEach(u=>URL.revokeObjectURL(u)); try{ URL.revokeObjectURL(pre.u); }catch(e){}
