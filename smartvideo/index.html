@@ -103,6 +103,15 @@ canvas#rc{display:none}
 .pl .pd{font-variant-numeric:tabular-nums;font-size:13px}
 .pl button{padding:5px 10px}
 .pl-empty,.pl-tot{font-size:13px;padding:6px 0}
+/* mode magique */
+#btnMagic{background:#2b2440;border-color:#5b4a8f;color:#e8ddff;font-weight:700}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips button{padding:9px 14px}
+.chips button.on,.seg2 button.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:700}
+.seg2{display:flex;gap:6px}.seg2 button{flex:1}
+.mbig{font-size:17px;padding:14px;width:100%}
+.tile .mg{position:absolute;right:40px;top:9px;background:#6b4fd8;color:#fff;border-radius:6px;padding:1px 6px;font-size:11px;font-weight:700}
+
 </style>
 </head>
 <body>
@@ -128,6 +137,7 @@ canvas#rc{display:none}
 <div id="bottom" hidden>
   <div class="info" id="info"></div>
   <button id="selAll">Tout</button>
+  <button id="btnMagic">✨ Magique</button>
   <button class="primary" id="btnFilm">🎬 Créer</button>
 </div>
 
@@ -167,6 +177,22 @@ canvas#rc{display:none}
     <div class="row"><label>Fondu entre morceaux</label><input type="range" data-k="xfade" min="0" max="8" step="0.5" style="flex:1"><span id="v_xfade" style="width:44px"></span></div>
     <div class="row"><label>Fondu final</label><input type="range" data-k="musicFadeOut" min="0.5" max="8" step="0.5" style="flex:1"><span id="v_musicFadeOut" style="width:44px"></span></div>
     <p class="hint">Ajoute un ou plusieurs morceaux depuis l'app Fichiers (MP3, M4A…), dans l'ordre voulu (↑ ↓). Ils s'enchaînent en fondu, sans les silences de début et de fin ; la playlist recommence si le film est plus long. Les morceaux protégés d'Apple Music ne peuvent pas être utilisés.</p>
+  </div>
+</section>
+
+<!-- Film magique -->
+<section class="sheet" id="magic" hidden>
+  <div class="top"><button id="mgClose">✕</button><div class="t">✨ Film magique</div></div>
+  <div class="body">
+    <p class="hint" style="margin-top:0">SMARTVIDEO regarde tes vidéos cochées et garde automatiquement les meilleurs moments : image nette et lumineuse, sans secousses, sans ciel vide. Le film suit l'ordre chronologique.</p>
+    <div class="sec">Durée du film</div>
+    <div class="chips" id="mgDur"><button data-m="1">1 min</button><button data-m="2">2 min</button><button data-m="3">3 min</button><button data-m="5">5 min</button><button data-m="10">10 min</button><button data-m="15">15 min</button></div>
+    <div class="sec">Rythme</div>
+    <div class="seg2" id="mgRhythm"><button data-r="calme">Calme</button><button data-r="normal">Normal</button><button data-r="rapide">Rapide</button></div>
+    <p class="hint" id="mgInfo"></p>
+    <div id="mgRun" hidden><div class="bar"><i id="mgBar"></i></div><p class="hint" id="mgProg"></p></div>
+    <button class="primary mbig" id="mgGo">✨ Créer le film magique</button>
+    <p class="hint">La première fois, l'analyse prend environ 2 à 3 secondes par vidéo ; elle est gardée en mémoire pour les fois suivantes. Titre, musique et format viennent des réglages habituels.</p>
   </div>
 </section>
 
@@ -264,12 +290,13 @@ function render(){
   const g=$('#grid'); g.innerHTML=''; let last=null;
   videos.forEach((v,i)=>{ const dk=dayKey(v.date);
     if(dk!==last){ last=dk; const h=document.createElement('div'); h.className='day'; h.innerHTML=`<span>${v.date.toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'long',year:'numeric'})}</span><button data-day="${dk}">tout / rien</button>`; g.appendChild(h); }
-    const t=document.createElement('div'); t.className='tile'; t.dataset.i=i; t.innerHTML='<img alt=""><span class="check"></span><span class="bdg"></span><span class="dur"></span><button class="edit">✎</button>'; v.tile=t; g.appendChild(t); updateTile(v); });
+    const t=document.createElement('div'); t.className='tile'; t.dataset.i=i; t.innerHTML='<img alt=""><span class="check"></span><span class="bdg"></span><span class="dur"></span><span class="mg" hidden></span><button class="edit">✎</button>'; v.tile=t; g.appendChild(t); updateTile(v); });
   updateInfo(); syncFmt();
 }
 function updateTile(v){ const t=v.tile; if(!t) return; const img=$('img',t); if(v.thumb&&img.getAttribute('src')!==v.thumb) img.src=v.thumb;
   t.classList.toggle('sel',isSel(v)); t.classList.toggle('short',isShort(v)||!!v.err);
   const c=clipOf(v); $('.dur',t).textContent=v.dur?fmtDur(v.dur):'';
+  const mg=$('.mg',t); if(mg){ const n=MAGIC.last&&isSel(v)?MAGIC.last.filter(x=>x.v===v).length:0; mg.hidden=!n; mg.textContent=n>1?'✨×'+n:'✨'; }
   $('.bdg',t).textContent=v.err?'illisible':isShort(v)?'trop courte':isManual(v)?'✂ '+fmtDur(c.out-c.in):c.auto?'⚡ '+fmtDur(c.out-c.in):''; }
 function updateInfo(){ const s=videos.filter(isSel); let tot=s.reduce((a,v)=>{ const c=clipOf(v); return a+(isFinite(c.out)?c.out-c.in:0); },0); if(s.length&&S.titleOn) tot+=+S.titleDur; if(s.length&&S.endOn) tot+=2.5;
   $('#info').innerHTML=`<b>${s.length}</b> / ${videos.length} cochée${s.length>1?'s':''}${s.length?` · film <b>${fmtDur(tot)}</b> · ${S.format}`:''}`; $('#btnFilm').disabled=!s.length; }
@@ -387,6 +414,126 @@ $('#edClose').onclick=closeEd;
 $('#edPrev').onclick=()=>{ if(ed.i>0){ updateTile(videos[ed.i]); loadEd(ed.i-1); } };
 $('#edNext').onclick=()=>{ if(ed.i<videos.length-1){ updateTile(videos[ed.i]); loadEd(ed.i+1); } };
 
+
+/* ---------- mode magique : les meilleurs moments, choisis automatiquement ---------- */
+const MAGIC={last:null,busy:false};
+const RHY={calme:6.5,normal:4.5,rapide:3};
+let AN={}; try{ AN=JSON.parse(localStorage.getItem('sv-an')||'{}'); }catch(e){}
+const saveAn=()=>{ for(let k=0;k<3;k++){ try{ localStorage.setItem('sv-an',JSON.stringify(AN)); return; }catch(e){ const ks=Object.keys(AN); ks.slice(0,Math.ceil(ks.length/3)).forEach(x=>delete AN[x]); } } };
+/* analyse d'une vidéo : une image par seconde environ, réduite à 32×18 : lumière, contraste, couleurs, mouvement, ciel */
+async function analyse(v,el,tx,onStep){
+  const k=key(v); if(AN[k]&&AN[k].v===1) return AN[k];
+  const u=URL.createObjectURL(v.file);
+  try{
+    await new Promise((res,rej)=>{ const to=setTimeout(()=>rej(new Error('délai')),15000); el.onloadedmetadata=()=>{ clearTimeout(to); res(); }; el.onerror=()=>{ clearTimeout(to); rej(new Error('illisible')); }; el.src=u; el.load(); });
+    const d=v.dur||el.duration; if(!(d>0.5)) throw new Error('durée');
+    const n=Math.max(2,Math.min(80,Math.round(d))), step=d/n, pts=[]; let prev=null;
+    for(let i=0;i<n;i++){
+      const t=Math.min(d-0.05,(i+0.5)*step);
+      await new Promise(res=>{ const to=setTimeout(res,2500); el.onseeked=()=>{ clearTimeout(to); res(); }; el.currentTime=t; });
+      tx.drawImage(el,0,0,32,18); const px=tx.getImageData(0,0,32,18).data, Y=new Float32Array(576);
+      let sy=0,sy2=0,ss=0; for(let j=0;j<576;j++){ const r=px[4*j],g=px[4*j+1],b=px[4*j+2], y=0.299*r+0.587*g+0.114*b; Y[j]=y; sy+=y; sy2+=y*y; ss+=Math.max(r,g,b)-Math.min(r,g,b); }
+      const my=sy/576, c=Math.sqrt(Math.max(0,sy2/576-my*my));
+      let m=0; if(prev){ for(let j=0;j<576;j++) m+=Math.abs(Y[j]-prev[j]); m/=576; }
+      let sky=0, nb=0;  /* blocs 4×3 clairs et unis : ciel, mur blanc */
+      for(let by=0;by<18;by+=3) for(let bx=0;bx<32;bx+=4){ let a=0,a2=0; for(let yy=0;yy<3;yy++) for(let xx=0;xx<4;xx++){ const q=Y[(by+yy)*32+bx+xx]; a+=q; a2+=q*q; } a/=12; const sd=Math.sqrt(Math.max(0,a2/12-a*a)); nb++; if(a>150&&sd<7) sky++; }
+      pts.push([+t.toFixed(2),Math.round(my),Math.round(c),Math.round(ss/576),Math.round(m*10)/10,Math.round(sky/nb*100)/100]);
+      prev=Y; onStep&&onStep(i+1,n);
+    }
+    pts.length&&pts[0]&&pts.length>1&&(pts[0][4]=pts[1][4]);
+    AN[k]={v:1,dur:d,pts}; saveAn(); return AN[k];
+  } finally { el.removeAttribute('src'); el.load(); URL.revokeObjectURL(u); }
+}
+/* note de chaque instant (0 à 1) */
+function scorePts(list){
+  const ms=[], ss=[]; list.forEach(x=>x.an.pts.forEach(p=>{ ms.push(p[4]); ss.push(p[3]); }));
+  const med=a=>{ const b=a.slice().sort((x,y)=>x-y); return b.length?b[Math.floor(b.length/2)]:1; };
+  const M=Math.max(2,med(ms)), SS=Math.max(8,med(ss));
+  for(const x of list){ const d=x.an.dur; x.q=x.an.pts.map(([t,y,c,s,m,sky])=>{
+    const sb=y<22?0.1:y<=205?1:Math.max(0,Math.min(1,(240-y)/35)), sc=Math.max(0,Math.min(1,(c-10)/35)), sat=Math.min(1,s/(SS*1.5)), r=m/M;
+    const sm=r<0.15?0.65:r<=1.6?1:Math.max(0,1-(r-1.6)/1.6);
+    let q=0.38*sb+0.2*sc+0.1*sat+0.32*sm;
+    if(t<1||t>d-1) q*=0.55;          /* démarrage, arrêt de la caméra */
+    if(sky>=0.5) q*=0.2;             /* caméra tournée vers le ciel */
+    if(r>3&&m>25) q*=0.15;           /* mouvement trop rapide */
+    return q; }); }
+}
+function winScore(x,st,L){ let s=0,n=0,fast=false; const pts=x.an.pts;
+  for(let i=0;i<pts.length;i++){ const t=pts[i][0]; if(t>=st-0.3&&t<=st+L+0.3){ s+=x.q[i]; n++; if(x.q[i]<0.12) fast=true; } }
+  if(!n){ let b=0; for(let i=1;i<pts.length;i++) if(Math.abs(pts[i][0]-st-L/2)<Math.abs(pts[b][0]-st-L/2)) b=i; return x.q[b]; }
+  return s/n-(fast?0.3:0); }
+function bestWin(x,L,taken){ const d=x.an.dur; L=Math.min(L,d); let best=null;
+  for(let st=0;st<=d-L+1e-6;st+=0.5){ if(taken&&taken.some(([a,b])=>st<b+1&&st+L>a-1)) continue; const sc=winScore(x,st,L); if(!best||sc>best.sc) best={st,sc}; }
+  return best; }
+function magicPlan(list,target,S0){
+  scorePts(list);
+  const bud=Math.max(S0,target-(S.titleOn?+S.titleDur:0)-(S.endOn?2.5:0));
+  let cands=list.filter(x=>x.an.dur>=1.5).map(x=>{ const L=Math.min(S0,x.an.dur), b=bestWin(x,L); return {...x,L,st:b.st,Q:b.sc}; });
+  if(!cands.length) return [];
+  const med=cands.map(c=>c.Q).sort((a,b)=>a-b)[Math.floor(cands.length/2)];
+  const keep=cands.filter(c=>c.Q>=Math.max(0.35,0.6*med)); if(keep.length>=Math.min(3,cands.length)) cands=keep;
+  let N=Math.max(1,Math.round(bud/S0)), shots=[];
+  if(cands.length>N){
+    /* trop de vidéos : on répartit entre les journées (selon le temps filmé), puis on garde les meilleures */
+    const days=new Map(); cands.forEach(c=>{ const k=dayKey(c.v.date); if(!days.has(k)) days.set(k,[]); days.get(k).push(c); });
+    const w=[...days.values()].map(a=>Math.sqrt(a.reduce((s,c)=>s+c.an.dur,0))), W=w.reduce((a,b)=>a+b,0);
+    let quota=[...days.values()].map((a,i)=>Math.min(a.length,Math.max(1,Math.round(N*w[i]/W))));
+    let tot=quota.reduce((a,b)=>a+b,0), guard=0;
+    while(tot>N&&guard++<500){ const i=quota.indexOf(Math.max(...quota)); if(quota[i]<=1) break; quota[i]--; tot--; }
+    while(tot<N&&guard++<1000){ let bi=-1,bv=-1; [...days.values()].forEach((a,i)=>{ if(quota[i]<a.length){ const v=w[i]/(quota[i]+1); if(v>bv){ bv=v; bi=i; } } }); if(bi<0) break; quota[bi]++; tot++; }
+    [...days.values()].forEach((a,i)=>{ a.slice().sort((x,y)=>y.Q-x.Q).slice(0,quota[i]).forEach(c=>shots.push({x:c,st:c.st,L:c.L})); });
+  } else {
+    shots=cands.map(c=>({x:c,st:c.st,L:c.L}));
+    /* pas assez de vidéos : d'autres moments des vidéos les plus longues */
+    let total=shots.reduce((a,s)=>a+s.L,0), guard=0;
+    while(total<bud-S0*0.5&&guard++<400){
+      let best=null;
+      for(const c of cands){ const taken=shots.filter(s=>s.x===c).map(s=>[s.st,s.st+s.L]); if(taken.length*S0>c.an.dur*0.6) continue;
+        const b=bestWin(c,S0,taken); if(b&&b.sc>0.3){ const sc=b.sc-0.08*taken.length; if(!best||sc>best.sc) best={c,st:b.st,sc}; } }
+      if(!best) break; shots.push({x:best.c,st:best.st,L:Math.min(S0,best.c.an.dur)}); total+=Math.min(S0,best.c.an.dur);
+    }
+    /* encore court : on allonge un peu les plans */
+    if(total<bud*0.9){ const f=Math.min(1.6,bud/Math.max(1,total)); shots.forEach(s=>{ const L2=Math.min(s.x.an.dur,s.L*f), st2=Math.max(0,Math.min(s.x.an.dur-L2,s.st-(L2-s.L)/2)); s.L=L2; s.st=st2; }); }
+  }
+  shots.sort((a,b)=>(a.x.v.date-b.x.v.date)||a.x.v.name.localeCompare(b.x.v.name)||(a.st-b.st));
+  return shots.map(s=>({v:s.x.v,in:s.st,out:s.st+s.L}));
+}
+function mgSync(){
+  $$('#mgDur button').forEach(b=>b.classList.toggle('on',+b.dataset.m===+S.magicMin));
+  $$('#mgRhythm button').forEach(b=>b.classList.toggle('on',b.dataset.r===S.magicRhythm));
+  const sel=videos.filter(v=>isSel(v)&&v.dur), raw=sel.reduce((a,v)=>a+v.dur,0), done=sel.filter(v=>AN[key(v)]).length;
+  $('#mgInfo').textContent=sel.length?`${sel.length} vidéo${sel.length>1?'s':''} cochée${sel.length>1?'s':''} · ${fmtDur(raw)} de rushs${done<sel.length?` · ${sel.length-done} à analyser`:' · déjà analysées'}${raw<+S.magicMin*60?' · moins de rushs que la durée voulue : le film sera plus court':''}`:'Coche d\'abord des vidéos.';
+  $('#mgGo').disabled=!sel.length||MAGIC.busy;
+}
+$('#btnMagic').onclick=()=>{ if(S.magicMin==null) S.magicMin=2; if(!S.magicRhythm) S.magicRhythm='normal'; $('#mgRun').hidden=true; mgSync(); $('#magic').hidden=false; };
+$('#mgClose').onclick=()=>{ if(MAGIC.busy){ MAGIC.stop=true; return; } $('#magic').hidden=true; };
+$('#mgDur').onclick=e=>{ const b=e.target.closest('button'); if(!b) return; S.magicMin=+b.dataset.m; save(); mgSync(); };
+$('#mgRhythm').onclick=e=>{ const b=e.target.closest('button'); if(!b) return; S.magicRhythm=b.dataset.r; save(); mgSync(); };
+$('#mgGo').onclick=async()=>{
+  const sel=videos.filter(v=>isSel(v)&&v.dur); if(!sel.length||MAGIC.busy) return;
+  const pre=primeMedia(sel[0].file);   /* au moment du toucher : son et lecture autorisés pour la suite */
+  MAGIC.busy=true; MAGIC.stop=false; mgSync(); $('#mgRun').hidden=false;
+  let wl=null; try{ wl=await navigator.wakeLock?.request('screen'); }catch(e){}
+  const el=document.createElement('video'); el.muted=true; el.playsInline=true; el.setAttribute('playsinline',''); el.preload='auto'; el.style.cssText='width:64px;height:36px'; $('#hold').appendChild(el);
+  const cv=document.createElement('canvas'); cv.width=32; cv.height=18; const tx=cv.getContext('2d',{willReadFrequently:true});
+  const list=[]; let i=0;
+  try{
+    for(const v of sel){ if(MAGIC.stop) break; i++;
+      try{ const an=await analyse(v,el,tx,(a,b)=>{ $('#mgBar').style.width=((i-1+a/b)/sel.length*100)+'%'; $('#mgProg').textContent=`Analyse ${i} / ${sel.length} · ${v.name}`; }); list.push({v,an}); }
+      catch(e){ console.warn('analyse',v.name,e); }
+      $('#mgBar').style.width=(i/sel.length*100)+'%';
+    }
+  } finally { el.remove(); try{ wl&&wl.release(); }catch(e){} }
+  MAGIC.busy=false;
+  if(MAGIC.stop||!list.length){ $('#mgRun').hidden=true; mgSync(); if(!list.length&&!MAGIC.stop) toast('Analyse impossible'); try{ pre.ac.close(); pre.el.remove(); }catch(e){} return; }
+  const plan=magicPlan(list,+S.magicMin*60,RHY[S.magicRhythm]||4.5);
+  MAGIC.last=plan; videos.forEach(updateTile);
+  const nv=new Set(plan.map(p=>p.v)).size, dur=plan.reduce((a,p)=>a+p.out-p.in,0);
+  $('#mgProg').textContent=`${plan.length} plans choisis dans ${nv} vidéo${nv>1?'s':''} · ${fmtDur(dur)}`;
+  $('#magic').hidden=true;
+  startFilm(plan,pre).catch(err=>{ console.error(err); $('#rInfo').innerHTML=`<span style="color:var(--danger)">Erreur : ${err.message}</span>`; $('#rClose').hidden=false; $('#rCancel').hidden=true; });
+};
+
 /* ---------- pages de titre ---------- */
 function wrapText(ctx,text,maxW){ const out=[]; for(const para of String(text).split('\n')){ const ws=para.split(/\s+/).filter(Boolean); let line=''; for(const w of ws){ const t=line?line+' '+w:w; if(ctx.measureText(t).width>maxW&&line){ out.push(line); line=w; } else line=t; } out.push(line); } return out; }
 function drawCard(ctx,text,sub,W,H,a){
@@ -404,23 +551,26 @@ let cancel=false, outBlob=null, outName='';
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 function pickMime(){ return ['video/mp4;codecs=avc1.640028,mp4a.40.2','video/mp4;codecs=avc1,mp4a','video/mp4','video/webm;codecs=vp9,opus','video/webm'].find(m=>window.MediaRecorder&&MediaRecorder.isTypeSupported(m)); }
 $('#btnFilm').onclick=()=>{ startFilm().catch(err=>{ console.error(err); $('#rInfo').innerHTML=`<span style="color:var(--danger)">Erreur : ${err.message}</span>`; $('#rClose').hidden=false; $('#rCancel').hidden=true; }); };
-async function startFilm(){
-  const list=videos.filter(v=>isSel(v)&&v.dur); if(!list.length) return;
-  const mime=pickMime(); if(!mime){ alert('Cet appareil ne sait pas enregistrer de vidéo.'); return; }
-  /* tout ce qui demande un geste de l'utilisateur est fait ici, tout de suite */
+/* tout ce qui demande un geste de l'utilisateur (son, lecture vidéo) est préparé tout de suite, au moment du toucher */
+function primeMedia(firstFile){
   const ac=new (window.AudioContext||window.webkitAudioContext)(); ac.resume();
-  const pool2=[0].map(()=>{ const el=document.createElement('video'); el.playsInline=true; el.preload='auto'; el.setAttribute('playsinline',''); el.style.cssText='width:160px;height:90px'; $('#hold').appendChild(el); return el; });  /* un seul lecteur : moins de mémoire */
-  const urls=list.map(v=>URL.createObjectURL(v.file));
-  /* musique lue en continu (pas chargée entièrement en mémoire) */
-  let mEl=null;  /* la musique est décodée par l'AudioContext (méthode fiable sur iPhone) */
-  pool2.forEach((el,k)=>{ el.src=urls[Math.min(k,urls.length-1)]; const p=el.play(); if(p) p.then(()=>el.pause()).catch(()=>{}); });
+  const el=document.createElement('video'); el.playsInline=true; el.preload='auto'; el.setAttribute('playsinline',''); el.style.cssText='width:160px;height:90px'; $('#hold').appendChild(el);
+  const u=URL.createObjectURL(firstFile); el.src=u; const p=el.play(); if(p) p.then(()=>el.pause()).catch(()=>{});
+  return {ac,el,u};
+}
+async function startFilm(plan,pre){
+  const clipsIn=plan||videos.filter(v=>isSel(v)&&v.dur).map(v=>({v,...clipOf(v)})); if(!clipsIn.length) return;
+  const mime=pickMime(); if(!mime){ alert('Cet appareil ne sait pas enregistrer de vidéo.'); return; }
+  if(!pre) pre=primeMedia(clipsIn[0].v.file);
+  const ac=pre.ac, pool2=[pre.el];  /* un seul lecteur : moins de mémoire */
+  const urlOf=new Map(); clipsIn.forEach(c=>{ if(!urlOf.has(c.v)) urlOf.set(c.v,URL.createObjectURL(c.v.file)); });
   let wl=null; try{ wl=await navigator.wakeLock?.request('screen'); }catch(e){}
   $('#render').hidden=false; cancel=false; outBlob=null; ['#result','#rShare','#rDown','#rClose'].forEach(s=>$(s).hidden=true); $('#rCancel').hidden=false; $('#rHint').hidden=false; $('#rTitle').textContent='Création du film';
   const s=S.quality==='720'?720:1080, L=Math.round(s*16/9), [W,H]=S.format==='9:16'?[s,L]:[L,s];
   const cv=$('#rc'); cv.width=W; cv.height=H; const ctx=cv.getContext('2d',{alpha:false}); ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H);
   const dest=ac.createMediaStreamDestination(); const master=ac.createGain(); master.connect(dest);
   const gains=pool2.map(el=>{ const g=ac.createGain(); g.gain.value=0; try{ ac.createMediaElementSource(el).connect(g).connect(master); }catch(e){ console.warn(e); } return g; });
-  let mSrc=null, mGain=null; const clips=list.map(v=>({v,...clipOf(v),crop:getCrop(v,S.format)}));
+  let mSrc=null, mGain=null; const clips=clipsIn.map(c=>({...c,crop:getCrop(c.v,S.format),url:urlOf.get(c.v)}));
   const total=clips.reduce((a,c)=>a+c.out-c.in,0)+(S.titleOn?+S.titleDur:0)+(S.endOn?2.5:0);
   if(playlist.length){ try{
       const dec=ab=>new Promise((res,rej)=>{ const p=ac.decodeAudioData(ab,res,rej); if(p&&p.then) p.then(res,rej); });
@@ -434,7 +584,7 @@ async function startFilm(){
   const frame=()=>new Promise(r=>requestAnimationFrame(r));
   rec.start(1000); if(mSrc) mSrc.start();
   const card=async(text,sub,dur)=>{ const st=performance.now(); while(!cancel){ const u=(performance.now()-st)/1000; if(u>=dur) break; drawCard(ctx,text,sub,W,H,clamp01(Math.min(u/0.7,(dur-u)/0.7))); if(mGain) mGain.gain.setTargetAtTime(musicLevel(elapsed+u),ac.currentTime,0.05); await frame(); } elapsed+=dur; prog(); };
-  const prep=(el,i)=>new Promise(res=>{ const c=clips[i]; if(el.src!==urls[i]){ el.pause(); el.removeAttribute('src'); el.load(); el.src=urls[i]; } const go=()=>{ el.addEventListener('seeked',()=>res(),{once:true}); el.currentTime=Math.max(0.01,c.in); }; if(el.readyState>=1) go(); else el.addEventListener('loadedmetadata',go,{once:true}); setTimeout(res,8000); });
+  const prep=(el,i)=>new Promise(res=>{ const c=clips[i]; if(el.src!==c.url){ el.pause(); el.removeAttribute('src'); el.load(); el.src=c.url; } const go=()=>{ el.addEventListener('seeked',()=>res(),{once:true}); el.currentTime=Math.max(0.01,c.in); }; if(el.readyState>=1) go(); else el.addEventListener('loadedmetadata',go,{once:true}); setTimeout(res,8000); });
   if(S.titleOn) await card(S.title||'Mon film',S.subtitle,+S.titleDur);
   const el=pool2[0], g=gains[0];
   /* contrôle d'image : sur iPhone, une vidéo qui démarre peut donner des images noires ; on ne les dessine jamais */
@@ -457,11 +607,11 @@ async function startFilm(){
     el.pause(); g.gain.setTargetAtTime(0,ac.currentTime,0.02); elapsed+=d; prog();
   }
   if(S.endOn&&!cancel) await card(S.endText,'',2.5);
-  await sleep(200); rec.stop(); await stopped; try{ mSrc&&mSrc.stop(); }catch(e){} ac.close(); pool2.forEach(el=>{ el.pause(); el.removeAttribute('src'); el.load(); el.remove(); }); urls.forEach(u=>URL.revokeObjectURL(u));
+  await sleep(200); rec.stop(); await stopped; try{ mSrc&&mSrc.stop(); }catch(e){} ac.close(); pool2.forEach(el=>{ el.pause(); el.removeAttribute('src'); el.load(); el.remove(); }); urlOf.forEach(u=>URL.revokeObjectURL(u)); try{ URL.revokeObjectURL(pre.u); }catch(e){}
   try{ wl&&wl.release(); }catch(e){}
   if(cancel){ $('#render').hidden=true; return; }
   const ext=mime.startsWith('video/mp4')?'mp4':'webm'; const d=new Date();
-  outName=`SMARTVIDEO ${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}h${pad(d.getMinutes())}.${ext}`;
+  outName=`SMARTVIDEO ${plan?'magique ':''}${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}h${pad(d.getMinutes())}.${ext}`;
   outBlob=new Blob(chunks,{type:mime.split(';')[0]});
   $('#rTitle').textContent='✓ Film prêt'; $('#rInfo').textContent=`${fmtDur(total)} · ${(outBlob.size/1048576).toFixed(0)} Mo · créé en ${fmtDur((performance.now()-t0)/1000)}`; $('#rBar').style.width='100%';
   const rv=$('#result'); rv.src=URL.createObjectURL(outBlob); rv.hidden=false; $('#rShare').hidden=false; $('#rDown').hidden=false; $('#rClose').hidden=false; $('#rCancel').hidden=true; $('#rHint').hidden=true;
