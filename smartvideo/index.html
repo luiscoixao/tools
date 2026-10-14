@@ -570,8 +570,8 @@ async function startFilm(plan,pre){
   const dest=ac.createMediaStreamDestination(); const master=ac.createGain(); master.connect(dest);
   const gains=pool2.map(el=>{ const g=ac.createGain(); g.gain.value=0; try{ ac.createMediaElementSource(el).connect(g).connect(master); }catch(e){ console.warn(e); } return g; });
   let mSrc=null, mGain=null; const clips=clipsIn.map(c=>({...c,crop:getCrop(c.v,S.format),url:urlOf.get(c.v)}));
-  /* fondu enchaîné entre les plans (0,5 s) : chaque plan commence pendant les dernières images du précédent */
-  const XF=clips.map((c,i)=>i<clips.length-1&&c.out-c.in>=1.4&&clips[i+1].out-clips[i+1].in>=1.4?0.5:0);
+  /* coupe nette entre les plans (pas de fondu) ; le plan suivant est préparé à l'avance dans le 2e lecteur */
+  const XF=clips.map(()=>0);
   const total=clips.reduce((a,c)=>a+c.out-c.in,0)-XF.reduce((a,b)=>a+b,0)+(S.titleOn?+S.titleDur:0)+(S.endOn?2.5:0);
   if(playlist.length){ try{
       const dec=ab=>new Promise((res,rej)=>{ const p=ac.decodeAudioData(ab,res,rej); if(p&&p.then) p.then(res,rej); });
