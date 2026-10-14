@@ -600,19 +600,23 @@ async function startFilm(plan,pre){
   for(let i=0;i<clips.length&&!cancel;i++){
     const c=clips[i], d=c.out-c.in, el=pool2[i%2], g=gains[i%2], nx=pool2[(i+1)%2], gn=gains[(i+1)%2], cn=clips[i+1];
     await ready.get(el);
-    if(el.paused) await playEl(el);
+    if(el.paused) await playEl(el); else if(el.muted){ el.muted=false; if(el.paused) await playEl(el); }   /* démarré sans le son pendant le fondu */
     if(cn) load(nx,i+1);   /* le plan suivant se prépare pendant que celui-ci joue */
-    const first=i===0, lastC=i===clips.length-1&&!S.endOn, xf=XF[i]; let started=inXf, nStarted=false; const tw=performance.now();
+    const first=i===0, lastC=i===clips.length-1&&!S.endOn, xf=XF[i]; let started=inXf, nStarted=false; const tw=performance.now(); let lastT=-1, lastMove=performance.now();
     while(!cancel){ const u=el.currentTime-c.in; if(u>=d-0.02||el.ended) break;
       const a=clamp01(Math.min(first?u/0.5:1,lastC?(d-u)/1:1));
       if(!started&&el.videoWidth&&el.readyState>=2&&(el.currentTime>c.in+0.02||performance.now()-tw>1500)&&frameOK(el)) started=true;
       /* fondu enchaîné : le plan suivant démarre sous le plan courant */
-      if(xf&&u>=d-xf&&!nStarted){ nStarted=true; await Promise.race([ready.get(nx),sleep(300)]); playEl(nx); }
+      /* sur iPhone, une 2e vidéo qui démarre AVEC le son met la 1re en pause : on la démarre muette, le son viendra au plan suivant */
+      if(xf&&u>=d-xf&&!nStarted){ nStarted=true; await Promise.race([ready.get(nx),sleep(300)]); nx.muted=true; nx.play().catch(()=>{}); }
+      /* garde-fou : lecture interrompue par le système, ou vidéo bloquée */
+      if(el.paused&&!el.ended&&u<d-0.05){ el.play().catch(()=>{}); }
+      if(el.currentTime!==lastT){ lastT=el.currentTime; lastMove=performance.now(); } else if(performance.now()-lastMove>3000) break;
       const k=nStarted?clamp01((u-(d-xf))/xf):0;
       if(started){ if(a<1&&!nStarted){ ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H); } draw(el,c,a); }
       if(nStarted&&k>0&&nx.currentTime>cn.in+0.02&&frameOK(nx)) draw(nx,{...cn,crop:cn.crop},k);
       g.gain.setTargetAtTime(started?S.origVol/100*a*(1-k):0,ac.currentTime,0.03);
-      if(nStarted) gn.gain.setTargetAtTime(S.origVol/100*k,ac.currentTime,0.03);
+
       if(mGain) mGain.gain.setTargetAtTime(musicLevel(elapsed+u),ac.currentTime,0.05);
       if(Math.random()<0.1){ $('#rBar').style.width=Math.min(100,(elapsed+u)/total*100)+'%'; $('#rInfo').textContent=`${fmtDur(elapsed+u)} / ${fmtDur(total)} · plan ${i+1} / ${clips.length}`; }
       await frame(); }
