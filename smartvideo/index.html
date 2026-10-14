@@ -125,11 +125,8 @@ canvas#rc{display:none}
 <section id="empty">
   <img src="icon-180.png" alt="">
   <h1>SMARTVIDEO</h1>
-  <p>Choisis des vidéos dans ta photothèque, garde le meilleur passage de chacune, recadre en 9:16 ou 16:9, et crée un petit film MP4 avec titre et musique.</p>
+  <p>Un petit film à partir de tes vidéos.</p>
   <button class="primary" id="btnPick">＋ Choisir des vidéos</button>
-  <div style="margin-top:12px"><button id="btnPickMagic" style="font-size:17px;padding:14px 22px;background:#2b2440;border-color:#5b4a8f;color:#e8ddff;font-weight:700">✨ Film magique</button></div>
-  <p class="hint" style="margin-top:10px">Film magique : choisis tes vidéos, une durée, et SMARTVIDEO garde tout seul les meilleurs moments.</p>
-  <p class="hint" style="margin-top:22px">Tout reste sur ton iPhone : les vidéos ne sont envoyées nulle part.</p>
 </section>
 <input type="file" id="fileIn" accept="video/*" multiple hidden>
 <input type="file" id="musicIn" multiple accept=".mp3,.m4a,.aac,.wav,.aif,.aiff,.caf,audio/mpeg,audio/mp3,audio/mp4,audio/x-m4a,audio/aac,audio/wav,audio/*" hidden>
@@ -152,7 +149,7 @@ canvas#rc{display:none}
     <div id="track"><div id="range"></div><div class="th" id="hIn"></div><div class="th" id="hOut"></div><div id="ph"></div></div>
     <div class="btns"><button id="bPlay">▶ Passage</button><button id="bIn">[ Début</button><button id="bOut">Fin ]</button><button id="bAuto">⚡ Milieu</button><button id="bAll">Tout</button></div>
     <div class="btns" style="margin-top:6px"><button id="bSel">☐ Cochée</button><button id="bCropMax">Cadre max</button><button id="bCropC">Centrer</button></div>
-    <div class="hint" style="margin-top:6px">Glisse le cadre, pince pour zoomer, tire un coin pour le redimensionner.</div>
+
   </div>
 </section>
 
@@ -178,7 +175,7 @@ canvas#rc{display:none}
     <div class="row"><label>Volume musique</label><input type="range" data-k="musicVol" min="0" max="100" step="5" style="flex:1"><span id="v_musicVol" style="width:44px"></span></div>
     <div class="row"><label>Fondu entre morceaux</label><input type="range" data-k="xfade" min="0" max="8" step="0.5" style="flex:1"><span id="v_xfade" style="width:44px"></span></div>
     <div class="row"><label>Fondu final</label><input type="range" data-k="musicFadeOut" min="0.5" max="8" step="0.5" style="flex:1"><span id="v_musicFadeOut" style="width:44px"></span></div>
-    <p class="hint">Ajoute un ou plusieurs morceaux depuis l'app Fichiers (MP3, M4A…), dans l'ordre voulu (↑ ↓). Ils s'enchaînent en fondu, sans les silences de début et de fin ; la playlist recommence si le film est plus long. Les morceaux protégés d'Apple Music ne peuvent pas être utilisés.</p>
+    <p class="hint">Morceaux MP3 ou M4A depuis l'app Fichiers.</p>
   </div>
 </section>
 
@@ -186,7 +183,6 @@ canvas#rc{display:none}
 <section class="sheet" id="magic" hidden>
   <div class="top"><button id="mgClose">✕</button><div class="t">✨ Film magique</div></div>
   <div class="body">
-    <p class="hint" style="margin-top:0">SMARTVIDEO regarde tes vidéos cochées et garde automatiquement les meilleurs moments : image nette et lumineuse, sans secousses, sans ciel vide. Le film suit l'ordre chronologique.</p>
     <div class="sec">Durée du film</div>
     <div class="chips" id="mgDur"><button data-m="1">1 min</button><button data-m="2">2 min</button><button data-m="3">3 min</button><button data-m="5">5 min</button><button data-m="10">10 min</button><button data-m="15">15 min</button></div>
     <div class="sec">Rythme</div>
@@ -194,7 +190,6 @@ canvas#rc{display:none}
     <p class="hint" id="mgInfo"></p>
     <div id="mgRun" hidden><div class="bar"><i id="mgBar"></i></div><p class="hint" id="mgProg"></p></div>
     <button class="primary mbig" id="mgGo">✨ Créer le film magique</button>
-    <p class="hint">La première fois, l'analyse prend environ 2 à 3 secondes par vidéo ; elle est gardée en mémoire pour les fois suivantes. Titre, musique et format viennent des réglages habituels.</p>
   </div>
 </section>
 
@@ -204,7 +199,7 @@ canvas#rc{display:none}
   <div class="body">
     <div class="bar"><i id="rBar"></i></div>
     <div id="rInfo" class="muted"></div>
-    <div class="hint" id="rHint">Garde SMARTVIDEO ouvert et l'écran allumé pendant la création (elle se fait en temps réel).</div>
+    <div class="hint" id="rHint">Garde l'écran allumé.</div>
     <video id="result" controls playsinline hidden></video>
     <button class="primary" id="rShare" hidden>💾 Enregistrer dans Photos / Partager</button>
     <button id="rDown" hidden>Télécharger le fichier</button>
@@ -252,7 +247,7 @@ async function shootingDate(file){
 /* ---------- import ---------- */
 let magicAfterPick=false;
 $('#btnPick').onclick=$('#btnAdd').onclick=()=>{ magicAfterPick=false; $('#fileIn').click(); };
-$('#btnPickMagic').onclick=()=>{ magicAfterPick=true; $('#fileIn').click(); };
+
 $('#fileIn').onchange=async e=>{
   const files=[...e.target.files]; e.target.value=''; if(!files.length) return;
   $('#empty').hidden=true; $('#grid').hidden=false; $('#bottom').hidden=false;
@@ -499,7 +494,7 @@ function mgSync(){
   $$('#mgDur button').forEach(b=>b.classList.toggle('on',+b.dataset.m===+S.magicMin));
   $$('#mgRhythm button').forEach(b=>b.classList.toggle('on',b.dataset.r===S.magicRhythm));
   const sel=videos.filter(v=>isSel(v)&&v.dur), raw=sel.reduce((a,v)=>a+v.dur,0), done=sel.filter(v=>AN[key(v)]).length;
-  $('#mgInfo').textContent=sel.length?`${sel.length} vidéo${sel.length>1?'s':''} cochée${sel.length>1?'s':''} · ${fmtDur(raw)} de rushs${done<sel.length?` · ${sel.length-done} à analyser`:' · déjà analysées'}${raw<+S.magicMin*60?' · moins de rushs que la durée voulue : le film sera plus court':''}`:'Coche d\'abord des vidéos.';
+  $('#mgInfo').textContent=sel.length?`${sel.length} vidéo${sel.length>1?'s':''} cochée${sel.length>1?'s':''} · ${fmtDur(raw)} de rushs`:'Coche d\'abord des vidéos.';
   $('#mgGo').disabled=!sel.length||MAGIC.busy;
 }
 $('#btnMagic').onclick=()=>{ if(S.magicMin==null) S.magicMin=2; if(!S.magicRhythm) S.magicRhythm='normal'; $('#mgRun').hidden=true; mgSync(); $('#magic').hidden=false; };
@@ -592,6 +587,11 @@ async function startFilm(plan,pre){
   const frameOK=el=>{ try{ tx.clearRect(0,0,6,6); tx.drawImage(el,0,0,6,6); const d=tx.getImageData(0,0,6,6).data; let s=0; for(let k=0;k<d.length;k+=4) s+=d[k]+d[k+1]+d[k+2]+(d[k+3]<250?0:1); return s>d.length/4; }catch(e){ return true; } };
   const ready=new Map();   /* lecteur -> promesse « placé au début du plan » */
   const load=(el,i)=>{ const p=prep(el,i); ready.set(el,p); return p; };
+  /* une seule copie par nouvelle image de la vidéo (au lieu de 60 par seconde) : moins de travail pour l'iPhone */
+  const RVFC='requestVideoFrameCallback' in HTMLVideoElement.prototype;
+  const watch=el=>{ if(!RVFC||el._w) return; el._w=1; const f=()=>{ el._nf=true; el.requestVideoFrameCallback(f); }; el.requestVideoFrameCallback(f); };
+  pool2.forEach(watch);
+  const fresh=el=>{ if(!RVFC) return true; const n=el._nf; el._nf=false; return n; };
   const draw=(el,c,alpha)=>{ const vw=el.videoWidth, vh=el.videoHeight; if(!vw||el.readyState<2) return false;
     const r=cropRect(c.crop,vw,vh,W/H); ctx.globalAlpha=alpha; ctx.drawImage(el,r.sx,r.sy,r.sw,r.sh,0,0,W,H); ctx.globalAlpha=1; return true; };
   const playEl=async el=>{ el.muted=false; try{ await el.play(); }catch(e){ el.muted=true; await el.play().catch(()=>{}); } };
@@ -613,7 +613,7 @@ async function startFilm(plan,pre){
       if(el.paused&&!el.ended&&u<d-0.05){ el.play().catch(()=>{}); }
       if(el.currentTime!==lastT){ lastT=el.currentTime; lastMove=performance.now(); } else if(performance.now()-lastMove>3000) break;
       const k=nStarted?clamp01((u-(d-xf))/xf):0;
-      if(started){ if(a<1&&!nStarted){ ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H); } draw(el,c,a); }
+      if(started&&(fresh(el)||a<1)){ if(a<1&&!nStarted){ ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H); } draw(el,c,a); }
       if(nStarted&&k>0&&nx.currentTime>cn.in+0.02&&frameOK(nx)) draw(nx,{...cn,crop:cn.crop},k);
       g.gain.setTargetAtTime(started?S.origVol/100*a*(1-k):0,ac.currentTime,0.03);
 
