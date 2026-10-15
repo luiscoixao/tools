@@ -784,11 +784,11 @@ async function audioClip(v,trk,t0,t1){
   }
   return [L,R];
 }
-async function renderV2(clipsIn,sup){
+async function renderV2(clipsIn,sup,actx){
   const {W,H,s}=sup, VC=sup.vc, AC=sup.ac;
   let wl=null; try{ wl=await navigator.wakeLock?.request('screen'); }catch(e){}
   $('#render').hidden=false; cancel=false; outBlob=null; ['#result','#rShare','#rDown','#rClose'].forEach(x=>$(x).hidden=true); $('#rCancel').hidden=false; $('#rHint').hidden=false; $('#rTitle').textContent='Création du film';
-  const t0=performance.now();
+  const t0=performance.now(); let noMusic=false;
   const clips=clipsIn.map(c=>({...c,crop:getCrop(c.v,S.format)}));
   const TD=S.titleOn?+S.titleDur:0, ED=S.endOn?2.5:0;
   /* minutage du film, en images exactes */
@@ -849,20 +849,23 @@ async function renderV2(clipsIn,sup){
   /* ---- son : son des vidéos + musique, mixés et encodés morceau par morceau (peu de mémoire) ---- */
   if(!cancel){
     $('#rInfo').textContent='Son…';
-    let mus=null;
+    let mus=null, mr=1;
     if(playlist.length){ try{
-      const oac=new (window.OfflineAudioContext||window.webkitOfflineAudioContext)(2,48000,48000);
-      const dec=ab=>new Promise((res,rej)=>{ const p=oac.decodeAudioData(ab,res,rej); if(p&&p.then) p.then(res,rej); });
-      const buf=await buildMix(playlist,total+2,48000,+S.xfade,dec,(nm,i,N)=>{ $('#rInfo').textContent=`Musique… ${N>1?(i+1)+'/'+N+' · ':''}${nm}`; });
-      if(buf) mus=[buf.getChannelData(0),buf.numberOfChannels>1?buf.getChannelData(1):buf.getChannelData(0)]; else toast('Musique illisible : film sans musique');
-    }catch(e){ console.warn(e); toast('Musique illisible : film sans musique'); } }
+      /* décodage avec le contexte audio ouvert au toucher du bouton (Safari décode mal avec un contexte hors ligne) */
+      const cx=actx||new (window.OfflineAudioContext||window.webkitOfflineAudioContext)(2,48000,48000), sr=cx.sampleRate;
+      const dec=ab=>new Promise((res,rej)=>{ const p=cx.decodeAudioData(ab,res,rej); if(p&&p.then) p.then(res,rej); });
+      const buf=await buildMix(playlist,total+2,sr,+S.xfade,dec,(nm,i,N)=>{ $('#rInfo').textContent=`Musique… ${N>1?(i+1)+'/'+N+' · ':''}${nm}`; });
+      if(buf){ mus=[buf.getChannelData(0),buf.numberOfChannels>1?buf.getChannelData(1):buf.getChannelData(0)]; mr=sr/48000; } else noMusic=true;
+    }catch(e){ console.warn(e); noMusic=true; } }
+    try{ actx&&actx.close(); }catch(e){}
     let aerr=null; const aenc=new AudioEncoder({output:(ch,meta)=>muxer.addAudioChunk(ch,meta),error:e=>{ aerr=e; }});
     aenc.configure({codec:AC.codec,sampleRate:48000,numberOfChannels:2,bitrate:160000});
     const ov=S.origVol/100, mv=S.musicVol/100, fo=Math.max(0.1,+S.musicFadeOut), B=4800, NS=Math.round(total*48000);
     let pos=0;
     const put=async(L,R)=>{ const m=L.length;
       for(let i=0;i<m;i++){ let a=L[i], b=R[i];
-        if(mus&&pos+i<mus[0].length){ const t=(pos+i)/48000, g=mv*clamp01(Math.min(t/1.2,(total-t)/fo)); a+=mus[0][pos+i]*g; b+=mus[1][pos+i]*g; }
+        if(mus){ const x=(pos+i)*mr, x0=x|0, f=x-x0; if(x0+1<mus[0].length){ const t=(pos+i)/48000, g=mv*clamp01(Math.min(t/1.2,(total-t)/fo));
+          a+=(mus[0][x0]*(1-f)+mus[0][x0+1]*f)*g; b+=(mus[1][x0]*(1-f)+mus[1][x0+1]*f)*g; } }
         L[i]=a>1?1:a<-1?-1:a; R[i]=b>1?1:b<-1?-1:b; }
       for(let i=0;i<m&&!cancel;i+=B){ const k=Math.min(B,m-i), d=new Float32Array(k*2); d.set(L.subarray(i,i+k),0); d.set(R.subarray(i,i+k),k);
         const ad=new AudioData({format:'f32-planar',sampleRate:48000,numberOfFrames:k,numberOfChannels:2,timestamp:Math.round((pos+i)*1e6/48000),data:d}); aenc.encode(ad); ad.close();
@@ -886,7 +889,7 @@ async function renderV2(clipsIn,sup){
   const d=new Date();
   outName=`SMARTVIDEO ${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}h${pad(d.getMinutes())}.mp4`;
   outBlob=new Blob([muxer.target.buffer],{type:'video/mp4'});
-  $('#rTitle').textContent='✓ Film prêt'; $('#rInfo').textContent=`${fmtDur(total)} · ${(outBlob.size/1048576).toFixed(0)} Mo · créé en ${fmtDur((performance.now()-t0)/1000)}`; $('#rBar').style.width='100%';
+  $('#rTitle').textContent='✓ Film prêt'; $('#rInfo').textContent=`${fmtDur(total)} · ${(outBlob.size/1048576).toFixed(0)} Mo · créé en ${fmtDur((performance.now()-t0)/1000)}${noMusic?' · ⚠︎ musique illisible':''}`; $('#rBar').style.width='100%';
   const rv=$('#result'); rv.src=URL.createObjectURL(outBlob); rv.hidden=false; $('#rShare').hidden=false; $('#rDown').hidden=false; $('#rClose').hidden=false; $('#rCancel').hidden=true; $('#rHint').hidden=true;
 }
 /* point d'entrée : V2 si l'iPhone sait faire, sinon l'ancienne méthode */
@@ -894,10 +897,12 @@ async function makeFilm(plan,pre){
   const clipsIn=plan||videos.filter(v=>isSel(v)&&v.dur).map(v=>({v,...clipOf(v)})); if(!clipsIn.length) return;
   /* sans les outils WebCodecs : ancienne méthode, lancée tout de suite (le geste de l'utilisateur est encore valable) */
   if(!(window.VideoEncoder&&window.VideoDecoder&&window.AudioEncoder&&window.Mp4Muxer)) return startFilm(clipsIn,pre);
+  /* contexte audio ouvert pendant le toucher : il sert à lire la musique */
+  let actx=pre&&pre.ac; if(!actx&&playlist.length){ try{ actx=new (window.AudioContext||window.webkitAudioContext)(); actx.resume(); }catch(e){} }
   const sup=await v2Support();
   if(!sup){ toast('Cet iPhone ne permet pas la fabrication image par image : ancienne méthode'); return startFilm(clipsIn,pre); }
-  try{ if(pre){ pre.ac.close(); pre.el.remove(); pre.el2&&pre.el2.remove(); } }catch(e){}
-  return renderV2(clipsIn,sup);
+  try{ if(pre){ pre.el.remove(); pre.el2&&pre.el2.remove(); } }catch(e){}
+  return renderV2(clipsIn,sup,actx);
 }
 
 $('#rCancel').onclick=()=>{ cancel=true; };
