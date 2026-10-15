@@ -476,6 +476,8 @@ function shareTime(durs,bud,lmax){ /* répartition équitable, chaque vidéo pla
     for(const i of open){ const cap=Math.min(durs[i],lmax); const add=Math.min(each,cap-out[i]); out[i]+=add; used+=add; if(out[i]<cap-0.01) next.push(i); }
     left-=used; open=next; if(used<0.01) break; }
   return out; }
+/* durée qu'une vidéo peut donner : ses plans sont séparés d'au moins 2 s */
+function usable(d,lmax){ if(d<=lmax) return d; const k=Math.max(1,Math.floor((d+2)/(lmax+2))); return Math.min(d,Math.max(lmax,k*lmax*0.92)); }
 function magicPlan(list,target,rhythm){
   scorePts(list);
   const lmax=LMAX[rhythm]||6, lmin=LMIN[rhythm]||2;
@@ -494,8 +496,13 @@ function magicPlan(list,target,rhythm){
     while(tot<N&&guard++<1000){ let bi=-1,bv=-1; groups.forEach((a,i)=>{ if(quota[i]<a.length){ const v=w[i]/(quota[i]+1); if(v>bv){ bv=v; bi=i; } } }); if(bi<0) break; quota[bi]++; tot++; }
     cands=[]; groups.forEach((a,i)=>a.slice().sort((x,y)=>y.Q-x.Q).slice(0,quota[i]).forEach(c=>cands.push(c)));
   }
-  const lens=shareTime(cands.map(c=>c.an.dur),bud,lmax);
-  const shots=cands.map((c,i)=>{ const L=Math.max(Math.min(lmin,c.an.dur),lens[i]), b=bestWin(c,L); return {x:c,st:b.st,L:Math.min(L,c.an.dur-b.st)}; });
+  /* temps de chaque vidéo : partage équitable, plafonné par ce que la vidéo peut donner ;
+     au-delà de lmax, la vidéo donne plusieurs plans (les meilleurs moments, sans se chevaucher) */
+  const lens=shareTime(cands.map(c=>usable(c.an.dur,lmax)),bud,Infinity);
+  const shots=[];
+  cands.forEach((c,i)=>{ const d=c.an.dur, T=Math.max(Math.min(lmin,d),lens[i]), k=Math.max(1,Math.ceil(T/lmax-0.05)); let L=T/k; const taken=[];
+    for(let q=0;q<k;q++){ let b=null, l=L; while(l>=Math.min(lmin,d)-1e-6){ b=bestWin(c,l,taken); if(b) break; l*=0.8; } if(!b) break;
+      const len=Math.min(l,d-b.st); taken.push([b.st,b.st+len]); shots.push({x:c,st:b.st,L:len}); } });
   shots.sort((a,b)=>(a.x.v.date-b.x.v.date)||a.x.v.name.localeCompare(b.x.v.name)||(a.st-b.st));
   return shots.map(s=>({v:s.x.v,in:s.st,out:s.st+s.L}));
 }
@@ -505,8 +512,8 @@ function mgSync(){
   const sel=videos.filter(v=>isSel(v)&&v.dur), raw=sel.reduce((a,v)=>a+v.dur,0), done=sel.filter(v=>AN[key(v)]).length;
   let est='';
   if(sel.length){ const r=S.magicRhythm||'normal', bud=Math.max(1,+S.magicMin*60-(S.titleOn?+S.titleDur:0)-(S.endOn?2.5:0)), N=Math.floor(bud/(LMIN[r]||2));
-    const n=Math.min(sel.length,N), lens=shareTime(sel.slice(0,n).map(v=>v.dur),bud,LMAX[r]||6), tot=lens.reduce((a,b)=>a+b,0), per=tot/Math.max(1,n);
-    est=` → ${n<sel.length?n+' vidéos gardées':'toutes les vidéos'}, ≈ ${per.toFixed(1).replace('.',',')} s chacune${tot<bud-5?` · film de ${fmtDur(tot+(S.titleOn?+S.titleDur:0))} (plans de ${LMAX[r]} s max)`:''}`; }
+    const n=Math.min(sel.length,N), lm=LMAX[r]||6, lens=shareTime(sel.slice(0,n).map(v=>usable(v.dur,lm)),bud,Infinity), tot=lens.reduce((a,b)=>a+b,0), per=tot/Math.max(1,n);
+    est=` → ${n<sel.length?n+' vidéos gardées':'toutes les vidéos'}${per>lm?'':`, ≈ ${per.toFixed(1).replace('.',',')} s chacune`}${tot<bud-5?` · film de ${fmtDur(tot+(S.titleOn?+S.titleDur:0))} : pas assez de vidéo`:''}`; }
   $('#mgInfo').textContent=sel.length?`${sel.length} vidéo${sel.length>1?'s':''} cochée${sel.length>1?'s':''}${est}`:'Coche d\'abord des vidéos.';
   $('#mgGo').disabled=!sel.length||MAGIC.busy;
 }
@@ -535,7 +542,7 @@ $('#mgGo').onclick=async()=>{
   MAGIC.last=plan; videos.forEach(updateTile);
   const nv=new Set(plan.map(p=>p.v)).size, dur=plan.reduce((a,p)=>a+p.out-p.in,0);
   $('#mgProg').textContent=`${plan.length} plans choisis dans ${nv} vidéo${nv>1?'s':''} · ${fmtDur(dur)}`;
-  if(dur<+S.magicMin*60*0.85) toast(`Film de ${fmtDur(dur)} : plans de ${LMAX[S.magicRhythm]||6} s maximum. Ajoute des vidéos ou choisis un rythme plus calme pour un film plus long.`);
+  if(dur<+S.magicMin*60*0.85) toast(`Film de ${fmtDur(dur)} : pas assez de vidéo pour la durée choisie.`);
   $('#magic').hidden=true;
   makeFilm(plan,pre).catch(err=>{ console.error(err); $('#rInfo').innerHTML=`<span style="color:var(--danger)">Erreur : ${err.message}</span>`; $('#rClose').hidden=false; $('#rCancel').hidden=true; });
 };
@@ -788,7 +795,7 @@ async function renderV2(clipsIn,sup,actx){
   const {W,H,s}=sup, VC=sup.vc, AC=sup.ac;
   let wl=null; try{ wl=await navigator.wakeLock?.request('screen'); }catch(e){}
   $('#render').hidden=false; cancel=false; outBlob=null; ['#result','#rShare','#rDown','#rClose'].forEach(x=>$(x).hidden=true); $('#rCancel').hidden=false; $('#rHint').hidden=false; $('#rTitle').textContent='Création du film';
-  const t0=performance.now(); let noMusic=false;
+  const t0=performance.now(); let noMusic=false, nA=0, hasMusic=false;
   const clips=clipsIn.map(c=>({...c,crop:getCrop(c.v,S.format)}));
   const TD=S.titleOn?+S.titleDur:0, ED=S.endOn?2.5:0;
   /* minutage du film, en images exactes */
@@ -855,10 +862,13 @@ async function renderV2(clipsIn,sup,actx){
       const cx=actx||new (window.OfflineAudioContext||window.webkitOfflineAudioContext)(2,48000,48000), sr=cx.sampleRate;
       const dec=ab=>new Promise((res,rej)=>{ const p=cx.decodeAudioData(ab,res,rej); if(p&&p.then) p.then(res,rej); });
       const buf=await buildMix(playlist,total+2,sr,+S.xfade,dec,(nm,i,N)=>{ $('#rInfo').textContent=`Musique… ${N>1?(i+1)+'/'+N+' · ':''}${nm}`; });
-      if(buf){ mus=[buf.getChannelData(0),buf.numberOfChannels>1?buf.getChannelData(1):buf.getChannelData(0)]; mr=sr/48000; } else noMusic=true;
+      if(buf){ mus=[buf.getChannelData(0),buf.numberOfChannels>1?buf.getChannelData(1):buf.getChannelData(0)]; mr=sr/48000; hasMusic=true; } else noMusic=true;
     }catch(e){ console.warn(e); noMusic=true; } }
     try{ actx&&actx.close(); }catch(e){}
-    let aerr=null; const aenc=new AudioEncoder({output:(ch,meta)=>muxer.addAudioChunk(ch,meta),error:e=>{ aerr=e; }});
+    let aerr=null; const aenc=new AudioEncoder({output:(ch,meta)=>{
+      /* Safari peut omettre la description AAC : sans elle, la piste son est muette. On la fournit (AAC-LC, 48 kHz, stéréo). */
+      if(AC.mux==='aac'&&meta&&meta.decoderConfig&&!(meta.decoderConfig.description&&meta.decoderConfig.description.byteLength)) meta={...meta,decoderConfig:{...meta.decoderConfig,description:new Uint8Array([0x11,0x90])}};
+      muxer.addAudioChunk(ch,meta); nA++; },error:e=>{ aerr=e; }});
     aenc.configure({codec:AC.codec,sampleRate:48000,numberOfChannels:2,bitrate:160000});
     const ov=S.origVol/100, mv=S.musicVol/100, fo=Math.max(0.1,+S.musicFadeOut), B=4800, NS=Math.round(total*48000);
     let pos=0;
@@ -889,7 +899,7 @@ async function renderV2(clipsIn,sup,actx){
   const d=new Date();
   outName=`SMARTVIDEO ${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}h${pad(d.getMinutes())}.mp4`;
   outBlob=new Blob([muxer.target.buffer],{type:'video/mp4'});
-  $('#rTitle').textContent='✓ Film prêt'; $('#rInfo').textContent=`${fmtDur(total)} · ${(outBlob.size/1048576).toFixed(0)} Mo · créé en ${fmtDur((performance.now()-t0)/1000)}${noMusic?' · ⚠︎ musique illisible':''}`; $('#rBar').style.width='100%';
+  $('#rTitle').textContent='✓ Film prêt'; $('#rInfo').textContent=`${fmtDur(total)} · ${(outBlob.size/1048576).toFixed(0)} Mo · créé en ${fmtDur((performance.now()-t0)/1000)}${noMusic?' · ⚠︎ musique illisible':hasMusic?' · ♪':''}${nA?'':' · ⚠︎ sans son'}`; $('#rBar').style.width='100%';
   const rv=$('#result'); rv.src=URL.createObjectURL(outBlob); rv.hidden=false; $('#rShare').hidden=false; $('#rDown').hidden=false; $('#rClose').hidden=false; $('#rCancel').hidden=true; $('#rHint').hidden=true;
 }
 /* point d'entrée : V2 si l'iPhone sait faire, sinon l'ancienne méthode */
