@@ -867,7 +867,10 @@ async function renderV2(clipsIn,sup,actx){
     try{ actx&&actx.close(); }catch(e){}
     let aerr=null; const aenc=new AudioEncoder({output:(ch,meta)=>{
       /* Safari peut omettre la description AAC : sans elle, la piste son est muette. On la fournit (AAC-LC, 48 kHz, stéréo). */
-      if(AC.mux==='aac'&&meta&&meta.decoderConfig&&!(meta.decoderConfig.description&&meta.decoderConfig.description.byteLength)) meta={...meta,decoderConfig:{...meta.decoderConfig,description:new Uint8Array([0x11,0x90])}};
+      /* Safari donne la description AAC emballée dans un descripteur complet (03…04…05) : il ne faut garder que la config (tag 05), sinon le son est illisible */
+      if(AC.mux==='aac'&&meta&&meta.decoderConfig){ const dc=meta.decoderConfig; let d=dc.description; d=d?(d instanceof ArrayBuffer?new Uint8Array(d):new Uint8Array(d.buffer,d.byteOffset,d.byteLength)):null;
+        let asc=null; if(d&&d.length){ asc=d; for(let g=0;g<4&&asc&&asc.length>2&&(asc[0]===3||asc[0]===5);g++) asc=asc[0]===3?parseEsds(asc,0,asc.length):parseEsds(new Uint8Array([3,3,0,0,0,...asc]),0,asc.length+5); if(asc&&asc.length>8) asc=null; }
+        meta={...meta,decoderConfig:{...dc,description:(asc&&asc.length?asc:new Uint8Array([0x11,0x90])).slice()}}; }
       muxer.addAudioChunk(ch,meta); nA++; },error:e=>{ aerr=e; }});
     aenc.configure({codec:AC.codec,sampleRate:48000,numberOfChannels:2,bitrate:160000});
     const ov=S.origVol/100, mv=S.musicVol/100, fo=Math.max(0.1,+S.musicFadeOut), B=4800, NS=Math.round(total*48000);
