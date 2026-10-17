@@ -124,6 +124,7 @@ canvas#rc{display:none}
 .tb .pi{position:absolute;right:3px;top:3px;font-size:11px}
 .tb .fl{position:absolute;left:-1px;top:-1px;background:var(--accent);color:var(--accent-ink);font-size:11px;font-weight:700;border-radius:4px 0 6px 0;padding:0 5px}
 .tb.cur{outline:3px solid #fff;outline-offset:-3px}
+.tb .vo{position:absolute;right:3px;bottom:3px;font-size:10px;background:#000b;border-radius:4px;padding:0 4px}
 .mu{position:relative;height:30px;margin-top:6px;background:var(--panel2);border-radius:6px}
 .ms{position:absolute;top:0;bottom:0;border-radius:6px;font-size:11px;line-height:30px;padding:0 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#111;font-weight:600;border-right:2px solid var(--bg)}
 .mu .none{font-size:12px;color:var(--muted);line-height:30px;padding:0 8px;position:sticky;left:0}
@@ -225,7 +226,11 @@ canvas#rc{display:none}
     <div id="tlPanel" hidden>
       <div class="row"><label id="tlWhat"></label></div>
       <div class="row" style="flex-wrap:nowrap"><span>♪ Ici</span><select id="tlSel"></select></div>
+      <div class="row" id="tlVolRow" style="flex-wrap:nowrap"><span>🔊 Son du plan</span><input type="range" id="tlVol" min="0" max="200" step="10" style="flex:1"><b id="tlVolV" style="width:56px;text-align:right;white-space:nowrap"></b></div>
     </div>
+    <div class="sec">Volume général</div>
+    <div class="row" style="flex-wrap:nowrap"><span style="width:110px">Son des vidéos</span><input type="range" id="tlOrig" min="0" max="100" step="5" style="flex:1"><b id="tlOrigV" style="width:56px;text-align:right;white-space:nowrap"></b></div>
+    <div class="row" style="flex-wrap:nowrap"><span style="width:110px">Musique</span><input type="range" id="tlMus" min="0" max="100" step="5" style="flex:1"><b id="tlMusV" style="width:56px;text-align:right;white-space:nowrap"></b></div>
     <div class="row" style="flex-wrap:nowrap;margin-top:18px"><label style="min-width:0">Morceaux</label><button id="tlAdd">＋ Ajouter…</button></div>
     <div id="tlList"></div>
   </div>
@@ -430,6 +435,10 @@ async function buildMix(tracks,seconds,sr,xf,decode,info){
 /* ---------- musique placée sur la timeline ----------
    MK : clé de plan -> n° du morceau qui commence à ce plan ; ensuite la playlist continue dans l'ordre */
 let MK={};
+/* volume de chaque plan (1 = normal), en plus du volume général des vidéos */
+let VOL={}; try{ VOL=JSON.parse(localStorage.getItem('sv-vol')||'{}'); }catch(e){}
+const volOf=k=>VOL[k]!=null?VOL[k]:1;
+const saveVol=()=>{ try{ localStorage.setItem('sv-vol',JSON.stringify(VOL)); }catch(e){} };
 function musicSegs(B){ const out=[]; B.forEach(b=>{ const m=MK[b.k]; if(m!=null&&m<playlist.length) out.push({t:b.T,track:m}); });
   if(!out.length||out[0].t>0.01) out.unshift({t:0,track:0}); return out; }
 /* aperçu : quel morceau joue quand (durées connues des morceaux) */
@@ -483,6 +492,7 @@ function tlRender(){
     else { const th=b.kind==='clip'?b.c.v.thumb:b.p.thumb; if(th) d.style.backgroundImage=`url("${th}")`; if(b.kind==='photo') d.insertAdjacentHTML('beforeend','<span class="pi">📷</span>'); }
     d.insertAdjacentHTML('beforeend',`<span class="tt">${fmtDur(b.T)}</span>`);
     if(MK[b.k]!=null&&MK[b.k]<playlist.length) d.insertAdjacentHTML('beforeend',`<span class="fl">♪ ${MK[b.k]+1}</span>`);
+    if(b.kind==='clip'&&volOf(b.k)!==1) d.insertAdjacentHTML('beforeend',`<span class="vo">${volOf(b.k)?'🔊 '+Math.round(volOf(b.k)*100)+'%':'🔇'}</span>`);
     row.appendChild(d); });
   $('#tlIn').style.width=x+'px';
   const xOf=t=>{ for(const b of B){ if(t<b.T+b.dur-1e-6) return b.x+Math.max(0,(t-b.T)/b.dur)*b.w; } return x; };
@@ -493,12 +503,19 @@ function tlRender(){
   const list=$('#tlList'); list.innerHTML='';
   playlist.forEach((m,i)=>{ const r=document.createElement('div'); r.className='tlSong'; r.innerHTML=`<i style="background:${MCOL[i%MCOL.length]}"></i><span></span><em class="muted">${m.dur?fmtDur(m.dur):''}</em><button data-rm="${i}">✕</button>`; $('span',r).textContent=`${i+1}. ${m.name}`; list.appendChild(r); });
   if(TL.cur>=0) tlPanel();
+  $('#tlOrig').value=S.origVol; $('#tlOrigV').textContent=S.origVol+' %'; $('#tlMus').value=S.musicVol; $('#tlMusV').textContent=S.musicVol+' %';
 }
 function tlPanel(){ const b=TL.B[TL.cur]; if(!b){ $('#tlPanel').hidden=true; return; }
   $('#tlWhat').textContent=(b.kind==='title'?'Titre':b.kind==='end'?'Page de fin':b.kind==='photo'?'Photo':'Plan')+` · à ${fmtDur(b.T)}`;
   const sel=$('#tlSel'); sel.innerHTML=''; const o0=document.createElement('option'); o0.value=''; o0.textContent=playlist.length?'— la playlist continue —':'Ajoute d\'abord des morceaux'; sel.appendChild(o0);
   playlist.forEach((m,i)=>{ const o=document.createElement('option'); o.value=i; o.textContent=`${i+1}. ${m.name}`; sel.appendChild(o); });
-  sel.value=MK[b.k]!=null&&MK[b.k]<playlist.length?String(MK[b.k]):''; $('#tlPanel').hidden=false; }
+  sel.value=MK[b.k]!=null&&MK[b.k]<playlist.length?String(MK[b.k]):'';
+  $('#tlVolRow').hidden=b.kind!=='clip'; if(b.kind==='clip'){ const v=Math.round(volOf(b.k)*100); $('#tlVol').value=v; $('#tlVolV').textContent=v?v+' %':'muet'; }
+  $('#tlPanel').hidden=false; }
+$('#tlVol').oninput=()=>{ const b=TL.B[TL.cur]; if(!b||b.kind!=='clip') return; const v=+$('#tlVol').value; if(v===100) delete VOL[b.k]; else VOL[b.k]=v/100; saveVol(); $('#tlVolV').textContent=v?v+' %':'muet'; };
+$('#tlVol').onchange=()=>tlRender();
+$('#tlOrig').oninput=()=>{ S.origVol=+$('#tlOrig').value; $('#tlOrigV').textContent=S.origVol+' %'; save(); };
+$('#tlMus').oninput=()=>{ S.musicVol=+$('#tlMus').value; $('#tlMusV').textContent=S.musicVol+' %'; save(); };
 $('#tlRow').addEventListener('click',e=>{ const d=e.target.closest('.tb'); if(!d) return; TL.cur=+d.dataset.i; tlRender(); });
 $('#tlSel').onchange=()=>{ const b=TL.B[TL.cur]; if(!b) return; const v=$('#tlSel').value; if(v==='') delete MK[b.k]; else MK[b.k]=+v; tlRender(); };
 $('#tlList').addEventListener('click',e=>{ const i=e.target.dataset&&e.target.dataset.rm; if(i==null) return; const n=+i; playlist.splice(n,1);
@@ -1051,7 +1068,7 @@ async function renderV2(clipsIn,sup,actx){
       const m=Math.round((c.T+c.N/FPS2)*48000)-pos; if(m<=0) continue;
       const L=new Float32Array(m), R=new Float32Array(m);
       if(ov>0){ let a=null; try{ const mv2=await moovOf(c.v); a=await audioClip(c.v,mv2&&mv2.audio,c.in,c.in+m/48000); }catch(e){ console.warn(e); }
-        if(a){ const n=Math.min(m,a[0].length), fd=Math.min(960,n>>2)||1; for(let i=0;i<n;i++){ const g=ov*Math.min(1,i/fd,(n-i)/fd); L[i]=a[0][i]*g; R[i]=a[1][i]*g; } } }
+        if(a){ const cv=ov*volOf(key(c.v)+'@'+(+c.in).toFixed(1)), n=Math.min(m,a[0].length), fd=Math.min(960,n>>2)||1; for(let i=0;i<n;i++){ const g=cv*Math.min(1,i/fd,(n-i)/fd); L[i]=a[0][i]*g; R[i]=a[1][i]*g; } } }
       await put(L,R); }
     if(!cancel) await silence(NS-pos);
     await aenc.flush(); aenc.close();
