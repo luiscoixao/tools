@@ -88,7 +88,7 @@ header{position:sticky;top:0;z-index:10;background:rgba(19,21,24,.96);-webkit-ba
 #ph{position:absolute;top:-6px;bottom:-6px;width:2px;margin-left:-1px;background:#fff;z-index:3;pointer-events:none}
 .btns{display:flex;gap:6px;flex-wrap:wrap}
 .btns button{flex:1;min-width:0;font-size:13px;padding:9px 6px}
-#editor{z-index:40}
+#editor{z-index:40}#settings{z-index:45}#render{z-index:50}
 .edrow{display:flex;align-items:center;gap:10px;margin-top:8px}
 .edrow input[type=range]{flex:1}
 .edrow b{width:52px;text-align:right;font-size:13px;white-space:nowrap}
@@ -116,6 +116,53 @@ canvas#rc{display:none}
 .seg2{display:flex;gap:6px}.seg2 button{flex:1}
 .mbig{font-size:17px;padding:14px;width:100%}
 .tile .mg{position:absolute;right:40px;top:9px;background:#6b4fd8;color:#fff;border-radius:6px;padding:1px 6px;font-size:11px;font-weight:700}
+/* montage */
+#mt{background:#111216}
+.mtStage{flex:1;min-height:120px;display:flex;align-items:center;justify-content:center;background:#111216}
+.mtBox{position:relative;background:#000}
+.mtBox canvas{width:100%;height:100%;display:block}
+.mtBar{display:flex;align-items:center;gap:4px;padding:4px 10px;flex:none}
+.mtBar .ic{background:none;border:0;font-size:24px;padding:4px 12px;color:var(--text)}
+.mtBar .big{font-size:26px;margin-left:auto;margin-right:auto}
+#mtTime{font-variant-numeric:tabular-nums;font-size:15px;min-width:110px;text-align:right}
+.mtTlW{position:relative;height:142px;flex:none}
+.mtTl{position:absolute;inset:0;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.mtTl::-webkit-scrollbar{display:none}
+.mtIn{position:relative;height:142px}
+.mtRuler{position:absolute;top:0;height:22px;left:0;right:0}
+.mtRuler span{position:absolute;top:3px;font-size:10px;color:var(--muted);transform:translateX(-50%);font-variant-numeric:tabular-nums}
+.mtRuler i{position:absolute;top:17px;width:2px;height:2px;margin-left:-1px;background:#666;border-radius:1px}
+.mtV{position:absolute;top:26px;height:58px;left:0;right:0}
+.mtM{position:absolute;top:94px;height:42px;left:0;right:0}
+.mc{position:absolute;top:0;height:58px;border-radius:6px;overflow:hidden;background:#222}
+.mc .st{position:absolute;inset:0;display:flex;pointer-events:none;overflow:hidden;border-radius:6px}
+.mc .st img{height:58px;width:44px;object-fit:cover;flex:none}
+.mc .du{position:absolute;right:5px;bottom:3px;font-size:11px;font-weight:700;text-shadow:0 1px 3px #000;pointer-events:none}
+.mc .vo{position:absolute;left:5px;bottom:3px;font-size:10px;text-shadow:0 1px 3px #000;pointer-events:none}
+.mc .fl{position:absolute;left:0;top:0;background:var(--accent);color:var(--accent-ink);font-size:10px;font-weight:700;border-radius:0 0 6px 0;padding:0 5px;pointer-events:none}
+.mc.card{display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:11px;background:#2a2e35}
+.mc.sel{overflow:visible;box-shadow:0 0 0 2px #fff;z-index:2}
+.mc .hl,.mc .hr{position:absolute;top:-2px;bottom:-2px;width:18px;background:#fff;touch-action:none;z-index:3}
+.mc .hl{left:-18px;border-radius:6px 0 0 6px}.mc .hr{right:-18px;border-radius:0 6px 6px 0}
+.mc .hl::after,.mc .hr::after{content:"";position:absolute;left:7px;top:20px;bottom:20px;width:4px;border-radius:2px;background:#333}
+.mc.drag{opacity:.55;z-index:5;box-shadow:0 6px 20px #000}
+.mp{position:absolute;top:0;height:42px;border-radius:6px;overflow:hidden;border:1.5px solid}
+.mp canvas{position:absolute;inset:0;width:100%;height:100%}
+.mp b{position:absolute;left:4px;top:3px;font-size:11px;background:#000a;padding:0 5px;border-radius:4px;color:#fff;font-weight:600;white-space:nowrap}
+.mAdd{position:absolute;top:4px;height:34px;font-size:13px;padding:0 14px;white-space:nowrap}
+.mtHead{position:absolute;left:50%;top:20px;bottom:2px;width:2px;margin-left:-1px;background:#fff;pointer-events:none;z-index:6;box-shadow:0 0 3px #000}
+.mtIns{position:absolute;top:22px;height:66px;width:4px;margin-left:-2px;background:var(--accent);border-radius:2px;pointer-events:none;z-index:7}
+.mtTools{display:flex;gap:2px;overflow-x:auto;padding:6px 6px calc(8px + var(--sb));border-top:1px solid var(--line);flex:none}
+.mtTools button{flex:1 0 62px;background:none;border:0;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;color:var(--muted);padding:6px 2px;border-radius:10px}
+.mtTools button b{font-size:20px;color:var(--text);font-weight:400;line-height:26px}
+.mtTools button.on{background:var(--panel2)}
+.mtPop{flex:none;background:var(--panel);border-top:1px solid var(--line);padding:8px 14px;max-height:34vh;overflow:auto}
+.prow{display:flex;align-items:center;gap:10px;padding:6px 0}
+.prow input[type=range]{flex:1}.prow b{width:52px;text-align:right;font-size:13px;white-space:nowrap}
+.prow span{font-size:14px}.prow .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.prow .dot{width:12px;height:12px;border-radius:3px;flex:none}.prow button{padding:5px 10px}
+.plist{display:flex;flex-direction:column;gap:4px}.plist button{text-align:left;display:flex;align-items:center;gap:8px}
+.plist button.on{background:var(--accent);color:var(--accent-ink);font-weight:700}.plist i{width:12px;height:12px;border-radius:3px}
 /* photos + timeline */
 .phHead{grid-column:1/-1;padding:16px 2px 2px;font-weight:700;display:flex;justify-content:space-between;align-items:center}
 .phHead span{font-weight:400;font-size:12px;color:var(--muted)}
@@ -228,23 +275,14 @@ button.lnk{background:none;border:0;padding:0;color:var(--accent);font-size:13px
   </div>
 </section>
 
-<!-- Timeline : le film et la musique -->
-<section class="sheet" id="tl" hidden>
-  <div class="top"><button id="tlClose">✕</button><div class="t" id="tlTitle">Ton film</div><button class="primary" id="tlGo">🎬 Créer</button></div>
-  <div class="body">
-    <div class="tlScroll" id="tlScroll"><div class="tlIn" id="tlIn"><div class="tlRow" id="tlRow"></div><div class="mu" id="tlMu"></div><div class="tlIns" id="tlIns" hidden></div></div></div>
-    <p class="hint" id="tlHint">Touche un plan pour le régler. Appui long puis glisse pour le déplacer. <button class="lnk" id="tlReset">Ordre chronologique</button></p>
-    <div id="tlPanel" hidden>
-      <div class="row" style="flex-wrap:nowrap"><label id="tlWhat" style="min-width:0"></label><span id="tlMove"><button id="tlLeft" aria-label="Avancer">◀</button> <button id="tlRight" aria-label="Reculer">▶</button></span><button id="tlEdit">✎</button></div>
-      <div class="row" style="flex-wrap:nowrap"><span>♪ Ici</span><select id="tlSel"></select></div>
-      <div class="row" id="tlVolRow" style="flex-wrap:nowrap"><span>🔊 Son du plan</span><input type="range" id="tlVol" min="0" max="200" step="10" style="flex:1"><b id="tlVolV" style="width:56px;text-align:right;white-space:nowrap"></b></div>
-    </div>
-    <div class="sec">Volume général</div>
-    <div class="row" style="flex-wrap:nowrap"><span style="width:110px">Son des vidéos</span><input type="range" id="tlOrig" min="0" max="100" step="5" style="flex:1"><b id="tlOrigV" style="width:56px;text-align:right;white-space:nowrap"></b></div>
-    <div class="row" style="flex-wrap:nowrap"><span style="width:110px">Musique</span><input type="range" id="tlMus" min="0" max="100" step="5" style="flex:1"><b id="tlMusV" style="width:56px;text-align:right;white-space:nowrap"></b></div>
-    <div class="row" style="flex-wrap:nowrap;margin-top:18px"><label style="min-width:0">Morceaux</label><button id="tlAdd">＋ Ajouter…</button></div>
-    <div id="tlList"></div>
-  </div>
+<!-- Montage : aperçu, timeline, musique -->
+<section class="sheet" id="mt" hidden>
+  <div class="top"><button id="mtClose">✕</button><div class="t">Montage</div><button class="primary" id="mtGo">🎬 Créer</button></div>
+  <div class="mtStage" id="mtStage"><div class="mtBox" id="mtBox"><canvas id="mtCv"></canvas></div></div>
+  <div class="mtBar"><button class="ic" id="mtUndo" aria-label="Annuler">↶</button><button class="ic" id="mtRedo" aria-label="Rétablir">↷</button><button class="ic big" id="mtPlay" aria-label="Lecture">▶</button><span id="mtTime">00:00 / 00:00</span></div>
+  <div class="mtTlW"><div class="mtTl" id="mtTl"><div class="mtIn" id="mtIn"><div class="mtRuler" id="mtRuler"></div><div class="mtV" id="mtV"></div><div class="mtM" id="mtM"></div><div class="mtIns" id="mtIns" hidden></div></div></div><div class="mtHead"></div></div>
+  <div class="mtPop" id="mtPop" hidden></div>
+  <div class="mtTools" id="mtTools"></div>
 </section>
 
 <!-- Rendu -->
@@ -397,7 +435,7 @@ $('#fmt').onclick=e=>{ const b=e.target.closest('button'); if(!b) return; S.form
 
 /* ---------- réglages ---------- */
 $('#btnSet').onclick=()=>{ fillSet(); $('#settings').hidden=false; };
-$('#setClose').onclick=()=>{ $('#settings').hidden=true; enforceMin(); render(); save(); };
+$('#setClose').onclick=()=>{ $('#settings').hidden=true; enforceMin(); render(); save(); if(!$('#mt').hidden){ mtLayout(); mtRender(); pvShow(MT.t); } };
 function fillSet(){ $$('#settings [data-k]').forEach(i=>{ const v=S[i.dataset.k]; if(i.type==='checkbox') i.checked=!!v; else i.value=v; }); $('#v_origVol').textContent=S.origVol+' %'; $('#v_musicVol').textContent=S.musicVol+' %'; plVals(); plRender(); }
 $$('#settings [data-k]').forEach(i=>i.addEventListener(i.type==='checkbox'||i.tagName==='SELECT'?'change':'input',()=>{ const k=i.dataset.k; S[k]=i.type==='checkbox'?i.checked:(i.type==='number'||i.type==='range')?+i.value:i.value; $('#v_origVol').textContent=S.origVol+' %'; $('#v_musicVol').textContent=S.musicVol+' %'; save(); }));
 /* ---------- playlist musicale ---------- */
@@ -418,7 +456,7 @@ function plRender(){ const box=$('#plist'); if(!box) return; box.innerHTML='';
   const f=document.createElement('div'); f.className='pl-tot muted'; f.textContent=`${playlist.length} morceau${playlist.length>1?'x':''} · ${fmtDur(tot)}`; box.appendChild(f); }
 $('#musicPick').onclick=()=>$('#musicIn').click();
 $('#musicIn').onchange=async e=>{ const fs=[...e.target.files]; e.target.value=''; const add=fs.map(f=>({file:f,name:f.name.replace(/\.[^.]+$/,''),dur:0}));
-  playlist.push(...add); plRender(); if(!$('#tl').hidden) tlRender(); for(const m of add){ m.dur=await trackDur(m.file); plRender(); if(!$('#tl').hidden) tlRender(); } };
+  playlist.push(...add); plRender(); if(!$('#mt').hidden) mtRender(); for(const m of add){ m.dur=await trackDur(m.file); plRender(); songPeaks(m); if(!$('#mt').hidden) mtRender(); } };
 $('#musicShuffle').onclick=()=>{ for(let i=playlist.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [playlist[i],playlist[j]]=[playlist[j],playlist[i]]; } MK={}; plRender(); };
 $('#musicClear').onclick=()=>{ playlist=[]; MK={}; plRender(); };
 $$('[data-k="xfade"],[data-k="musicFadeOut"]').forEach(i=>i.addEventListener('input',()=>setTimeout(plVals,0)));
@@ -450,12 +488,6 @@ let MK={};
 /* volume de chaque vidéo (1 = normal), en plus du volume général ; mémorisé avec ses passages */
 const volV=v=>{ const x=CL[key(v)]; return x&&x.vol!=null?x.vol:1; };
 const setVolV=(v,x)=>{ const c=cd(v); if(Math.abs(x-1)<0.001) delete c.vol; else c.vol=x; save(); };
-/* ordre du film choisi à la main (clés des plans) */
-let ORD=[]; try{ ORD=JSON.parse(localStorage.getItem('sv-ord')||'[]'); }catch(e){}
-const saveOrd=()=>{ try{ localStorage.setItem('sv-ord',JSON.stringify(ORD)); }catch(e){} };
-const mkName=(i)=>i!=null&&i<playlist.length?`${i+1}. ${playlist[i].name}`:'';
-function musicSegs(B){ const out=[], seen=new Set(); B.forEach(b=>{ if(!b.vk||seen.has(b.vk)) return; seen.add(b.vk); const m=MK[b.vk]; if(m!=null&&m<playlist.length) out.push({t:b.T,track:m}); });
-  if(!out.length||out[0].t>0.01) out.unshift({t:0,track:0}); return out; }
 /* aperçu : quel morceau joue quand (durées connues des morceaux) */
 function musicPieces(segs,total){ const out=[], X=+S.xfade||0; if(!playlist.length) return out;
   segs.forEach((sg,i)=>{ const end=i+1<segs.length?segs[i+1].t:total; let t=sg.t, k=sg.track, g=0;
@@ -483,108 +515,260 @@ async function buildMixAt(tracks,segs,seconds,sr,xf,decode,info){
   }
   cache=null; return placed?out:null;
 }
-/* le film, bloc par bloc, en images exactes : titre, plans vidéo, photos, fin */
-function filmItems(clips){ const occ={}, it=[];
-  clips.forEach(c=>{ const vk='v:'+key(c.v), n=occ[vk]=(occ[vk]||0)+1; it.push({kind:'clip',c,vk,k:vk+'#'+(n-1),d:c.out-c.in}); });
-  selPhotos().forEach(p=>it.push({kind:'photo',p,vk:'p:'+key(p),k:'p:'+key(p),d:+S.photoDur||3}));
-  if(!ORD.length) return it;
-  /* ordre choisi ; un élément jamais placé garde sa place par défaut, derrière son voisin d'origine */
-  const pos=new Map(ORD.map((k,i)=>[k,i])), known=it.filter(x=>pos.has(x.k)).sort((a,b)=>pos.get(a.k)-pos.get(b.k)), out=[...known];
-  it.forEach((x,i)=>{ if(pos.has(x.k)) return; let j=-1; for(let q=i-1;q>=0;q--){ const y=out.indexOf(it[q]); if(y>=0){ j=y; break; } } out.splice(j+1,0,x); });
-  return out; }
-function filmBlocks(clips){ const B=[]; let T=0;
+/* ---------- montage : la suite des plans du film, comme un éditeur vidéo ----------
+   SEQ : plans dans l'ordre du film {id, kind:'clip'|'photo', v|p, in, out | dur, vol?}
+   SEQK : vidéos/photos déjà prises en compte (un plan supprimé de la timeline n'y revient pas tout seul) */
+let SEQ=null, SEQK=new Set(), seqN=0;
+const newId=()=>'s'+(++seqN)+Date.now().toString(36);
+const ikey=x=>x.kind==='clip'?'v:'+key(x.v):'p:'+key(x.p);
+function seqSave(){ try{ localStorage.setItem('sv-seq',JSON.stringify({k:[...SEQK],s:(SEQ||[]).map(x=>x.kind==='clip'?{t:'c',k:key(x.v),in:x.in,out:x.out,vol:x.vol,id:x.id}:{t:'p',k:key(x.p),dur:x.dur,id:x.id})})); }catch(e){} }
+const photoItem=p=>({id:newId(),kind:'photo',p,dur:+S.photoDur||3});
+function seqSet(list){ SEQ=list; SEQK=new Set([...videos.filter(v=>isSel(v)).map(v=>'v:'+key(v)),...selPhotos().map(p=>'p:'+key(p))]); seqSave(); }
+function seqFromSel(){ return videos.filter(v=>isSel(v)&&v.dur).map(v=>{ const c=clipOf(v); return {id:newId(),kind:'clip',v,in:c.in,out:c.out}; }).concat(selPhotos().map(photoItem)); }
+function seqFromPlan(plan){ return plan.map(c=>({id:newId(),kind:'clip',v:c.v,in:c.in,out:c.out})).concat(selPhotos().map(photoItem)); }
+function seqRestore(){ let a=null; try{ a=JSON.parse(localStorage.getItem('sv-seq')||'null'); }catch(e){} if(!a||!a.s||!a.s.length) return false;
+  const vm=new Map(videos.map(v=>[key(v),v])), pm=new Map(photos.map(p=>[key(p),p])), out=[];
+  a.s.forEach(x=>{ if(x.t==='c'){ const v=vm.get(x.k); if(v&&isSel(v)&&v.dur) out.push({id:x.id||newId(),kind:'clip',v,in:Math.max(0,x.in),out:Math.min(x.out,v.dur),vol:x.vol}); }
+    else { const p=pm.get(x.k); if(p&&isSel(p)) out.push({id:x.id||newId(),kind:'photo',p,dur:x.dur||3}); } });
+  if(!out.length) return false; SEQ=out; SEQK=new Set(a.k||[]); out.forEach(x=>SEQK.add(ikey(x))); return true; }
+/* le montage suit la sélection : plans retirés si la vidéo est décochée, vidéos nouvellement cochées ajoutées à leur place chronologique */
+function ensureSeq(){
+  if(!SEQ&&!seqRestore()){ seqSet(seqFromSel()); return; }
+  const before=SEQ.length;
+  SEQ=SEQ.filter(x=>x.kind==='clip'?videos.includes(x.v)&&isSel(x.v):photos.includes(x.p)&&isSel(x.p));
+  [...SEQK].forEach(k=>{ const v=videos.find(v=>'v:'+key(v)===k), p=photos.find(p=>'p:'+key(p)===k); if((v&&!isSel(v))||(p&&!isSel(p))) SEQK.delete(k); });
+  videos.filter(v=>isSel(v)&&v.dur&&!SEQK.has('v:'+key(v))).forEach(v=>{ const c=clipOf(v), it={id:newId(),kind:'clip',v,in:c.in,out:c.out};
+    let j=SEQ.findIndex(x=>x.kind==='clip'&&x.v.date>v.date); if(j<0){ j=SEQ.length; while(j>0&&SEQ[j-1].kind==='photo') j--; } SEQ.splice(j,0,it); SEQK.add('v:'+key(v)); });
+  selPhotos().filter(p=>!SEQK.has('p:'+key(p))).forEach(p=>{ SEQ.push(photoItem(p)); SEQK.add('p:'+key(p)); });
+  seqSave();
+}
+/* le film, bloc par bloc, en images exactes : titre, plans, fin */
+function filmBlocks(){ ensureSeq(); const B=[]; let T=0;
   const add=(b,d)=>{ b.N=Math.max(1,Math.round(d*30)); b.T=T; b.dur=b.N/30; T+=b.dur; B.push(b); };
   if(S.titleOn) add({kind:'title',k:'title'},+S.titleDur);
-  filmItems(clips).forEach(x=>add(x,x.d));
+  SEQ.forEach(x=>{ if(x.kind==='clip') add({kind:'clip',it:x,c:{v:x.v,in:x.in,out:x.out,crop:getCrop(x.v,S.format)},vk:'v:'+key(x.v),k:x.id,vol:x.vol},x.out-x.in);
+    else add({kind:'photo',it:x,p:x.p,vk:'p:'+key(x.p),k:x.id},x.dur); });
   if(S.endOn) add({kind:'end',k:'end'},2.5);
   return {B,total:T}; }
 
-/* ---------- timeline : vérifier le film et placer la musique ---------- */
-const MCOL=['#f0b429','#6fd08c','#7aa7ff','#ff8fa3','#c49bff','#5fd4d4','#ffb07a','#b8e05a'];
-const TL={plan:null,B:[],total:0,cur:-1};
-function openTL(plan){ TL.plan=plan; TL.cur=-1; $('#tlPanel').hidden=true; tlRender(); $('#tl').hidden=false; $('#tlScroll').scrollLeft=0; }
-function tlClips(){ return TL.plan||videos.filter(v=>isSel(v)&&v.dur).map(v=>({v,...clipOf(v)})); }
-function tlRender(){
-  const {B,total}=filmBlocks(tlClips()); TL.B=B; TL.total=total;
-  $('#tlTitle').textContent=`Ton film · ${fmtDur(total)}`;
-  const row=$('#tlRow'); row.innerHTML=''; let x=0;
-  B.forEach((b,i)=>{ b.w=Math.round(Math.max(54,Math.min(150,b.dur*13))); b.x=x; x+=b.w;
-    const d=document.createElement('div'); d.className='tb'+(b.kind==='title'||b.kind==='end'?' card':'')+(i===TL.cur?' cur':''); d.style.width=b.w+'px'; d.dataset.i=i;
-    if(b.kind==='title') d.textContent='Titre'; else if(b.kind==='end') d.textContent='Fin';
-    else { const th=b.kind==='clip'?b.c.v.thumb:b.p.thumb; if(th) d.style.backgroundImage=`url("${th}")`; if(b.kind==='photo') d.insertAdjacentHTML('beforeend','<span class="pi">📷</span>'); }
-    d.insertAdjacentHTML('beforeend',`<span class="tt">${fmtDur(b.T)}</span>`);
-    if(b.vk&&MK[b.vk]!=null&&MK[b.vk]<playlist.length&&B.findIndex(x=>x.vk===b.vk)===i) d.insertAdjacentHTML('beforeend',`<span class="fl">♪ ${MK[b.vk]+1}</span>`);
-    if(b.kind==='clip'&&volV(b.c.v)!==1) d.insertAdjacentHTML('beforeend',`<span class="vo">${volV(b.c.v)?'🔊 '+Math.round(volV(b.c.v)*100)+'%':'🔇'}</span>`);
-    row.appendChild(d); });
-  $('#tlIn').style.width=x+'px';
-  const xOf=t=>{ for(const b of B){ if(t<b.T+b.dur-1e-6) return b.x+Math.max(0,(t-b.T)/b.dur)*b.w; } return x; };
-  const mu=$('#tlMu'); mu.innerHTML='';
-  if(!playlist.length) mu.innerHTML='<div class="none">♪ Aucune musique : ajoute des morceaux ci-dessous</div>';
-  else musicPieces(musicSegs(B),total).forEach(pc=>{ const e=document.createElement('div'); e.className='ms'; const a=xOf(pc.t0), z=xOf(pc.t1);
-    e.style.left=a+'px'; e.style.width=Math.max(4,z-a)+'px'; e.style.background=MCOL[pc.track%MCOL.length]; e.textContent=`${pc.track+1}. ${playlist[pc.track].name}`; mu.appendChild(e); });
-  const list=$('#tlList'); list.innerHTML='';
-  playlist.forEach((m,i)=>{ const r=document.createElement('div'); r.className='tlSong'; r.innerHTML=`<i style="background:${MCOL[i%MCOL.length]}"></i><span></span><em class="muted">${m.dur?fmtDur(m.dur):''}</em><button data-rm="${i}">✕</button>`; $('span',r).textContent=`${i+1}. ${m.name}`; list.appendChild(r); });
-  if(TL.cur>=0) tlPanel();
-  $('#tlOrig').value=S.origVol; $('#tlOrigV').textContent=S.origVol+' %'; $('#tlMus').value=S.musicVol; $('#tlMusV').textContent=S.musicVol+' %';
+/* vignettes le long de chaque vidéo (pellicule) */
+const STRIP=new Map(); const stripQ=[]; let stripBusy=false;
+function wantStrip(v){ if(STRIP.has(key(v))||stripQ.includes(v)) return; stripQ.push(v); runStrip(); }
+async function runStrip(){ if(stripBusy) return; stripBusy=true;
+  const el=document.createElement('video'); el.muted=true; el.playsInline=true; el.setAttribute('playsinline',''); el.preload='auto'; el.style.cssText='width:64px;height:36px'; $('#hold').appendChild(el);
+  const c=document.createElement('canvas'), cx=c.getContext('2d');
+  while(stripQ.length){ const v=stripQ.shift(), arr=[]; STRIP.set(key(v),arr); const u=URL.createObjectURL(v.file);
+    try{ await new Promise((res,rej)=>{ const to=setTimeout(()=>rej(new Error('délai')),15000); el.onloadedmetadata=()=>{ clearTimeout(to); res(); }; el.onerror=()=>{ clearTimeout(to); rej(new Error('illisible')); }; el.src=u; el.load(); });
+      const d=el.duration, n=Math.max(2,Math.min(16,Math.ceil(d/2))); c.height=60; c.width=Math.max(34,Math.round(60*el.videoWidth/Math.max(1,el.videoHeight)));
+      for(let i=0;i<n;i++){ const t=Math.min(d-0.05,(i+0.5)*d/n); await new Promise(res=>{ const to=setTimeout(res,2500); el.onseeked=()=>{ clearTimeout(to); res(); }; el.currentTime=t; });
+        try{ cx.drawImage(el,0,0,c.width,c.height); arr.push({t,url:c.toDataURL('image/jpeg',0.7)}); }catch(e){} }
+      if(!$('#mt').hidden) mtSoon(); }catch(e){ console.warn('pellicule',e); }
+    URL.revokeObjectURL(u); }
+  el.removeAttribute('src'); el.load(); el.remove(); stripBusy=false; }
+function frameUrl(v,t){ const a=STRIP.get(key(v)); if(!a||!a.length) return v.thumb||''; let b=a[0]; for(const x of a) if(Math.abs(x.t-t)<Math.abs(b.t-t)) b=x; return b.url; }
+
+/* forme d'onde des morceaux */
+async function songPeaks(m){ if(m.peaks||m.peaksBusy) return; m.peaksBusy=true;
+  try{ const OAC=window.OfflineAudioContext||window.webkitOfflineAudioContext, cx=new OAC(1,1,22050), ab=await m.file.arrayBuffer();
+    const b=await new Promise((res,rej)=>{ const p=cx.decodeAudioData(ab,res,rej); if(p&&p.then) p.then(res,rej); });
+    const d=b.getChannelData(0), step=Math.max(1,Math.round(b.sampleRate*0.2)), n=Math.ceil(d.length/step), pk=new Float32Array(n); let mx=0.0001;
+    for(let i=0;i<n;i++){ let s=0; const e=Math.min(d.length,(i+1)*step); for(let j=i*step;j<e;j+=8){ const a=Math.abs(d[j]); if(a>s) s=a; } pk[i]=s; if(s>mx) mx=s; }
+    for(let i=0;i<n;i++) pk[i]/=mx; m.peaks=pk; if(!m.dur) m.dur=b.duration; }catch(e){ m.peaks=new Float32Array(0); }
+  m.peaksBusy=false; if(!$('#mt').hidden) mtSoon(); }
+
+/* ---- état de l'écran ---- */
+const MT={pps:12,sel:null,B:[],total:0,t:0,undo:[],redo:[],pad:0,prog:0,pop:null};
+const mtSnap=()=>{ MT.undo.push({s:SEQ.map(x=>({...x})),k:[...SEQK],m:{...MK}}); if(MT.undo.length>60) MT.undo.shift(); MT.redo=[]; mtUndoBtns(); };
+const mtUndoBtns=()=>{ $('#mtUndo').disabled=!MT.undo.length; $('#mtRedo').disabled=!MT.redo.length; };
+function mtRestore(st){ SEQ=st.s.map(x=>({...x})); SEQK=new Set(st.k); MK={...st.m}; seqSave(); MT.sel=null; mtRender(); }
+$('#mtUndo').onclick=()=>{ const st=MT.undo.pop(); if(!st) return; MT.redo.push({s:SEQ.map(x=>({...x})),k:[...SEQK],m:{...MK}}); mtRestore(st); mtUndoBtns(); };
+$('#mtRedo').onclick=()=>{ const st=MT.redo.pop(); if(!st) return; MT.undo.push({s:SEQ.map(x=>({...x})),k:[...SEQK],m:{...MK}}); mtRestore(st); mtUndoBtns(); };
+let mtRaf=0; const mtSoon=()=>{ cancelAnimationFrame(mtRaf); mtRaf=requestAnimationFrame(()=>mtRender()); };
+
+function openMontage(plan){
+  if(plan) seqSet(seqFromPlan(plan)); else ensureSeq();
+  MT.sel=null; MT.undo=[]; MT.redo=[]; MT.pop=null; mtUndoBtns(); $('#mt').hidden=false;
+  SEQ.forEach(x=>{ if(x.kind==='clip') wantStrip(x.v); }); playlist.forEach(songPeaks);
+  requestAnimationFrame(()=>{ mtLayout(); mtRender(); mtSeek(0,true); }); }
+$('#mtClose').onclick=()=>{ pvStop(); $('#mt').hidden=true; };
+$('#mtGo').onclick=()=>{ pvStop(); makeFilm().catch(err=>{ console.error(err); $('#rInfo').innerHTML=`<span style="color:var(--danger)">Erreur : ${err.message}</span>`; $('#rClose').hidden=false; $('#rCancel').hidden=true; }); };
+window.addEventListener('resize',()=>{ if(!$('#mt').hidden){ mtLayout(); mtRender(); mtSeek(MT.t,true); } });
+
+/* aperçu au format du film */
+function mtLayout(){ const st=$('#mtStage').getBoundingClientRect(), r=RATIO[S.format]; let w=st.width-16, h=w/r; if(h>st.height-12){ h=st.height-12; w=h*r; }
+  const box=$('#mtBox'); box.style.width=Math.max(10,w)+'px'; box.style.height=Math.max(10,h)+'px'; const cv=$('#mtCv'), dpr=Math.min(2,window.devicePixelRatio||1);
+  cv.width=Math.round(Math.max(10,w)*dpr); cv.height=Math.round(Math.max(10,h)*dpr); MT.pad=Math.round($('#mtTl').clientWidth/2); }
+
+const mmss=s=>{ s=Math.max(0,s); return `${pad(Math.floor(s/60))}:${pad(Math.floor(s%60))}`; };
+function mtRender(){
+  const {B,total}=filmBlocks(); MT.B=B; MT.total=total; const pps=MT.pps, P=MT.pad, W=P*2+total*pps;
+  $('#mtIn').style.width=W+'px';
+  /* règle */
+  const ru=$('#mtRuler'); ru.innerHTML=''; const steps=[1,2,5,10,15,30,60,120,300]; const step=steps.find(s=>s*pps>=64)||600;
+  for(let t=0;t<=total+0.01;t+=step){ const x=P+t*pps; ru.insertAdjacentHTML('beforeend',`<span style="left:${x}px">${mmss(t)}</span>`);
+    for(let q=1;q<4;q++){ const xx=x+q*step*pps/4; if(xx<P+total*pps) ru.insertAdjacentHTML('beforeend',`<i style="left:${xx}px"></i>`); } }
+  /* plans */
+  const vt=$('#mtV'); vt.innerHTML='';
+  B.forEach((b,i)=>{ const d=document.createElement('div'), x=P+b.T*pps, w=Math.max(6,b.dur*pps); d.className='mc'+(b.k===MT.sel?' sel':''); d.dataset.i=i; d.style.left=x+'px'; d.style.width=(w-2)+'px';
+    if(b.kind==='title'||b.kind==='end'){ d.classList.add('card'); d.textContent=b.kind==='title'?'Titre':'Fin'; vt.appendChild(d); return; }
+    const st=document.createElement('div'); st.className='st'; const n=Math.max(1,Math.ceil(w/44));
+    for(let q=0;q<n;q++){ const im=document.createElement('img'); im.alt=''; const src=b.kind==='clip'?frameUrl(b.c.v,b.c.in+(q+0.5)*44/pps):b.p.thumb; if(src) im.src=src; st.appendChild(im); }
+    d.appendChild(st);
+    d.insertAdjacentHTML('beforeend',`<span class="du">${b.kind==='photo'?'📷 ':''}${mmss(b.dur)}</span>`);
+    const vol=b.kind==='clip'?(b.vol!=null?b.vol:volV(b.c.v)):1; if(vol!==1) d.insertAdjacentHTML('beforeend',`<span class="vo">${vol?'🔊'+Math.round(vol*100)+'%':'🔇'}</span>`);
+    const m=mkOf(B,i); if(m!=null) d.insertAdjacentHTML('beforeend',`<span class="fl">♪ ${m+1}</span>`);
+    if(b.k===MT.sel) d.insertAdjacentHTML('beforeend','<i class="hl" data-h="l"></i><i class="hr" data-h="r"></i>');
+    vt.appendChild(d); });
+  /* musique */
+  const mu=$('#mtM'); mu.innerHTML='';
+  if(!playlist.length){ mu.innerHTML=`<button class="mAdd" style="left:${P}px" id="mtAddMus">＋ Ajouter une musique</button>`; $('#mtAddMus').onclick=()=>$('#musicIn').click(); }
+  else musicPieces(musicSegs(B),total).forEach(pc=>{ const e=document.createElement('div'), x=P+pc.t0*pps, w=Math.max(4,(pc.t1-pc.t0)*pps); e.className='mp'; e.style.left=x+'px'; e.style.width=(w-2)+'px';
+    e.style.background=MCOL[pc.track%MCOL.length]+'55'; e.style.borderColor=MCOL[pc.track%MCOL.length];
+    const m=playlist[pc.track]; const cv=document.createElement('canvas'); const cw=Math.min(4000,Math.max(4,Math.round(w))); cv.width=cw; cv.height=40; const g=cv.getContext('2d'); g.fillStyle=MCOL[pc.track%MCOL.length];
+    if(m.peaks&&m.peaks.length){ for(let px=0;px<cw;px++){ const t=px/pps, k=Math.floor(t/0.2); const a=m.peaks[Math.min(m.peaks.length-1,k)]||0, h=Math.max(1,a*30); g.fillRect(px,40-h,1,h); } } else songPeaks(m);
+    e.appendChild(cv); const lb=document.createElement('b'); lb.textContent=m.name; e.appendChild(lb); mu.appendChild(e); });
+  mtTools(); mtTime();
 }
-function tlPanel(){ const b=TL.B[TL.cur]; if(!b){ $('#tlPanel').hidden=true; return; }
-  $('#tlWhat').textContent=(b.kind==='title'?'Titre':b.kind==='end'?'Page de fin':b.kind==='photo'?'Photo':'Plan')+` · à ${fmtDur(b.T)}`;
-  const sel=$('#tlSel'); sel.innerHTML=''; const o0=document.createElement('option'); o0.value=''; o0.textContent=playlist.length?'— la playlist continue —':'Ajoute d\'abord des morceaux'; sel.appendChild(o0);
-  playlist.forEach((m,i)=>{ const o=document.createElement('option'); o.value=i; o.textContent=`${i+1}. ${m.name}`; sel.appendChild(o); });
-  sel.disabled=!b.vk; sel.value=b.vk&&MK[b.vk]!=null&&MK[b.vk]<playlist.length?String(MK[b.vk]):'';
-  $('#tlVolRow').hidden=b.kind!=='clip'; if(b.kind==='clip'){ const v=Math.round(volV(b.c.v)*100); $('#tlVol').value=v; $('#tlVolV').textContent=v?v+' %':'muet'; }
-  const mov=!!b.vk; $('#tlMove').hidden=!mov; $('#tlEdit').hidden=b.kind!=='clip';
-  $('#tlLeft').disabled=!mov||!TL.B[TL.cur-1]||!TL.B[TL.cur-1].vk; $('#tlRight').disabled=!mov||!TL.B[TL.cur+1]||!TL.B[TL.cur+1].vk;
-  $('#tlPanel').hidden=false; }
-$('#tlVol').oninput=()=>{ const b=TL.B[TL.cur]; if(!b||b.kind!=='clip') return; const v=+$('#tlVol').value; setVolV(b.c.v,v/100); $('#tlVolV').textContent=v?v+' %':'muet'; };
-/* déplacer un plan : l'ordre complet est mémorisé */
-function tlMove(from,to){ const it=TL.B.filter(b=>b.vk), a=it.indexOf(TL.B[from]); if(a<0) return; const x=it.splice(a,1)[0];
-  let ti=to; ti=Math.max(0,Math.min(it.length,ti)); it.splice(ti,0,x); ORD=it.map(b=>b.k); saveOrd();
-  tlRender(); TL.cur=TL.B.findIndex(b=>b.k===x.k); tlRender(); }
-const itemIdx=i=>TL.B.filter(b=>b.vk).indexOf(TL.B[i]);
-$('#tlLeft').onclick=()=>{ const a=itemIdx(TL.cur); if(a>0) tlMove(TL.cur,a-1); };
-$('#tlRight').onclick=()=>{ const a=itemIdx(TL.cur); if(a>=0) tlMove(TL.cur,a+1); };
-$('#tlEdit').onclick=()=>{ const b=TL.B[TL.cur]; if(!b||b.kind!=='clip') return; const i=videos.indexOf(b.c.v); if(i>=0) openEd(i); };
-$('#tlReset').onclick=()=>{ ORD=[]; saveOrd(); TL.cur=-1; $('#tlPanel').hidden=true; tlRender(); };
-/* glisser-déposer : appui long sur un plan, puis glisser */
-(()=>{ const row=$('#tlRow'), sc=$('#tlScroll'); let st=null, timer=0, drag=null, raf=0;
-  const blockAt=x=>{ for(let i=0;i<TL.B.length;i++){ const b=TL.B[i]; if(x<b.x+b.w) return i; } return TL.B.length-1; };
-  const xIn=cx=>cx-row.getBoundingClientRect().left;
-  row.addEventListener('touchstart',e=>{ const d=e.target.closest('.tb'); if(!d||e.touches.length>1) return; const i=+d.dataset.i; if(!TL.B[i]||!TL.B[i].vk) return;
-    st={i,x:e.touches[0].clientX,y:e.touches[0].clientY}; clearTimeout(timer);
-    timer=setTimeout(()=>{ drag={i,el:d,cx:st.x}; d.classList.add('drag'); $('#tlIns').hidden=false; navigator.vibrate&&navigator.vibrate(15); place(); },350); },{passive:true});
-  const place=()=>{ if(!drag) return; const x=xIn(drag.cx), j=blockAt(x), b=TL.B[j]; let before=x<b.x+b.w/2?j:j+1;
-    let bx=before<TL.B.length?TL.B[before].x:TL.B[TL.B.length-1].x+TL.B[TL.B.length-1].w; drag.to=before; $('#tlIns').style.left=(bx-2)+'px';
-    const r=sc.getBoundingClientRect(); const edge=drag.cx<r.left+40?-8:drag.cx>r.right-40?8:0; cancelAnimationFrame(raf); if(edge){ const step=()=>{ sc.scrollLeft+=edge; place(); }; raf=requestAnimationFrame(step); } };
-  row.addEventListener('touchmove',e=>{ if(drag){ e.preventDefault(); drag.cx=e.touches[0].clientX; place(); return; }
+const MCOL=['#2fa8ff','#f0b429','#6fd08c','#ff8fa3','#c49bff','#5fd4d4','#ffb07a','#b8e05a'];
+/* morceau qui commence à ce bloc (posé sur le plan, ou sur la vidéo depuis le crayon) */
+function mkOf(B,i){ const b=B[i]; let m=MK[b.k]; if(m==null&&b.vk&&B.findIndex(x=>x.vk===b.vk)===i) m=MK[b.vk]; return m!=null&&m<playlist.length?m:null; }
+function musicSegs(B){ const out=[]; B.forEach((b,i)=>{ const m=mkOf(B,i); if(m!=null) out.push({t:b.T,track:m}); });
+  if(!out.length||out[0].t>0.01) out.unshift({t:0,track:0}); return out; }
+function mtTime(){ $('#mtTime').textContent=`${mmss(MT.t)} / ${mmss(MT.total)}`; }
+
+/* ---- défilement : la tête de lecture est fixe au milieu ---- */
+const tl=$('#mtTl');
+tl.addEventListener('scroll',()=>{ if(performance.now()-MT.prog<120) return; const t=Math.max(0,Math.min(MT.total,tl.scrollLeft/MT.pps)); if(PV.playing) pvStop(); MT.t=t; mtTime(); pvShow(t); });
+function mtSeek(t,scroll){ MT.t=Math.max(0,Math.min(MT.total,t)); if(scroll){ MT.prog=performance.now(); tl.scrollLeft=MT.t*MT.pps; } mtTime(); pvShow(MT.t); }
+const blockAtT=t=>{ for(let i=0;i<MT.B.length;i++){ const b=MT.B[i]; if(t<b.T+b.dur-1e-6) return i; } return MT.B.length-1; };
+
+/* ---- toucher un plan : le sélectionner ---- */
+$('#mtV').addEventListener('click',e=>{ if(Date.now()-(MT.dragEnd||0)<400) return; const d=e.target.closest('.mc'); if(!d){ MT.sel=null; MT.pop=null; mtRender(); return; }
+  const b=MT.B[+d.dataset.i]; MT.sel=MT.sel===b.k?null:b.k; MT.pop=null; mtRender(); });
+
+/* ---- poignées : raccourcir / rallonger le plan sélectionné ---- */
+$('#mtV').addEventListener('pointerdown',e=>{ const h=e.target.dataset&&e.target.dataset.h; if(!h) return; e.preventDefault(); e.stopPropagation();
+  const d=e.target.closest('.mc'), b=MT.B[+d.dataset.i], it=b.it; if(!it) return; mtSnap(); const x0=e.clientX, o={in:it.in,out:it.out,dur:it.dur}, pid=e.pointerId;
+  const mv=ev=>{ if(ev.pointerId!==pid) return; ev.preventDefault(); const dt=(ev.clientX-x0)/MT.pps;
+    if(it.kind==='clip'){ const D=it.v.dur||o.out; if(h==='l') it.in=Math.max(0,Math.min(o.out-0.5,o.in+dt)); else it.out=Math.min(D,Math.max(o.in+0.5,o.out+dt)); }
+    else it.dur=Math.max(1,Math.min(20,(o.dur+(h==='r'?dt:-dt)))); mtSoon(); pvShowSoon(it,h); };
+  const up=ev=>{ if(ev.pointerId!==pid) return; removeEventListener('pointermove',mv); removeEventListener('pointerup',up); removeEventListener('pointercancel',up); MT.dragEnd=Date.now(); seqSave(); mtRender(); };
+  addEventListener('pointermove',mv,{passive:false}); addEventListener('pointerup',up); addEventListener('pointercancel',up); });
+let pvT=0; function pvShowSoon(it,h){ clearTimeout(pvT); pvT=setTimeout(()=>{ const i=MT.B.findIndex(b=>b.it===it); if(i<0) return; const b=MT.B[i]; pvShow(h==='l'?b.T+0.01:b.T+b.dur-0.05); },60); }
+
+/* ---- appui long puis glisser : déplacer un plan ; deux doigts : zoom ---- */
+(()=>{ let st=null, timer=0, drag=null, raf=0, pinch=null;
+  const P=()=>MT.pad, xIn=cx=>cx-$('#mtIn').getBoundingClientRect().left;
+  const place=()=>{ if(!drag) return; const t=(xIn(drag.cx)-P())/MT.pps; let best=null;
+    MT.B.forEach((b,i)=>{ if(!b.it) return; [b.T,b.T+b.dur].forEach((bt,s)=>{ const pos=s?i+1:i; if(!best||Math.abs(bt-t)<Math.abs(best.t-t)) best={t:bt,pos}; }); });
+    if(best){ drag.pos=best.pos; $('#mtIns').style.left=(P()+best.t*MT.pps)+'px'; }
+    drag.el.style.transform=`translateX(${drag.cx-drag.x0}px)`;
+    const r=tl.getBoundingClientRect(), edge=drag.cx<r.left+44?-10:drag.cx>r.right-44?10:0; cancelAnimationFrame(raf);
+    if(edge) raf=requestAnimationFrame(()=>{ MT.prog=performance.now(); tl.scrollLeft+=edge; place(); }); };
+  const begin=(i,el,cx)=>{ drag={i,el,x0:cx,cx,pos:i}; el.classList.add('drag'); $('#mtIns').hidden=false; navigator.vibrate&&navigator.vibrate(15); place(); };
+  const finish=()=>{ clearTimeout(timer); cancelAnimationFrame(raf); if(!drag) return; const b=MT.B[drag.i]; drag.el.classList.remove('drag'); drag.el.style.transform=''; $('#mtIns').hidden=true;
+    /* position d'arrivée dans SEQ */
+    const tgt=MT.B.slice(0,drag.pos).filter(x=>x.it&&x!==b).length; drag=null; MT.dragEnd=Date.now();
+    const a=SEQ.indexOf(b.it); if(a<0) return; mtSnap(); SEQ.splice(a,1); SEQ.splice(Math.max(0,Math.min(SEQ.length,tgt)),0,b.it); seqSave(); MT.sel=b.k; mtRender(); };
+  const vt=$('#mtV');
+  tl.addEventListener('touchstart',e=>{ pvStop();
+    if(e.touches.length===2){ clearTimeout(timer); st=null; const [a,c]=e.touches; pinch={d:Math.abs(a.clientX-c.clientX)||1,pps:MT.pps,t:MT.t}; return; }
+    const d=e.target.closest('.mc'); if(!d||e.target.dataset.h) return; const i=+d.dataset.i; if(!MT.B[i]||!MT.B[i].it) return;
+    st={x:e.touches[0].clientX,y:e.touches[0].clientY}; clearTimeout(timer); timer=setTimeout(()=>{ if(st) begin(i,d,st.x); },380); },{passive:true});
+  tl.addEventListener('touchmove',e=>{
+    if(pinch&&e.touches.length===2){ e.preventDefault(); const [a,c]=e.touches, dd=Math.abs(a.clientX-c.clientX)||1; MT.pps=Math.max(2,Math.min(90,pinch.pps*dd/pinch.d)); mtRender(); mtSeek(pinch.t,true); return; }
+    if(drag){ e.preventDefault(); drag.cx=e.touches[0].clientX; place(); return; }
     if(st&&Math.hypot(e.touches[0].clientX-st.x,e.touches[0].clientY-st.y)>8){ clearTimeout(timer); st=null; } },{passive:false});
-  const end=()=>{ clearTimeout(timer); cancelAnimationFrame(raf); if(drag){ const b=TL.B[drag.i]; drag.el.classList.remove('drag'); $('#tlIns').hidden=true;
-      /* position cible parmi les plans déplaçables */
-      let to=0; for(let q=0;q<drag.to&&q<TL.B.length;q++) if(TL.B[q].vk&&q!==drag.i) to++;
-      const k=b.k; drag=null; TL.justDragged=Date.now(); tlMove(TL.B.findIndex(x=>x.k===k),to); }
-    st=null; };
-  row.addEventListener('touchend',end); row.addEventListener('touchcancel',end);
-  /* à la souris (ordinateur) : glisser directement */
-  row.addEventListener('mousedown',e=>{ const d=e.target.closest('.tb'); if(!d) return; const i=+d.dataset.i; if(!TL.B[i]||!TL.B[i].vk) return; const x0=e.clientX; let on=false;
-    const mv=ev=>{ if(!on&&Math.abs(ev.clientX-x0)>6){ on=true; drag={i,el:d,cx:ev.clientX}; d.classList.add('drag'); $('#tlIns').hidden=false; } if(on){ drag.cx=ev.clientX; place(); } };
-    const up=()=>{ removeEventListener('mousemove',mv); removeEventListener('mouseup',up); if(on) end(); };
+  const tend=e=>{ if(pinch&&e.touches.length<2){ pinch=null; } clearTimeout(timer); st=null; if(drag) finish(); };
+  tl.addEventListener('touchend',tend); tl.addEventListener('touchcancel',tend);
+  /* souris (ordinateur) : glisser un plan ; molette + Ctrl : zoom */
+  vt.addEventListener('mousedown',e=>{ const d=e.target.closest('.mc'); if(!d||e.target.dataset.h) return; const i=+d.dataset.i; if(!MT.B[i]||!MT.B[i].it) return; const x0=e.clientX; let on=false;
+    const mv=ev=>{ if(!on&&Math.abs(ev.clientX-x0)>6){ on=true; begin(i,d,x0); } if(on){ drag.cx=ev.clientX; place(); } };
+    const up=()=>{ removeEventListener('mousemove',mv); removeEventListener('mouseup',up); if(on) finish(); };
     addEventListener('mousemove',mv); addEventListener('mouseup',up); });
+  tl.addEventListener('wheel',e=>{ if(!e.ctrlKey) return; e.preventDefault(); MT.pps=Math.max(2,Math.min(90,MT.pps*(e.deltaY<0?1.15:0.87))); const t=MT.t; mtRender(); mtSeek(t,true); },{passive:false});
 })();
-$('#tlVol').onchange=()=>tlRender();
-$('#tlOrig').oninput=()=>{ S.origVol=+$('#tlOrig').value; $('#tlOrigV').textContent=S.origVol+' %'; save(); };
-$('#tlMus').oninput=()=>{ S.musicVol=+$('#tlMus').value; $('#tlMusV').textContent=S.musicVol+' %'; save(); };
-$('#tlRow').addEventListener('click',e=>{ if(Date.now()-(TL.justDragged||0)<400) return; const d=e.target.closest('.tb'); if(!d) return; TL.cur=+d.dataset.i; tlRender(); });
-$('#tlSel').onchange=()=>{ const b=TL.B[TL.cur]; if(!b||!b.vk) return; const v=$('#tlSel').value; if(v==='') delete MK[b.vk]; else MK[b.vk]=+v; tlRender(); };
-$('#tlList').addEventListener('click',e=>{ const i=e.target.dataset&&e.target.dataset.rm; if(i==null) return; const n=+i; playlist.splice(n,1);
-  for(const k in MK){ if(MK[k]===n) delete MK[k]; else if(MK[k]>n) MK[k]--; } plRender(); tlRender(); });
-$('#tlAdd').onclick=()=>$('#musicIn').click();
-$('#tlClose').onclick=()=>{ $('#tl').hidden=true; };
-$('#tlGo').onclick=()=>{ makeFilm(TL.plan).catch(err=>{ console.error(err); $('#rInfo').innerHTML=`<span style="color:var(--danger)">Erreur : ${err.message}</span>`; $('#rClose').hidden=false; $('#rCancel').hidden=true; }); };
+
+/* ---- barre d'outils selon ce qui est sélectionné ---- */
+function selBlock(){ return MT.B.find(b=>b.k===MT.sel)||null; }
+function mtTools(){ const b=selBlock(), bar=$('#mtTools'); let T;
+  if(!b) T=[['♪','Musique','music'],['🔊','Volume','gvol'],['🎵','Morceaux','songs'],['T','Titre','title'],['↺','Remettre','reset']];
+  else if(b.kind==='clip') T=[['🔊','Volume','vol'],['✂︎','Découper','split'],['♪','Musique ici','here'],['⌗','Cadrage','crop'],['🗑','Supprimer','del']];
+  else if(b.kind==='photo') T=[['♪','Musique ici','here'],['✂︎','Découper','split'],['🗑','Supprimer','del']];
+  else T=[['T','Titre','title']];
+  bar.innerHTML=T.map(([ic,lb,a])=>`<button data-a="${a}" class="${MT.pop===a?'on':''}"><b>${ic}</b>${lb}</button>`).join('');
+  mtPop(); }
+$('#mtTools').addEventListener('click',e=>{ const btn=e.target.closest('button'); if(!btn) return; const a=btn.dataset.a, b=selBlock(); pvStop();
+  if(a==='music'){ $('#musicIn').click(); return; }
+  if(a==='title'){ fillSet(); $('#settings').hidden=false; return; }
+  if(a==='crop'){ const i=videos.indexOf(b.c.v); if(i>=0) openEd(i); return; }
+  if(a==='reset'){ if(MT.pop!=='reset'){ MT.pop='reset'; mtTools(); return; } }
+  if(a==='split'){ const it=b.it, off=MT.t-b.T; if(off<0.4||off>b.dur-0.4){ toast('Place la tête de lecture à l\'intérieur du plan'); return; }
+    mtSnap(); const i=SEQ.indexOf(it); let n;
+    if(it.kind==='clip'){ const cut=it.in+off; n={...it,id:newId(),in:cut}; it.out=cut; } else { n={...it,id:newId(),dur:it.dur-off}; it.dur=off; }
+    SEQ.splice(i+1,0,n); seqSave(); MT.sel=n.id; mtRender(); return; }
+  if(a==='del'){ mtSnap(); const i=SEQ.indexOf(b.it); if(i>=0) SEQ.splice(i,1); delete MK[b.k]; seqSave(); MT.sel=null; MT.pop=null; mtRender(); toast('Plan retiré · ↶ pour annuler'); return; }
+  MT.pop=MT.pop===a?null:a; mtTools(); });
+function mtPop(){ const p=$('#mtPop'), b=selBlock(), a=MT.pop; if(!a){ p.hidden=true; p.innerHTML=''; return; } p.hidden=false;
+  if(a==='vol'&&b&&b.kind==='clip'){ const v=Math.round((b.it.vol!=null?b.it.vol:volV(b.c.v))*100);
+    p.innerHTML=`<div class="prow"><span>Son du plan</span><input type="range" min="0" max="200" step="10" value="${v}" id="ppVol"><b id="ppVolV">${v?v+' %':'muet'}</b></div>`;
+    let snapped=false; $('#ppVol').oninput=ev=>{ if(!snapped){ mtSnap(); snapped=true; } const x=+ev.target.value; b.it.vol=x===100&&volV(b.c.v)===1?undefined:x/100; $('#ppVolV').textContent=x?x+' %':'muet'; seqSave(); };
+    $('#ppVol').onchange=()=>mtRender(); return; }
+  if(a==='gvol'){ p.innerHTML=`<div class="prow"><span>Son des vidéos</span><input type="range" min="0" max="100" step="5" value="${S.origVol}" id="ppO"><b id="ppOV">${S.origVol} %</b></div>
+    <div class="prow"><span>Musique</span><input type="range" min="0" max="100" step="5" value="${S.musicVol}" id="ppM"><b id="ppMV">${S.musicVol} %</b></div>`;
+    $('#ppO').oninput=ev=>{ S.origVol=+ev.target.value; $('#ppOV').textContent=S.origVol+' %'; save(); }; $('#ppM').oninput=ev=>{ S.musicVol=+ev.target.value; $('#ppMV').textContent=S.musicVol+' %'; save(); }; return; }
+  if(a==='here'&&b){ const cur=MK[b.k]!=null?MK[b.k]:(b.vk&&MK[b.vk]!=null&&MT.B.findIndex(x=>x.vk===b.vk)===MT.B.indexOf(b)?MK[b.vk]:null);
+    if(!playlist.length){ p.innerHTML='<div class="prow"><span>Ajoute d\'abord des morceaux</span><button id="ppAdd">＋ Musique</button></div>'; $('#ppAdd').onclick=()=>$('#musicIn').click(); return; }
+    p.innerHTML='<div class="plist">'+[`<button data-m="" class="${cur==null?'on':''}">La playlist continue</button>`].concat(playlist.map((m,i)=>`<button data-m="${i}" class="${cur===i?'on':''}"><i style="background:${MCOL[i%MCOL.length]}"></i>${i+1}. ${esc(m.name)}</button>`)).join('')+'</div>';
+    p.querySelectorAll('button').forEach(x=>x.onclick=()=>{ mtSnap(); delete MK[b.vk]; if(x.dataset.m==='') delete MK[b.k]; else MK[b.k]=+x.dataset.m; mtRender(); }); return; }
+  if(a==='songs'){ p.innerHTML=(playlist.length?playlist.map((m,i)=>`<div class="prow"><i class="dot" style="background:${MCOL[i%MCOL.length]}"></i><span class="nm">${i+1}. ${esc(m.name)}</span><em>${m.dur?fmtDur(m.dur):''}</em><button data-up="${i}" ${i?'':'disabled'}>↑</button><button data-rm="${i}">✕</button></div>`).join(''):'<div class="prow"><span>Aucun morceau</span></div>')+'<div class="prow"><button id="ppAdd2">＋ Ajouter des morceaux</button></div>';
+    $('#ppAdd2').onclick=()=>$('#musicIn').click();
+    p.querySelectorAll('[data-rm]').forEach(x=>x.onclick=()=>{ const n=+x.dataset.rm; playlist.splice(n,1); for(const k in MK){ if(MK[k]===n) delete MK[k]; else if(MK[k]>n) MK[k]--; } plRender(); mtRender(); });
+    p.querySelectorAll('[data-up]').forEach(x=>x.onclick=()=>{ const n=+x.dataset.up; [playlist[n-1],playlist[n]]=[playlist[n],playlist[n-1]]; for(const k in MK){ if(MK[k]===n) MK[k]=n-1; else if(MK[k]===n-1) MK[k]=n; } plRender(); mtRender(); }); return; }
+  if(a==='reset'){ p.innerHTML='<div class="prow"><span>Remettre tous les plans dans l\'ordre chronologique, avec les passages d\'origine ?</span><button id="ppReset" class="primary">Remettre</button></div>';
+    $('#ppReset').onclick=()=>{ mtSnap(); seqSet(seqFromSel()); MK={}; MT.sel=null; MT.pop=null; videos.forEach(updateTile); mtRender(); mtSeek(0,true); }; return; }
+  p.hidden=true; }
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ---- aperçu : image à la tête de lecture, lecture ---- */
+const PV={el:null,au:null,playing:false,url:new Map(),img:new Map(),want:null,busy:false,last:0,aTrack:-1};
+const pvUrl=f=>{ if(!PV.url.has(f)) PV.url.set(f,URL.createObjectURL(f)); return PV.url.get(f); };
+function pvEl(){ if(!PV.el){ const el=document.createElement('video'); el.playsInline=true; el.setAttribute('playsinline',''); el.preload='auto'; el.style.cssText='width:160px;height:90px'; $('#hold').appendChild(el); PV.el=el; } return PV.el; }
+function pvCtx(){ const cv=$('#mtCv'); return [cv.getContext('2d'),cv.width,cv.height]; }
+function pvDrawEl(b){ const el=PV.el, [g,W,H]=pvCtx(); if(!el||!el.videoWidth) return; const r=cropRect(b.c.crop,el.videoWidth,el.videoHeight,W/H); g.drawImage(el,r.sx,r.sy,r.sw,r.sh,0,0,W,H); }
+function pvDrawPhoto(b){ const [g,W,H]=pvCtx(); let im=PV.img.get(b.p); if(!im){ im=new Image(); im.onload=()=>{ if(!PV.playing) pvShow(MT.t); }; im.src=pvUrl(b.p.file); PV.img.set(b.p,im); }
+  g.fillStyle='#000'; g.fillRect(0,0,W,H); if(!im.complete||!im.naturalWidth) return; const iw=im.naturalWidth, ih=im.naturalHeight, r=W/H; let sw=iw, sh=iw/r; if(sh>ih){ sh=ih; sw=ih*r; } g.drawImage(im,(iw-sw)/2,(ih-sh)/2,sw,sh,0,0,W,H); }
+function pvShow(t){ if(!MT.B.length) return; const b=MT.B[blockAtT(t)], [g,W,H]=pvCtx();
+  if(b.kind==='title'){ drawCard(g,S.title||'Mon film',S.subtitle,W,H,1); return; } if(b.kind==='end'){ drawCard(g,S.endText,'',W,H,1); return; }
+  if(b.kind==='photo'){ pvDrawPhoto(b); return; }
+  PV.want={b,src:b.c.in+(t-b.T)}; pvSeekLoop(); }
+async function pvSeekLoop(){ if(PV.busy) return; PV.busy=true; const el=pvEl();
+  while(PV.want&&!PV.playing){ const {b,src}=PV.want; PV.want=null; const u=pvUrl(b.c.v.file);
+    if(el.getAttribute('src')!==u){ el.src=u; await new Promise(r=>{ const to=setTimeout(r,4000); el.onloadedmetadata=()=>{ clearTimeout(to); r(); }; }); }
+    await new Promise(r=>{ const to=setTimeout(r,1500); el.onseeked=()=>{ clearTimeout(to); r(); }; el.currentTime=Math.max(0,src); });
+    if(!PV.playing) pvDrawEl(b); }
+  PV.busy=false; }
+$('#mtPlay').onclick=()=>{ if(PV.playing){ pvStop(); return; } pvPlay(); };
+function pvStop(){ if(!PV.playing) return; PV.playing=false; try{ PV.el&&PV.el.pause(); PV.au&&PV.au.pause(); }catch(e){} $('#mtPlay').textContent='▶'; }
+function pvPlay(){ if(!MT.B.length) return; if(MT.t>=MT.total-0.05) mtSeek(0,true);
+  const el=pvEl(); if(!PV.au){ PV.au=new Audio(); PV.au.preload='auto'; }
+  PV.playing=true; $('#mtPlay').textContent='❚❚'; PV.aTrack=-1; let cur=-1, last=performance.now();
+  const pieces=playlist.length?musicPieces(musicSegs(MT.B),MT.total):[];
+  const music=t=>{ const pc=pieces.find(p=>t>=p.t0&&t<p.t1); if(!pc){ if(!PV.au.paused) PV.au.pause(); PV.aTrack=-1; return; }
+    const key2=pc.track+'@'+pc.t0; if(PV.aTrack!==key2){ PV.aTrack=key2; PV.au.src=pvUrl(playlist[pc.track].file); PV.au.currentTime=Math.max(0,t-pc.t0); PV.au.volume=Math.min(1,S.musicVol/100); PV.au.play().catch(()=>{}); } };
+  const step=async()=>{ if(!PV.playing) return; const now=performance.now(), dt=(now-last)/1000; last=now; const i=blockAtT(MT.t), b=MT.B[i];
+    if(i!==cur){ cur=i; if(b.kind==='clip'){ const u=pvUrl(b.c.v.file); if(el.getAttribute('src')!==u) el.src=u; el.currentTime=b.c.in+(MT.t-b.T); el.muted=false; el.volume=Math.min(1,S.origVol/100*(b.vol!=null?b.vol:volV(b.c.v))); el.play().catch(()=>{}); } else el.pause(); }
+    if(b.kind==='clip'){ const t=b.T+(el.currentTime-b.c.in); MT.t=Math.max(MT.t,Math.min(t,b.T+b.dur)); if(el.currentTime>=b.c.out-0.04||el.ended) MT.t=b.T+b.dur+0.001; if(el.readyState>=2) pvDrawEl(b); }
+    else { MT.t+=dt; if(b.kind==='photo') pvDrawPhoto(b); else { const [g,W,H]=pvCtx(); drawCard(g,b.kind==='title'?(S.title||'Mon film'):S.endText,b.kind==='title'?S.subtitle:'',W,H,1); } }
+    music(MT.t);
+    if(MT.t>=MT.total-0.01){ MT.t=MT.total; pvStop(); }
+    MT.prog=performance.now(); tl.scrollLeft=MT.t*MT.pps; mtTime(); if(PV.playing) requestAnimationFrame(step); };
+  music(MT.t); requestAnimationFrame(step); }
 
 /* ---------- éditeur ---------- */
 const edV=$('#edV'); const ed={i:-1,url:null,vw:0,vh:0,k:1,tmp:null,range:false,raf:0};
 function openEd(i){ $('#editor').hidden=false; loadEd(i); cancelAnimationFrame(ed.raf); ed.raf=requestAnimationFrame(edLoop); }
-function closeEd(){ edV.pause(); edV.removeAttribute('src'); edV.load(); if(ed.url) URL.revokeObjectURL(ed.url); ed.url=null; $('#editor').hidden=true; cancelAnimationFrame(ed.raf); const v=videos[ed.i]; if(v) updateTile(v); updateInfo(); ed.i=-1; if(!$('#tl').hidden) tlRender(); }
+function closeEd(){ edV.pause(); edV.removeAttribute('src'); edV.load(); if(ed.url) URL.revokeObjectURL(ed.url); ed.url=null; $('#editor').hidden=true; cancelAnimationFrame(ed.raf); const v=videos[ed.i]; if(v) updateTile(v); updateInfo(); ed.i=-1; if(!$('#mt').hidden){ mtRender(); pvShow(MT.t); } }
 function loadEd(i){ ed.i=i; const v=videos[i]; edV.pause(); if(ed.url) URL.revokeObjectURL(ed.url); ed.url=URL.createObjectURL(v.file); ed.vw=0; ed.range=false;
   $('#edTitle').textContent=`${v.date.toLocaleDateString('fr-FR',{day:'numeric',month:'short'})} ${pad(v.date.getHours())}:${pad(v.date.getMinutes())} · ${v.name}`;
   edV.onloadedmetadata=()=>{ v.dur=edV.duration; v.w=edV.videoWidth; v.h=edV.videoHeight; edV.currentTime=clipOf(v).in; layout(); timeline(); };
@@ -773,7 +957,7 @@ $('#mgGo').onclick=async()=>{
   $('#mgProg').textContent=`${plan.length} plans choisis dans ${nv} vidéo${nv>1?'s':''} · ${fmtDur(dur)}`;
   if(dur+phT<(+S.magicMin*60-phT>=10?+S.magicMin*60:dur+phT)*0.85) toast(`Film de ${fmtDur(dur+phT)} : pas assez de vidéo pour la durée choisie.`);
   $('#magic').hidden=true; $('#mgRun').hidden=true;
-  openTL(plan);
+  openMontage(plan);
 };
 
 /* ---------- pages de titre ---------- */
@@ -792,7 +976,7 @@ function drawCard(ctx,text,sub,W,H,a){
 let cancel=false, outBlob=null, outName='';
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 function pickMime(){ return ['video/mp4;codecs=avc1.640028,mp4a.40.2','video/mp4;codecs=avc1,mp4a','video/mp4','video/webm;codecs=vp9,opus','video/webm'].find(m=>window.MediaRecorder&&MediaRecorder.isTypeSupported(m)); }
-$('#btnFilm').onclick=()=>{ MAGIC.last=null; videos.forEach(updateTile); openTL(null); };
+$('#btnFilm').onclick=()=>{ openMontage(null); };
 /* tout ce qui demande un geste de l'utilisateur (son, lecture vidéo) est préparé tout de suite, au moment du toucher */
 function primeMedia(firstFile){
   const ac=new (window.AudioContext||window.webkitAudioContext)(); ac.resume();
@@ -1135,7 +1319,7 @@ async function renderV2(clipsIn,sup,actx){
       const m=Math.round((c.T+c.N/FPS2)*48000)-pos; if(m<=0) continue;
       const L=new Float32Array(m), R=new Float32Array(m);
       if(ov>0){ let a=null; try{ const mv2=await moovOf(c.v); a=await audioClip(c.v,mv2&&mv2.audio,c.in,c.in+m/48000); }catch(e){ console.warn(e); }
-        if(a){ const cv=ov*volV(c.v), n=Math.min(m,a[0].length), fd=Math.min(960,n>>2)||1; for(let i=0;i<n;i++){ const g=cv*Math.min(1,i/fd,(n-i)/fd); L[i]=a[0][i]*g; R[i]=a[1][i]*g; } } }
+        if(a){ const cv=ov*(items[ii].vol!=null?items[ii].vol:volV(c.v)), n=Math.min(m,a[0].length), fd=Math.min(960,n>>2)||1; for(let i=0;i<n;i++){ const g=cv*Math.min(1,i/fd,(n-i)/fd); L[i]=a[0][i]*g; R[i]=a[1][i]*g; } } }
       await put(L,R); }
     if(!cancel) await silence(NS-pos);
     await aenc.flush(); aenc.close();
@@ -1151,7 +1335,7 @@ async function renderV2(clipsIn,sup,actx){
 }
 /* point d'entrée : V2 si l'iPhone sait faire, sinon l'ancienne méthode */
 async function makeFilm(plan,pre){
-  const clipsIn=plan||videos.filter(v=>isSel(v)&&v.dur).map(v=>({v,...clipOf(v)})); if(!clipsIn.length&&!selPhotos().length) return;
+  ensureSeq(); const clipsIn=SEQ.filter(x=>x.kind==='clip').map(x=>({v:x.v,in:x.in,out:x.out})); if(!SEQ.length) return;
   /* sans les outils WebCodecs : ancienne méthode, lancée tout de suite (le geste de l'utilisateur est encore valable) */
   if(!(window.VideoEncoder&&window.VideoDecoder&&window.AudioEncoder&&window.Mp4Muxer)){ if(!clipsIn.length) return; if(photos.length) toast('Photos et placement de la musique : iOS trop ancien'); return startFilm(clipsIn,pre); }
   /* contexte audio ouvert pendant le toucher : il sert à lire la musique */
