@@ -74,6 +74,19 @@ header{position:sticky;top:0;z-index:10;background:rgba(19,21,24,.96);-webkit-ba
 .pl .pd{font-variant-numeric:tabular-nums;font-size:13px}
 .pl button{padding:5px 10px}
 .pl-empty,.pl-tot{font-size:13px;padding:6px 0}
+/* écran Ordre : glisser-déposer + cadrage photo par photo */
+#ogrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:12px 12px calc(24px + var(--sb))}
+#ogrid.land{grid-template-columns:repeat(2,1fr)}
+@media (min-width:600px){#ogrid{grid-template-columns:repeat(5,1fr)}#ogrid.land{grid-template-columns:repeat(3,1fr)}}
+.otile{position:relative;border-radius:9px;overflow:hidden;background:#000;touch-action:pan-y;-webkit-touch-callout:none;cursor:grab}
+.otile canvas{display:block;width:100%;height:100%;pointer-events:none}
+.otile .num{position:absolute;left:5px;top:5px;min-width:22px;text-align:center;background:rgba(0,0,0,.72);border-radius:6px;padding:1px 6px;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums}
+.otile .bdg{position:absolute;left:5px;bottom:5px;background:rgba(0,0,0,.7);border-radius:5px;padding:1px 5px;font-size:10px;color:var(--accent)}
+.otile.ghost{opacity:.25;outline:2px dashed var(--accent);outline-offset:-2px}
+.otile.lift{position:fixed;z-index:50;pointer-events:none;box-shadow:0 14px 34px rgba(0,0,0,.6);outline:3px solid var(--accent);outline-offset:-3px;transform:scale(1.06);opacity:.95}
+.otile.press{transform:scale(.96);transition:transform .2s}
+#orderHint{padding:10px 14px 0}
+#order .body{padding:0}
 </style>
 </head>
 <body>
@@ -93,7 +106,16 @@ header{position:sticky;top:0;z-index:10;background:rgba(19,21,24,.96);-webkit-ba
 <input type="file" id="fileIn" accept="image/*" multiple hidden>
 <input type="file" id="musicIn" multiple accept=".mp3,.m4a,.aac,.wav,.aif,.aiff,.caf,audio/mpeg,audio/mp3,audio/mp4,audio/x-m4a,audio/aac,audio/wav,audio/*" hidden>
 <main id="grid" hidden></main>
-<div id="bottom" hidden><div class="info" id="info"></div><button id="selAll">Tout</button><button class="primary" id="btnMake">🎬 Créer</button></div>
+<div id="bottom" hidden><div class="info" id="info"></div><button id="selAll">Tout</button><button id="btnOrder">↕ Ordre</button><button class="primary" id="btnMake">🎬 Créer</button></div>
+
+<!-- Ordre et cadrage des photos du diaporama -->
+<section class="sheet" id="order" hidden>
+  <div class="top"><div class="t">Ordre et cadrage</div><button id="oDate">Par date</button><button class="primary" id="oClose">OK</button></div>
+  <div class="body">
+    <div class="hint" id="orderHint">Appui long puis glisse une photo pour la déplacer. Touche une photo pour la recentrer.</div>
+    <div id="ogrid"></div>
+  </div>
+</section>
 
 <!-- Éditeur de cadrage -->
 <section class="sheet" id="editor" hidden>
@@ -254,8 +276,8 @@ async function renderTitle(W,H,over,bg){ const cv=new OffscreenCanvas(W,H), c=cv
   if(bg){ const img=await getBitmap(bg); c.filter=`blur(${Math.round(Math.min(W,H)/90)}px) brightness(.5)`; renderSlideInto(c,img,cr(bg),W,H,over); c.filter='none'; } titleInto(c,W,H); return cv; }
 
 /* ---------- éditeur : cadrage tactile ---------- */
-const pv=$('#pv'); let edI=-1, edImg=null;
-async function openEd(i){ $('#editor').hidden=false; edI=i; await edLoad(); }
+const pv=$('#pv'); let edI=-1, edImg=null, edList=null;
+async function openEd(i,list){ $('#editor').hidden=false; edI=i; edList=list||null; await edLoad(); }
 async function edLoad(){ const p=photos[edI]; $('#edTitle').textContent=`${p.date.toLocaleDateString('fr-FR',{day:'numeric',month:'short'})} ${pad(p.date.getHours())}:${pad(p.date.getMinutes())} · ${p.name}`; edImg=await getBitmap(p); edDraw(true); edBtns(); }
 function edBtns(){ const p=photos[edI], s=cr(p); $('#mFill').classList.toggle('on',s.mode!=='fit'); $('#mFit').classList.toggle('on',s.mode==='fit'); $('#zoom').value=s.z; $('#zoom').disabled=s.mode==='fit'; $('#bSel').textContent=isSel(p)?'☑ Cochée':'☐ Cochée'; $('#bTitleBg').classList.toggle('on',!!cd(p).titleBg); const sel=selected(), k=sel.indexOf(p); $('#edPos').textContent=k>=0?`photo ${k+1} / ${sel.length}`:'non cochée'; $('#bEarlier').disabled=k<=0; $('#bLater').disabled=k<0||k>=sel.length-1; }
 function edDraw(resize){ if(!edImg) return; const st=$('#stage').getBoundingClientRect(), R=S.format==='9:16'?9/16:16/9;
@@ -282,9 +304,71 @@ $('#bSel').onclick=()=>{ const p=photos[edI]; setSel(p,!isSel(p)); edBtns(); };
 $('#bEarlier').onclick=()=>{ moveSel(photos[edI],-1); edBtns(); };
 $('#bLater').onclick=()=>{ moveSel(photos[edI],1); edBtns(); };
 $('#bTitleBg').onclick=()=>{ const p=photos[edI], on=!cd(p).titleBg; photos.forEach(x=>{ if(CL[key(x)]) delete CL[key(x)].titleBg; if(x.tile) updateTile(x); }); if(on) cd(p).titleBg=true; updateTile(p); edBtns(); save(); toast(on?'Cette photo sera le fond du titre':'Fond du titre : première photo'); };
-$('#edClose').onclick=()=>{ $('#editor').hidden=true; photos.forEach(updateTile); };
-$('#edPrev').onclick=()=>{ if(edI>0){ edI--; edLoad(); } };
-$('#edNext').onclick=()=>{ if(edI<photos.length-1){ edI++; edLoad(); } };
+$('#edClose').onclick=()=>{ $('#editor').hidden=true; photos.forEach(updateTile); if(!$('#order').hidden) oRender(); };
+/* ◀ ▶ : dans l'ordre du diaporama quand on vient de l'écran Ordre, sinon dans la grille */
+const edStep=d=>{ if(edList){ const k=edList.indexOf(photos[edI])+d; if(k>=0&&k<edList.length){ edI=photos.indexOf(edList[k]); edLoad(); } return; }
+  const j=edI+d; if(j>=0&&j<photos.length){ edI=j; edLoad(); } };
+$('#edPrev').onclick=()=>edStep(-1);
+$('#edNext').onclick=()=>edStep(1);
+
+/* ---------- écran Ordre : glisser-déposer + cadrage ---------- */
+const thImg=p=>p.thImg||(p.thImg=new Promise(res=>{ if(!p.thumb) return res(null); const im=new Image(); im.onload=()=>res(im); im.onerror=()=>res(null); im.src=p.thumb; }));
+async function oDraw(p,cv){ const im=await thImg(p); if(!im){ p.thImg=null; return; } const c=cv.getContext('2d'); c.fillStyle='#000'; c.fillRect(0,0,cv.width,cv.height); renderSlideInto(c,im,cr(p),cv.width,cv.height,1); }
+function oRender(){ const g=$('#ogrid'), land=S.format==='16:9'; g.classList.toggle('land',land); g.innerHTML='';
+  const sel=selected(); $('#oDate').disabled=S.order!=='perso';
+  if(!sel.length){ g.innerHTML='<div class="hint" style="grid-column:1/-1;padding:30px 0;text-align:center">Aucune photo cochée.</div>'; return; }
+  const [cw,ch]=land?[320,180]:[180,320];
+  sel.forEach((p,i)=>{ const t=document.createElement('div'); t.className='otile'; t.style.aspectRatio=land?'16/9':'9/16'; t._p=p;
+    const cv=document.createElement('canvas'); cv.width=cw; cv.height=ch; t.appendChild(cv);
+    const n=document.createElement('span'); n.className='num'; n.textContent=i+1; t.appendChild(n);
+    const c=CL[key(p)]?.crop?.[S.format], b=document.createElement('span'); b.className='bdg';
+    b.textContent=(cd(p).titleBg?'★ titre ':'')+(c&&(c.mode==='fit'||c.z>1.001||Math.abs(c.cx-.5)>.005||Math.abs(c.cy-.5)>.005)?(c.mode==='fit'?'entière':'cadrée'):'');
+    if(b.textContent) t.appendChild(b);
+    g.appendChild(t); oDraw(p,cv); }); }
+function oNumber(){ $$('#ogrid .otile').forEach((t,i)=>{ const n=$('.num',t); if(n) n.textContent=i+1; }); }
+/* nouvel ordre lu dans la grille → ordre personnel */
+function oCommit(){ const list=$$('#ogrid .otile').map(t=>t._p); if(S.order!=='perso'){ S.order='perso'; toast('Ordre personnel activé'); }
+  list.forEach((p,i)=>{ cd(p).ord=i+1; }); ordN=list.length; $('#oDate').disabled=false; updateInfo(); photos.forEach(updateTile); save(); }
+$('#btnOrder').onclick=()=>{ $('#order').hidden=false; oRender(); };
+$('#oClose').onclick=()=>{ $('#order').hidden=true; photos.forEach(updateTile); updateInfo(); };
+$('#oDate').onclick=()=>{ S.order='date'; renumber(); updateInfo(); photos.forEach(updateTile); save(); oRender(); toast('Ordre par date rétabli'); };
+
+/* glisser-déposer : appui long au doigt, glissement direct à la souris */
+(function(){
+  const grid=$('#ogrid'), scroller=()=>$('#order .body');
+  let st=null; /* {tile,x,y,timer,drag,lift,dx,dy,touch,id} */
+  const begin=(tile,x,y,touch,id)=>{ st={tile,x,y,touch,id,drag:false,list:$$('#ogrid .otile').map(t=>t._p)};
+    if(touch){ tile.classList.add('press'); st.timer=setTimeout(()=>{ if(st&&!st.drag) startDrag(); },280); } };
+  function startDrag(){ const t=st.tile, r=t.getBoundingClientRect(); t.classList.remove('press');
+    const lift=t.cloneNode(true); const c0=$('canvas',t), c1=$('canvas',lift); c1.getContext('2d').drawImage(c0,0,0);
+    lift.classList.add('lift'); lift.style.width=r.width+'px'; lift.style.height=r.height+'px'; lift.style.left=r.left+'px'; lift.style.top=r.top+'px';
+    document.body.appendChild(lift); t.classList.add('ghost'); st.drag=true; st.lift=lift; st.dx=st.x-r.left; st.dy=st.y-r.top;
+    if(navigator.vibrate) try{ navigator.vibrate(10); }catch(e){} autoScroll(); }
+  function move(x,y){ if(!st) return; st.cx=x; st.cy=y;
+    if(!st.drag){ if(Math.hypot(x-st.x,y-st.y)>8){ if(st.touch) cancel(); else startDrag(); } if(!st||!st.drag) return; }
+    st.lift.style.left=(x-st.dx)+'px'; st.lift.style.top=(y-st.dy)+'px';
+    const el=document.elementFromPoint(x,y), over=el&&el.closest('.otile'); if(!over||over===st.tile||!grid.contains(over)) return;
+    const tiles=[...grid.children], a=tiles.indexOf(st.tile), b=tiles.indexOf(over);
+    grid.insertBefore(st.tile,b>a?over.nextSibling:over); oNumber(); }  /* prend la place de la photo survolée */
+  function autoScroll(){ if(!st||!st.drag) return; const sc=scroller(), r=sc.getBoundingClientRect(), y=st.cy??st.y, m=70;
+    let v=0; if(y<r.top+m) v=-Math.ceil((r.top+m-y)/6); else if(y>r.bottom-m) v=Math.ceil((y-(r.bottom-m))/6);
+    if(v){ sc.scrollTop+=v; move(st.cx??st.x,st.cy??st.y); } requestAnimationFrame(autoScroll); }
+  function end(){ if(!st) return; clearTimeout(st.timer); const s=st; st=null; s.tile.classList.remove('press');
+    if(s.drag){ s.lift.remove(); s.tile.classList.remove('ghost'); if($$('#ogrid .otile').map(t=>t._p).some((p,i)=>p!==s.list[i])) oCommit(); return true; }
+    /* simple toucher : ouvrir le cadrage */
+    const list=$$('#ogrid .otile').map(t=>t._p); openEd(photos.indexOf(s.tile._p),list); return false; }
+  function cancel(){ if(!st) return; clearTimeout(st.timer); st.tile.classList.remove('press'); if(st.lift){ st.lift.remove(); st.tile.classList.remove('ghost'); } st=null; }
+  /* doigt */
+  grid.addEventListener('touchstart',e=>{ const t=e.target.closest('.otile'); if(!t||e.touches.length>1){ cancel(); return; } const p=e.touches[0]; begin(t,p.clientX,p.clientY,true,p.identifier); },{passive:true});
+  grid.addEventListener('touchmove',e=>{ if(!st) return; const p=[...e.changedTouches].find(q=>q.identifier===st.id); if(!p) return; if(st.drag) e.preventDefault(); move(p.clientX,p.clientY); },{passive:false});
+  grid.addEventListener('touchend',e=>{ if(!st) return; end(); e.preventDefault(); },{passive:false});
+  grid.addEventListener('touchcancel',cancel);
+  grid.addEventListener('contextmenu',e=>e.preventDefault());
+  /* souris */
+  grid.addEventListener('pointerdown',e=>{ if(e.pointerType==='touch'||e.button!==0) return; const t=e.target.closest('.otile'); if(!t) return; e.preventDefault(); begin(t,e.clientX,e.clientY,false,e.pointerId); });
+  window.addEventListener('pointermove',e=>{ if(st&&!st.touch) move(e.clientX,e.clientY); });
+  window.addEventListener('pointerup',e=>{ if(st&&!st.touch) end(); });
+})();
 
 /* ---------- réglages ---------- */
 $('#btnSet').onclick=()=>{ $$('#settings [data-k]').forEach(i=>{ const v=S[i.dataset.k]; if(i.type==='checkbox') i.checked=!!v; else i.value=v; }); $('#v_musicVol').textContent=S.musicVol+' %'; plVals(); plRender(); $('#settings').hidden=false; };
