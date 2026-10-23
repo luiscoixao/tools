@@ -82,6 +82,9 @@ header{position:sticky;top:0;z-index:10;background:rgba(19,21,24,.96);-webkit-ba
 .otile canvas{display:block;width:100%;height:100%;pointer-events:none}
 .otile .num{position:absolute;left:5px;top:5px;min-width:22px;text-align:center;background:rgba(0,0,0,.72);border-radius:6px;padding:1px 6px;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums}
 .otile .bdg{position:absolute;left:5px;bottom:5px;background:rgba(0,0,0,.7);border-radius:5px;padding:1px 5px;font-size:10px;color:var(--accent)}
+.otitle{position:relative;border-radius:9px;overflow:hidden;background:#000;cursor:pointer;outline:1px solid var(--line);outline-offset:-1px}
+.otitle canvas{display:block;width:100%;height:100%;pointer-events:none}
+.otitle .num{position:absolute;left:5px;top:5px;background:rgba(0,0,0,.72);border-radius:6px;padding:1px 6px;font-size:12px;font-weight:700;color:var(--accent)}
 .otile.ghost{opacity:.25;outline:2px dashed var(--accent);outline-offset:-2px}
 .otile.lift{position:fixed;z-index:50;pointer-events:none;box-shadow:0 14px 34px rgba(0,0,0,.6);outline:3px solid var(--accent);outline-offset:-3px;transform:scale(1.06);opacity:.95}
 .otile.press{transform:scale(.96);transition:transform .2s}
@@ -112,7 +115,7 @@ header{position:sticky;top:0;z-index:10;background:rgba(19,21,24,.96);-webkit-ba
 <section class="sheet" id="order" hidden>
   <div class="top"><div class="t">Ordre et cadrage</div><button id="oDate">Par date</button><button class="primary" id="oClose">OK</button></div>
   <div class="body">
-    <div class="hint" id="orderHint">Appui long puis glisse une photo pour la déplacer. Touche une photo pour la recentrer.</div>
+    <div class="hint" id="orderHint">Appui long puis glisse une photo pour la déplacer. Touche une photo pour la recentrer, ou le titre pour le modifier.</div>
     <div id="ogrid"></div>
   </div>
 </section>
@@ -318,6 +321,13 @@ function oRender(){ const g=$('#ogrid'), land=S.format==='16:9'; g.classList.tog
   const sel=selected(); $('#oDate').disabled=S.order!=='perso';
   if(!sel.length){ g.innerHTML='<div class="hint" style="grid-column:1/-1;padding:30px 0;text-align:center">Aucune photo cochée.</div>'; return; }
   const [cw,ch]=land?[320,180]:[180,320];
+  /* page de titre en tête (fixe : se règle dans ⚙︎ Réglages) */
+  if(S.titleOn){ const t=document.createElement('div'); t.className='otitle'; t.style.aspectRatio=land?'16/9':'9/16';
+    const cv=document.createElement('canvas'); cv.width=cw*2; cv.height=ch*2; t.appendChild(cv);
+    const n=document.createElement('span'); n.className='num'; n.textContent='Titre'; t.appendChild(n); g.appendChild(t);
+    (async()=>{ const bg=plan().bg, c=cv.getContext('2d'); c.fillStyle='#000'; c.fillRect(0,0,cv.width,cv.height);
+      const im=bg?await thImg(bg):null; if(im){ c.filter=`blur(${Math.round(Math.min(cv.width,cv.height)/90)}px) brightness(.5)`; renderSlideInto(c,im,cr(bg),cv.width,cv.height,1); c.filter='none'; }
+      titleInto(c,cv.width,cv.height); })(); }
   sel.forEach((p,i)=>{ const t=document.createElement('div'); t.className='otile'; t.style.aspectRatio=land?'16/9':'9/16'; t._p=p;
     const cv=document.createElement('canvas'); cv.width=cw; cv.height=ch; t.appendChild(cv);
     const n=document.createElement('span'); n.className='num'; n.textContent=i+1; t.appendChild(n);
@@ -328,7 +338,8 @@ function oRender(){ const g=$('#ogrid'), land=S.format==='16:9'; g.classList.tog
 function oNumber(){ $$('#ogrid .otile').forEach((t,i)=>{ const n=$('.num',t); if(n) n.textContent=i+1; }); }
 /* nouvel ordre lu dans la grille → ordre personnel */
 function oCommit(){ const list=$$('#ogrid .otile').map(t=>t._p); if(S.order!=='perso'){ S.order='perso'; toast('Ordre personnel activé'); }
-  list.forEach((p,i)=>{ cd(p).ord=i+1; }); ordN=list.length; $('#oDate').disabled=false; updateInfo(); photos.forEach(updateTile); save(); }
+  list.forEach((p,i)=>{ cd(p).ord=i+1; }); ordN=list.length; $('#oDate').disabled=false; updateInfo(); photos.forEach(updateTile); save(); oRender(); }  /* oRender : le fond du titre suit la nouvelle 1re photo */
+$('#ogrid').addEventListener('click',e=>{ if(e.target.closest('.otitle')) $('#btnSet').click(); });
 $('#btnOrder').onclick=()=>{ $('#order').hidden=false; oRender(); };
 $('#oClose').onclick=()=>{ $('#order').hidden=true; photos.forEach(updateTile); updateInfo(); };
 $('#oDate').onclick=()=>{ S.order='date'; renumber(); updateInfo(); photos.forEach(updateTile); save(); oRender(); toast('Ordre par date rétabli'); };
@@ -372,7 +383,7 @@ $('#oDate').onclick=()=>{ S.order='date'; renumber(); updateInfo(); photos.forEa
 
 /* ---------- réglages ---------- */
 $('#btnSet').onclick=()=>{ $$('#settings [data-k]').forEach(i=>{ const v=S[i.dataset.k]; if(i.type==='checkbox') i.checked=!!v; else i.value=v; }); $('#v_musicVol').textContent=S.musicVol+' %'; plVals(); plRender(); $('#settings').hidden=false; };
-$('#setClose').onclick=()=>{ $('#settings').hidden=true; if(S.order==='perso'){ renumber(); } updateInfo(); save(); };
+$('#setClose').onclick=()=>{ $('#settings').hidden=true; if(S.order==='perso'){ renumber(); } updateInfo(); save(); if(!$('#order').hidden) oRender(); };
 $$('#settings [data-k]').forEach(i=>i.addEventListener(i.type==='checkbox'||i.tagName==='SELECT'?'change':'input',()=>{ const k=i.dataset.k; S[k]=i.type==='checkbox'?i.checked:(i.type==='number'||i.type==='range')?+i.value:i.value; $('#v_musicVol').textContent=S.musicVol+' %'; save(); }));
 /* ---------- playlist musicale ---------- */
 let playlist=[];  /* {file,name,dur} — dans l'ordre de lecture */
