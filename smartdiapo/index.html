@@ -127,7 +127,7 @@ header{position:sticky;top:0;z-index:10;background:rgba(19,21,24,.96);-webkit-ba
   <div class="edctl">
     <div class="btns"><button id="mFill">Remplir</button><button id="mFit">Photo entière</button><button id="bCenter">Recentrer</button></div>
     <div class="row" style="margin:10px 0"><span class="hint">Zoom</span><input type="range" id="zoom" min="1" max="4" step="0.01" style="flex:1"></div>
-    <div class="btns"><button id="bSel">☐ Cochée</button><button id="bTitleBg">Fond du titre</button></div>
+    <div class="btns"><button id="bSel">☐ Cochée</button><button id="bFx">✨ Retouche</button><button id="bCmp">Avant</button><button id="bTitleBg">Fond du titre</button></div>
     <div class="btns" style="margin-top:6px"><button id="bEarlier">⬅ Plus tôt</button><span id="edPos" class="hint" style="align-self:center;min-width:90px;text-align:center"></span><button id="bLater">Plus tard ➡</button></div>
     <div class="hint" style="margin-top:6px">Glisse pour déplacer, pince pour zoomer. « Photo entière » garde toute la photo sur un fond flouté.</div>
   </div>
@@ -142,6 +142,8 @@ header{position:sticky;top:0;z-index:10;background:rgba(19,21,24,.96);-webkit-ba
     <div class="row"><label>Transition</label><select data-k="trans"><option value="fade">Fondu enchaîné</option><option value="black">Fondu au noir</option><option value="cut">Coupe franche</option></select><input type="number" data-k="transDur" min="0.2" max="3" step="0.1"> s</div>
     <div class="row"><label>Ordre des photos</label><select data-k="order"><option value="date">Date de prise de vue</option><option value="perso">Ordre des touchers (modifiable)</option></select></div>
     <div class="row"><label>Mouvement</label><select data-k="kb"><option value="kb">Léger zoom (Ken Burns)</option><option value="none">Image fixe</option></select></div>
+    <div class="row"><label>Retouche auto</label><select data-k="fx"><option value="light">Légère</option><option value="normal">Normale</option><option value="off">Aucune</option></select></div>
+    <p class="hint">Ravive un peu les couleurs et éclaircit les photos sous-exposées, sans toucher aux photos déjà bien exposées. Désactivable photo par photo dans le cadrage (✨).</p>
     <div class="row"><label>Définition</label><select data-k="quality"><option value="1080">1080p (Full HD)</option><option value="720">720p (plus léger)</option></select></div>
     <div class="sec">Page de titre</div>
     <div class="row"><label><input type="checkbox" data-k="titleOn"> Afficher pendant</label><input type="number" data-k="titleDur" min="1" max="10" step="0.5"> s</div>
@@ -185,7 +187,7 @@ const toast=t=>{ const d=document.createElement('div'); d.className='toast'; d.t
 async function pool(items,n,fn){ let i=0; const w=async()=>{ while(i<items.length){ const it=items[i++]; try{ await fn(it); }catch(e){ console.warn(e); } } }; await Promise.all(Array.from({length:Math.min(n,items.length)},w)); }
 
 /* ---------- état mémorisé ---------- */
-const DEF={order:'date',engine:'auto',format:'9:16',quality:'1080',dur:3.5,trans:'fade',transDur:0.8,kb:'kb',titleOn:true,titleDur:3.5,t1:'',t2:'',t3:'',musicVol:80,xfade:3,musicFadeOut:3};
+const DEF={order:'date',engine:'auto',format:'9:16',quality:'1080',dur:3.5,trans:'fade',transDur:0.8,kb:'kb',titleOn:true,titleDur:3.5,t1:'',t2:'',t3:'',musicVol:80,xfade:3,musicFadeOut:3,fx:'light'};
 let S=Object.assign({},DEF), CL={};
 try{ Object.assign(S,JSON.parse(localStorage.getItem('sd-set')||'{}')); CL=JSON.parse(localStorage.getItem('sd-photos')||'{}'); }catch(e){}
 let saveT=null; const save=()=>{ clearTimeout(saveT); saveT=setTimeout(()=>{ try{ localStorage.setItem('sd-set',JSON.stringify(S)); localStorage.setItem('sd-photos',JSON.stringify(CL)); }catch(e){} },300); };
@@ -213,12 +215,38 @@ async function exifDate(file){
 function loadImg(file){ return new Promise((res,rej)=>{ const im=new Image(); const u=URL.createObjectURL(file); im.onload=()=>{ URL.revokeObjectURL(u); res(im); }; im.onerror=()=>{ URL.revokeObjectURL(u); rej(new Error('image illisible')); }; im.decoding='async'; im.src=u; }); }
 /* image réduite (max 2400 px) gardée en mémoire le temps d'en avoir besoin */
 const imgCache=new Map();
-async function getBitmap(p){
+/* ---------- retouche automatique ----------
+   1) niveaux : noir et blanc ramenés aux extrêmes (gain limité, rien de brûlé)
+   2) sous-exposition : courbe gamma qui remonte les tons moyens, seulement si la photo est sombre
+   3) vibrance : renforce surtout les couleurs ternes, épargne celles déjà saturées */
+const FX={light:{vib:.14,gmin:.65,target:.38,gain:1.6},normal:{vib:.26,gmin:.55,target:.42,gain:1.8}};
+const fxOn=p=>S.fx!=='off'&&!(CL[key(p)]&&CL[key(p)].nofx);
+function enhanceCanvas(cv,level){ const P=FX[level]; if(!P) return cv; const c=cv.getContext('2d',{willReadFrequently:true}), W=cv.width, H=cv.height;
+  const id=c.getImageData(0,0,W,H), d=id.data, n=W*H, step=Math.max(1,Math.floor(n/60000)), hist=new Uint32Array(256); let cnt=0;
+  for(let i=0;i<n;i+=step){ const k=i*4; hist[(d[k]*54+d[k+1]*183+d[k+2]*19)>>8]++; cnt++; }
+  const pct=q=>{ let a=0; const t=q*cnt; for(let v=0;v<256;v++){ a+=hist[v]; if(a>=t) return v/255; } return 1; };
+  /* photo bien exposée : niveaux à peine retouchés (gain ≤ 8 %) ; photo sombre : on ramène les hautes lumières vers le haut */
+  const m0=pct(.5), dark=m0<.30, lo=clamp(pct(.005)-.01,0,.04), hi=clamp(pct(.995)+.02,dark?Math.max(lo+.2,1/P.gain):.93,1), med=clamp01((m0-lo)/(hi-lo));
+  const g=dark&&med<P.target&&med>.01?clamp(Math.log(P.target)/Math.log(med),P.gmin,1):1;
+  const lut=new Uint8ClampedArray(256); for(let v=0;v<256;v++) lut[v]=Math.round(255*Math.pow(clamp01((v/255-lo)/(hi-lo)),g));
+  const vib=P.vib;
+  for(let k=0;k<d.length;k+=4){ let r=lut[d[k]], gg=lut[d[k+1]], b=lut[d[k+2]];
+    const mx=Math.max(r,gg,b), mn=Math.min(r,gg,b); if(mx>mn){ const sat=(mx-mn)/mx, f=1+vib*(1-sat)*(1-sat), avg=(r+gg+b)/3;
+      r=avg+(r-avg)*f; gg=avg+(gg-avg)*f; b=avg+(b-avg)*f; }
+    d[k]=r; d[k+1]=gg; d[k+2]=b; }
+  c.putImageData(id,0,0); return cv; }
+const fxCache=new Map();
+async function getRaw(p){
   if(imgCache.has(p)) return imgCache.get(p);
   const pr=(async()=>{ const im=await loadImg(p.file); const k=Math.min(1,2400/Math.max(im.naturalWidth,im.naturalHeight)); const w=Math.round(im.naturalWidth*k), h=Math.round(im.naturalHeight*k);
     const c=document.createElement('canvas'); c.width=w; c.height=h; c.getContext('2d').drawImage(im,0,0,w,h); p.iw=w; p.ih=h; return c; })();
   imgCache.set(p,pr); if(imgCache.size>4){ const first=imgCache.keys().next().value; if(first!==p) imgCache.delete(first); } return pr;
 }
+/* image utilisée pour le cadrage et la vidéo : retouchée si la retouche est active pour cette photo */
+async function getBitmap(p){ if(!fxOn(p)) return getRaw(p); const k=S.fx;
+  const hit=fxCache.get(p); if(hit&&hit.k===k) return hit.pr;
+  const pr=(async()=>{ const raw=await getRaw(p), c=document.createElement('canvas'); c.width=raw.width; c.height=raw.height; c.getContext('2d').drawImage(raw,0,0); await sleep(0); return enhanceCanvas(c,k); })();
+  fxCache.set(p,{k,pr}); if(fxCache.size>4){ const first=fxCache.keys().next().value; if(first!==p) fxCache.delete(first); } return pr; }
 
 /* ---------- import ---------- */
 $('#btnPick').onclick=$('#btnAdd').onclick=()=>$('#fileIn').click();
@@ -282,7 +310,7 @@ async function renderTitle(W,H,over,bg){ const cv=new OffscreenCanvas(W,H), c=cv
 const pv=$('#pv'); let edI=-1, edImg=null, edList=null;
 async function openEd(i,list){ $('#editor').hidden=false; edI=i; edList=list||null; await edLoad(); }
 async function edLoad(){ const p=photos[edI]; $('#edTitle').textContent=`${p.date.toLocaleDateString('fr-FR',{day:'numeric',month:'short'})} ${pad(p.date.getHours())}:${pad(p.date.getMinutes())} · ${p.name}`; edImg=await getBitmap(p); edDraw(true); edBtns(); }
-function edBtns(){ const p=photos[edI], s=cr(p); $('#mFill').classList.toggle('on',s.mode!=='fit'); $('#mFit').classList.toggle('on',s.mode==='fit'); $('#zoom').value=s.z; $('#zoom').disabled=s.mode==='fit'; $('#bSel').textContent=isSel(p)?'☑ Cochée':'☐ Cochée'; $('#bTitleBg').classList.toggle('on',!!cd(p).titleBg); const sel=selected(), k=sel.indexOf(p); $('#edPos').textContent=k>=0?`photo ${k+1} / ${sel.length}`:'non cochée'; $('#bEarlier').disabled=k<=0; $('#bLater').disabled=k<0||k>=sel.length-1; }
+function edBtns(){ const p=photos[edI], s=cr(p); $('#mFill').classList.toggle('on',s.mode!=='fit'); $('#mFit').classList.toggle('on',s.mode==='fit'); $('#zoom').value=s.z; $('#zoom').disabled=s.mode==='fit'; $('#bSel').textContent=isSel(p)?'☑ Cochée':'☐ Cochée'; $('#bTitleBg').classList.toggle('on',!!cd(p).titleBg); $('#bFx').classList.toggle('on',fxOn(p)); $('#bFx').disabled=S.fx==='off'; $('#bCmp').disabled=!fxOn(p); const sel=selected(), k=sel.indexOf(p); $('#edPos').textContent=k>=0?`photo ${k+1} / ${sel.length}`:'non cochée'; $('#bEarlier').disabled=k<=0; $('#bLater').disabled=k<0||k>=sel.length-1; }
 function edDraw(resize){ if(!edImg) return; const st=$('#stage').getBoundingClientRect(), R=S.format==='9:16'?9/16:16/9;
   let w=st.width-24, h=w/R; if(h>st.height-24){ h=st.height-24; w=h*R; }
   if(resize||pv._w!==Math.round(w)){ const dpr=Math.min(2,devicePixelRatio||1); pv._w=Math.round(w); pv.width=Math.round(w*dpr); pv.height=Math.round(h*dpr); pv.style.width=w+'px'; pv.style.height=h+'px'; }
@@ -303,6 +331,11 @@ $('#zoom').oninput=e=>{ const s=cr(photos[edI]); s.z=+e.target.value; edDraw(); 
 $('#mFill').onclick=()=>{ cr(photos[edI]).mode='fill'; edBtns(); edDraw(); updateTile(photos[edI]); save(); };
 $('#mFit').onclick=()=>{ cr(photos[edI]).mode='fit'; edBtns(); edDraw(); updateTile(photos[edI]); save(); };
 $('#bCenter').onclick=()=>{ const s=cr(photos[edI]); s.cx=.5; s.cy=.5; s.z=1; edBtns(); edDraw(); updateTile(photos[edI]); save(); };
+$('#bFx').onclick=async()=>{ const p=photos[edI], c=cd(p); if(c.nofx) delete c.nofx; else c.nofx=true; save(); edImg=await getBitmap(p); edDraw(); edBtns(); toast(c.nofx?'Retouche désactivée pour cette photo':'Retouche activée'); };
+/* « Avant » : maintenir pour voir la photo d'origine */
+let cmpOn=false; const cmpShow=async on=>{ const p=photos[edI]; if(on===cmpOn||!fxOn(p)) return; cmpOn=on; const keep=edImg; edImg=on?await getRaw(p):await getBitmap(p); edDraw(); if(!on&&!edImg) edImg=keep; };
+$('#bCmp').addEventListener('pointerdown',e=>{ e.preventDefault(); cmpShow(true); });
+['pointerup','pointerleave','pointercancel'].forEach(t=>$('#bCmp').addEventListener(t,()=>cmpShow(false)));
 $('#bSel').onclick=()=>{ const p=photos[edI]; setSel(p,!isSel(p)); edBtns(); };
 $('#bEarlier').onclick=()=>{ moveSel(photos[edI],-1); edBtns(); };
 $('#bLater').onclick=()=>{ moveSel(photos[edI],1); edBtns(); };
@@ -316,7 +349,9 @@ $('#edNext').onclick=()=>edStep(1);
 
 /* ---------- écran Ordre : glisser-déposer + cadrage ---------- */
 const thImg=p=>p.thImg||(p.thImg=new Promise(res=>{ if(!p.thumb) return res(null); const im=new Image(); im.onload=()=>res(im); im.onerror=()=>res(null); im.src=p.thumb; }));
-async function oDraw(p,cv){ const im=await thImg(p); if(!im){ p.thImg=null; return; } const c=cv.getContext('2d'); c.fillStyle='#000'; c.fillRect(0,0,cv.width,cv.height); renderSlideInto(c,im,cr(p),cv.width,cv.height,1); }
+async function thSrc(p){ const im=await thImg(p); if(!im){ p.thImg=null; return null; } if(!fxOn(p)) return im;
+  const c=document.createElement('canvas'); c.width=im.naturalWidth; c.height=im.naturalHeight; c.getContext('2d').drawImage(im,0,0); return enhanceCanvas(c,S.fx); }
+async function oDraw(p,cv){ const im=await thSrc(p); if(!im) return; const c=cv.getContext('2d'); c.fillStyle='#000'; c.fillRect(0,0,cv.width,cv.height); renderSlideInto(c,im,cr(p),cv.width,cv.height,1); }
 function oRender(){ const g=$('#ogrid'), land=S.format==='16:9'; g.classList.toggle('land',land); g.innerHTML='';
   const sel=selected(); $('#oDate').disabled=S.order!=='perso';
   if(!sel.length){ g.innerHTML='<div class="hint" style="grid-column:1/-1;padding:30px 0;text-align:center">Aucune photo cochée.</div>'; return; }
@@ -326,7 +361,7 @@ function oRender(){ const g=$('#ogrid'), land=S.format==='16:9'; g.classList.tog
     const cv=document.createElement('canvas'); cv.width=cw*2; cv.height=ch*2; t.appendChild(cv);
     const n=document.createElement('span'); n.className='num'; n.textContent='Titre'; t.appendChild(n); g.appendChild(t);
     (async()=>{ const bg=plan().bg, c=cv.getContext('2d'); c.fillStyle='#000'; c.fillRect(0,0,cv.width,cv.height);
-      const im=bg?await thImg(bg):null; if(im){ c.filter=`blur(${Math.round(Math.min(cv.width,cv.height)/90)}px) brightness(.5)`; renderSlideInto(c,im,cr(bg),cv.width,cv.height,1); c.filter='none'; }
+      const im=bg?await thSrc(bg):null; if(im){ c.filter=`blur(${Math.round(Math.min(cv.width,cv.height)/90)}px) brightness(.5)`; renderSlideInto(c,im,cr(bg),cv.width,cv.height,1); c.filter='none'; }
       titleInto(c,cv.width,cv.height); })(); }
   sel.forEach((p,i)=>{ const t=document.createElement('div'); t.className='otile'; t.style.aspectRatio=land?'16/9':'9/16'; t._p=p;
     const cv=document.createElement('canvas'); cv.width=cw; cv.height=ch; t.appendChild(cv);
@@ -383,7 +418,7 @@ $('#oDate').onclick=()=>{ S.order='date'; renumber(); updateInfo(); photos.forEa
 
 /* ---------- réglages ---------- */
 $('#btnSet').onclick=()=>{ $$('#settings [data-k]').forEach(i=>{ const v=S[i.dataset.k]; if(i.type==='checkbox') i.checked=!!v; else i.value=v; }); $('#v_musicVol').textContent=S.musicVol+' %'; plVals(); plRender(); $('#settings').hidden=false; };
-$('#setClose').onclick=()=>{ $('#settings').hidden=true; if(S.order==='perso'){ renumber(); } updateInfo(); save(); if(!$('#order').hidden) oRender(); };
+$('#setClose').onclick=()=>{ $('#settings').hidden=true; fxCache.clear(); if(!$('#editor').hidden&&edI>=0) getBitmap(photos[edI]).then(b=>{ edImg=b; edDraw(); edBtns(); }); if(S.order==='perso'){ renumber(); } updateInfo(); save(); if(!$('#order').hidden) oRender(); };
 $$('#settings [data-k]').forEach(i=>i.addEventListener(i.type==='checkbox'||i.tagName==='SELECT'?'change':'input',()=>{ const k=i.dataset.k; S[k]=i.type==='checkbox'?i.checked:(i.type==='number'||i.type==='range')?+i.value:i.value; $('#v_musicVol').textContent=S.musicVol+' %'; save(); }));
 /* ---------- playlist musicale ---------- */
 let playlist=[];  /* {file,name,dur} — dans l'ordre de lecture */
