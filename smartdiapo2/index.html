@@ -55,6 +55,7 @@ header{display:flex;align-items:center;gap:8px;padding:calc(var(--st) + 8px) max
 #atrack{position:absolute;left:0;right:0;top:96px;height:46px}
 .clip{position:absolute;top:0;height:66px;border-radius:7px;background:#000 center/auto 100% repeat-x;outline:1px solid rgba(255,255,255,.12);outline-offset:-1px;overflow:hidden;touch-action:pan-x;-webkit-touch-callout:none}
 .clip.ttl{background:#050505;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff;outline-color:var(--line)}
+.clip .lo{position:absolute;left:3px;top:3px;font-size:9px;font-weight:700;background:var(--danger);color:#200;border-radius:4px;padding:0 4px}
 .clip .dl{position:absolute;right:3px;bottom:3px;font-size:10px;background:rgba(0,0,0,.7);border-radius:4px;padding:0 4px;font-variant-numeric:tabular-nums;color:#fff}
 .clip.sel,.aclip.sel{outline:3px solid var(--accent);outline-offset:-3px;z-index:2}
 .clip.lift{z-index:5;opacity:.85;box-shadow:0 10px 24px rgba(0,0,0,.6);outline:3px solid var(--accent);outline-offset:-3px}
@@ -216,7 +217,7 @@ function loadImg(blob){ return new Promise((res,rej)=>{ const im=new Image(); co
 const DEF={format:'9:16',quality:'1080',dur:3.5,trans:'fade',transDur:0.8,kb:'kb',fx:'normal',titleDur:3.5,t1:'',t2:'',t3:'',musicVol:80,xfade:3,musicFadeOut:3,engine:'auto'};
 const S=Object.assign({},DEF);
 /* ---------- projet ----------
-   photos : id -> {id,name,date,blob,crop,fx}       (image ramenée à 2400 px)
+   photos : id -> {id,name,date,blob,crop,fx,hd}    (photo d'origine, réduite seulement au-delà de 4096 px)
    songs  : id -> {id,name,blob,dur,a,b,peaks}      (a/b : début et fin sans les silences)
    P.clips : piste image, dans l'ordre  {id, kind:'photo'|'title', pid, dur}
    P.audio : piste son, morceaux bout à bout  {id, sid, from, len}  (from : position dans le morceau) */
@@ -415,7 +416,7 @@ function dbOpen(){ return new Promise(res=>{ try{ const r=indexedDB.open('smartd
 function dbReq(store,mode,fn){ return new Promise(res=>{ if(!db) return res(null); try{ const tx=db.transaction(store,mode), rq=fn(tx.objectStore(store));
   tx.oncomplete=()=>res(rq&&rq.result); tx.onerror=tx.onabort=()=>{ if(!dbWarned&&mode==='readwrite'){ dbWarned=true; toast("Espace insuffisant : le projet n'est plus enregistré sur l'iPhone"); } res(null); }; }catch(e){ res(null); } }); }
 const dbPut=(s,o)=>dbReq(s,'readwrite',st=>st.put(o)), dbDel=(s,id)=>dbReq(s,'readwrite',st=>st.delete(id)), dbAll=s=>dbReq(s,'readonly',st=>st.getAll()), dbClear=s=>dbReq(s,'readwrite',st=>st.clear());
-const photoRec=p=>({id:p.id,name:p.name,date:+p.date,blob:p.blob,crop:p.crop||{},fx:p.fx||null});
+const photoRec=p=>({id:p.id,name:p.name,date:+p.date,blob:p.blob,crop:p.crop||{},fx:p.fx||null,hd:!!p.hd});
 const songRec=s=>({id:s.id,name:s.name,blob:s.blob,dur:s.dur,a:s.a,b:s.b,peaks:s.peaks});
 const phT=new Map(); const savePhoto=p=>{ clearTimeout(phT.get(p.id)); phT.set(p.id,setTimeout(()=>dbPut('photos',photoRec(p)),400)); };
 let prT=null; const saveProject=()=>{ clearTimeout(prT); prT=setTimeout(()=>dbPut('kv',{id:'project',clips:P.clips,audio:P.audio,S:{...S}}),300); };
@@ -423,23 +424,23 @@ let prT=null; const saveProject=()=>{ clearTimeout(prT); prT=setTimeout(()=>dbPu
 /* ---------- images ---------- */
 const imgCache=new Map(), fxCache=new Map();
 function lru(m,k,max){ const v=m.get(k); m.delete(k); m.set(k,v); while(m.size>max) m.delete(m.keys().next().value); return v; }
-function getRaw(p){ if(imgCache.has(p.id)) return lru(imgCache,p.id,4);
+function getRaw(p){ if(imgCache.has(p.id)) return lru(imgCache,p.id,2);
   const pr=loadImg(p.blob).then(im=>{ const c=document.createElement('canvas'); c.width=im.naturalWidth; c.height=im.naturalHeight; c.getContext('2d').drawImage(im,0,0); return c; });
-  imgCache.set(p.id,pr); lru(imgCache,p.id,4); return pr; }
+  imgCache.set(p.id,pr); lru(imgCache,p.id,2); return pr; }
 function getBitmap(p){ const lv=fxLevel(p); if(lv==='off') return getRaw(p); const k=p.id+'|'+lv;
-  if(fxCache.has(k)) return lru(fxCache,k,4);
+  if(fxCache.has(k)) return lru(fxCache,k,2);
   const pr=(async()=>{ const raw=await getRaw(p), c=document.createElement('canvas'); c.width=raw.width; c.height=raw.height; c.getContext('2d').drawImage(raw,0,0); await sleep(0); return enhanceCanvas(c,lv); })();
-  fxCache.set(k,pr); lru(fxCache,k,4); return pr; }
+  fxCache.set(k,pr); lru(fxCache,k,2); return pr; }
 async function makeThumb(p){ try{ const im=await loadImg(p.blob); p.iw=im.naturalWidth; p.ih=im.naturalHeight; const k=220/Math.max(p.iw,p.ih), c=document.createElement('canvas'); c.width=Math.round(p.iw*k); c.height=Math.round(p.ih*k); c.getContext('2d').drawImage(im,0,0,c.width,c.height);
     await new Promise(r=>c.toBlob(b=>{ if(b) p.thumb=URL.createObjectURL(b); r(); },'image/jpeg',0.8)); }catch(e){ p.err=true; } tlSoon(); }
-/* import : date de prise de vue, image ramenée à 2400 px (moins de mémoire, projet gardé sur l'iPhone) */
+/* import : date de prise de vue ; la photo d'origine est gardée telle quelle (réduite seulement au-delà de 4096 px) */
 async function importImages(files){ const out=[];
   await pool(files.map((f,i)=>({f,i})),3,async({f,i})=>{
     const date=(await exifDate(f))||new Date(f.lastModified||Date.now()); let blob=f;
     try{ const im=await loadImg(f), mx=Math.max(im.naturalWidth,im.naturalHeight);
-      if(mx>2400||!/jpe?g/i.test(f.type||'')){ const k=Math.min(1,2400/mx), c=document.createElement('canvas'); c.width=Math.round(im.naturalWidth*k); c.height=Math.round(im.naturalHeight*k); c.getContext('2d').drawImage(im,0,0,c.width,c.height); blob=await new Promise(r=>c.toBlob(r,'image/jpeg',.92)); } }
+      if(mx>4096){ const k=4096/mx, c=document.createElement('canvas'); c.width=Math.round(im.naturalWidth*k); c.height=Math.round(im.naturalHeight*k); c.getContext('2d').drawImage(im,0,0,c.width,c.height); blob=await new Promise(r=>c.toBlob(r,'image/jpeg',.95)); } }
     catch(e){ toast('Image illisible : '+f.name); return; }
-    const p={id:uid(),name:f.name,date,blob,crop:{},fx:null,v:0}; photos.set(p.id,p); dbPut('photos',photoRec(p)); await makeThumb(p); out[i]=p; });
+    const p={id:uid(),name:f.name,date,blob,crop:{},fx:null,v:0,hd:true}; photos.set(p.id,p); dbPut('photos',photoRec(p)); await makeThumb(p); out[i]=p; });
   return out.filter(Boolean).sort((a,b)=>a.date-b.date||a.name.localeCompare(b.name)); }
 
 /* ---------- musique : analyse (durée, silences, forme d'onde) ---------- */
@@ -541,7 +542,7 @@ function tlRender(){ const {B,total}=layout(), pps=TL.pps, pad=padX(), aEnd=audi
   const vt=$('#vtrack'); vt.innerHTML='';
   B.forEach(b=>{ const c=b.c, d=document.createElement('div'); d.className='clip'+(c.kind==='title'?' ttl':'')+(TL.sel&&TL.sel.id===c.id?' sel':''); d.dataset.id=c.id;
     d.style.left=(pad+b.T*pps)+'px'; d.style.width=Math.max(4,b.dur*pps-2)+'px';
-    if(c.kind==='photo'){ const p=photos.get(c.pid); if(p&&p.thumb) d.style.backgroundImage=`url(${p.thumb})`; } else d.textContent='Titre';
+    if(c.kind==='photo'){ const p=photos.get(c.pid); if(p&&p.thumb) d.style.backgroundImage=`url(${p.thumb})`; if(p&&!p.hd){ const l=document.createElement('span'); l.className='lo'; l.textContent='réduite'; l.title='Importée en définition réduite : utilise Remplacer pour la reprendre en pleine qualité'; d.appendChild(l); } } else d.textContent='Titre';
     if(b.dur*pps>34){ const l=document.createElement('span'); l.className='dl'; l.textContent=fmtS(b.dur); d.appendChild(l); }
     vt.appendChild(d); });
   if(!B.length) vt.innerHTML=`<button class="tAdd primary" style="left:${pad}px" data-act="addPhotos">＋ Ajouter des photos</button>`;
@@ -786,6 +787,8 @@ async function encodeAudio2(mux,buf,total){ const SR=48000, N=Math.min(buf.lengt
     const ad=new AudioData({format:'f32-planar',sampleRate:SR,numberOfFrames:n,numberOfChannels:2,timestamp:Math.round(p*1e6/SR),data:d}); ae.encode(ad); ad.close();
     while(ae.encodeQueueSize>8) await sleep(2); }
   await ae.flush(); ae.close(); }
+/* débit vidéo : haute qualité, plafonné pour les longs films (la vidéo est assemblée dans la mémoire de l'iPhone) */
+const vbr=(W,H,total)=>Math.round(Math.min(W>=1080||H>=1080?16e6:10e6,Math.max(8e6,5e9/Math.max(1,total))));
 let cancelV=false, outBlob=null, outName='';
 $('#rCancel').onclick=()=>{ cancelV=true; };
 $('#btnMake').onclick=()=>{ makeVideo().catch(e=>{ console.error(e); $('#rInfo').innerHTML=`<span style="color:var(--danger)">Erreur : ${esc(e.message)}</span>`; $('#rClose').hidden=false; $('#rCancel').hidden=true; }); };
@@ -807,7 +810,7 @@ async function makeVideo(){ pause(); const {B,total}=layout(); if(!B.length){ to
     acRT.close(); const sink=new MemSink(), useAudio=!!musicBuf;
     const mux=new Mp4Muxer(sink,{video:{codec:codec.v,width:W,height:H},audio:useAudio?{codec:'mp4a',sampleRate:48000,numberOfChannels:2,bitrate:192000}:null}); await mux.start();
     let encErr=null; const enc=new VideoEncoder({output:(ch,meta)=>{ const b=new Uint8Array(ch.byteLength); ch.copyTo(b); mux.addVideo(b,Math.round(ch.timestamp*90000/1e6),Math.round(90000/FPS),ch.type==='key',meta&&meta.decoderConfig&&meta.decoderConfig.description); },error:e=>{ encErr=e; }});
-    const ecfg={codec:codec.v,width:W,height:H,bitrate:W>=1080||H>=1080?8e6:4e6,framerate:FPS}; if(codec.v.startsWith('avc')) ecfg.avc={format:'avc'}; enc.configure(ecfg);
+    const ecfg={codec:codec.v,width:W,height:H,bitrate:vbr(W,H,total),framerate:FPS,latencyMode:'quality'}; if(codec.v.startsWith('avc')) ecfg.avc={format:'avc'}; enc.configure(ecfg);
     const nF=Math.round(total*FPS);
     for(let f=0;f<nF;f++){ if(cancelV) break; if(encErr) throw encErr; await frame(ctx,f/FPS);
       const vf=new VideoFrame(cv,{timestamp:Math.round(f*1e6/FPS),duration:Math.round(1e6/FPS)}); enc.encode(vf,{keyFrame:f%(FPS*2)===0}); vf.close();
@@ -823,7 +826,7 @@ async function makeVideo(){ pause(); const {B,total}=layout(); if(!B.length){ to
     if(!mime.startsWith('video/mp4')) outName=outName.replace('.mp4','.webm');
     const rc=document.createElement('canvas'); rc.width=W; rc.height=H; const rctx=rc.getContext('2d');
     const dest=acRT.createMediaStreamDestination(); let src=null; if(musicBuf){ src=acRT.createBufferSource(); src.buffer=musicBuf; src.connect(dest); }
-    const rec=new MediaRecorder(new MediaStream([...rc.captureStream(FPS).getVideoTracks(),...dest.stream.getAudioTracks()]),{mimeType:mime,videoBitsPerSecond:W>=1080||H>=1080?8e6:4e6});
+    const rec=new MediaRecorder(new MediaStream([...rc.captureStream(FPS).getVideoTracks(),...dest.stream.getAudioTracks()]),{mimeType:mime,videoBitsPerSecond:vbr(W,H,total)});
     const chunks=[]; rec.ondataavailable=e=>{ if(e.data.size) chunks.push(e.data); }; const stopped=new Promise(r=>rec.onstop=r);
     await frame(ctx,0); rctx.drawImage(cv,0,0); rec.start(1000); if(src) src.start(); const st=performance.now();
     while(!cancelV){ const t=(performance.now()-st)/1000; if(t>=total) break; await frame(ctx,t); rctx.drawImage(cv,0,0);
@@ -851,6 +854,7 @@ async function boot(){ syncFmt(); await dbOpen();
   sg.forEach(r=>{ if(useS.has(r.id)) songs.set(r.id,{...r}); else dbDel('songs',r.id); });
   P.clips=P.clips.filter(c=>c.kind==='title'||photos.has(c.pid)); P.audio=P.audio.filter(a=>songs.has(a.sid));
   syncFmt(); pvLayout(); tlRender(); toolsRender(); setT(0);
+  const lo=[...photos.values()].filter(p=>!p.hd).length; if(lo) setTimeout(()=>toast(`${lo} photo${lo>1?'s':''} importée${lo>1?'s':''} en définition réduite (repère rouge) : Remplacer pour la pleine qualité`),800);
   await pool([...photos.values()],3,makeThumb); }
 boot();
 if('serviceWorker' in navigator&&location.protocol==='https:') navigator.serviceWorker.register('sw.js').catch(()=>{});

@@ -231,7 +231,7 @@ async function exifDate(file){
 }
 /* ---------- images ---------- */
 function loadImg(file){ return new Promise((res,rej)=>{ const im=new Image(); const u=URL.createObjectURL(file); im.onload=()=>{ URL.revokeObjectURL(u); res(im); }; im.onerror=()=>{ URL.revokeObjectURL(u); rej(new Error('image illisible')); }; im.decoding='async'; im.src=u; }); }
-/* image réduite (max 2400 px) gardée en mémoire le temps d'en avoir besoin */
+/* image en pleine définition (max 4096 px) gardée en mémoire le temps d'en avoir besoin */
 const imgCache=new Map();
 /* ---------- retouche automatique ----------
    1) niveaux : noir et blanc ramenés aux extrêmes (gain limité, rien de brûlé)
@@ -266,15 +266,15 @@ function enhanceCanvas(cv,level){ const P=FX[level]; if(!P) return cv; const c=c
 const fxCache=new Map();
 async function getRaw(p){
   if(imgCache.has(p)) return imgCache.get(p);
-  const pr=(async()=>{ const im=await loadImg(p.file); const k=Math.min(1,2400/Math.max(im.naturalWidth,im.naturalHeight)); const w=Math.round(im.naturalWidth*k), h=Math.round(im.naturalHeight*k);
+  const pr=(async()=>{ const im=await loadImg(p.file); const k=Math.min(1,4096/Math.max(im.naturalWidth,im.naturalHeight)); const w=Math.round(im.naturalWidth*k), h=Math.round(im.naturalHeight*k);
     const c=document.createElement('canvas'); c.width=w; c.height=h; c.getContext('2d').drawImage(im,0,0,w,h); p.iw=w; p.ih=h; return c; })();
-  imgCache.set(p,pr); if(imgCache.size>4){ const first=imgCache.keys().next().value; if(first!==p) imgCache.delete(first); } return pr;
+  imgCache.set(p,pr); if(imgCache.size>2){ const first=imgCache.keys().next().value; if(first!==p) imgCache.delete(first); } return pr;
 }
 /* image utilisée pour le cadrage et la vidéo : retouchée si la retouche est active pour cette photo */
 async function getBitmap(p){ if(!fxOn(p)) return getRaw(p); const k=fxLevel(p);
   const hit=fxCache.get(p); if(hit&&hit.k===k) return hit.pr;
   const pr=(async()=>{ const raw=await getRaw(p), c=document.createElement('canvas'); c.width=raw.width; c.height=raw.height; c.getContext('2d').drawImage(raw,0,0); await sleep(0); return enhanceCanvas(c,k); })();
-  fxCache.set(p,{k,pr}); if(fxCache.size>4){ const first=fxCache.keys().next().value; if(first!==p) fxCache.delete(first); } return pr; }
+  fxCache.set(p,{k,pr}); if(fxCache.size>2){ const first=fxCache.keys().next().value; if(first!==p) fxCache.delete(first); } return pr; }
 
 /* ---------- import ---------- */
 $('#btnPick').onclick=$('#btnAdd').onclick=()=>$('#fileIn').click();
@@ -654,6 +654,9 @@ async function pickCodec(W,H){
 }
 
 /* ---------- création ---------- */
+/* débit vidéo : haute qualité, plafonné pour les longs films (la vidéo est assemblée dans la mémoire de l'iPhone) */
+const vbr=(W,H,total)=>Math.round(Math.min(W>=1080||H>=1080?16e6:10e6,Math.max(8e6,5e9/Math.max(1,total))));
+
 let cancelV=false, outBlob=null, outName='';
 $('#rCancel').onclick=()=>{ cancelV=true; };
 $('#btnMake').onclick=()=>{ makeVideo().catch(e=>{ console.error(e); $('#rInfo').innerHTML=`<span style="color:var(--danger)">Erreur : ${e.message}</span>`; $('#rClose').hidden=false; $('#rCancel').hidden=true; }); };
@@ -694,7 +697,7 @@ async function makeVideo(){
     const sink=new MemSink(), useAudio=!!musicBuf;
     const mux=new Mp4Muxer(sink,{video:{codec:codec.v,width:W,height:H},audio:useAudio?{codec:'mp4a',sampleRate:48000,numberOfChannels:2,bitrate:192000}:null}); await mux.start();
     let encErr=null; const enc=new VideoEncoder({output:(ch,meta)=>{ const b=new Uint8Array(ch.byteLength); ch.copyTo(b); mux.addVideo(b,Math.round(ch.timestamp*90000/1e6),Math.round(90000/FPS),ch.type==='key',meta&&meta.decoderConfig&&meta.decoderConfig.description); },error:e=>{ encErr=e; }});
-    const ecfg={codec:codec.v,width:W,height:H,bitrate:W>=1080||H>=1080?8e6:4e6,framerate:FPS}; if(codec.v.startsWith('avc')) ecfg.avc={format:'avc'}; enc.configure(ecfg);
+    const ecfg={codec:codec.v,width:W,height:H,bitrate:vbr(W,H,total),framerate:FPS,latencyMode:'quality'}; if(codec.v.startsWith('avc')) ecfg.avc={format:'avc'}; enc.configure(ecfg);
     const nF=Math.round(total*FPS);
     for(let f=0;f<nF;f++){ if(cancelV) break; if(encErr) throw encErr; const t=f/FPS; await frameAt(t,f);
       const vf=new VideoFrame(cv,{timestamp:Math.round(f*1e6/FPS),duration:Math.round(1e6/FPS)}); enc.encode(vf,{keyFrame:f%(FPS*2)===0}); vf.close();
@@ -711,7 +714,7 @@ async function makeVideo(){
     const rc=document.createElement('canvas'); rc.width=W; rc.height=H; const rctx=rc.getContext('2d');
     const dest=acRT.createMediaStreamDestination(); let mg=null, src=null;
     if(musicBuf){ src=acRT.createBufferSource(); src.buffer=musicBuf; src.loop=true; mg=acRT.createGain(); mg.gain.value=0; src.connect(mg).connect(dest); }
-    const rec=new MediaRecorder(new MediaStream([...rc.captureStream(FPS).getVideoTracks(),...dest.stream.getAudioTracks()]),{mimeType:mime,videoBitsPerSecond:W>=1080||H>=1080?8e6:4e6});
+    const rec=new MediaRecorder(new MediaStream([...rc.captureStream(FPS).getVideoTracks(),...dest.stream.getAudioTracks()]),{mimeType:mime,videoBitsPerSecond:vbr(W,H,total)});
     const chunks=[]; rec.ondataavailable=e=>{ if(e.data.size) chunks.push(e.data); }; const stopped=new Promise(r=>rec.onstop=r);
     await frameAt(0,0); rctx.drawImage(cv,0,0); rec.start(1000); if(src) src.start(); const st=performance.now();
     while(!cancelV){ const t=(performance.now()-st)/1000; if(t>=total) break; await frameAt(t,0); rctx.drawImage(cv,0,0);
