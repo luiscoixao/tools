@@ -1,0 +1,17 @@
+{
+  "name": "SMARTVIDEOEDIT",
+  "short_name": "VIDEOEDIT",
+  "description": "Extraire plusieurs passages d'une vidéo et les assembler en une seule, sans perte de qualité.",
+  "lang": "fr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#131518",
+  "theme_color": "#131518",
+  "icons": [
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}
