@@ -3,328 +3,204 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Éditeur MP3 Web</title>
+<title>Éditeur MP3 simple</title>
 <style>
-  :root{--bg:#0f1115;--panel:#171a21;--line:#2a2f3a;--text:#e8ecf4;--muted:#9aa4b2;--accent:#4f8cff}
-  *{box-sizing:border-box}
-  body{margin:0;font:14px/1.45 system-ui,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--text)}
-  header{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;gap:12px;align-items:center;flex-wrap:wrap}
-  h1{font-size:18px;margin:0}
-  main{padding:20px;max-width:1100px;margin:auto}
-  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px}
-  button,input[type=file],select{font:inherit}
-  button{background:#232833;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:10px 14px;cursor:pointer}
-  button:hover{border-color:var(--accent)}
-  button.primary{background:var(--accent);border-color:var(--accent);color:white}
-  button:disabled{opacity:.45;cursor:not-allowed}
-  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-  canvas{width:100%;height:180px;background:#0b0d11;border:1px solid var(--line);border-radius:8px;display:block;touch-action:none}
-  label{color:var(--muted)}
-  input[type=range]{width:220px}
-  .status{color:var(--muted)}
-  .ok{color:#4ade80;font-weight:600}
-  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
-  audio{width:100%;margin-top:10px}
+body{margin:0;font:16px/1.5 system-ui,sans-serif;background:#10131a;color:#eef2f8;padding:16px}
+h1{font-size:22px}
+.card{background:#181c25;border:1px solid #2b3140;border-radius:14px;padding:16px;margin-bottom:14px}
+button{font:inherit;padding:12px 16px;border-radius:10px;border:1px solid #333b4d;background:#242b39;color:#fff;cursor:pointer;margin:4px 4px 4px 0}
+button:disabled{opacity:.4;cursor:not-allowed}
+.primary{background:#3b82f6;border-color:#3b82f6}
+canvas{width:100%;height:200px;background:#0a0d12;border:1px solid #2b3140;border-radius:10px;touch-action:none;display:block}
+#audio{width:100%;margin-top:12px}
+#msg{white-space:pre-wrap}
+.err{color:#ff6b6b;font-weight:700}
+.ok{color:#4ade80;font-weight:700}
+small{color:#9aa4b2}
 </style>
 </head>
 <body>
-<header>
-  <h1>🎵 Éditeur MP3 Web</h1>
-  <input type="file" id="file" accept=".mp3,.wav,.m4a,.ogg,.flac,audio/mpeg,audio/mp3,audio/*">
-  <span class="status" id="status">Charge un fichier MP3 pour commencer.</span>
-</header>
+<h1>🎵 Éditeur MP3 simple</h1>
 
-<main>
-  <div class="card">
-    <div class="row" style="justify-content:space-between">
-      <div class="row">
-        <button id="play">▶︎ Lire</button>
-        <button id="pause">⏸ Pause</button>
-        <button id="stop">⏹ Stop</button>
-        <button id="zoomOut">− Zoom</button>
-        <button id="zoomIn">+ Zoom</button>
-      </div>
-      <span id="time" class="status">0.00 / 0.00 s</span>
-    </div>
-    <canvas id="wave"></canvas>
-    <audio id="player" controls></audio>
-    <p class="status">Touche et fais glisser sur la forme d’onde pour sélectionner une zone.</p>
+<div class="card">
+  <input type="file" id="file" accept="audio/*,.mp3,.wav,.m4a,.ogg">
+  <p id="msg">1. Choisis un fichier MP3.<br>2. Touche la forme d’onde et fais glisser.<br>3. Appuie sur « Garder la sélection » puis « Exporter MP3 ».</p>
+</div>
+
+<div class="card">
+  <canvas id="wave"></canvas>
+  <audio id="audio" controls></audio>
+  <div style="margin-top:10px">
+    <button id="play">▶︎ Lire</button>
+    <button id="stop">⏹ Stop</button>
+    <button id="cut">✂️ Couper sélection</button>
+    <button id="keep" disabled>🎯 Garder la sélection</button>
+    <button id="export" class="primary" disabled>⬇︎ Exporter MP3</button>
+    <button id="exportWav">⬇︎ Exporter WAV</button>
   </div>
+  <p><small>Si « Exporter MP3 » échoue, utilise « Exporter WAV » : le fichier sera lisible et convertible en MP3.</small></p>
+</div>
 
-  <div class="card">
-    <h2 style="margin-top:0;font-size:16px">Édition</h2>
-    <div class="grid">
-      <div>
-        <label>Volume <span id="volVal">100%</span></label><br>
-        <input type="range" id="volume" min="0" max="200" value="100">
-      </div>
-      <div>
-        <label>Vitesse <span id="rateVal">1.00×</span></label><br>
-        <input type="range" id="rate" min="0.5" max="2" step="0.05" value="1">
-      </div>
-      <div>
-        <label>Fondu entrée (s)</label><br>
-        <input type="number" id="fadeIn" min="0" step="0.1" value="0">
-      </div>
-      <div>
-        <label>Fondu sortie (s)</label><br>
-        <input type="number" id="fadeOut" min="0" step="0.1" value="0">
-      </div>
-    </div>
-    <div class="row" style="margin-top:14px">
-      <button id="cut" disabled>✂️ Couper la sélection</button>
-      <button id="trim" disabled>🎯 Garder la sélection</button>
-      <button id="silence" disabled>🔇 Muter la sélection</button>
-      <button id="undo">↩︎ Annuler</button>
-      <button id="exportSel" class="primary" disabled>⬇︎ Exporter la sélection MP3</button>
-      <button id="exportAll" disabled>⬇︎ Exporter tout MP3</button>
-    </div>
-    <p class="status" id="help">Après « Garder la sélection », clique sur « Exporter tout MP3 » pour télécharger le résultat.</p>
-  </div>
-</main>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/lamejs/1.2.1/lame.min.js"></script>
 <script>
-const fileInput=document.getElementById('file'), statusEl=document.getElementById('status');
-const canvas=document.getElementById('wave'), ctx=canvas.getContext('2d');
-const player=document.getElementById('player'), timeEl=document.getElementById('time');
-const playBtn=document.getElementById('play'), pauseBtn=document.getElementById('pause'), stopBtn=document.getElementById('stop');
-const cutBtn=document.getElementById('cut'), trimBtn=document.getElementById('trim'), silenceBtn=document.getElementById('silence');
-const undoBtn=document.getElementById('undo'), exportSelBtn=document.getElementById('exportSel'), exportAllBtn=document.getElementById('exportAll');
-const volume=document.getElementById('volume'), rate=document.getElementById('rate');
-const fadeIn=document.getElementById('fadeIn'), fadeOut=document.getElementById('fadeOut');
+const $=id=>document.getElementById(id);
+const fileInput=$('file'),msg=$('msg'),canvas=$('wave'),ctx=canvas.getContext('2d');
+const audio=$('audio'),keepBtn=$('keep'),exportBtn=$('export'),cutBtn=$('cut');
+let actx=null,buffer=null,sel=null,drag=false;
 
-let audioBuffer=null, selection=null, zoom=1, offset=0, history=[];
-let audioCtx=null, sourceNode=null, gainNode=null, startedAt=0, startOffset=0, playing=false;
-
-function setStatus(t,ok){statusEl.textContent=t;statusEl.className='status'+(ok?' ok':'')}
-function enableButtons(){
-  const has=!!audioBuffer, sel=!!selection;
-  cutBtn.disabled=!(has&&sel); trimBtn.disabled=!(has&&sel); silenceBtn.disabled=!(has&&sel);
-  exportSelBtn.disabled=!(has&&sel); exportAllBtn.disabled=!has; undoBtn.disabled=!history.length;
+function say(text,cls){msg.innerHTML=text;if(cls)msg.className=cls}
+function enable(){
+  keepBtn.disabled=!sel;
+  exportBtn.disabled=!buffer;
+  cutBtn.disabled=!sel;
 }
-function resizeCanvas(){
-  canvas.width=canvas.clientWidth*devicePixelRatio;
-  canvas.height=180*devicePixelRatio;
-  draw();
-}
-window.addEventListener('resize',resizeCanvas);
+function resize(){canvas.width=canvas.clientWidth*devicePixelRatio;canvas.height=200*devicePixelRatio;draw()}
+window.onresize=resize;
 
-fileInput.addEventListener('change',async e=>{
-  const f=e.target.files[0]; if(!f)return;
-  setStatus('Chargement de '+f.name+'…');
+fileInput.onchange=async()=>{
+  const f=fileInput.files[0];
+  if(!f){say('Aucun fichier choisi.','err');return}
+  say('Chargement de '+f.name+'…');
   try{
-    audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();
-    if(audioCtx.state==='suspended')await audioCtx.resume();
-    const arrayBuffer=await f.arrayBuffer();
-    audioBuffer=await audioCtx.decodeAudioData(arrayBuffer);
-    history=[]; selection=null; offset=0; zoom=1;
-    player.src=URL.createObjectURL(f);
-    enableButtons(); resizeCanvas();
-    setStatus('Fichier chargé : '+f.name+' ('+audioBuffer.duration.toFixed(2)+' s). Touche la forme d’onde pour sélectionner.',true);
-  }catch(err){
-    console.error(err);
-    setStatus('Impossible de lire ce fichier : '+err.message);
+    actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+    const raw=await f.arrayBuffer();
+    buffer=await actx.decodeAudioData(raw);
+    sel=null;enable();resize();
+    audio.src=URL.createObjectURL(f);
+    say('✅ Fichier chargé : '+f.name+'\nDurée : '+buffer.duration.toFixed(2)+' secondes.\n Touche maintenant la forme d’onde et fais glisser.','ok');
+  }catch(e){
+    console.error(e);
+    say('❌ Erreur de chargement : '+e.message+'\nEssaie un autre fichier MP3 ou convertis-le en WAV.','err');
   }
-});
+};
 
 function draw(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
-  if(!audioBuffer)return;
-  const data=audioBuffer.getChannelData(0);
-  const visible=Math.max(1,Math.floor(data.length/zoom));
-  const start=Math.min(offset,data.length-visible);
-  const mid=canvas.height/2, step=Math.max(1,Math.floor(visible/canvas.width));
-  ctx.strokeStyle='#4f8cff'; ctx.lineWidth=1;
-  ctx.beginPath();
+  if(!buffer)return;
+  const d=buffer.getChannelData(0),mid=canvas.height/2;
+  const block=Math.max(1,Math.floor(d.length/canvas.width));
+  ctx.strokeStyle='#60a5fa';ctx.beginPath();
   for(let x=0;x<canvas.width;x++){
-    const i0=start+Math.floor(x*visible/canvas.width);
-    let min=1,max=-1;
-    for(let i=i0;i<Math.min(i0+step,data.length);i++){const v=data[i];if(v<min)min=v;if(v>max)max=v}
-    ctx.moveTo(x,mid+min*mid); ctx.lineTo(x,mid+max*mid);
+    let mn=1,mx=-1;
+    for(let i=x*block;i<Math.min((x+1)*block,d.length);i++){
+      const v=d[i];if(v<mn)mn=v;if(v>mx)mx=v;
+    }
+    ctx.moveTo(x,mid+mn*mid);ctx.lineTo(x,mid+mx*mid);
   }
   ctx.stroke();
-  if(selection){
-    const x1=selection.start/audioBuffer.duration*canvas.width;
-    const x2=selection.end/audioBuffer.duration*canvas.width;
-    ctx.fillStyle='rgba(79,140,255,.22)';
+  if(sel){
+    const x1=sel.a/buffer.duration*canvas.width,x2=sel.b/buffer.duration*canvas.width;
+    ctx.fillStyle='rgba(59,130,246,.25)';
     ctx.fillRect(Math.min(x1,x2),0,Math.abs(x2-x1),canvas.height);
   }
 }
 
-function posToTime(e){
-  const rect=canvas.getBoundingClientRect();
-  const ratio=Math.max(0,Math.min(1,(e.clientX-rect.left)/rect.width));
-  return ratio*audioBuffer.duration;
+function timeFromEvent(e){
+  const r=canvas.getBoundingClientRect();
+  return Math.max(0,Math.min(1,(e.clientX-r.left)/r.width))*buffer.duration;
 }
-let dragging=false;
-canvas.addEventListener('pointerdown',e=>{
-  if(!audioBuffer)return;
-  e.preventDefault(); dragging=true;
-  canvas.setPointerCapture(e.pointerId);
-  const t=posToTime(e); selection={start:t,end:t};
-  enableButtons(); draw();
-  setStatus('Sélection en cours : '+t.toFixed(2)+' s');
-});
-canvas.addEventListener('pointermove',e=>{
-  if(!dragging||!audioBuffer)return;
-  e.preventDefault();
-  selection.end=posToTime(e); draw();
-});
-canvas.addEventListener('pointerup',e=>{
-  if(!dragging)return;
-  dragging=false;
-  if(selection){
-    const a=Math.min(selection.start,selection.end), b=Math.max(selection.start,selection.end);
-    if(b-a<0.05){selection=null;setStatus('Sélection trop courte : fais glisser sur au moins 0,05 seconde.');}
-    else{selection={start:a,end:b};setStatus('Sélection : '+a.toFixed(2)+' s → '+b.toFixed(2)+' s ('+(b-a).toFixed(2)+' s).',true);}
+canvas.onpointerdown=e=>{
+  if(!buffer)return;
+  e.preventDefault();drag=true;canvas.setPointerCapture(e.pointerId);
+  const t=timeFromEvent(e);sel={a:t,b:t};enable();draw();
+  say('Sélection commencée à '+t.toFixed(2)+' s…');
+};
+canvas.onpointermove=e=>{
+  if(!drag||!buffer)return;
+  e.preventDefault();sel.b=timeFromEvent(e);draw();
+};
+canvas.onpointerup=e=>{
+  if(!drag)return;drag=false;
+  if(sel){
+    sel.a=Math.min(sel.a,sel.b);sel.b=Math.max(sel.a,sel.b);
+    if(sel.b-sel.a<0.05){sel=null;say('❌ Sélection trop courte. Fais glisser sur une partie plus longue.','err')}
+    else{say('✅ Sélection : '+sel.a.toFixed(2)+' s à '+sel.b.toFixed(2)+' s ('+(sel.b-sel.a).toFixed(2)+' s).\nAppuie sur « Garder la sélection ».','ok')}
   }
-  enableButtons(); draw();
-});
-canvas.addEventListener('pointercancel',()=>{dragging=false});
-
-function stopPlayback(){
-  if(sourceNode){try{sourceNode.stop()}catch{} sourceNode.disconnect(); sourceNode=null}
-  playing=false; playBtn.textContent='▶︎ Lire';
-}
-function play(from){
-  if(!audioBuffer)return;
-  stopPlayback();
-  sourceNode=audioCtx.createBufferSource(); sourceNode.buffer=audioBuffer;
-  gainNode=audioCtx.createGain();
-  gainNode.gain.value=volume.value/100;
-  sourceNode.playbackRate.value=parseFloat(rate.value);
-  sourceNode.connect(gainNode).connect(audioCtx.destination);
-  startOffset=from??0; startedAt=audioCtx.currentTime;
-  sourceNode.start(0,startOffset);
-  playing=true; playBtn.textContent='⏸ Pause';
-  sourceNode.onended=()=>{if(playing){playing=false;playBtn.textContent='▶︎ Lire'}};
-}
-playBtn.onclick=()=>playing?stopPlayback():play(selection?selection.start:0);
-pauseBtn.onclick=()=>{if(playing){const elapsed=(audioCtx.currentTime-startedAt)*parseFloat(rate.value);stopPlayback();startOffset+=elapsed}};
-stopBtn.onclick=()=>{stopPlayback();startOffset=0};
-document.getElementById('zoomIn').onclick=()=>{zoom=Math.min(200,zoom*1.5);draw()};
-document.getElementById('zoomOut').onclick=()=>{zoom=Math.max(1,zoom/1.5);offset=0;draw()};
-volume.oninput=()=>{document.getElementById('volVal').textContent=volume.value+'%';if(gainNode)gainNode.gain.value=volume.value/100};
-rate.oninput=()=>{document.getElementById('rateVal').textContent=parseFloat(rate.value).toFixed(2)+'×';if(sourceNode)sourceNode.playbackRate.value=parseFloat(rate.value)};
-
-function pushHistory(){history.push(audioBuffer);if(history.length>20)history.shift();enableButtons()}
-undoBtn.onclick=()=>{
-  if(history.length){
-    audioBuffer=history.pop();selection=null;enableButtons();draw();
-    setStatus('Modification annulée.',true);
-  }
+  enable();draw();
 };
 
-function makeBuffer(channels,length,sampleRate){return audioCtx.createBuffer(channels,length,sampleRate)}
-function copyRange(buf,start,end,mute=false){
-  const s=Math.max(0,Math.floor(start*buf.sampleRate));
-  const e=Math.min(buf.length,Math.floor(end*buf.sampleRate));
-  const out=makeBuffer(buf.numberOfChannels,mute?buf.length:Math.max(1,e-s),buf.sampleRate);
-  for(let c=0;c<buf.numberOfChannels;c++){
-    const src=buf.getChannelData(c), dst=out.getChannelData(c);
-    if(mute){dst.set(src);dst.fill(0,s,e)}
-    else dst.set(src.subarray(s,e));
+function sub(a,b){
+  const sr=buffer.sampleRate,s=Math.floor(a*sr),e=Math.floor(b*sr);
+  const out=actx.createBuffer(buffer.numberOfChannels,Math.max(1,e-s),sr);
+  for(let c=0;c<buffer.numberOfChannels;c++){
+    out.getChannelData(c).set(buffer.getChannelData(c).subarray(s,e));
   }
   return out;
 }
-function applyFades(buf){
-  const fi=Math.min(buf.length,Math.floor(parseFloat(fadeIn.value||0)*buf.sampleRate));
-  const fo=Math.min(buf.length,Math.floor(parseFloat(fadeOut.value||0)*buf.sampleRate));
-  for(let c=0;c<buf.numberOfChannels;c++){
-    const d=buf.getChannelData(c);
-    for(let i=0;i<fi;i++)d[i]*=i/fi;
-    for(let i=0;i<fo;i++)d[buf.length-1-i]*=i/fo;
-  }
-  return buf;
-}
-function getSel(){
-  return [Math.min(selection.start,selection.end),Math.max(selection.start,selection.end)];
-}
-function afterEdit(msg){
-  selection=null; enableButtons(); draw();
-  player.src='';
-  setStatus(msg+' Clique maintenant sur « Exporter tout MP3 ».',true);
-}
-
+$('play').onclick=()=>{
+  if(!buffer)return;
+  const src=actx.createBufferSource();src.buffer=buffer;
+  src.connect(actx.destination);src.start(0,sel?sel.a:0);
+};
+$('stop').onclick=()=>{audio.pause();audio.currentTime=0};
 cutBtn.onclick=()=>{
-  if(!selection)return; pushHistory();
-  const [a,b]=getSel();
-  const left=copyRange(audioBuffer,0,a), right=copyRange(audioBuffer,b,audioBuffer.duration);
-  const out=makeBuffer(audioBuffer.numberOfChannels,left.length+right.length,audioBuffer.sampleRate);
-  for(let c=0;c<audioBuffer.numberOfChannels;c++){
+  if(!sel)return;
+  const left=sub(0,sel.a),right=sub(sel.b,buffer.duration);
+  const out=actx.createBuffer(buffer.numberOfChannels,left.length+right.length,buffer.sampleRate);
+  for(let c=0;c<buffer.numberOfChannels;c++){
     out.getChannelData(c).set(left.getChannelData(c),0);
     out.getChannelData(c).set(right.getChannelData(c),left.length);
   }
-  audioBuffer=applyFades(out);
-  afterEdit('Sélection coupée. Durée : '+audioBuffer.duration.toFixed(2)+' s.');
+  buffer=out;sel=null;enable();draw();
+  say('✅ Sélection coupée. Nouvelle durée : '+buffer.duration.toFixed(2)+' s.\nAppuie sur « Exporter MP3 » ou « Exporter WAV ».','ok');
 };
-trimBtn.onclick=()=>{
-  if(!selection)return; pushHistory();
-  const [a,b]=getSel();
-  audioBuffer=applyFades(copyRange(audioBuffer,a,b));
-  afterEdit('Sélection conservée. Durée : '+audioBuffer.duration.toFixed(2)+' s.');
-};
-silenceBtn.onclick=()=>{
-  if(!selection)return; pushHistory();
-  const [a,b]=getSel();
-  audioBuffer=applyFades(copyRange(audioBuffer,0,audioBuffer.duration,true));
-  afterEdit('Sélection rendue muette.');
+keepBtn.onclick=()=>{
+  if(!sel)return;
+  buffer=sub(sel.a,sel.b);sel=null;enable();draw();
+  say('✅ Sélection conservée. Durée : '+buffer.duration.toFixed(2)+' s.\nAppuie maintenant sur « Exporter MP3 ».','ok');
 };
 
-function encodeMp3(buf,kbps=192){
-  if(typeof lamejs==='undefined')throw new Error('Encodeur MP3 non chargé (connexion Internet requise).');
-  const channels=Math.min(2,buf.numberOfChannels);
-  const encoder=new lamejs.Mp3Encoder(channels,buf.sampleRate,kbps);
-  const left=buf.getChannelData(0);
-  const right=channels>1?buf.getChannelData(1):left;
-  const l=new Int16Array(left.length), r=new Int16Array(right.length);
-  for(let i=0;i<left.length;i++){
-    l[i]=Math.max(-32768,Math.min(32767,Math.round(left[i]*32767)));
-    r[i]=Math.max(-32768,Math.min(32767,Math.round(right[i]*32767)));
+function wavBlob(buf){
+  const ch=buf.numberOfChannels,len=buf.length,sr=buf.sampleRate;
+  const ab=new ArrayBuffer(44+len*ch*2),v=new DataView(ab);
+  const str=(o,s)=>{for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i))};
+  str(0,'RIFF');v.setUint32(4,36+len*ch*2,true);str(8,'WAVE');str(12,'fmt ');
+  v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,ch,true);
+  v.setUint32(24,sr,true);v.setUint32(28,sr*ch*2,true);v.setUint16(32,ch*2,true);v.setUint16(34,16,true);
+  str(36,'data');v.setUint32(40,len*ch*2,true);
+  let o=44;
+  for(let i=0;i<len;i++)for(let c=0;c<ch;c++){
+    const x=Math.max(-1,Math.min(1,buf.getChannelData(c)[i]));
+    v.setInt16(o,x<0?x*32768:x*32767,true);o+=2;
   }
-  const parts=[], block=1152;
-  for(let i=0;i<l.length;i+=block){
-    const d=encoder.encodeBuffer(l.subarray(i,i+block),r.subarray(i,i+block));
-    if(d.length)parts.push(new Int8Array(d));
-  }
-  const end=encoder.flush();
-  if(end.length)parts.push(new Int8Array(end));
-  return new Blob(parts,{type:'audio/mpeg'});
+  return new Blob([ab],{type:'audio/wav'});
 }
-function download(blob,name){
-  const url=URL.createObjectURL(blob);
+function save(blob,name){
   const a=document.createElement('a');
-  a.href=url; a.download=name; document.body.appendChild(a); a.click(); a.remove();
-  setTimeout(()=>URL.revokeObjectURL(url),5000);
+  a.href=URL.createObjectURL(blob);a.download=name;
+  document.body.appendChild(a);a.click();a.remove();
 }
-async function exportBuffer(buf,label){
-  if(!buf)return;
-  setStatus('Encodage MP3 en cours…');
-  try{
-    const blob=encodeMp3(buf,192);
-    download(blob,'edition-'+label+'.mp3');
-    setStatus('MP3 exporté : '+label+' ('+(blob.size/1024/1024).toFixed(2)+' Mo).',true);
-  }catch(err){
-    console.error(err);
-    setStatus('Export MP3 impossible : '+err.message);
-  }
-}
-exportSelBtn.onclick=()=>{
-  if(!selection)return;
-  const [a,b]=getSel();
-  exportBuffer(applyFades(copyRange(audioBuffer,a,b)),'selection');
+$('exportWav').onclick=()=>{
+  if(!buffer)return;
+  save(wavBlob(buffer),'edition.wav');
+  say('✅ Fichier WAV téléchargé.','ok');
 };
-exportAllBtn.onclick=()=>exportBuffer(audioBuffer,'complet');
-
-function tick(){
-  if(audioBuffer){
-    const current=playing?Math.min(audioBuffer.duration,startOffset+(audioCtx.currentTime-startedAt)*parseFloat(rate.value)):startOffset;
-    timeEl.textContent=current.toFixed(2)+' / '+audioBuffer.duration.toFixed(2)+' s';
+exportBtn.onclick=()=>{
+  if(!buffer)return;
+  say('Encodage MP3…');
+  try{
+    if(typeof lamejs==='undefined')throw new Error('lamejs n’est pas chargé. Vérifie la connexion Internet ou utilise Exporter WAV.');
+    const enc=new lamejs.Mp3Encoder(Math.min(2,buffer.numberOfChannels),buffer.sampleRate,192);
+    const L=buffer.getChannelData(0),R=buffer.numberOfChannels>1?buffer.getChannelData(1):L;
+    const l=new Int16Array(L.length),r=new Int16Array(R.length);
+    for(let i=0;i<L.length;i++){
+      l[i]=Math.max(-32768,Math.min(32767,Math.round(L[i]*32767)));
+      r[i]=Math.max(-32768,Math.min(32767,Math.round(R[i]*32767)));
+    }
+    const parts=[],N=1152;
+    for(let i=0;i<l.length;i+=N){
+      const d=enc.encodeBuffer(l.subarray(i,i+N),r.subarray(i,i+N));
+      if(d.length)parts.push(new Int8Array(d));
+    }
+    const end=enc.flush();
+    if(end.length)parts.push(new Int8Array(end));
+    save(new Blob(parts,{type:'audio/mpeg'}),'edition.mp3');
+    say('✅ Fichier MP3 téléchargé.','ok');
+  }catch(e){
+    console.error(e);
+    say('❌ Export MP3 impossible : '+e.message+'\nUtilise « Exporter WAV ».','err');
   }
-  requestAnimationFrame(tick);
-}
-tick();resizeCanvas();
+};
+resize();
 </script>
 </body>
 </html>
