@@ -23,14 +23,13 @@
   input[type=range]{width:220px}
   .status{color:var(--muted)}
   .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
-  .sel{border:1px dashed var(--accent);background:rgba(79,140,255,.12)}
   audio{width:100%;margin-top:10px}
 </style>
 </head>
 <body>
 <header>
   <h1>🎵 Éditeur MP3 Web</h1>
-  <input type="file" id="file" accept="audio/*">
+  <input type="file" id="file" accept=".mp3,.wav,.m4a,.ogg,.flac,audio/mpeg,audio/mp3,audio/*">
   <span class="status" id="status">Charge un fichier MP3 pour commencer.</span>
 </header>
 
@@ -193,8 +192,7 @@ function pushHistory(){history.push(audioBuffer);if(history.length>20)history.sh
 undoBtn.onclick=()=>{if(history.length){audioBuffer=history.pop();selection=null;enableEditButtons();draw();setStatus('Modification annulée.')}};
 
 function newBuffer(channels,length,sampleRate){
-  const b=audioCtx.createBuffer(channels,length,sampleRate);
-  return b;
+  return audioCtx.createBuffer(channels,length,sampleRate);
 }
 function copyRange(buf,start,end,mute=false){
   const s=Math.max(0,Math.floor(start*buf.sampleRate));
