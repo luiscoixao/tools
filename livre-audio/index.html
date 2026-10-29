@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Livre audio</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Livre audio">
+<meta name="theme-color" content="#f7f1ea" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#17131a" media="(prefers-color-scheme: dark)">
+<link rel="apple-touch-icon" href="icone-180.png">
+<link rel="icon" type="image/png" href="icone-192.png">
+<link rel="manifest" href="manifest.json">
+<style>
+:root{
+  --bg:#f7f1ea; --card:#fffaf5; --line:#eadfd3; --text:#2a1f24; --muted:#8b7b80;
+  --accent:#e5694f; --accent2:#7a2c6e; --ink:#fff; --field:#f3ebe2; --ok:#2f9e63; --danger:#c8423a;
+  --grad:linear-gradient(135deg,#ff8a5c 0%,#d45a6a 50%,#7a2c6e 100%);
+  --shadow:0 1px 2px rgba(60,20,40,.05),0 8px 24px rgba(60,20,40,.07);
+  --st:env(safe-area-inset-top,0px); --sb:env(safe-area-inset-bottom,0px);
+  --g:max(16px,env(safe-area-inset-left,0px)); color-scheme:light dark;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#17131a; --card:#221c25; --line:#342b37; --text:#f3ebee; --muted:#a6979d; --field:#2c2430;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
+}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+html,body{margin:0;background:var(--bg);color:var(--text);font:16px/1.4 -apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif;overscroll-behavior-y:none}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;padding:0}
+button:active{transform:scale(.97)}
+input,textarea{font:inherit;color:var(--text);background:var(--field);border:1.5px solid transparent;border-radius:12px;padding:12px 14px;width:100%;outline:none;-webkit-appearance:none}
+input:focus,textarea:focus{border-color:var(--accent);background:var(--card)}
+input::placeholder,textarea::placeholder{color:var(--muted)}
+textarea{resize:vertical;min-height:84px}
+main{max-width:620px;margin:0 auto;padding:calc(var(--st) + 14px) var(--g) calc(120px + var(--sb))}
+
+header{display:flex;align-items:center;gap:12px;margin:4px 2px 18px}
+header img{width:44px;height:44px;border-radius:11px;box-shadow:0 4px 12px rgba(122,44,110,.25)}
+header h1{font-size:26px;font-weight:800;letter-spacing:-.4px;margin:0}
+header p{margin:0;color:var(--muted);font-size:13px}
+
+.card{background:var(--card);border-radius:20px;padding:16px;box-shadow:var(--shadow);margin-bottom:14px}
+.label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:0 0 10px 2px}
+
+/* couverture + titre */
+.top{display:flex;gap:14px;align-items:stretch}
+#coverBtn{flex:0 0 128px;height:128px;border-radius:16px;background:var(--field);border:2px dashed var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--muted);font-size:13px;overflow:hidden;position:relative}
+#coverBtn svg{width:30px;height:30px}
+#coverBtn img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+#coverBtn.has{border:0;box-shadow:0 6px 16px rgba(0,0,0,.18)}
+.top .fields{flex:1;min-width:0;display:flex;flex-direction:column;gap:10px;justify-content:center}
+#title{font-weight:700;font-size:18px}
+
+/* pistes */
+#list{display:flex;flex-direction:column;gap:8px}
+.tr{display:flex;align-items:center;gap:8px;background:var(--field);border-radius:14px;padding:6px 6px 6px 12px}
+.tr .n{flex:0 0 22px;height:22px;border-radius:50%;background:var(--grad);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.tr .mid{flex:1;min-width:0}
+.tr input{background:transparent;padding:6px 4px 2px;border-radius:8px;font-weight:600;font-size:15px}
+.tr input:focus{background:var(--card)}
+.tr .meta{font-size:12px;color:var(--muted);padding:0 4px 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
+.ib{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--muted)}
+.ib:disabled{opacity:.25}
+.ib svg{width:18px;height:18px}
+.ib.x:active{color:var(--danger)}
+#addAudio{width:100%;margin-top:10px;padding:14px;border-radius:14px;border:2px dashed var(--line);color:var(--accent);font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px}
+#addAudio svg{width:20px;height:20px}
+.hint{font-size:13px;color:var(--muted);margin:8px 2px 0}
+
+/* détails */
+details summary{list-style:none;display:flex;align-items:center;justify-content:space-between;cursor:pointer}
+details summary::-webkit-details-marker{display:none}
+details summary .label{margin:0}
+details summary svg{width:18px;height:18px;color:var(--muted);transition:transform .2s}
+details[open] summary svg{transform:rotate(180deg)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.grid .full{grid-column:1/-1}
+
+/* barre du bas */
+.bar{position:fixed;left:0;right:0;bottom:0;padding:12px var(--g) calc(12px + var(--sb));background:linear-gradient(to top,var(--bg) 60%,transparent)}
+#go{display:block;width:100%;max-width:620px;margin:0 auto;padding:17px;border-radius:16px;background:var(--grad);color:#fff;font-weight:800;font-size:17px;box-shadow:0 8px 22px rgba(212,90,106,.35)}
+#go small{display:block;font-weight:600;font-size:12px;opacity:.85;margin-top:2px}
+#go:disabled{opacity:.45;box-shadow:none}
+
+/* fenêtre de création */
+#sheet{position:fixed;inset:0;background:rgba(20,10,18,.5);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);display:flex;align-items:flex-end;justify-content:center;z-index:20}
+#sheet .in{background:var(--card);width:100%;max-width:620px;border-radius:26px 26px 0 0;padding:26px 22px calc(22px + var(--sb));text-align:center}
+.ring{width:150px;height:150px;margin:6px auto 16px;position:relative}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring .pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:800;font-variant-numeric:tabular-nums}
+.ring img{position:absolute;inset:28px;width:94px;height:94px;border-radius:14px;object-fit:cover}
+#sheet h2{margin:0 0 4px;font-size:20px}
+#sheet p{margin:0 0 18px;color:var(--muted);font-size:14px}
+.btn{display:block;width:100%;padding:15px;border-radius:14px;font-weight:700;font-size:16px;margin-top:10px}
+.btn.main{background:var(--grad);color:#fff}
+.btn.sub{background:var(--field)}
+.btn.ghost{color:var(--muted)}
+#toast{position:fixed;left:50%;top:calc(var(--st) + 12px);transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:14px;z-index:30;max-width:90vw;text-align:center}
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <img src="icone-180.png" alt="">
+    <div><h1>Livre audio</h1><p>MP3 ou WAV → livre audio .m4b</p></div>
+  </header>
+
+  <section class="card">
+    <div class="top">
+      <button id="coverBtn" aria-label="Choisir la couverture">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>
+        <span>Couverture</span>
+      </button>
+      <div class="fields">
+        <input id="title" placeholder="Titre du livre" autocomplete="off">
+        <input id="author" placeholder="Auteur" autocomplete="off">
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="label">Pistes · 1 fichier = 1 chapitre</div>
+    <div id="list"></div>
+    <button id="addAudio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Ajouter des fichiers MP3 ou WAV</button>
+  </section>
+
+  <section class="card">
+    <details id="more">
+      <summary><span class="label">Plus d'informations</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></summary>
+      <div class="grid">
+        <input id="narrator" class="full" placeholder="Narrateur (voix)" autocomplete="off">
+        <input id="year" placeholder="Année" inputmode="numeric" autocomplete="off">
+        <input id="genre" placeholder="Genre" value="Livre audio" autocomplete="off">
+        <input id="publisher" class="full" placeholder="Éditeur" autocomplete="off">
+        <textarea id="desc" class="full" placeholder="Résumé"></textarea>
+      </div>
+    </details>
+  </section>
+</main>
+
+<div class="bar"><button id="go" disabled>Créer le livre audio<small id="goSub">Ajoute au moins un fichier audio</small></button></div>
+
+<div id="sheet" hidden>
+  <div class="in">
+    <div class="ring">
+      <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" fill="none" stroke="var(--field)" stroke-width="8"/>
+        <circle id="arc" cx="50" cy="50" r="44" fill="none" stroke="url(#gr)" stroke-width="8" stroke-linecap="round" stroke-dasharray="276.5" stroke-dashoffset="276.5"/>
+        <defs><linearGradient id="gr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff8a5c"/><stop offset="1" stop-color="#7a2c6e"/></linearGradient></defs></svg>
+      <div class="pct" id="pct">0 %</div>
+      <img id="doneCover" alt="" hidden>
+    </div>
+    <h2 id="sTitle">Création en cours…</h2>
+    <p id="sSub">Préparation du moteur audio</p>
+    <div id="doneBtns" hidden>
+      <button class="btn main" id="share">Partager / Enregistrer</button>
+      <button class="btn sub" id="dl">Télécharger</button>
+      <button class="btn ghost" id="close">Fermer</button>
+    </div>
+    <button class="btn ghost" id="cancel">Annuler</button>
+  </div>
+</div>
+
+<div id="toast" hidden></div>
+<input type="file" id="fAudio" accept="audio/mpeg,audio/mp3,audio/wav,audio/x-wav,audio/wave,.mp3,.wav" multiple hidden>
+<input type="file" id="fCover" accept="image/*" hidden>
+
+<script>
+const $=s=>document.querySelector(s);
+const tracks=[]; // {file, name, dur}
+let coverJpg=null, coverURL=null, outBlob=null, outName='', cancelled=false, totalDur=0;
+
+/* ---------- utilitaires ---------- */
+const fmt=s=>{ if(!isFinite(s)) return '–'; s=Math.round(s); const h=Math.floor(s/3600), m=Math.floor(s%3600/60), x=s%60;
+  return h? `${h} h ${String(m).padStart(2,'0')}` : `${m} min ${String(x).padStart(2,'0')}`; };
+const size=b=>b>1e9?(b/1e9).toFixed(2)+' Go':(b/1e6).toFixed(1)+' Mo';
+const esc=t=>String(t).replace(/\\/g,'\\\\').replace(/([=;#])/g,'\\$1').replace(/\r?\n/g,'\\\n');
+function toast(t){ const e=$('#toast'); e.textContent=t; e.hidden=false; clearTimeout(toast.t); toast.t=setTimeout(()=>e.hidden=true,3200); }
+const cleanName=n=>n.replace(/\.[^.]+$/,'').replace(/[_]+/g,' ').replace(/^\d+[\s.\-–]+/,'').trim()||n;
+function duration(file){ return new Promise(res=>{ const a=new Audio(), u=URL.createObjectURL(file); let done=false;
+  const end=v=>{ if(done) return; done=true; URL.revokeObjectURL(u); res(v); };
+  a.preload='metadata'; a.onloadedmetadata=()=>{ if(isFinite(a.duration)) end(a.duration); else { a.currentTime=1e7; a.ontimeupdate=()=>end(a.duration); } };
+  a.onerror=()=>end(NaN); setTimeout(()=>end(NaN),15000); a.src=u; }); }
+
+/* ---------- couverture : recadrage carré, JPEG 1400 px ---------- */
+$('#coverBtn').onclick=()=>$('#fCover').click();
+$('#fCover').onchange=async e=>{ const f=e.target.files[0]; e.target.value=''; if(!f) return;
+  try{ const bmp=await createImageBitmap(f); const s=Math.min(bmp.width,bmp.height), N=Math.min(1400,s);
+    const c=document.createElement('canvas'); c.width=c.height=N;
+    c.getContext('2d').drawImage(bmp,(bmp.width-s)/2,(bmp.height-s)/2,s,s,0,0,N,N);
+    const blob=await new Promise(r=>c.toBlob(r,'image/jpeg',.9));
+    coverJpg=new Uint8Array(await blob.arrayBuffer());
+    if(coverURL) URL.revokeObjectURL(coverURL); coverURL=URL.createObjectURL(blob);
+    const b=$('#coverBtn'); b.classList.add('has'); b.querySelector('img')?.remove();
+    const im=new Image(); im.src=coverURL; im.alt='Couverture'; b.appendChild(im);
+  }catch(err){ toast("Impossible de lire cette image"); } };
+
+/* ---------- pistes ---------- */
+$('#addAudio').onclick=()=>$('#fAudio').click();
+$('#fAudio').onchange=async e=>{ const fs=[...e.target.files]; e.target.value='';
+  fs.sort((a,b)=>a.name.localeCompare(b.name,'fr',{numeric:true}));
+  for(const f of fs){ if(!/\.(mp3|wav)$/i.test(f.name)&&!/audio\/(mpeg|mp3|wav|x-wav|wave)/.test(f.type)){ toast(`« ${f.name} » n'est ni un MP3 ni un WAV`); continue; }
+    const t={file:f,name:cleanName(f.name),dur:NaN}; tracks.push(t); render(); t.dur=await duration(f); render(); }
+  if(!$('#title').value.trim()&&tracks.length===1&&fs.length===1) $('#title').value=tracks[0].name;
+};
+const ico={up:'<path d="m6 15 6-6 6 6"/>',down:'<path d="m6 9 6 6 6-6"/>',x:'<path d="M6 6l12 12M18 6 6 18"/>'};
+const svg=k=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${ico[k]}</svg>`;
+function render(){
+  const L=$('#list'); L.innerHTML='';
+  tracks.forEach((t,i)=>{ const r=document.createElement('div'); r.className='tr';
+    r.innerHTML=`<div class="n">${i+1}</div><div class="mid"><input aria-label="Titre du chapitre"><div class="meta"></div></div>
+      <button class="ib" data-a="up" aria-label="Monter" ${i?'':'disabled'}>${svg('up')}</button>
+      <button class="ib" data-a="down" aria-label="Descendre" ${i<tracks.length-1?'':'disabled'}>${svg('down')}</button>
+      <button class="ib x" data-a="x" aria-label="Retirer">${svg('x')}</button>`;
+    const inp=r.querySelector('input'); inp.value=t.name; inp.oninput=()=>t.name=inp.value;
+    r.querySelector('.meta').textContent=`${isNaN(t.dur)?'…':fmt(t.dur)} · ${t.file.name}`;
+    r.querySelectorAll('button').forEach(b=>b.onclick=()=>{ const a=b.dataset.a;
+      if(a==='up') [tracks[i-1],tracks[i]]=[tracks[i],tracks[i-1]];
+      if(a==='down') [tracks[i+1],tracks[i]]=[tracks[i],tracks[i+1]];
+      if(a==='x') tracks.splice(i,1); render(); });
+    L.appendChild(r); });
+  totalDur=tracks.reduce((s,t)=>s+(t.dur||0),0);
+  const ready=tracks.length>0 && tracks.every(t=>isFinite(t.dur));
+  $('#go').disabled=!ready;
+  $('#goSub').textContent=!tracks.length?'Ajoute au moins un fichier audio'
+    : !ready?'Lecture des fichiers…' : `${tracks.length} chapitre${tracks.length>1?'s':''} · ${fmt(totalDur)}`;
+}
+
+/* ---------- moteur FFmpeg ---------- */
+let W=null, wid=0, wpend=new Map(), onLog=null;
+function startWorker(){ W=new Worker('worker.js'); wpend=new Map();
+  W.onmessage=({data:{id,type,data}})=>{ if(type==='log'){ onLog&&onLog(data.message||''); return; }
+    const p=wpend.get(id); if(!p) return; wpend.delete(id); type==='error'?p.rej(new Error(data)):p.res(data); }; }
+const call=(type,data)=>new Promise((res,rej)=>{ const id=++wid; wpend.set(id,{res,rej}); W.postMessage({id,type,data}); });
+
+function setPct(p){ p=Math.max(0,Math.min(100,p)); $('#pct').textContent=Math.floor(p)+' %';
+  $('#arc').setAttribute('stroke-dashoffset',276.5*(1-p/100)); }
+
+$('#go').onclick=async()=>{
+  cancelled=false; outBlob=null; const S=$('#sheet');
+  S.hidden=false; $('#doneBtns').hidden=true; $('#cancel').hidden=false; $('#doneCover').hidden=true; $('#pct').hidden=false;
+  $('#sTitle').textContent='Création en cours…'; $('#sSub').textContent='Préparation du moteur audio'; setPct(0);
+  let log='';
+  try{
+    if(!W) startWorker();
+    await call('load');
+    if(cancelled) return;
+    $('#sSub').textContent='Encodage et assemblage des chapitres';
+    // fichiers audio montés sous des noms simples
+    const blobs=tracks.map((t,i)=>({name:`a${i}.${/\.wav$/i.test(t.file.name)?'wav':'mp3'}`,data:t.file}));
+    await call('mount',{blobs});
+    // métadonnées + chapitres
+    const v=id=>$('#'+id).value.trim();
+    const title=v('title')||tracks[0].name, author=v('author');
+    let m=';FFMETADATA1\n', add=(k,x)=>{ if(x) m+=`${k}=${esc(x)}\n`; };
+    add('title',title); add('album',title); add('artist',author); add('album_artist',author);
+    add('composer',v('narrator')); add('genre',v('genre')); add('date',v('year')); add('publisher',v('publisher'));
+    add('comment',v('desc')); add('description',v('desc'));
+    let t0=0; tracks.forEach((t,i)=>{ const a=Math.round(t0*1000), b=Math.round((t0+t.dur)*1000); t0+=t.dur;
+      m+=`\n[CHAPTER]\nTIMEBASE=1/1000\nSTART=${a}\nEND=${b}\ntitle=${esc(t.name||('Chapitre '+(i+1)))}\n`; });
+    await call('write',{path:'/meta.txt',data:m});
+    const args=['-y']; blobs.forEach(b=>args.push('-i','/in/'+b.name));
+    let ci=-1; if(coverJpg){ await call('write',{path:'/cover.jpg',data:coverJpg}); ci=blobs.length; args.push('-i','/cover.jpg'); }
+    const mi=blobs.length+(coverJpg?1:0); args.push('-i','/meta.txt');
+    if(blobs.length>1){
+      const f=blobs.map((_,i)=>`[${i}:a]aresample=44100,aformat=sample_fmts=fltp:channel_layouts=stereo[a${i}]`).join(';')
+        +';'+blobs.map((_,i)=>`[a${i}]`).join('')+`concat=n=${blobs.length}:v=0:a=1[a]`;
+      args.push('-filter_complex',f,'-map','[a]');
+    } else args.push('-map','0:a','-ac','2','-ar','44100');
+    if(ci>=0) args.push('-map',`${ci}:v`,'-c:v','copy','-disposition:v:0','attached_pic');
+    args.push('-map_metadata',String(mi),'-map_chapters',String(mi),'-c:a','aac','-b:a','96k','-f','mp4','-brand','M4B ','/out.m4b');
+    onLog=s=>{ log=(log+'\n'+s).slice(-2000); const x=/time=(\d+):(\d+):([\d.]+)/.exec(s);
+      if(x&&totalDur) setPct((+x[1]*3600+ +x[2]*60+ +x[3])/totalDur*100); };
+    const ret=await call('exec',{args}); onLog=null;
+    if(cancelled) return;
+    if(ret!==0) throw new Error('FFmpeg a échoué');
+    const data=await call('read',{path:'/out.m4b'}); await call('rm',{path:'/out.m4b'});
+    outBlob=new Blob([data],{type:'audio/mp4'});
+    outName=(title.replace(/[\\/:*?"<>|]+/g,'').trim()||'livre-audio')+'.m4b';
+    setPct(100); $('#pct').hidden=!!coverURL;
+    if(coverURL){ const d=$('#doneCover'); d.src=coverURL; d.hidden=false; }
+    $('#sTitle').textContent='Ton livre audio est prêt';
+    $('#sSub').textContent=`${outName} · ${size(outBlob.size)} · ${fmt(totalDur)}`;
+    $('#doneBtns').hidden=false; $('#cancel').hidden=true;
+  }catch(err){
+    if(cancelled) return; console.error(err,log);
+    $('#sTitle').textContent='La création a échoué';
+    $('#sSub').textContent=/memory|Aborted|OOM/i.test(String(err)+log)
+      ? "Mémoire insuffisante sur cet appareil : essaie avec moins de pistes ou des fichiers plus courts."
+      : /fetch|network|importScripts|NetworkError/i.test(String(err)) ? "Connexion nécessaire au premier usage pour charger le moteur audio."
+      : "Vérifie que les fichiers sont bien des MP3 ou WAV lisibles.";
+    $('#cancel').textContent='Fermer';
+    if(W){ W.terminate(); W=null; }
+  }
+};
+$('#cancel').onclick=()=>{ cancelled=true; onLog=null; if(W){ W.terminate(); W=null; } $('#sheet').hidden=true; $('#cancel').textContent='Annuler'; };
+$('#close').onclick=()=>{ $('#sheet').hidden=true; };
+$('#dl').onclick=()=>{ if(!outBlob) return; const a=document.createElement('a'); a.href=URL.createObjectURL(outBlob); a.download=outName; document.body.appendChild(a); a.click(); a.remove(); };
+$('#share').onclick=async()=>{ if(!outBlob) return; const f=new File([outBlob],outName,{type:'audio/mp4'});
+  if(navigator.canShare&&navigator.canShare({files:[f]})){ try{ await navigator.share({files:[f],title:outName}); }catch(e){} } else $('#dl').click(); };
+
+render();
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body>
+</html>
