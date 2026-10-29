@@ -256,8 +256,10 @@ $('#go').onclick=async()=>{
     const title=v('title')||tracks[0].name, author=v('author');
     let m=';FFMETADATA1\n', add=(k,x)=>{ if(x) m+=`${k}=${esc(x)}\n`; };
     add('title',title); add('album',title); add('artist',author); add('album_artist',author);
-    add('composer',v('narrator')); add('genre',v('genre')); add('date',v('year')); add('publisher',v('publisher'));
-    add('comment',v('desc')); add('description',v('desc'));
+    add('composer',v('narrator')); add('genre',v('genre')); add('date',v('year'));
+    if(v('publisher')) add('copyright',`© ${v('year')?v('year')+' ':''}${v('publisher')}`);
+    add('comment',v('desc')); add('description',v('desc')); add('synopsis',v('desc'));
+    add('media_type','2'); // étiquette « livre audio » (stik = 2)
     let t0=0; tracks.forEach((t,i)=>{ const a=Math.round(t0*1000), b=Math.round((t0+t.dur)*1000); t0+=t.dur;
       m+=`\n[CHAPTER]\nTIMEBASE=1/1000\nSTART=${a}\nEND=${b}\ntitle=${esc(t.name||('Chapitre '+(i+1)))}\n`; });
     await call('write',{path:'/meta.txt',data:m});
