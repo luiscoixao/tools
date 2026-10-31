@@ -102,6 +102,30 @@ h2.sec{font-weight:900;font-size:22px;margin:26px 2px 12px}
 .conf{position:fixed;top:-14px;width:10px;height:14px;border-radius:3px;z-index:20;pointer-events:none;animation:fall linear forwards}
 @keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
 .shake{animation:shake .35s}
+.cta:disabled{opacity:.35;box-shadow:none}
+.play{margin-top:4px}
+.fig{display:block;width:100%;max-width:360px;margin:0 auto;touch-action:none;user-select:none;-webkit-user-select:none}
+.qimg .fig{max-width:300px;margin-bottom:8px}
+.sl{font:900 26px Nunito,system-ui,sans-serif;text-anchor:middle;paint-order:stroke;stroke:#fff;stroke-width:5px}
+.side{stroke:#1f1b3a;stroke-width:7;stroke-linecap:round;transition:stroke .2s,stroke-width .2s}
+.side.pulse{animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{50%{stroke-width:11}}
+.side.ok{stroke:#8b5cf6;stroke-width:11;animation:none}
+.side.ko{stroke:#e11d48;animation:none}
+.hit{stroke:transparent;stroke-width:44;stroke-linecap:round;cursor:pointer}
+.hint{margin-top:12px;padding:12px 14px;border-radius:16px;background:#f4f2fb;font-size:18px;font-weight:700;text-align:center}
+.eq{margin:10px 0 4px;text-align:center;font-size:26px;font-weight:900}
+.eq .ok{color:var(--good)}
+.sld{display:flex;align-items:center;gap:12px;margin:12px 0;font-weight:900;font-size:24px;color:var(--k)}
+.sld input{flex:1;-webkit-appearance:none;appearance:none;height:14px;border-radius:999px;background:color-mix(in srgb,var(--k) 25%,#fff);outline:none}
+.sld input::-webkit-slider-thumb{-webkit-appearance:none;width:34px;height:34px;border-radius:50%;background:var(--k);border:4px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.3)}
+.sld input::-moz-range-thumb{width:28px;height:28px;border-radius:50%;background:var(--k);border:4px solid #fff}
+.sld b{min-width:28px;text-align:right}
+.bubbles{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.bubbles .opt{margin:0;text-align:center;font-size:30px;font-weight:900;padding:18px 8px;border-radius:22px}
+.grab{cursor:grab}
+.bigbtn{display:block;margin:14px auto 0;padding:14px 26px;border:0;border-radius:999px;background:var(--c);color:#fff;font-weight:900;font-size:20px;box-shadow:0 5px 0 rgba(0,0,0,.2);cursor:pointer}
+.bigbtn:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(0,0,0,.2)}
 @keyframes shake{25%{transform:translateX(-6px)}50%{transform:translateX(6px)}75%{transform:translateX(-3px)}}
 </style>
 </head>
@@ -236,6 +260,220 @@ ens:{learn:[
 ]},
 };
 
+/* ================= SONS ================= */
+let AC=null;
+function sound(ok){
+  try{
+    AC=AC||new (window.AudioContext||window.webkitAudioContext)();
+    const notes=ok?[523,659,784]:[220,165];
+    notes.forEach((f,i)=>{
+      const o=AC.createOscillator(),g=AC.createGain(),t=AC.currentTime+i*.09;
+      o.type=ok?'triangle':'sine';o.frequency.value=f;
+      g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.18,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+.22);
+      o.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+.25);
+    });
+  }catch(e){}
+}
+
+/* ================= GÉOMÉTRIE INTERACTIVE ================= */
+const GC={a:'#f97316',b:'#14b8a6',c:'#8b5cf6',ink:'#1f1b3a',soft:'#f3f0ff'};
+function svgPt(svg,ev){const p=svg.createSVGPoint();p.x=ev.clientX;p.y=ev.clientY;return p.matrixTransform(svg.getScreenCTM().inverse());}
+
+/* figures pour les questions */
+function figRight(a,b,c){
+  const x0=70,y0=170,x1=250,y1=40;
+  return `<svg viewBox="0 0 300 210" class="fig">
+    <path d="M${x0} ${y0} L${x1} ${y0} L${x0} ${y1} Z" fill="${GC.soft}" stroke="${GC.ink}" stroke-width="4" stroke-linejoin="round"/>
+    <path d="M${x0} ${y0-18} h18 v18" fill="none" stroke="${GC.ink}" stroke-width="3"/>
+    <text x="${(x0+x1)/2}" y="${y0+32}" class="sl" fill="${GC.a}">${a}</text>
+    <text x="${x0-26}" y="${(y0+y1)/2+9}" class="sl" fill="${GC.b}">${b}</text>
+    <text x="${(x0+x1)/2+22}" y="${(y0+y1)/2-8}" class="sl" fill="${GC.c}">${c}</text></svg>`;
+}
+function figTri(p,q,r){
+  return `<svg viewBox="0 0 320 220" class="fig">
+    <path d="M40 180 L280 180 L190 40 Z" fill="${GC.soft}" stroke="${GC.ink}" stroke-width="4" stroke-linejoin="round"/>
+    <text x="160" y="212" class="sl" fill="${GC.a}">${p}</text>
+    <text x="256" y="104" class="sl" fill="${GC.b}">${q}</text>
+    <text x="96" y="100" class="sl" fill="${GC.c}">${r}</text></svg>`;
+}
+function figArea(){
+  return `<svg viewBox="0 0 320 200" class="fig">
+    <path d="M30 160 L290 160 L110 56 Z" fill="#ccfbf1" stroke="${GC.ink}" stroke-width="4" stroke-linejoin="round"/>
+    <line x1="110" y1="56" x2="110" y2="160" stroke="${GC.b}" stroke-width="3" stroke-dasharray="7 6"/>
+    <path d="M110 146 h14 v14" fill="none" stroke="${GC.b}" stroke-width="2.5"/>
+    <text x="160" y="192" class="sl" fill="${GC.a}">10</text>
+    <text x="94" y="116" class="sl" fill="${GC.b}">4</text></svg>`;
+}
+function figAngles(){
+  return `<svg viewBox="0 0 320 210" class="fig">
+    <path d="M40 180 L280 180 L130 50 Z" fill="${GC.soft}" stroke="${GC.ink}" stroke-width="4" stroke-linejoin="round"/>
+    <path d="M40 180 L90 180 A50 50 0 0 0 68.5 138.9 Z" fill="${GC.a}" opacity=".85"/>
+    <path d="M280 180 L235 180 A45 45 0 0 1 245.9 150.5 Z" fill="${GC.b}" opacity=".85"/>
+    <text x="118" y="172" class="sl" fill="${GC.a}" font-size="22">50°</text>
+    <text x="210" y="172" class="sl" fill="${GC.b}" font-size="22">60°</text>
+    <text x="134" y="98" class="sl" fill="${GC.c}">?</text></svg>`;
+}
+
+/* 1. toucher l'hypoténuse */
+function mountHyp(box,done){
+  const x0=70,y0=200,x1=270,y1=50;
+  const side=(k,a,b,c,d)=>`<g data-s="${k}"><line class="side pulse" x1="${a}" y1="${b}" x2="${c}" y2="${d}"/><line class="hit" x1="${a}" y1="${b}" x2="${c}" y2="${d}"/></g>`;
+  box.innerHTML=`<svg viewBox="0 0 320 250" class="fig">
+    <path d="M${x0} ${y0} L${x1} ${y0} L${x0} ${y1} Z" fill="${GC.soft}"/>
+    <path d="M${x0} ${y0-22} h22 v22" fill="none" stroke="${GC.ink}" stroke-width="3"/>
+    ${side('a',x0,y0,x1,y0)}${side('b',x0,y0,x0,y1)}${side('c',x1,y0,x0,y1)}
+    <text id="hl" x="${(x0+x1)/2+30}" y="${(y0+y1)/2-12}" class="sl" fill="${GC.c}" opacity="0">c</text>
+  </svg><div class="hint" id="hint">👆 Touche le côté <b>le plus long</b>, en face de l'angle droit ⬛</div>`;
+  const hint=box.querySelector('#hint');
+  box.querySelectorAll('g[data-s]').forEach(g=>{
+    g.addEventListener('click',()=>{
+      const ln=g.querySelector('.side');
+      if(g.dataset.s==='c'){
+        box.querySelectorAll('.side').forEach(x=>x.classList.remove('pulse'));
+        ln.classList.add('ok');box.querySelector('#hl').setAttribute('opacity','1');
+        hint.innerHTML='✨ Voici <b>l\'hypoténuse</b> !';
+        done(`L'<b>hypoténuse</b> est le plus grand côté d'un triangle rectangle. Elle est toujours <b>en face de l'angle droit</b>.`);
+      }else{
+        sound(false);ln.classList.add('ko');setTimeout(()=>ln.classList.remove('ko'),600);
+        hint.innerHTML='Presque ! Ce côté <b>touche</b> l\'angle droit. Cherche celui d\'<b>en face</b> 👀';
+      }
+    });
+  });
+}
+
+/* 2. Pythagore avec curseurs */
+function mountPyth(box,done){
+  box.innerHTML=`<svg class="fig" id="pf"></svg>
+    <div class="eq" id="peq"></div>
+    <label class="sld" style="--k:${GC.a}"><span>a</span><input type="range" min="1" max="8" step="1" value="2" id="sa"><b id="va">2</b></label>
+    <label class="sld" style="--k:${GC.b}"><span>b</span><input type="range" min="1" max="8" step="1" value="2" id="sb"><b id="vb">2</b></label>
+    <div class="hint" id="ph">🎯 Défi : règle <b style="color:${GC.a}">a</b> et <b style="color:${GC.b}">b</b> pour que <b style="color:${GC.c}">c</b> tombe juste (un nombre entier)</div>`;
+  const svg=box.querySelector('#pf'),sa=box.querySelector('#sa'),sb=box.querySelector('#sb');
+  let moves=0,won=false;
+  function draw(){
+    const a=+sa.value,b=+sb.value,u=20,c=Math.hypot(a,b),c2=a*a+b*b,ok=Number.isInteger(c);
+    box.querySelector('#va').textContent=a;box.querySelector('#vb').textContent=b;
+    let s='';
+    for(let i=0;i<a;i++)for(let j=0;j<a;j++)s+=`<rect x="${i*u}" y="${j*u}" width="${u}" height="${u}" fill="${GC.a}" stroke="#fff" stroke-width="2" rx="3"/>`;
+    for(let i=0;i<b;i++)for(let j=0;j<b;j++)s+=`<rect x="${-(i+1)*u}" y="${-(j+1)*u}" width="${u}" height="${u}" fill="${GC.b}" stroke="#fff" stroke-width="2" rx="3"/>`;
+    const P=[a*u,0],Q=[0,-b*u],n=[b*u,-a*u];
+    const H=[P,Q,[Q[0]+n[0],Q[1]+n[1]],[P[0]+n[0],P[1]+n[1]]];
+    s+=`<polygon points="${H.map(p=>p.join(',')).join(' ')}" fill="${GC.c}" fill-opacity="${ok?.95:.75}" stroke="#fff" stroke-width="3"/>`;
+    s+=`<polygon points="0,0 ${P.join(',')} ${Q.join(',')}" fill="#fff" stroke="${GC.ink}" stroke-width="4" stroke-linejoin="round"/>`;
+    s+=`<path d="M0 ${-Math.min(14,b*u/3)} h${Math.min(14,a*u/3)} v${Math.min(14,b*u/3)}" fill="none" stroke="${GC.ink}" stroke-width="2.5"/>`;
+    const fs=Math.max(16,Math.min(30,u*Math.min(a,b)*.55));
+    s+=`<text x="${a*u/2}" y="${a*u/2+10}" class="sl" style="font-size:${Math.max(16,a*u*.4)}px;stroke:rgba(0,0,0,.25);stroke-width:2px" fill="#fff">${a*a}</text>`;
+    s+=`<text x="${-b*u/2}" y="${-b*u/2+10}" class="sl" style="font-size:${Math.max(16,b*u*.4)}px;stroke:rgba(0,0,0,.25);stroke-width:2px" fill="#fff">${b*b}</text>`;
+    const cx=(P[0]+Q[0]+n[0])/2,cy=(P[1]+Q[1]+n[1])/2;
+    s+=`<text x="${cx}" y="${cy+12}" class="sl" style="font-size:${Math.max(18,c*u*.35)}px;stroke:rgba(0,0,0,.25);stroke-width:2px" fill="#fff">${c2}</text>`;
+    const pad=20,minX=-b*u-pad,maxX=(a+b)*u+pad,minY=-(a+b)*u-pad,maxY=a*u+pad;
+    svg.setAttribute('viewBox',`${minX} ${minY} ${maxX-minX} ${maxY-minY}`);
+    svg.style.maxHeight='46vh';
+    svg.innerHTML=s;
+    const cTxt=ok?`<span class="ok">c = ${c} 🎉</span>`:`c ≈ ${c.toFixed(2).replace('.',',')}`;
+    box.querySelector('#peq').innerHTML=`<span style="color:${GC.a}">${a*a}</span> + <span style="color:${GC.b}">${b*b}</span> = <span style="color:${GC.c}">${c2}</span> → ${cTxt}`;
+    if(ok&&!won){
+      won=true;
+      box.querySelector('#ph').innerHTML='🏆 Trouvé ! Les carrés <b style="color:#f97316">orange</b> + <b style="color:#14b8a6">verts</b> remplissent exactement le <b style="color:#8b5cf6">violet</b>.';
+      done(`${a}² + ${b}² = ${c}², donc <b>c = ${c}</b>. C'est le <b>théorème de Pythagore</b> : $a^2+b^2=c^2$.`);
+    }else if(!won&&moves>=8){
+      box.querySelector('#ph').innerHTML='💡 Petit coup de pouce : essaie <b>a = 3</b> et <b>b = 4</b>';
+    }
+  }
+  [sa,sb].forEach(x=>x.addEventListener('input',()=>{moves++;draw();}));
+  draw();
+}
+
+/* 3. aire du triangle : on déplace le sommet */
+function mountArea(box,done){
+  const u=30,X0=20,Y0=170,base=8,hh=4;
+  box.innerHTML=`<svg viewBox="0 0 280 210" class="fig" id="af"></svg>
+    <div class="eq">Aire = <span style="color:${GC.a}">8</span> × <span style="color:${GC.b}">4</span> ÷ 2 = <span class="ok" id="av">16</span></div>
+    <div class="hint" id="ah">👆 Fais glisser le <b>point violet</b> : l'aire change-t-elle ?</div>`;
+  const svg=box.querySelector('#af');
+  let ax=X0+2*u,travel=0,last=ax,drag=false,won=false;
+  function draw(){
+    let g='';
+    for(let i=0;i<base;i++)for(let j=0;j<hh;j++)g+=`<rect x="${X0+i*u}" y="${Y0-(j+1)*u}" width="${u}" height="${u}" fill="none" stroke="#e4e2ee" stroke-width="1.5"/>`;
+    const top=Y0-hh*u;
+    svg.innerHTML=`${g}
+      <rect x="${X0}" y="${top}" width="${base*u}" height="${hh*u}" fill="none" stroke="#c9c5dc" stroke-width="2.5" stroke-dasharray="8 6"/>
+      <path d="M${X0} ${Y0} L${X0+base*u} ${Y0} L${ax} ${top} Z" fill="#99f6e4" fill-opacity=".85" stroke="${GC.ink}" stroke-width="4" stroke-linejoin="round"/>
+      <line x1="${ax}" y1="${top}" x2="${ax}" y2="${Y0}" stroke="${GC.b}" stroke-width="3" stroke-dasharray="6 5"/>
+      <text x="${X0+base*u/2}" y="${Y0+30}" class="sl" fill="${GC.a}">8</text>
+      <text x="${ax+(ax>X0+base*u-30?-18:18)}" y="${Y0-hh*u/2+8}" class="sl" fill="${GC.b}">4</text>
+      <circle cx="${ax}" cy="${top}" r="16" fill="${GC.c}" stroke="#fff" stroke-width="4" class="grab"/>
+      <circle cx="${ax}" cy="${top}" r="30" fill="transparent" class="grab"/>`;
+  }
+  function move(ev){
+    const p=svgPt(svg,ev);ax=Math.max(X0-20,Math.min(X0+base*u+20,p.x));
+    travel+=Math.abs(ax-last);last=ax;draw();
+    if(!won&&travel>4*u){
+      won=true;
+      box.querySelector('#ah').innerHTML='😮 L\'aire reste <b>16</b>, quelle que soit la forme !';
+      done(`L'aire d'un triangle ne dépend que de sa <b>base</b> et de sa <b>hauteur</b> : c'est toujours la moitié du rectangle, $\\dfrac{\\text{base}\\times\\text{hauteur}}{2}$.`);
+    }
+  }
+  svg.addEventListener('pointerdown',e=>{drag=true;svg.setPointerCapture(e.pointerId);move(e);});
+  svg.addEventListener('pointermove',e=>{if(drag)move(e);});
+  svg.addEventListener('pointerup',()=>drag=false);
+  svg.addEventListener('pointercancel',()=>drag=false);
+  draw();
+}
+
+/* 4. découper les trois angles */
+function mountAngles(box,done){
+  const A=[40,170],B=[280,170],C=[140,40],M=[160,250],R=34;
+  const V=[A,B,C],cols=[GC.a,GC.b,GC.c];
+  const ang=(p,q)=>Math.atan2(q[1]-p[1],q[0]-p[0]);
+  const sec=V.map((v,i)=>{
+    const o=V.filter((_,j)=>j!==i);
+    let s=ang(v,o[0]),e=ang(v,o[1]);
+    let d=e-s;while(d<0)d+=2*Math.PI;
+    if(d>Math.PI){[s,e]=[e,s];d=2*Math.PI-d;}
+    return {v,s,d};
+  });
+  const path=(v,s,d)=>`M${v[0]} ${v[1]} L${v[0]+R*Math.cos(s)} ${v[1]+R*Math.sin(s)} A${R} ${R} 0 0 1 ${v[0]+R*Math.cos(s+d)} ${v[1]+R*Math.sin(s+d)} Z`;
+  box.innerHTML=`<svg viewBox="0 0 320 290" class="fig" id="gf">
+    <path d="M${A} L${B} L${C} Z" fill="${GC.soft}" stroke="${GC.ink}" stroke-width="4" stroke-linejoin="round" id="tri"/>
+    <line x1="40" y1="${M[1]}" x2="280" y2="${M[1]}" stroke="${GC.ink}" stroke-width="3" stroke-dasharray="6 6" id="ln" opacity=".25"/>
+    ${sec.map((s,i)=>`<path id="w${i}" d="${path(s.v,s.s,s.d)}" fill="${cols[i]}" stroke="#fff" stroke-width="2"/>`).join('')}
+    <text id="t180" x="160" y="${M[1]-46}" class="sl" fill="${GC.ink}" opacity="0">180°</text>
+  </svg>
+  <button class="bigbtn" id="cut">✂️ Découper les 3 angles</button>
+  <div class="hint">Les 3 coins colorés sont les <b>angles</b> du triangle.</div>`;
+  box.querySelector('#cut').onclick=e=>{
+    e.target.disabled=true;e.target.style.opacity='.4';
+    let cum=Math.PI;
+    const tg=sec.map(s=>{const t=cum;cum+=s.d;return t-s.s;});
+    const t0=performance.now(),D=1400;
+    (function step(now){
+      let t=Math.min(1,(now-t0)/D);t=t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+      sec.forEach((s,i)=>{
+        const px=s.v[0]+(M[0]-s.v[0])*t,py=s.v[1]+(M[1]-s.v[1])*t;
+        box.querySelector('#w'+i).setAttribute('transform',`translate(${px} ${py}) rotate(${tg[i]*180/Math.PI*t}) translate(${-s.v[0]} ${-s.v[1]})`);
+      });
+      if(t<1)requestAnimationFrame(step);
+      else{
+        box.querySelector('#ln').setAttribute('opacity','1');
+        box.querySelector('#t180').setAttribute('opacity','1');
+        done(`Mis bout à bout, les 3 angles forment un <b>demi-tour</b> : leur somme fait toujours <b>180°</b>, quel que soit le triangle.`);
+      }
+    })(t0);
+  };
+}
+
+LESSONS.geo={steps:[
+  {type:'play',title:'Découvre',text:'Voici un triangle <b>rectangle</b>. Où est son côté le plus important ?',mount:mountHyp},
+  {type:'play',title:'Expérimente',text:'Chaque côté porte un carré. Joue avec les curseurs !',mount:mountPyth},
+  {q:'Combien mesure l\'hypoténuse ?',img:figRight(6,8,'?'),bubbles:true,a:['10','14','12','9'],why:r`$6^2+8^2=36+64=100=10^2$, donc l'hypoténuse mesure $10$.`},
+  {q:'Ce triangle est-il rectangle ?',img:figTri(12,13,5),bubbles:true,keep:true,a:['✅ Oui','❌ Non'],why:r`$5^2+12^2=25+144=169=13^2$ : Pythagore marche, donc il est rectangle !`},
+  {type:'play',title:'Expérimente',text:'Le triangle turquoise a une base de <b>8</b> et une hauteur de <b>4</b>.',mount:mountArea},
+  {q:'Quelle est l\'aire de ce triangle ?',img:figArea(),bubbles:true,a:['20','40','14','10'],why:r`$\dfrac{10\times4}{2}=20$.`},
+  {type:'play',title:'Expérimente',text:'Que se passe-t-il si on assemble les 3 angles d\'un triangle ?',mount:mountAngles},
+  {q:'Combien mesure l\'angle manquant ?',img:figAngles(),bubbles:true,a:['70°','90°','110°','80°'],why:r`$180-50-60=70$ : l'angle manquant fait $70^\circ$.`},
+]};
+
 /* ================= PROGRESSION ================= */
 const KEY='mathnb-v1', GOAL=50;
 function dayStr(d){return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();}
@@ -334,9 +572,13 @@ function math(el){if(window.renderMathInElement){try{renderMathInElement(el,{del
 
 function startLesson(card){
   const les=LESSONS[card.key];
-  const qs=shuffle(les.quiz).map((q,i)=>({...q,type:'q',id:i}));
-  L={key:card.key,label:card.label,queue:[...les.learn.map((h,i)=>({type:'learn',html:h,n:i+1,of:les.learn.length})),...qs],
-     done:0,combo:0,gained:0,nq:qs.length,missed:new Set()};
+  let queue;
+  if(les.steps){ queue=les.steps.map((s,i)=>({...s,type:s.type||'q',id:i})); }
+  else{
+    const qs=shuffle(les.quiz).map((q,i)=>({...q,type:'q',id:i}));
+    queue=[...les.learn.map((h,i)=>({type:'learn',html:h,n:i+1,of:les.learn.length})),...qs];
+  }
+  L={key:card.key,label:card.label,queue,done:0,combo:0,gained:0,nq:queue.filter(s=>s.type==='q').length,missed:new Set()};
   document.documentElement.style.setProperty('--c',card.c[1]);
   $lesson.classList.add('open');document.body.style.overflow='hidden';
   render();
@@ -355,9 +597,22 @@ function render(){
     $fb.className='fb neutral show';
     $fb.innerHTML=`<button class="cta">Compris !</button>`;
     $fb.querySelector('.cta').onclick=()=>{L.queue.shift();L.done++;render();};
+  }else if(s.type==='play'){
+    $body.innerHTML=`<div class="kicker">${L.label} · ${s.title||'À toi de jouer'}</div><div class="q">${s.text}</div><div class="play"></div>`;
+    $fb.className='fb neutral show';
+    $fb.innerHTML=`<button class="cta" disabled>Continuer</button>`;
+    let finished=false;
+    s.mount($body.querySelector('.play'),msg=>{
+      if(finished) return; finished=true;
+      sound(true);
+      $fb.className='fb good show';
+      $fb.innerHTML=`<h3>${['Bravo !','Bien joué !','Génial !'][Math.floor(Math.random()*3)]}</h3><p>${msg}</p><button class="cta">Continuer</button>`;
+      $fb.querySelector('.cta').onclick=()=>{L.queue.shift();L.done++;render();};
+      math($fb);
+    });
   }else{
-    const opts=shuffle(s.a.map((t,i)=>({t,ok:i===0})));
-    $body.innerHTML=`<div class="kicker">${L.label} · Question</div><div class="q">${s.q}</div><div id="opts"></div>`;
+    const opts=s.keep?s.a.map((t,i)=>({t,ok:i===0})):shuffle(s.a.map((t,i)=>({t,ok:i===0})));
+    $body.innerHTML=`<div class="kicker">${L.label} · Question</div>${s.img?`<div class="qimg">${s.img}</div>`:''}<div class="q">${s.q}</div><div id="opts" class="${s.bubbles?'bubbles':''}"></div>`;
     const box=$body.querySelector('#opts');
     opts.forEach(o=>{
       const b=document.createElement('button');b.className='opt';b.innerHTML=o.t;
@@ -371,7 +626,7 @@ function render(){
 function answer(btn,ok,s){
   $body.querySelectorAll('.opt').forEach(b=>b.disabled=true);
   if(ok){
-    btn.classList.add('ok');
+    btn.classList.add('ok');sound(true);
     L.combo++;
     const gain=10+(L.combo>=3?5:0);
     L.gained+=gain;
@@ -380,7 +635,7 @@ function answer(btn,ok,s){
     $fb.innerHTML=`<h3>${['Bravo !','Exact !','Parfait !','Bien vu !'][Math.floor(Math.random()*4)]}${L.combo>=3?' 🔥 '+L.combo+' d\'affilée':''}</h3><p>${s.why}</p><button class="cta">Continuer</button>`;
     $fb.querySelector('.cta').onclick=()=>{L.queue.shift();L.done++;render();};
   }else{
-    btn.classList.add('ko','shake');
+    btn.classList.add('ko','shake');sound(false);
     L.combo=0;L.missed.add(s.id);
     $fb.className='fb bad show';
     $fb.innerHTML=`<h3>Pas tout à fait…</h3><p>Bonne réponse : ${s.a[0]}<br>${s.why}</p><button class="cta">Je la reverrai</button>`;
