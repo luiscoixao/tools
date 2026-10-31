@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Math Notebook">
+<meta name="theme-color" content="#f7f8fa">
+<title>Math Notebook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Sans+Condensed:wght@600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<style>
+:root{--navy:#1e2f8e;--red:#b3343c;--paper:#f7f8fa;--grid:#dde3ec;--ring:#5e5e5e}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0}
+body{
+  min-height:100vh;
+  background-color:var(--paper);
+  background-image:
+    linear-gradient(var(--grid) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:16px 16px;
+  font-family:'Fira Sans Condensed',system-ui,sans-serif;
+  color:var(--navy);
+}
+.page{
+  position:relative;max-width:560px;margin:0 auto;
+  padding:calc(env(safe-area-inset-top) + 28px) 14px 40px 44px;
+}
+/* spirale */
+.spiral{
+  position:absolute;left:0;top:0;bottom:0;width:30px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='20'%3E%3Ccircle cx='23' cy='13' r='3.4' fill='%238d8d8d'/%3E%3Cpath d='M0 16 C8 6 20 4 24 12' stroke='%235e5e5e' stroke-width='3.2' fill='none' stroke-linecap='round'/%3E%3Cpath d='M1 14 C8 7 19 5 23 11' stroke='%23d2d2d2' stroke-width='1' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:repeat-y;
+}
+h1{
+  margin:0;font-weight:800;letter-spacing:-.5px;
+  font-size:clamp(34px,10.5vw,58px);line-height:1.06;
+}
+h1 .red{color:var(--red)}
+.underline{display:block;width:64%;height:16px;margin:4px 0 22px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.card{
+  position:relative;aspect-ratio:1/1.22;border:0;padding:0;background:none;
+  font:inherit;color:inherit;cursor:pointer;
+  transition:transform .12s ease;
+}
+.card:active{transform:scale(.95)}
+.card svg.frame{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.card .frame .fill{fill:rgba(255,255,255,.7);transition:fill .15s}
+.card.on .frame .fill{fill:#e6ecfb}
+.art{
+  position:absolute;left:8%;right:8%;top:10%;height:60%;
+  display:flex;align-items:center;justify-content:center;overflow:hidden;
+}
+.art svg{width:100%;height:100%}
+.tex{white-space:nowrap;font-size:40px;color:var(--navy);transform-origin:center}
+.label{
+  position:absolute;left:4px;right:4px;bottom:9%;
+  font-weight:600;text-align:center;white-space:nowrap;
+  font-size:clamp(12px,4.2vw,22px);
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="spiral"></div>
+
+  <h1>Replace social media<br>with addictive<br><span class="red">math lessons</span></h1>
+  <svg class="underline" viewBox="0 0 300 16" preserveAspectRatio="none">
+    <path d="M2 12 C 90 6, 190 4, 296 3" stroke="#b3343c" stroke-width="4" fill="none" stroke-linecap="round"/>
+  </svg>
+
+  <div class="grid" id="grid"></div>
+</div>
+
+<script>
+const NAVY='#1e2f8e';
+const CARDS=[
+  {label:'Calculus',tex:'\\displaystyle\\int dx'},
+  {label:'Algebra',tex:'x^2+y^2=1'},
+  {label:'Geometry',draw:'geometry'},
+  {label:'Trigonometry',draw:'trig'},
+  {label:'Statistics',draw:'stats'},
+  {label:'Linear Algebra',tex:'\\def\\arraystretch{1.4}\\begin{array}{|c|c|}\\hline \\;a\\; & \\;b\\; \\\\ \\hline \\;c\\; & \\;d\\; \\\\ \\hline\\end{array}'},
+  {label:'Radicals',tex:'\\sqrt{x+1}'},
+  {label:'Exponents',tex:'A^{-x}'},
+  {label:'Set Theory',draw:'venn'},
+];
+
+const S=`stroke="${NAVY}" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"`;
+const T=`fill="${NAVY}" font-family="Times New Roman,serif" font-style="italic" font-size="15"`;
+const DRAW={
+  geometry:`<path d="M14 68 L82 68 L82 10 Z" ${S}/>
+    <path d="M72 68 L72 58 L82 58" ${S} stroke-width="2"/>
+    <text x="10" y="30" fill="${NAVY}" font-family="Times New Roman,serif" font-weight="bold" font-size="16">8×3</text>
+    <text x="87" y="44" ${T}>b</text><text x="46" y="83" ${T}>c</text>`,
+  trig:`<circle cx="46" cy="46" r="26" ${S}/>
+    <line x1="8" y1="46" x2="90" y2="46" ${S} stroke-width="2"/><path d="M84 41 L90 46 L84 51" ${S} stroke-width="2"/>
+    <line x1="46" y1="82" x2="46" y2="6" ${S} stroke-width="2"/><path d="M41 12 L46 6 L51 12" ${S} stroke-width="2"/>
+    <line x1="46" y1="46" x2="66" y2="29" ${S} stroke-width="2"/><path d="M54 46 A8 8 0 0 0 52 41" ${S} stroke-width="1.5"/>
+    <text x="52" y="14" ${T}>y</text><text x="88" y="62" ${T}>x</text>
+    <text x="33" y="60" ${T}>o</text><text x="50" y="60" ${T}>c</text>`,
+  stats:`<defs><pattern id="hatch" width="4" height="4" patternUnits="userSpaceOnUse"><path d="M0 4 L4 0" stroke="${NAVY}" stroke-width="1.3"/></pattern></defs>
+    ${[22,36,50,66].map((h,i)=>`<rect x="${18+i*18}" y="${74-h}" width="12" height="${h}" fill="url(#hatch)" stroke="${NAVY}" stroke-width="2"/>`).join('')}
+    <line x1="10" y1="74" x2="92" y2="74" ${S}/>`,
+  venn:`<circle cx="38" cy="42" r="27" ${S}/><circle cx="62" cy="42" r="27" ${S}/>
+    <text x="22" y="48" ${T} font-size="17">A</text><text x="68" y="48" ${T} font-size="17">B</text>`,
+};
+
+/* bordure « dessinée à la main » */
+function rng(seed){let x=seed*9973;return()=>{x=(x*9301+49297)%233280;return x/233280;};}
+function sketch(w,h,r,seed){
+  const rnd=rng(seed),j=(a=1.4)=>(rnd()-.5)*2*a,p=(x,y)=>`${(x+j()).toFixed(1)},${(y+j()).toFixed(1)}`,m=2;
+  return `M${p(r,m)} L${p(w/2,m)} L${p(w-r,m)} Q${p(w-m,m)} ${p(w-m,r)} L${p(w-m,h/2)} L${p(w-m,h-r)} Q${p(w-m,h-m)} ${p(w-r,h-m)} L${p(w/2,h-m)} L${p(r,h-m)} Q${p(m,h-m)} ${p(m,h-r)} L${p(m,h/2)} L${p(m,r)} Q${p(m,m)} ${p(r,m)} Z`;
+}
+function frame(w,h,i){
+  let hatch='';
+  for(let x=16;x<w-16;x+=4) hatch+=`<line x1="${x}" y1="${h-4}" x2="${x+4}" y2="${h-9}" stroke="${NAVY}" stroke-width=".8" opacity=".4"/>`;
+  return `<svg class="frame" viewBox="0 0 ${w} ${h}">
+    <path class="fill" d="${sketch(w,h,14,i+1)}" stroke="${NAVY}" stroke-width="2"/>
+    <path d="${sketch(w,h,14,i+41)}" fill="none" stroke="${NAVY}" stroke-width="1" opacity=".45"/>
+    <g stroke="${NAVY}" stroke-width="1.6" stroke-linecap="round">
+      <line x1="11" y1="14" x2="15" y2="18"/><line x1="17" y1="9" x2="19" y2="15"/><line x1="24" y1="8" x2="23" y2="14"/>
+    </g>${hatch}</svg>`;
+}
+
+const grid=document.getElementById('grid');
+function build(){
+  grid.innerHTML='';
+  CARDS.forEach((c,i)=>{
+    const b=document.createElement('button');
+    b.className='card';b.setAttribute('aria-label',c.label);
+    b.innerHTML=`<div class="art">${c.draw?`<svg viewBox="0 0 100 84">${DRAW[c.draw]}</svg>`:'<div class="tex"></div>'}</div>
+      <div class="label">${c.label}</div>`;
+    b.onclick=()=>{const on=b.classList.contains('on');grid.querySelectorAll('.card').forEach(x=>x.classList.remove('on'));if(!on)b.classList.add('on');};
+    grid.appendChild(b);
+  });
+  layout();
+}
+function layout(){
+  grid.querySelectorAll('.card').forEach((b,i)=>{
+    const w=b.clientWidth,h=b.clientHeight;
+    const old=b.querySelector('.frame');if(old)old.remove();
+    b.insertAdjacentHTML('afterbegin',frame(w,h,i));
+    const t=b.querySelector('.tex');
+    if(t&&window.katex){
+      if(!t.dataset.done){katex.render(CARDS[i].tex,t,{throwOnError:false});t.dataset.done=1;}
+      const a=t.parentElement;t.style.transform='none';
+      const s=Math.min(a.clientWidth*.92/t.scrollWidth,a.clientHeight*.9/t.scrollHeight,1.8);
+      t.style.transform=`scale(${s})`;
+    }
+  });
+}
+window.addEventListener('load',()=>{build();document.fonts&&document.fonts.ready.then(layout);});
+window.addEventListener('resize',()=>{clearTimeout(window._r);window._r=setTimeout(layout,100);});
+</script>
+</body>
+</html>
