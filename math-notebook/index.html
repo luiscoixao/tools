@@ -54,7 +54,7 @@ h2.sec{font-weight:900;font-size:22px;margin:26px 2px 12px}
 }
 .tile:active{transform:translateY(4px);box-shadow:0 2px 0 var(--t3)}
 .tile::after{content:"";position:absolute;width:70%;height:55%;right:-25%;top:-18%;border-radius:50%;background:rgba(255,255,255,.15)}
-.tile .art{position:absolute;left:10%;right:10%;top:12%;height:54%;display:flex;align-items:center;justify-content:center;color:#fff}
+.tile .art{position:absolute;left:12%;right:12%;top:18%;height:50%;display:flex;align-items:center;justify-content:center;color:#fff}
 .tile .art svg{width:100%;height:100%}
 .tile .tex{white-space:nowrap;font-size:40px;transform-origin:center}
 .tile .lbl{position:absolute;left:4px;right:4px;bottom:9%;text-align:center;font-weight:900;font-size:clamp(12px,3.8vw,19px);white-space:nowrap}
@@ -126,6 +126,17 @@ h2.sec{font-weight:900;font-size:22px;margin:26px 2px 12px}
 .grab{cursor:grab}
 .bigbtn{display:block;margin:14px auto 0;padding:14px 26px;border:0;border-radius:999px;background:var(--c);color:#fff;font-weight:900;font-size:20px;box-shadow:0 5px 0 rgba(0,0,0,.2);cursor:pointer}
 .bigbtn:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(0,0,0,.2)}
+.mbtn{position:absolute;left:6px;top:6px;z-index:2;width:26px;height:26px;padding:0;border:0;border-radius:50%;background:rgba(255,255,255,.92);font-size:13px;line-height:26px;box-shadow:0 2px 4px rgba(0,0,0,.18);cursor:pointer}
+.mbtn:active{transform:scale(.9)}
+.lmemo{border:0;background:color-mix(in srgb,var(--c) 14%,#fff);border-radius:12px;font-size:20px;padding:6px 9px;cursor:pointer}
+.relink{color:inherit;font-weight:900}
+.memo-wrap{position:fixed;inset:0;z-index:30;background:rgba(20,16,40,0);pointer-events:none;transition:background .25s}
+.memo-wrap.open{background:rgba(20,16,40,.45);pointer-events:auto}
+.memo-sheet{position:absolute;left:0;right:0;bottom:0;max-height:82vh;overflow:auto;background:#fff;border-radius:26px 26px 0 0;padding:16px 20px calc(env(safe-area-inset-bottom) + 24px);transform:translateY(100%);transition:transform .3s ease;max-width:640px;margin:0 auto}
+.memo-wrap.open .memo-sheet{transform:none}
+.memo-head{display:flex;justify-content:space-between;align-items:center;font-weight:900;font-size:21px;color:var(--c);margin-bottom:6px}
+.memo-body{font-size:19px;line-height:1.5}
+.memo-body p{margin:0 0 12px;padding:10px 14px;border-radius:14px;background:color-mix(in srgb,var(--c) 8%,#fff)}
 @keyframes shake{25%{transform:translateX(-6px)}50%{transform:translateX(6px)}75%{transform:translateX(-3px)}}
 </style>
 </head>
@@ -154,6 +165,7 @@ h2.sec{font-weight:900;font-size:22px;margin:26px 2px 12px}
   <div class="ltop">
     <button class="x" id="close" aria-label="Fermer">✕</button>
     <div class="lbar"><i id="lBar"></i></div>
+    <button class="lmemo" id="lmemo" aria-label="Rappel de cours">📖</button>
     <span class="combo" id="combo"></span>
   </div>
   <div class="lbody" id="lbody"></div>
@@ -170,10 +182,15 @@ const CARDS=[
   {key:'geo',label:'Géométrie',   c:['#2dd4bf','#0d9488','#115e59'],draw:'geometry'},
   {key:'tri',label:'Trigo',       c:['#f472b6','#db2777','#9d174d'],draw:'trig'},
   {key:'sta',label:'Statistiques',c:['#60a5fa','#2563eb','#1e3a8a'],draw:'stats'},
+  {key:'pro',label:'Probabilités',c:['#38bdf8','#0284c7','#075985'],draw:'dice'},
   {key:'mat',label:'Matrices',    c:['#4ade80','#16a34a','#14532d'],tex:'\\begin{pmatrix}a&b\\\\c&d\\end{pmatrix}',alt:'(a b | c d)'},
   {key:'rac',label:'Racines',     c:['#facc15','#ca8a04','#854d0e'],tex:'\\sqrt{x+1}',alt:'√(x+1)'},
   {key:'pui',label:'Puissances',  c:['#f87171','#dc2626','#7f1d1d'],tex:'A^{-x}',alt:'A⁻ˣ'},
   {key:'ens',label:'Ensembles',   c:['#818cf8','#4f46e5','#312e81'],draw:'venn'},
+  {key:'fon',label:'Fonctions',   c:['#a3e635','#65a30d','#365314'],draw:'parab'},
+  {key:'sui',label:'Suites',      c:['#e879f9','#c026d3','#701a75'],tex:'u_{n+1}',alt:'uₙ₊₁'},
+  {key:'exp',label:'Exp & ln',    c:['#fb7185','#e11d48','#881337'],tex:'e^{x}',alt:'eˣ'},
+  {key:'pct',label:'Pourcentages',c:['#94a3b8','#475569','#1e293b'],tex:'+20\\%',alt:'+20 %'},
 ];
 
 const LESSONS={
@@ -474,6 +491,169 @@ LESSONS.geo={steps:[
   {q:'Combien mesure l\'angle manquant ?',img:figAngles(),bubbles:true,a:['70°','90°','110°','80°'],why:r`$180-50-60=70$ : l'angle manquant fait $70^\circ$.`},
 ]};
 
+/* ================= NOUVEAUX CHAPITRES ================= */
+LESSONS.fon={learn:[
+ r`<p>Une <b>fonction affine</b> s'écrit $f(x)=ax+b$ : sa courbe est une <b>droite</b>.</p><p>$a$ est la <b>pente</b> (de combien on monte quand $x$ avance de 1), $b$ est l'<b>ordonnée à l'origine</b>.</p>`,
+ r`<p>Une fonction du <b>second degré</b> $f(x)=ax^2+bx+c$ dessine une <b>parabole</b>.</p><p>Pour résoudre $ax^2+bx+c=0$, on calcule le <b>discriminant</b> : $$\Delta=b^2-4ac$$ Si $\Delta>0$ : deux solutions ; $\Delta=0$ : une ; $\Delta<0$ : aucune.</p>`],
+ quiz:[
+ {q:r`$f(x)=2x+3$. Combien vaut $f(4)$ ?`,a:[r`$11$`,r`$9$`,r`$14$`,r`$24$`],why:r`$2\times4+3=11$.`},
+ {q:r`Pente de la droite $y=-3x+1$ ?`,a:[r`$-3$`,r`$1$`,r`$3$`,r`$-\dfrac13$`],why:r`La pente est le nombre devant $x$ : $-3$.`},
+ {q:r`Discriminant de $x^2-4x+3$ ?`,a:[r`$4$`,r`$28$`,r`$-8$`,r`$16$`],why:r`$\Delta=(-4)^2-4\times1\times3=16-12=4$.`},
+ {q:r`Solutions de $x^2-4x+3=0$ ?`,a:[r`$1$ et $3$`,r`$-1$ et $-3$`,r`$2$ seulement`,r`aucune`],why:r`$\Delta=4$, $\sqrt\Delta=2$ : $x=\dfrac{4\pm2}{2}$, soit $1$ et $3$.`},
+]};
+LESSONS.sui={learn:[
+ r`<p>Une <b>suite arithmétique</b> avance en <b>ajoutant</b> toujours le même nombre $r$ (la raison) : $$u_{n+1}=u_n+r \qquad u_n=u_0+nr$$</p>`,
+ r`<p>Une <b>suite géométrique</b> avance en <b>multipliant</b> toujours par le même nombre $q$ : $$u_{n+1}=q\,u_n \qquad u_n=u_0\,q^n$$</p>`],
+ quiz:[
+ {q:r`$u_0=2$ et on ajoute $3$ à chaque fois. $u_5$ ?`,a:[r`$17$`,r`$15$`,r`$20$`,r`$486$`],why:r`$u_5=2+5\times3=17$.`},
+ {q:r`$u_0=3$ et on double à chaque fois. $u_4$ ?`,a:[r`$48$`,r`$24$`,r`$11$`,r`$96$`],why:r`$3\times2^4=3\times16=48$.`},
+ {q:r`La suite $2,\ 6,\ 18,\ 54$ est…`,a:[r`géométrique de raison $3$`,r`arithmétique de raison $4$`,r`géométrique de raison $4$`,r`ni l'un ni l'autre`],why:r`On multiplie par $3$ à chaque étape.`},
+ {q:r`$1+2+3+\dots+10$ ?`,a:[r`$55$`,r`$50$`,r`$45$`,r`$100$`],why:r`$\dfrac{10\times11}{2}=55$ (on associe $1+10$, $2+9$…).`},
+]};
+LESSONS.exp={learn:[
+ r`<p>L'<b>exponentielle</b> $e^x$ (avec $e\approx2{,}718$) transforme les additions en multiplications : $$e^{a+b}=e^a\times e^b \qquad e^0=1$$</p><p>Elle est sa propre dérivée : $(e^x)'=e^x$.</p>`,
+ r`<p>Le <b>logarithme</b> $\ln$ fait l'inverse : $\ln(e^x)=x$ et $\ln 1=0$.</p><p>Il transforme les multiplications en additions : $$\ln(ab)=\ln a+\ln b$$</p>`],
+ quiz:[
+ {q:r`$e^0$ ?`,a:[r`$1$`,r`$0$`,r`$e$`,r`$2{,}718$`],why:r`Tout nombre à la puissance $0$ vaut $1$.`},
+ {q:r`$\ln 1$ ?`,a:[r`$0$`,r`$1$`,r`$e$`,r`impossible`],why:r`$e^0=1$, donc $\ln1=0$.`},
+ {q:r`$\ln(e^3)$ ?`,a:[r`$3$`,r`$e^3$`,r`$3e$`,r`$1$`],why:r`$\ln$ et $e$ s'annulent : il reste $3$.`},
+ {q:r`$\ln 2+\ln 5$ ?`,a:[r`$\ln 10$`,r`$\ln 7$`,r`$10$`,r`$\ln 2{,}5$`],why:r`$\ln a+\ln b=\ln(ab)=\ln10$.`},
+]};
+LESSONS.pct={learn:[
+ r`<p>Augmenter de $t\,\%$, c'est <b>multiplier</b> par $1+\dfrac{t}{100}$.</p><p>Baisser de $t\,\%$, c'est multiplier par $1-\dfrac{t}{100}$.</p><p>Exemple : $+20\,\%$ → $\times1{,}2$ ; $-15\,\%$ → $\times0{,}85$.</p>`,
+ r`<p>Des évolutions successives <b>se multiplient</b>, elles ne s'additionnent pas !</p><p>$+10\,\%$ puis $-10\,\%$ : $1{,}1\times0{,}9=0{,}99$, soit une <b>baisse de 1 %</b>.</p>`],
+ quiz:[
+ {q:r`Un article à $80$ € augmente de $25\,\%$. Nouveau prix ?`,a:[r`$100$ €`,r`$105$ €`,r`$85$ €`,r`$120$ €`],why:r`$80\times1{,}25=100$.`},
+ {q:r`$200$ € avec $10\,\%$ de remise ?`,a:[r`$180$ €`,r`$190$ €`,r`$20$ €`,r`$210$ €`],why:r`$200\times0{,}9=180$.`},
+ {q:r`$+10\,\%$ puis $-10\,\%$ : au total ?`,a:[r`$-1\,\%$`,r`$0\,\%$`,r`$+1\,\%$`,r`$-10\,\%$`],why:r`$1{,}1\times0{,}9=0{,}99$ : on perd $1\,\%$.`},
+ {q:r`Un prix passe de $50$ € à $60$ €. Hausse ?`,a:[r`$+20\,\%$`,r`$+10\,\%$`,r`$+16{,}7\,\%$`,r`$+60\,\%$`],why:r`$\dfrac{60-50}{50}=0{,}2=20\,\%$.`},
+]};
+
+/* --- Probabilités interactives --- */
+function dieSvg(n,col){
+  const P={1:[[50,50]],2:[[28,28],[72,72]],3:[[26,26],[50,50],[74,74]],4:[[28,28],[72,28],[28,72],[72,72]],5:[[26,26],[74,26],[50,50],[26,74],[74,74]],6:[[28,24],[72,24],[28,50],[72,50],[28,76],[72,76]]}[n];
+  return `<svg viewBox="0 0 100 100" width="84" height="84"><rect x="6" y="6" width="88" height="88" rx="18" fill="#fff" stroke="${col}" stroke-width="5"/>${P.map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="9" fill="${col}"/>`).join('')}</svg>`;
+}
+const PC='#0284c7';
+function mountDice(box,done){
+  const cnt=[0,0,0,0,0,0];let N=0,won=false;
+  box.innerHTML=`<div style="display:flex;justify-content:center;margin:4px 0 8px" id="die">${dieSvg(6,PC)}</div>
+    <svg viewBox="0 0 300 170" class="fig" id="dc"></svg>
+    <div class="eq" id="dn">0 lancer</div>
+    <div style="display:flex;gap:10px;justify-content:center">
+      <button class="bigbtn" id="d1" style="margin:0">🎲 Lancer</button>
+      <button class="bigbtn" id="d100" style="margin:0">🚀 ×100</button></div>
+    <div class="hint" id="dh">Lance le dé beaucoup de fois. Que deviennent les barres ?</div>`;
+  const svg=box.querySelector('#dc');
+  function draw(){
+    const mx=Math.max(...cnt.map(c=>c/Math.max(N,1)),1/6*1.5);
+    let s='';
+    const y0=140,H=104,line=y0-H*(1/6)/mx;
+    cnt.forEach((c,i)=>{
+      const f=N?c/N:0,h=H*f/mx,x=22+i*46;
+      s+=`<rect x="${x}" y="${y0-h}" width="34" height="${h}" rx="6" fill="${PC}" opacity="${.55+.07*i}"/>
+          <text x="${x+17}" y="${y0+24}" class="sl" style="font-size:20px" fill="${PC}">${i+1}</text>
+          <text x="${x+17}" y="${y0-h-6}" style="font:800 12px Nunito;text-anchor:middle" fill="#6b6785">${N?Math.round(f*100)+'%':''}</text>`;
+    });
+    s+=`<line x1="14" y1="${line}" x2="290" y2="${line}" stroke="#f97316" stroke-width="3" stroke-dasharray="8 6"/>
+        <text x="150" y="16" style="font:900 15px Nunito;text-anchor:middle" fill="#f97316">- - -  chance théorique : 1/6 ≈ 17 %</text>
+        <line x1="14" y1="${y0}" x2="290" y2="${y0}" stroke="#1f1b3a" stroke-width="3"/>`;
+    svg.innerHTML=s;
+    box.querySelector('#dn').textContent=N+' lancer'+(N>1?'s':'');
+  }
+  function roll(k){
+    let last=1;
+    for(let i=0;i<k;i++){last=1+Math.floor(Math.random()*6);cnt[last-1]++;N++;}
+    const d=box.querySelector('#die');d.innerHTML=dieSvg(last,PC);d.classList.remove('shake');void d.offsetWidth;d.classList.add('shake');
+    draw();
+    if(!won&&N>=100){
+      won=true;
+      box.querySelector('#dh').innerHTML='🎯 Toutes les barres se rapprochent de la ligne orange !';
+      done(`Chaque face a <b>1 chance sur 6</b>. Plus on lance, plus la fréquence approche $\\dfrac16\\approx17\\,\\%$ : c'est ça, une <b>probabilité</b>.`);
+    }
+  }
+  box.querySelector('#d1').onclick=()=>roll(1);
+  box.querySelector('#d100').onclick=()=>roll(100);
+  draw();
+}
+function mountTree(box,done){
+  const leaves=[['P','P'],['P','F'],['F','P'],['F','F']];
+  const seen=new Set();
+  const X0=40,X1=150,X2=262,ys=[30,80,130,180],ym=[55,155];
+  let s=`<circle cx="${X0}" cy="105" r="10" fill="${PC}"/>`;
+  [0,1].forEach(i=>{
+    s+=`<line x1="${X0}" y1="105" x2="${X1}" y2="${ym[i]}" stroke="${PC}" stroke-width="4"/>
+        <text x="${(X0+X1)/2}" y="${(105+ym[i])/2+(i?22:-8)}" style="font:800 14px Nunito;text-anchor:middle" fill="#6b6785">1/2</text>
+        <circle cx="${X1}" cy="${ym[i]}" r="18" fill="#fff" stroke="${PC}" stroke-width="4"/>
+        <text x="${X1}" y="${ym[i]+7}" class="sl" style="font-size:20px" fill="${PC}">${i?'F':'P'}</text>`;
+    [0,1].forEach(j=>{
+      const k=i*2+j;
+      s+=`<line x1="${X1+18}" y1="${ym[i]}" x2="${X2-24}" y2="${ys[k]}" stroke="${PC}" stroke-width="4"/>
+          <g data-k="${k}" style="cursor:pointer"><rect x="${X2-24}" y="${ys[k]-20}" width="56" height="40" rx="12" fill="#e0f2fe" stroke="${PC}" stroke-width="3" class="lf"/>
+          <text x="${X2+4}" y="${ys[k]+8}" class="sl" style="font-size:22px" fill="${PC}">?</text></g>`;
+    });
+  });
+  box.innerHTML=`<svg viewBox="0 0 310 210" class="fig">${s}</svg>
+    <div class="hint" id="th">👆 Touche les 4 cases <b>?</b> pour voir tous les résultats possibles</div>`;
+  box.querySelectorAll('g[data-k]').forEach(g=>g.addEventListener('click',()=>{
+    const k=+g.dataset.k;if(seen.has(k))return;seen.add(k);sound(true);
+    g.querySelector('rect').setAttribute('fill','#fef3c7');
+    g.querySelector('text').textContent=leaves[k].join('');
+    if(seen.size===4){
+      box.querySelector('#th').innerHTML='4 issues, toutes avec la même chance : <b>1/4</b> chacune.';
+      done(`Avec 2 pièces, il y a <b>4 issues</b> (PP, PF, FP, FF). On <b>multiplie</b> le long des branches : $\\dfrac12\\times\\dfrac12=\\dfrac14$.`);
+    }
+  }));
+}
+function figUrn(){
+  const balls=[['#e11d48',110,120],['#e11d48',150,110],['#e11d48',130,150],['#2563eb',175,148],['#2563eb',195,118]];
+  return `<svg viewBox="0 0 300 200" class="fig">
+    <path d="M80 60 Q70 190 150 190 Q230 190 220 60 Z" fill="#f4f2fb" stroke="#1f1b3a" stroke-width="4"/>
+    <ellipse cx="150" cy="60" rx="70" ry="12" fill="#fff" stroke="#1f1b3a" stroke-width="4"/>
+    ${balls.map(b=>`<circle cx="${b[1]}" cy="${b[2]}" r="17" fill="${b[0]}"/><circle cx="${b[1]-5}" cy="${b[2]-6}" r="5" fill="#fff" opacity=".5"/>`).join('')}</svg>`;
+}
+LESSONS.pro={steps:[
+  {type:'play',title:'Expérimente',text:'Un dé a 6 faces. Laquelle sort le plus souvent ?',mount:mountDice},
+  {q:'Probabilité d\'obtenir un nombre <b>pair</b> ?',img:`<div style="display:flex;gap:8px;justify-content:center">${dieSvg(2,PC)}${dieSvg(4,PC)}${dieSvg(6,PC)}</div>`,bubbles:true,a:[r`$\dfrac12$`,r`$\dfrac13$`,r`$\dfrac16$`,r`$\dfrac23$`],why:r`3 faces paires sur 6 : $\dfrac36=\dfrac12$.`},
+  {type:'play',title:'Découvre',text:'On lance <b>deux pièces</b> : Pile (P) ou Face (F).',mount:mountTree},
+  {q:'Probabilité d\'obtenir <b>deux Piles</b> ?',bubbles:true,a:[r`$\dfrac14$`,r`$\dfrac12$`,r`$\dfrac13$`,r`$1$`],why:r`Une seule issue (PP) sur 4.`},
+  {q:'On tire une boule au hasard. Probabilité qu\'elle soit <b style="color:#e11d48">rouge</b> ?',img:figUrn(),bubbles:true,a:[r`$\dfrac35$`,r`$\dfrac25$`,r`$\dfrac32$`,r`$\dfrac13$`],why:r`3 boules rouges sur 5 au total.`},
+  {q:r`Il pleut avec une probabilité de $0{,}3$. Probabilité qu'il <b>ne pleuve pas</b> ?`,bubbles:true,a:[r`$0{,}7$`,r`$0{,}3$`,r`$1{,}3$`,r`$0$`],why:r`L'événement contraire : $1-0{,}3=0{,}7$.`},
+]};
+
+/* ================= RAPPELS DE COURS ================= */
+const MEMOS={
+ ana:r`<p><b>Dérivées</b></p><p>$(x^n)'=nx^{n-1}$ · $(k)'=0$ · $(kx^n)'=knx^{n-1}$</p><p>Dérivée $>0$ : la fonction monte ; $<0$ : elle descend.</p><p><b>Intégrale</b> : aire sous la courbe. $\displaystyle\int_a^b f(x)\,dx=F(b)-F(a)$ avec $F$ une primitive.</p>`,
+ alg:r`<p><b>Identités remarquables</b></p><p>$(a+b)^2=a^2+2ab+b^2$</p><p>$(a-b)^2=a^2-2ab+b^2$</p><p>$(a-b)(a+b)=a^2-b^2$</p><p><b>Équations</b> : même opération des deux côtés. $x^2=k$ ($k>0$) : $x=\pm\sqrt k$.</p>`,
+ geo:r`<p><b>Pythagore</b> (triangle rectangle) : $a^2+b^2=c^2$, $c$ = hypoténuse, en face de l'angle droit.</p><p><b>Aire du triangle</b> : $\dfrac{\text{base}\times\text{hauteur}}{2}$</p><p><b>Angles d'un triangle</b> : somme $=180^\circ$.</p><p><b>Disque</b> : aire $\pi r^2$, périmètre $2\pi r$.</p>`,
+ tri:r`<p>Sur le cercle de rayon 1 : point $(\cos x\,;\sin x)$.</p><p>$\cos^2x+\sin^2x=1$</p><p>$\pi$ rad $=180^\circ$</p><p>$\cos0=1$, $\sin0=0$, $\cos\frac\pi2=0$, $\sin\frac\pi2=1$</p><p>Triangle rectangle : $\cos=\dfrac{\text{adj}}{\text{hyp}}$, $\sin=\dfrac{\text{opp}}{\text{hyp}}$, $\tan=\dfrac{\text{opp}}{\text{adj}}$.</p>`,
+ sta:r`<p><b>Moyenne</b> : somme des valeurs ÷ nombre de valeurs.</p><p><b>Médiane</b> : valeur du milieu, une fois rangées.</p><p><b>Étendue</b> : max − min.</p>`,
+ pro:r`<p>$P(A)=\dfrac{\text{cas favorables}}{\text{cas possibles}}$, toujours entre $0$ et $1$.</p><p><b>Contraire</b> : $P(\bar A)=1-P(A)$</p><p><b>Arbre</b> : on multiplie le long d'une branche, on additionne les branches.</p><p><b>Indépendants</b> : $P(A\cap B)=P(A)\times P(B)$</p>`,
+ mat:r`<p><b>Vecteurs</b> : $(x;y)+(x';y')=(x+x';y+y')$</p><p><b>Produit scalaire</b> : $(x;y)\cdot(x';y')=xx'+yy'$ ; nul $\Leftrightarrow$ perpendiculaires.</p><p><b>Déterminant</b> : $\det\begin{pmatrix}a&b\\c&d\end{pmatrix}=ad-bc$</p>`,
+ rac:r`<p>$\sqrt{a}^2=a$ · $\sqrt{a^2}=|a|$</p><p>$\sqrt{ab}=\sqrt a\sqrt b$ · $\sqrt{\dfrac ab}=\dfrac{\sqrt a}{\sqrt b}$</p><p>⚠️ $\sqrt{a+b}\neq\sqrt a+\sqrt b$</p><p>$\dfrac1{\sqrt a}=\dfrac{\sqrt a}{a}$</p>`,
+ pui:r`<p>$a^m\times a^n=a^{m+n}$ · $\dfrac{a^m}{a^n}=a^{m-n}$</p><p>$(a^m)^n=a^{mn}$ · $(ab)^n=a^nb^n$</p><p>$a^0=1$ · $a^{-n}=\dfrac1{a^n}$</p>`,
+ ens:r`<p>$A\cap B$ : dans $A$ <b>et</b> dans $B$.</p><p>$A\cup B$ : dans $A$ <b>ou</b> dans $B$.</p><p>$\mathbb N\subset\mathbb Z\subset\mathbb Q\subset\mathbb R$</p><p>$\in$ « appartient à » · $\subset$ « est inclus dans »</p>`,
+ fon:r`<p><b>Affine</b> $f(x)=ax+b$ : droite de pente $a$, coupe l'axe vertical en $b$.</p><p><b>Second degré</b> $ax^2+bx+c$ : $\Delta=b^2-4ac$</p><p>$\Delta>0$ : $x=\dfrac{-b\pm\sqrt\Delta}{2a}$ · $\Delta=0$ : $x=\dfrac{-b}{2a}$ · $\Delta<0$ : pas de solution.</p>`,
+ sui:r`<p><b>Arithmétique</b> (on ajoute $r$) : $u_n=u_0+nr$</p><p><b>Géométrique</b> (on multiplie par $q$) : $u_n=u_0\,q^n$</p><p>$1+2+\dots+n=\dfrac{n(n+1)}{2}$</p>`,
+ exp:r`<p>$e^0=1$ · $e^{a+b}=e^ae^b$ · $(e^x)'=e^x$ · $e^x>0$</p><p>$\ln1=0$ · $\ln e=1$ · $\ln(e^x)=x$ · $e^{\ln x}=x$</p><p>$\ln(ab)=\ln a+\ln b$ · $\ln(a^n)=n\ln a$ · $(\ln x)'=\dfrac1x$</p>`,
+ pct:r`<p>Hausse de $t\,\%$ : $\times\left(1+\dfrac t{100}\right)$ · Baisse : $\times\left(1-\dfrac t{100}\right)$</p><p>Taux d'évolution : $\dfrac{\text{arrivée}-\text{départ}}{\text{départ}}$</p><p>Évolutions successives : on <b>multiplie</b> les coefficients.</p>`,
+};
+function openMemo(key){
+  const c=CARDS.find(x=>x.key===key);
+  let sh=document.getElementById('memo');
+  if(!sh){
+    sh=document.createElement('div');sh.id='memo';sh.className='memo-wrap';
+    sh.innerHTML=`<div class="memo-sheet"><div class="memo-head"><span id="mt"></span><button class="x" id="mx" aria-label="Fermer">✕</button></div><div class="memo-body" id="mb"></div></div>`;
+    document.body.appendChild(sh);
+    sh.addEventListener('click',e=>{if(e.target===sh||e.target.id==='mx')sh.classList.remove('open');});
+  }
+  sh.style.setProperty('--c',c.c[1]);
+  sh.querySelector('#mt').textContent='📖 Rappel · '+c.label;
+  sh.querySelector('#mb').innerHTML=MEMOS[key]||'';
+  math(sh.querySelector('#mb'));
+  requestAnimationFrame(()=>sh.classList.add('open'));
+}
+
 /* ================= PROGRESSION ================= */
 const KEY='mathnb-v1', GOAL=50;
 function dayStr(d){return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();}
@@ -512,6 +692,11 @@ function refreshStats(){
 const S=`stroke="currentColor" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"`;
 const T=`fill="currentColor" font-family="Times New Roman,serif" font-style="italic" font-size="16" font-weight="bold"`;
 const DRAW={
+  dice:`<rect x="10" y="22" width="40" height="40" rx="9" ${S}/><rect x="52" y="14" width="40" height="40" rx="9" transform="rotate(12 72 34)" ${S}/>
+    <circle cx="22" cy="34" r="4" fill="currentColor"/><circle cx="38" cy="50" r="4" fill="currentColor"/><circle cx="30" cy="42" r="4" fill="currentColor"/>
+    <g transform="rotate(12 72 34)"><circle cx="63" cy="25" r="4" fill="currentColor"/><circle cx="81" cy="25" r="4" fill="currentColor"/><circle cx="63" cy="43" r="4" fill="currentColor"/><circle cx="81" cy="43" r="4" fill="currentColor"/></g>`,
+  parab:`<line x1="6" y1="70" x2="94" y2="70" ${S} stroke-width="2"/><line x1="50" y1="80" x2="50" y2="4" ${S} stroke-width="2"/>
+    <path d="M18 8 Q50 120 82 8" ${S}/><line x1="8" y1="62" x2="92" y2="18" ${S} stroke-width="2.4" stroke-dasharray="5 5"/>`,
   geometry:`<path d="M14 68 L82 68 L82 10 Z" ${S}/><path d="M72 68 L72 58 L82 58" ${S} stroke-width="2"/>
     <text x="40" y="34" ${T} font-style="normal">c</text><text x="87" y="44" ${T}>b</text><text x="44" y="83" ${T}>a</text>`,
   trig:`<circle cx="46" cy="46" r="26" ${S}/>
@@ -529,8 +714,9 @@ function build(){
     const t=document.createElement('div');
     t.className='tile';t.dataset.key=c.key;t.setAttribute('role','button');t.tabIndex=0;
     t.style.setProperty('--t1',c.c[0]);t.style.setProperty('--t2',c.c[1]);t.style.setProperty('--t3',c.c[2]);
-    t.innerHTML=`<div class="st"></div><div class="art">${c.draw?`<svg viewBox="0 0 100 84">${DRAW[c.draw]}</svg>`:`<div class="tex">${c.alt}</div>`}</div><div class="lbl">${c.label}</div>`;
+    t.innerHTML=`<button class="mbtn" aria-label="Rappel de cours">📖</button><div class="st"></div><div class="art">${c.draw?`<svg viewBox="0 0 100 84">${DRAW[c.draw]}</svg>`:`<div class="tex">${c.alt}</div>`}</div><div class="lbl">${c.label}</div>`;
     t.addEventListener('click',()=>startLesson(c));
+    t.querySelector('.mbtn').addEventListener('click',e=>{e.stopPropagation();openMemo(c.key);});
     grid.appendChild(t);
   });
   refreshStats();renderTiles();
@@ -585,6 +771,7 @@ function startLesson(card){
 }
 function closeLesson(){$lesson.classList.remove('open');$fb.className='fb';document.body.style.overflow='';L=null;refreshStats();}
 document.getElementById('close').onclick=closeLesson;
+document.getElementById('lmemo').onclick=()=>{if(L)openMemo(L.key);};
 function progress(){$bar.style.width=(L.done/(L.done+L.queue.length)*100)+'%';$combo.textContent=L.combo>=2?'🔥×'+L.combo:'';}
 
 function render(){
@@ -592,7 +779,7 @@ function render(){
   const s=L.queue[0];
   if(!s) return finish();
   if(s.type==='learn'){
-    $body.innerHTML=`<div class="kicker">${L.label} · À retenir ${s.n}/${s.of}</div><div class="learn">${s.html}</div>`;
+    $body.innerHTML=`<div class="kicker">${L.label} · À retenir${s.n?` ${s.n}/${s.of}`:''}</div><div class="learn">${s.html}</div>`;
     math($body);
     $fb.className='fb neutral show';
     $fb.innerHTML=`<button class="cta">Compris !</button>`;
@@ -638,7 +825,8 @@ function answer(btn,ok,s){
     btn.classList.add('ko','shake');sound(false);
     L.combo=0;L.missed.add(s.id);
     $fb.className='fb bad show';
-    $fb.innerHTML=`<h3>Pas tout à fait…</h3><p>Bonne réponse : ${s.a[0]}<br>${s.why}</p><button class="cta">Je la reverrai</button>`;
+    $fb.innerHTML=`<h3>Pas tout à fait…</h3><p>Bonne réponse : ${s.a[0]}<br>${s.why}</p><p><a href="#" class="relink">📖 Revoir le cours</a></p><button class="cta">Je la reverrai</button>`;
+    $fb.querySelector('.relink').onclick=e=>{e.preventDefault();openMemo(L.key);};
     $fb.querySelector('.cta').onclick=()=>{L.queue.push(L.queue.shift());render();};
   }
   math($fb);progress();
