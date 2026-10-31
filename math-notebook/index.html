@@ -1,75 +1,116 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Math Notebook">
+<meta name="apple-mobile-web-app-title" content="Maths">
 <meta name="theme-color" content="#f7f8fa">
-<title>Math Notebook</title>
+<title>Cahier de maths</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fira+Sans+Condensed:wght@600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fira+Sans+Condensed:wght@400;600;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
 <style>
-:root{--navy:#1e2f8e;--red:#b3343c;--paper:#f7f8fa;--grid:#dde3ec;--ring:#5e5e5e}
+:root{--navy:#1e2f8e;--red:#b3343c;--green:#1f8a4c;--gold:#d99a17;--paper:#f7f8fa;--grid:#dde3ec}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0}
-body{
-  min-height:100vh;
+body,.lesson{
   background-color:var(--paper);
-  background-image:
-    linear-gradient(var(--grid) 1px,transparent 1px),
-    linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
   background-size:16px 16px;
-  font-family:'Fira Sans Condensed',system-ui,sans-serif;
-  color:var(--navy);
 }
-.page{
-  position:relative;max-width:560px;margin:0 auto;
-  padding:calc(env(safe-area-inset-top) + 28px) 14px 40px 44px;
-}
-/* spirale */
+body{min-height:100vh;font-family:'Fira Sans Condensed',system-ui,sans-serif;color:var(--navy)}
+button{font:inherit;color:inherit}
+.page{position:relative;max-width:560px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 18px) 14px 40px 44px}
 .spiral{
   position:absolute;left:0;top:0;bottom:0;width:30px;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='20'%3E%3Ccircle cx='23' cy='13' r='3.4' fill='%238d8d8d'/%3E%3Cpath d='M0 16 C8 6 20 4 24 12' stroke='%235e5e5e' stroke-width='3.2' fill='none' stroke-linecap='round'/%3E%3Cpath d='M1 14 C8 7 19 5 23 11' stroke='%23d2d2d2' stroke-width='1' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
   background-repeat:repeat-y;
 }
-h1{
-  margin:0;font-weight:800;letter-spacing:-.5px;
-  font-size:clamp(34px,10.5vw,58px);line-height:1.06;
-}
+/* barre de stats */
+.stats{display:flex;gap:8px;align-items:center;margin-bottom:10px;font-weight:600;font-size:17px}
+.pill{border:2px solid var(--navy);border-radius:999px;padding:3px 10px;background:#fff;box-shadow:2px 2px 0 var(--navy);white-space:nowrap}
+.pill.fire{color:var(--red);border-color:var(--red);box-shadow:2px 2px 0 var(--red)}
+.goal{margin:0 0 16px}
+.goal .lbl{display:flex;justify-content:space-between;font-size:15px;font-weight:600;margin-bottom:4px}
+.bar{height:14px;border:2px solid var(--navy);border-radius:999px;background:#fff;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:repeating-linear-gradient(-45deg,var(--red) 0 6px,#c9484f 6px 12px);transition:width .5s ease}
+h1{margin:0;font-weight:800;letter-spacing:-.5px;font-size:clamp(32px,9.6vw,54px);line-height:1.06}
 h1 .red{color:var(--red)}
-.underline{display:block;width:64%;height:16px;margin:4px 0 22px}
+.underline{display:block;width:64%;height:16px;margin:4px 0 20px}
+/* cartes */
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.card{
-  position:relative;aspect-ratio:1/1.22;border:0;padding:0;background:none;
-  font:inherit;color:inherit;cursor:pointer;
-  transition:transform .12s ease;
-}
+.card{position:relative;aspect-ratio:1/1.22;border:0;padding:0;background:none;cursor:pointer;transition:transform .12s ease}
 .card:active{transform:scale(.95)}
 .card svg.frame{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
-.card .frame .fill{fill:rgba(255,255,255,.7);transition:fill .15s}
-.card.on .frame .fill{fill:#e6ecfb}
-.art{
-  position:absolute;left:8%;right:8%;top:10%;height:60%;
-  display:flex;align-items:center;justify-content:center;overflow:hidden;
-}
+.card .frame .fill{fill:rgba(255,255,255,.7)}
+.card.done .frame .fill{fill:#eef2fd}
+.art{position:absolute;left:8%;right:8%;top:12%;height:58%;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .art svg{width:100%;height:100%}
-.tex{white-space:nowrap;font-size:40px;color:var(--navy);transform-origin:center}
-.label{
-  position:absolute;left:4px;right:4px;bottom:9%;
-  font-weight:600;text-align:center;white-space:nowrap;
-  font-size:clamp(12px,4.2vw,22px);
-}
+.tex{white-space:nowrap;font-size:40px;transform-origin:center}
+.label{position:absolute;left:4px;right:4px;bottom:9%;font-weight:600;text-align:center;white-space:nowrap;font-size:clamp(12px,4vw,21px)}
+.stars{position:absolute;right:9px;top:6px;font-size:13px;letter-spacing:1px;color:var(--gold)}
+/* leçon */
+.lesson{position:fixed;inset:0;z-index:10;display:none;flex-direction:column;padding:calc(env(safe-area-inset-top) + 12px) 18px 0}
+.lesson.open{display:flex}
+.ltop{display:flex;align-items:center;gap:12px;max-width:600px;width:100%;margin:0 auto}
+.x{border:0;background:none;font-size:28px;line-height:1;padding:4px;cursor:pointer}
+.ltop .bar{flex:1}
+.combo{font-weight:800;color:var(--red);min-width:44px;text-align:right;font-size:18px}
+.lbody{flex:1;overflow:auto;max-width:600px;width:100%;margin:0 auto;padding:22px 2px 190px;font-size:21px;line-height:1.45}
+.kicker{font-size:15px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--red);margin-bottom:8px}
+.learn{background:#fff;border:2px solid var(--navy);border-radius:16px;box-shadow:4px 4px 0 var(--navy);padding:18px}
+.learn p{margin:0 0 12px}.learn p:last-child{margin:0}
+.q{font-weight:600;font-size:23px;margin-bottom:18px}
+.opt{display:block;width:100%;text-align:left;margin:0 0 12px;padding:14px 16px;font-size:21px;border:2px solid var(--navy);border-radius:14px;background:#fff;box-shadow:3px 3px 0 var(--navy);cursor:pointer;transition:transform .08s}
+.opt:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--navy)}
+.opt.ok{background:#e3f6e8;border-color:var(--green);box-shadow:3px 3px 0 var(--green);color:var(--green)}
+.opt.ko{background:#fbe5e6;border-color:var(--red);box-shadow:3px 3px 0 var(--red);color:var(--red)}
+.opt:disabled{cursor:default}
+.fb{position:fixed;left:0;right:0;bottom:0;z-index:11;padding:16px 20px calc(env(safe-area-inset-bottom) + 16px);transform:translateY(110%);transition:transform .25s ease;border-top:3px solid}
+.fb.show{transform:none}
+.fb.good{background:#e3f6e8;border-color:var(--green);color:var(--green)}
+.fb.bad{background:#fbe5e6;border-color:var(--red);color:var(--red)}
+.fb.neutral{background:transparent;border-color:transparent}
+.fb h3{margin:0 0 4px;font-size:22px}
+.fb p{margin:0 0 12px;font-size:18px;color:#333}
+.cta{display:block;width:100%;max-width:600px;margin:0 auto;padding:15px;font-size:21px;font-weight:800;border:0;border-radius:14px;background:var(--navy);color:#fff;cursor:pointer;box-shadow:0 4px 0 #101a55}
+.cta:active{transform:translateY(3px);box-shadow:0 1px 0 #101a55}
+.fb.good .cta{background:var(--green);box-shadow:0 4px 0 #125b31}
+.fb.bad .cta{background:var(--red);box-shadow:0 4px 0 #7d2026}
+.end{text-align:center;padding-top:20px}
+.end .big{font-size:64px;line-height:1}
+.end h2{font-size:34px;margin:10px 0}
+.end .row{display:flex;gap:10px;justify-content:center;margin:18px 0}
+.end .box{border:2px solid var(--navy);border-radius:14px;background:#fff;box-shadow:3px 3px 0 var(--navy);padding:10px 14px;min-width:90px}
+.end .box b{display:block;font-size:26px}
+.endstars{font-size:46px;color:var(--gold);letter-spacing:6px}
+.plus{position:fixed;z-index:12;font-weight:800;color:var(--green);font-size:26px;pointer-events:none;animation:up 1s ease forwards}
+@keyframes up{to{transform:translateY(-60px);opacity:0}}
+.conf{position:fixed;top:-12px;width:9px;height:14px;z-index:20;pointer-events:none;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-6px)}50%{transform:translateX(6px)}75%{transform:translateX(-3px)}}
 </style>
 </head>
 <body>
 <div class="page">
   <div class="spiral"></div>
 
-  <h1>Replace social media<br>with addictive<br><span class="red">math lessons</span></h1>
+  <div class="stats">
+    <span class="pill fire" id="sStreak">🔥 0</span>
+    <span class="pill" id="sXp">⭐ 0 XP</span>
+    <span class="pill" id="sLvl">Niv. 1</span>
+  </div>
+  <div class="goal">
+    <div class="lbl"><span>Objectif du jour</span><span id="gTxt">0 / 50 XP</span></div>
+    <div class="bar"><i id="gBar"></i></div>
+  </div>
+
+  <h1>Remplace les réseaux sociaux par des <span class="red">leçons de maths</span></h1>
   <svg class="underline" viewBox="0 0 300 16" preserveAspectRatio="none">
     <path d="M2 12 C 90 6, 190 4, 296 3" stroke="#b3343c" stroke-width="4" fill="none" stroke-linecap="round"/>
   </svg>
@@ -77,45 +118,165 @@ h1 .red{color:var(--red)}
   <div class="grid" id="grid"></div>
 </div>
 
+<div class="lesson" id="lesson">
+  <div class="ltop">
+    <button class="x" id="close" aria-label="Fermer">✕</button>
+    <div class="bar"><i id="lBar"></i></div>
+    <span class="combo" id="combo"></span>
+  </div>
+  <div class="lbody" id="lbody"></div>
+</div>
+<div class="fb" id="fb"></div>
+
 <script>
+const r=String.raw;
 const NAVY='#1e2f8e';
+
+/* ================= CONTENU ================= */
 const CARDS=[
-  {label:'Calculus',tex:'\\displaystyle\\int dx'},
-  {label:'Algebra',tex:'x^2+y^2=1'},
-  {label:'Geometry',draw:'geometry'},
-  {label:'Trigonometry',draw:'trig'},
-  {label:'Statistics',draw:'stats'},
-  {label:'Linear Algebra',tex:'\\def\\arraystretch{1.4}\\begin{array}{|c|c|}\\hline \\;a\\; & \\;b\\; \\\\ \\hline \\;c\\; & \\;d\\; \\\\ \\hline\\end{array}'},
-  {label:'Radicals',tex:'\\sqrt{x+1}'},
-  {label:'Exponents',tex:'A^{-x}'},
-  {label:'Set Theory',draw:'venn'},
+  {key:'ana',label:'Analyse',tex:'\\displaystyle\\int dx'},
+  {key:'alg',label:'Algèbre',tex:'x^2+y^2=1'},
+  {key:'geo',label:'Géométrie',draw:'geometry'},
+  {key:'tri',label:'Trigonométrie',draw:'trig'},
+  {key:'sta',label:'Statistiques',draw:'stats'},
+  {key:'mat',label:'Matrices',tex:'\\def\\arraystretch{1.4}\\begin{array}{|c|c|}\\hline \\;a\\; & \\;b\\; \\\\ \\hline \\;c\\; & \\;d\\; \\\\ \\hline\\end{array}'},
+  {key:'rac',label:'Racines',tex:'\\sqrt{x+1}'},
+  {key:'pui',label:'Puissances',tex:'A^{-x}'},
+  {key:'ens',label:'Ensembles',draw:'venn'},
 ];
 
+const LESSONS={
+ana:{learn:[
+ r`<p>La <b>dérivée</b> d'une fonction mesure sa <b>pente</b> : à quelle vitesse elle monte ou descend.</p><p>Règle d'or : $$(x^n)'=n\,x^{n-1}$$ Exemple : $(x^3)'=3x^2$.</p>`,
+ r`<p>Une constante ne bouge pas : sa dérivée vaut $0$.</p><p>Un nombre devant se garde : $(5x^2)'=5\times 2x=10x$.</p><p>L'<b>intégrale</b> fait le chemin inverse : elle mesure une aire sous la courbe.</p>`],
+ quiz:[
+ {q:r`Dérivée de $x^2$ ?`,a:[r`$2x$`,r`$x$`,r`$\dfrac{x^3}{3}$`,r`$2$`],why:r`On descend l'exposant devant et on retire 1 : $2x^{1}=2x$.`},
+ {q:r`Dérivée de $5x^3$ ?`,a:[r`$15x^2$`,r`$5x^2$`,r`$15x^3$`,r`$3x^2$`],why:r`$5\times 3x^2=15x^2$.`},
+ {q:r`Dérivée de la constante $7$ ?`,a:[r`$0$`,r`$7$`,r`$1$`,r`$7x$`],why:r`Une constante ne varie pas : sa pente est nulle.`},
+ {q:r`Combien vaut $\displaystyle\int_0^1 2x\,dx$ ?`,a:[r`$1$`,r`$2$`,r`$\dfrac12$`,r`$0$`],why:r`Une primitive de $2x$ est $x^2$ : $1^2-0^2=1$.`},
+]},
+alg:{learn:[
+ r`<p>Les <b>identités remarquables</b> font gagner un temps fou :</p><p>$$(a+b)^2=a^2+2ab+b^2$$ $$(a-b)(a+b)=a^2-b^2$$</p>`,
+ r`<p>Pour résoudre une équation, on fait <b>la même opération des deux côtés</b>.</p><p>$2x+6=0 \Rightarrow 2x=-6 \Rightarrow x=-3$.</p>`],
+ quiz:[
+ {q:r`Développe $(x+3)^2$`,a:[r`$x^2+6x+9$`,r`$x^2+9$`,r`$x^2+3x+9$`,r`$x^2+6x+6$`],why:r`$a^2+2ab+b^2$ avec $a=x$, $b=3$ : $x^2+6x+9$.`},
+ {q:r`Solution de $2x+6=0$ ?`,a:[r`$x=-3$`,r`$x=3$`,r`$x=-6$`,r`$x=12$`],why:r`$2x=-6$ donc $x=-3$.`},
+ {q:r`Solutions de $x^2=16$ ?`,a:[r`$4$ et $-4$`,r`$4$ seulement`,r`$8$`,r`$256$`],why:r`$4^2=16$ et $(-4)^2=16$ : deux solutions.`},
+ {q:r`Factorise $x^2-9$`,a:[r`$(x-3)(x+3)$`,r`$(x-3)^2$`,r`$(x-9)(x+1)$`,r`$x(x-9)$`],why:r`C'est $a^2-b^2=(a-b)(a+b)$ avec $b=3$.`},
+]},
+geo:{learn:[
+ r`<p><b>Pythagore</b> : dans un triangle rectangle, $$a^2+b^2=c^2$$ où $c$ est l'<b>hypoténuse</b>, le côté opposé à l'angle droit.</p>`,
+ r`<p>Aire d'un triangle : $\dfrac{\text{base}\times\text{hauteur}}{2}$.</p><p>Aire d'un disque : $\pi r^2$.</p><p>Les angles d'un triangle font toujours $180^\circ$ au total.</p>`],
+ quiz:[
+ {q:r`Triangle rectangle de côtés $3$ et $4$ : hypoténuse ?`,a:[r`$5$`,r`$7$`,r`$6$`,r`$\sqrt7$`],why:r`$3^2+4^2=9+16=25=5^2$.`},
+ {q:r`Aire d'un triangle de base $8$ et hauteur $3$ ?`,a:[r`$12$`,r`$24$`,r`$11$`,r`$6$`],why:r`$\dfrac{8\times3}{2}=12$.`},
+ {q:r`Aire d'un disque de rayon $2$ ?`,a:[r`$4\pi$`,r`$2\pi$`,r`$4$`,r`$\pi$`],why:r`$\pi\times 2^2=4\pi$.`},
+ {q:r`Deux angles d'un triangle valent $50^\circ$ et $60^\circ$. Le troisième ?`,a:[r`$70^\circ$`,r`$90^\circ$`,r`$110^\circ$`,r`$80^\circ$`],why:r`$180-50-60=70$.`},
+]},
+tri:{learn:[
+ r`<p>Sur le <b>cercle trigonométrique</b> (rayon 1), un point d'angle $x$ a pour coordonnées $(\cos x\,;\,\sin x)$.</p><p>D'où la formule-star : $$\cos^2x+\sin^2x=1$$</p>`,
+ r`<p>On mesure les angles en <b>radians</b> : un demi-tour vaut $\pi$, soit $180^\circ$.</p><p>$\cos 0=1$, $\sin 0=0$, $\sin\dfrac{\pi}{2}=1$.</p>`],
+ quiz:[
+ {q:r`Combien vaut $\cos 0$ ?`,a:[r`$1$`,r`$0$`,r`$-1$`,r`$\dfrac12$`],why:r`L'angle 0 donne le point $(1\,;0)$ : abscisse 1.`},
+ {q:r`Combien vaut $\sin\dfrac{\pi}{2}$ ?`,a:[r`$1$`,r`$0$`,r`$\dfrac{\pi}{2}$`,r`$-1$`],why:r`Un quart de tour mène au point $(0\,;1)$ : ordonnée 1.`},
+ {q:r`$\pi$ radians, c'est…`,a:[r`$180^\circ$`,r`$90^\circ$`,r`$360^\circ$`,r`$3{,}14^\circ$`],why:r`$\pi$ rad = un demi-tour = $180^\circ$.`},
+ {q:r`Si $\cos x=0{,}6$ et $\sin x>0$, alors $\sin x=$ ?`,a:[r`$0{,}8$`,r`$0{,}4$`,r`$0{,}64$`,r`$1{,}6$`],why:r`$\sin^2x=1-0{,}36=0{,}64$, donc $\sin x=0{,}8$.`},
+]},
+sta:{learn:[
+ r`<p>La <b>moyenne</b> : on additionne tout et on divise par le nombre de valeurs.</p><p>La <b>médiane</b> : la valeur du milieu quand on les range dans l'ordre.</p>`,
+ r`<p>Une <b>probabilité</b> = cas favorables ÷ cas possibles.</p><p>Pour deux événements indépendants, on <b>multiplie</b> : $P(A \text{ et } B)=P(A)\times P(B)$.</p>`],
+ quiz:[
+ {q:r`Moyenne de $4$, $8$ et $12$ ?`,a:[r`$8$`,r`$24$`,r`$6$`,r`$12$`],why:r`$(4+8+12)\div3=24\div3=8$.`},
+ {q:r`Médiane de $3,\ 7,\ 9,\ 20,\ 21$ ?`,a:[r`$9$`,r`$12$`,r`$7$`,r`$20$`],why:r`Cinq valeurs rangées : celle du milieu est la 3ᵉ, $9$.`},
+ {q:r`Probabilité de faire $6$ avec un dé ?`,a:[r`$\dfrac16$`,r`$\dfrac12$`,r`$\dfrac56$`,r`$6$`],why:r`1 cas favorable sur 6 possibles.`},
+ {q:r`Pile deux fois de suite ?`,a:[r`$\dfrac14$`,r`$\dfrac12$`,r`$1$`,r`$\dfrac13$`],why:r`$\dfrac12\times\dfrac12=\dfrac14$.`},
+]},
+mat:{learn:[
+ r`<p>Un <b>vecteur</b> se note par ses coordonnées. On additionne coordonnée par coordonnée : $(1;2)+(3;1)=(4;3)$.</p>`,
+ r`<p>Le <b>déterminant</b> d'une matrice $2\times2$ : $$\det\begin{pmatrix}a&b\\c&d\end{pmatrix}=ad-bc$$</p><p>Le <b>produit scalaire</b> : $(x;y)\cdot(x';y')=xx'+yy'$.</p>`],
+ quiz:[
+ {q:r`$\det\begin{pmatrix}2&1\\3&4\end{pmatrix}$ ?`,a:[r`$5$`,r`$11$`,r`$10$`,r`$-5$`],why:r`$2\times4-1\times3=8-3=5$.`},
+ {q:r`$(1;2)+(3;1)$ ?`,a:[r`$(4;3)$`,r`$(3;2)$`,r`$(4;2)$`,r`$(5;3)$`],why:r`$1+3=4$ et $2+1=3$.`},
+ {q:r`$(1;2)\cdot(3;1)$ ?`,a:[r`$5$`,r`$(3;2)$`,r`$7$`,r`$4$`],why:r`$1\times3+2\times1=5$. Le résultat est un nombre.`},
+ {q:r`Le produit scalaire de deux vecteurs perpendiculaires vaut…`,a:[r`$0$`,r`$1$`,r`$-1$`,r`leur longueur`],why:r`C'est la propriété clé : orthogonaux $\Leftrightarrow$ produit scalaire nul.`},
+]},
+rac:{learn:[
+ r`<p>$\sqrt{a}$ est le nombre positif dont le carré vaut $a$ : $\sqrt{49}=7$.</p><p>Règle : $$\sqrt{a}\times\sqrt{b}=\sqrt{ab}$$</p>`,
+ r`<p>Pour simplifier, on cherche un <b>carré caché</b> : $\sqrt{12}=\sqrt{4\times3}=2\sqrt3$.</p><p>On évite les racines au dénominateur : $\dfrac{1}{\sqrt2}=\dfrac{\sqrt2}{2}$.</p>`],
+ quiz:[
+ {q:r`$\sqrt{49}$ ?`,a:[r`$7$`,r`$-7$`,r`$24{,}5$`,r`$\pm7$`],why:r`$7^2=49$, et une racine carrée est toujours positive.`},
+ {q:r`Simplifie $\sqrt{12}$`,a:[r`$2\sqrt3$`,r`$3\sqrt2$`,r`$4\sqrt3$`,r`$6$`],why:r`$\sqrt{4\times3}=\sqrt4\times\sqrt3=2\sqrt3$.`},
+ {q:r`$\sqrt2\times\sqrt8$ ?`,a:[r`$4$`,r`$\sqrt{10}$`,r`$16$`,r`$2\sqrt2$`],why:r`$\sqrt{16}=4$.`},
+ {q:r`$\dfrac{1}{\sqrt2}$ s'écrit aussi…`,a:[r`$\dfrac{\sqrt2}{2}$`,r`$\sqrt2$`,r`$2$`,r`$\dfrac12$`],why:r`On multiplie en haut et en bas par $\sqrt2$ : $\dfrac{\sqrt2}{2}$.`},
+]},
+pui:{learn:[
+ r`<p>$a^n$ = $a$ multiplié $n$ fois par lui-même.</p><p>$$a^m\times a^n=a^{m+n}\qquad (a^m)^n=a^{mn}$$</p>`,
+ r`<p>Les cas étonnants :</p><p>$a^0=1$ et $a^{-n}=\dfrac{1}{a^n}$.</p><p>Exemple : $10^{-2}=\dfrac{1}{100}=0{,}01$.</p>`],
+ quiz:[
+ {q:r`$2^3\times2^4$ ?`,a:[r`$2^7$`,r`$2^{12}$`,r`$4^7$`,r`$2^1$`],why:r`On additionne les exposants : $3+4=7$.`},
+ {q:r`$10^{-2}$ ?`,a:[r`$0{,}01$`,r`$-100$`,r`$-20$`,r`$0{,}1$`],why:r`$\dfrac{1}{10^2}=\dfrac{1}{100}$.`},
+ {q:r`$5^0$ ?`,a:[r`$1$`,r`$0$`,r`$5$`,r`impossible`],why:r`Tout nombre non nul à la puissance 0 vaut 1.`},
+ {q:r`$(x^2)^3$ ?`,a:[r`$x^6$`,r`$x^5$`,r`$x^8$`,r`$3x^2$`],why:r`On multiplie les exposants : $2\times3=6$.`},
+]},
+ens:{learn:[
+ r`<p>$A\cap B$ (<b>intersection</b>) : les éléments dans $A$ <b>et</b> dans $B$.</p><p>$A\cup B$ (<b>réunion</b>) : les éléments dans $A$ <b>ou</b> dans $B$.</p>`,
+ r`<p>Les grands ensembles de nombres s'emboîtent :</p><p>$$\mathbb N\subset\mathbb Z\subset\mathbb Q\subset\mathbb R$$</p><p>entiers naturels, relatifs, rationnels (fractions), réels.</p>`],
+ quiz:[
+ {q:r`$A=\{1,2,3\}$, $B=\{2,3,4\}$. $A\cap B$ ?`,a:[r`$\{2,3\}$`,r`$\{1,2,3,4\}$`,r`$\{1,4\}$`,r`$\varnothing$`],why:r`Seuls 2 et 3 sont dans les deux.`},
+ {q:r`Avec les mêmes $A$ et $B$, $A\cup B$ ?`,a:[r`$\{1,2,3,4\}$`,r`$\{2,3\}$`,r`$\{1,2,2,3,3,4\}$`,r`$\{1,4\}$`],why:r`On réunit tout, sans doublon.`},
+ {q:r`Le plus petit ensemble qui contient $-3$ ?`,a:[r`$\mathbb Z$`,r`$\mathbb N$`,r`$\mathbb Q$`,r`$\mathbb R$`],why:r`$\mathbb N$ n'a pas de négatifs ; $-3$ est un entier relatif.`},
+ {q:r`$\sqrt2$ appartient à…`,a:[r`$\mathbb R$ seulement`,r`$\mathbb Q$`,r`$\mathbb Z$`,r`$\mathbb N$`],why:r`$\sqrt2$ ne s'écrit pas comme une fraction : c'est un irrationnel.`},
+]},
+};
+
+/* ================= PROGRESSION ================= */
+const KEY='mathnb-v1', GOAL=50;
+function dayStr(d){return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();}
+function load(){try{return JSON.parse(localStorage.getItem(KEY))||null}catch(e){return null}}
+let st=load()||{xp:0,streak:0,last:'',todayDate:'',todayXp:0,best:{}};
+function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+function checkDay(){
+  const t=dayStr(new Date());
+  if(st.todayDate!==t){st.todayDate=t;st.todayXp=0;}
+  const y=new Date();y.setDate(y.getDate()-1);
+  if(st.last&&st.last!==t&&st.last!==dayStr(y)) st.streak=0; // série cassée
+}
+function refreshStats(){
+  checkDay();
+  document.getElementById('sStreak').textContent='🔥 '+st.streak;
+  document.getElementById('sXp').textContent='⭐ '+st.xp+' XP';
+  document.getElementById('sLvl').textContent='Niv. '+(Math.floor(st.xp/100)+1);
+  document.getElementById('gTxt').textContent=Math.min(st.todayXp,GOAL)+' / '+GOAL+' XP'+(st.todayXp>=GOAL?' ✓':'');
+  document.getElementById('gBar').style.width=Math.min(100,st.todayXp/GOAL*100)+'%';
+  grid.querySelectorAll('.card').forEach(b=>{
+    const s=st.best[b.dataset.key]||0;
+    b.querySelector('.stars').textContent=s?'★'.repeat(s)+'☆'.repeat(3-s):'';
+    b.classList.toggle('done',s>0);
+  });
+}
+
+/* ================= ACCUEIL ================= */
 const S=`stroke="${NAVY}" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"`;
 const T=`fill="${NAVY}" font-family="Times New Roman,serif" font-style="italic" font-size="15"`;
 const DRAW={
-  geometry:`<path d="M14 68 L82 68 L82 10 Z" ${S}/>
-    <path d="M72 68 L72 58 L82 58" ${S} stroke-width="2"/>
+  geometry:`<path d="M14 68 L82 68 L82 10 Z" ${S}/><path d="M72 68 L72 58 L82 58" ${S} stroke-width="2"/>
     <text x="10" y="30" fill="${NAVY}" font-family="Times New Roman,serif" font-weight="bold" font-size="16">8×3</text>
     <text x="87" y="44" ${T}>b</text><text x="46" y="83" ${T}>c</text>`,
   trig:`<circle cx="46" cy="46" r="26" ${S}/>
     <line x1="8" y1="46" x2="90" y2="46" ${S} stroke-width="2"/><path d="M84 41 L90 46 L84 51" ${S} stroke-width="2"/>
     <line x1="46" y1="82" x2="46" y2="6" ${S} stroke-width="2"/><path d="M41 12 L46 6 L51 12" ${S} stroke-width="2"/>
     <line x1="46" y1="46" x2="66" y2="29" ${S} stroke-width="2"/><path d="M54 46 A8 8 0 0 0 52 41" ${S} stroke-width="1.5"/>
-    <text x="52" y="14" ${T}>y</text><text x="88" y="62" ${T}>x</text>
-    <text x="33" y="60" ${T}>o</text><text x="50" y="60" ${T}>c</text>`,
+    <text x="52" y="14" ${T}>y</text><text x="88" y="62" ${T}>x</text><text x="33" y="60" ${T}>o</text><text x="50" y="60" ${T}>c</text>`,
   stats:`<defs><pattern id="hatch" width="4" height="4" patternUnits="userSpaceOnUse"><path d="M0 4 L4 0" stroke="${NAVY}" stroke-width="1.3"/></pattern></defs>
     ${[22,36,50,66].map((h,i)=>`<rect x="${18+i*18}" y="${74-h}" width="12" height="${h}" fill="url(#hatch)" stroke="${NAVY}" stroke-width="2"/>`).join('')}
     <line x1="10" y1="74" x2="92" y2="74" ${S}/>`,
   venn:`<circle cx="38" cy="42" r="27" ${S}/><circle cx="62" cy="42" r="27" ${S}/>
     <text x="22" y="48" ${T} font-size="17">A</text><text x="68" y="48" ${T} font-size="17">B</text>`,
 };
-
-/* bordure « dessinée à la main » */
 function rng(seed){let x=seed*9973;return()=>{x=(x*9301+49297)%233280;return x/233280;};}
-function sketch(w,h,r,seed){
+function sketch(w,h,rad,seed){
   const rnd=rng(seed),j=(a=1.4)=>(rnd()-.5)*2*a,p=(x,y)=>`${(x+j()).toFixed(1)},${(y+j()).toFixed(1)}`,m=2;
-  return `M${p(r,m)} L${p(w/2,m)} L${p(w-r,m)} Q${p(w-m,m)} ${p(w-m,r)} L${p(w-m,h/2)} L${p(w-m,h-r)} Q${p(w-m,h-m)} ${p(w-r,h-m)} L${p(w/2,h-m)} L${p(r,h-m)} Q${p(m,h-m)} ${p(m,h-r)} L${p(m,h/2)} L${p(m,r)} Q${p(m,m)} ${p(r,m)} Z`;
+  return `M${p(rad,m)} L${p(w/2,m)} L${p(w-rad,m)} Q${p(w-m,m)} ${p(w-m,rad)} L${p(w-m,h/2)} L${p(w-m,h-rad)} Q${p(w-m,h-m)} ${p(w-rad,h-m)} L${p(w/2,h-m)} L${p(rad,h-m)} Q${p(m,h-m)} ${p(m,h-rad)} L${p(m,h/2)} L${p(m,rad)} Q${p(m,m)} ${p(rad,m)} Z`;
 }
 function frame(w,h,i){
   let hatch='';
@@ -123,23 +284,20 @@ function frame(w,h,i){
   return `<svg class="frame" viewBox="0 0 ${w} ${h}">
     <path class="fill" d="${sketch(w,h,14,i+1)}" stroke="${NAVY}" stroke-width="2"/>
     <path d="${sketch(w,h,14,i+41)}" fill="none" stroke="${NAVY}" stroke-width="1" opacity=".45"/>
-    <g stroke="${NAVY}" stroke-width="1.6" stroke-linecap="round">
-      <line x1="11" y1="14" x2="15" y2="18"/><line x1="17" y1="9" x2="19" y2="15"/><line x1="24" y1="8" x2="23" y2="14"/>
-    </g>${hatch}</svg>`;
+    <g stroke="${NAVY}" stroke-width="1.6" stroke-linecap="round"><line x1="11" y1="14" x2="15" y2="18"/><line x1="17" y1="9" x2="19" y2="15"/><line x1="24" y1="8" x2="23" y2="14"/></g>${hatch}</svg>`;
 }
-
 const grid=document.getElementById('grid');
 function build(){
   grid.innerHTML='';
-  CARDS.forEach((c,i)=>{
+  CARDS.forEach(c=>{
     const b=document.createElement('button');
-    b.className='card';b.setAttribute('aria-label',c.label);
+    b.className='card';b.dataset.key=c.key;b.setAttribute('aria-label',c.label);
     b.innerHTML=`<div class="art">${c.draw?`<svg viewBox="0 0 100 84">${DRAW[c.draw]}</svg>`:'<div class="tex"></div>'}</div>
-      <div class="label">${c.label}</div>`;
-    b.onclick=()=>{const on=b.classList.contains('on');grid.querySelectorAll('.card').forEach(x=>x.classList.remove('on'));if(!on)b.classList.add('on');};
+      <div class="label">${c.label}</div><div class="stars"></div>`;
+    b.onclick=()=>startLesson(c.key,c.label);
     grid.appendChild(b);
   });
-  layout();
+  layout();refreshStats();
 }
 function layout(){
   grid.querySelectorAll('.card').forEach((b,i)=>{
@@ -155,8 +313,119 @@ function layout(){
     }
   });
 }
+
+/* ================= LEÇON ================= */
+const $lesson=document.getElementById('lesson'),$body=document.getElementById('lbody'),$fb=document.getElementById('fb'),
+      $bar=document.getElementById('lBar'),$combo=document.getElementById('combo');
+let L=null;
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function math(el){if(window.renderMathInElement)renderMathInElement(el,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});}
+
+function startLesson(key,label){
+  const les=LESSONS[key];
+  const qs=shuffle(les.quiz).map((q,i)=>({...q,type:'q',id:i}));
+  L={key,label,queue:[...les.learn.map((h,i)=>({type:'learn',html:h,n:i+1,of:les.learn.length})),...qs],
+     done:0,combo:0,gained:0,nq:qs.length,missed:new Set()};
+  $lesson.classList.add('open');document.body.style.overflow='hidden';
+  render();
+}
+function closeLesson(){$lesson.classList.remove('open');hideFb();document.body.style.overflow='';L=null;refreshStats();}
+document.getElementById('close').onclick=closeLesson;
+
+function progress(){$bar.style.width=(L.done/(L.done+L.queue.length)*100)+'%';$combo.textContent=L.combo>=2?'🔥×'+L.combo:'';}
+function hideFb(){$fb.className='fb';}
+
+function render(){
+  progress();hideFb();
+  const s=L.queue[0];
+  if(!s) return finish();
+  if(s.type==='learn'){
+    $body.innerHTML=`<div class="kicker">${L.label} · À retenir ${s.n}/${s.of}</div><div class="learn">${s.html}</div>`;
+    math($body);
+    $fb.className='fb neutral show';
+    $fb.innerHTML=`<button class="cta">Compris !</button>`;
+    $fb.querySelector('.cta').onclick=()=>{L.queue.shift();L.done++;render();};
+  }else{
+    const opts=shuffle(s.a.map((t,i)=>({t,ok:i===0})));
+    $body.innerHTML=`<div class="kicker">${L.label} · Question</div><div class="q">${s.q}</div><div id="opts"></div>`;
+    const box=$body.querySelector('#opts');
+    opts.forEach(o=>{
+      const b=document.createElement('button');b.className='opt';b.innerHTML=o.t;
+      b.onclick=()=>answer(b,o.ok,s);
+      box.appendChild(b);
+    });
+    math($body);
+  }
+  $body.scrollTop=0;
+}
+function answer(btn,ok,s){
+  const all=$body.querySelectorAll('.opt');
+  all.forEach(b=>b.disabled=true);
+  if(ok){
+    btn.classList.add('ok');
+    L.combo++;
+    const gain=10+(L.combo>=3?5:0);
+    L.gained+=gain;
+    floatPlus(btn,'+'+gain);
+    $fb.className='fb good show';
+    $fb.innerHTML=`<h3>${['Bravo !','Exact !','Parfait !','Bien vu !'][Math.floor(Math.random()*4)]}${L.combo>=3?' 🔥 Série de '+L.combo:''}</h3><p>${s.why}</p><button class="cta">Continuer</button>`;
+    $fb.querySelector('.cta').onclick=()=>{L.queue.shift();L.done++;render();};
+  }else{
+    btn.classList.add('ko');btn.classList.add('shake');
+    L.combo=0;L.missed.add(s.id);
+    $fb.className='fb bad show';
+    $fb.innerHTML=`<h3>Pas tout à fait…</h3><p>Bonne réponse : ${s.a[0]}<br>${s.why}</p><button class="cta">Je la reverrai</button>`;
+    $fb.querySelector('.cta').onclick=()=>{L.queue.push(L.queue.shift());render();};
+  }
+  math($fb);progress();
+}
+function floatPlus(el,txt){
+  const r=el.getBoundingClientRect(),d=document.createElement('div');
+  d.className='plus';d.textContent=txt+' XP';d.style.left=(r.right-90)+'px';d.style.top=(r.top)+'px';
+  document.body.appendChild(d);setTimeout(()=>d.remove(),1000);
+}
+function finish(){
+  const first=L.nq-L.missed.size;
+  const stars=first===L.nq?3:first>=L.nq-1?2:1;
+  const bonus=20+(stars===3?10:0);
+  const total=L.gained+bonus;
+  checkDay();
+  const t=dayStr(new Date());
+  if(st.last!==t){st.streak=(st.streak||0)+1;st.last=t;}
+  st.xp+=total;st.todayXp+=total;
+  st.best[L.key]=Math.max(st.best[L.key]||0,stars);
+  save();
+  progress();$bar.style.width='100%';
+  const goalHit=st.todayXp>=GOAL&&st.todayXp-total<GOAL;
+  $body.innerHTML=`<div class="end">
+    <div class="big">${stars===3?'🏆':'🎉'}</div>
+    <h2>${stars===3?'Sans faute !':'Leçon terminée !'}</h2>
+    <div class="endstars">${'★'.repeat(stars)}${'☆'.repeat(3-stars)}</div>
+    <div class="row">
+      <div class="box"><b>+${total}</b>XP</div>
+      <div class="box"><b>${first}/${L.nq}</b>du premier coup</div>
+      <div class="box"><b>🔥 ${st.streak}</b>jour${st.streak>1?'s':''}</div>
+    </div>
+    ${goalHit?'<p><b>Objectif du jour atteint !</b> Reviens demain pour garder ta série.</p>':''}
+  </div>`;
+  $fb.className='fb neutral show';
+  $fb.innerHTML=`<button class="cta">Retour au cahier</button>`;
+  $fb.querySelector('.cta').onclick=closeLesson;
+  confetti();
+}
+function confetti(){
+  const cols=['#1e2f8e','#b3343c','#d99a17','#1f8a4c'];
+  for(let i=0;i<45;i++){
+    const c=document.createElement('div');c.className='conf';
+    c.style.left=Math.random()*100+'vw';c.style.background=cols[i%4];
+    c.style.animationDuration=(1.6+Math.random()*1.4)+'s';c.style.animationDelay=(Math.random()*.4)+'s';
+    document.body.appendChild(c);setTimeout(()=>c.remove(),3500);
+  }
+}
+
 window.addEventListener('load',()=>{build();document.fonts&&document.fonts.ready.then(layout);});
 window.addEventListener('resize',()=>{clearTimeout(window._r);window._r=setTimeout(layout,100);});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!L)refreshStats();});
 </script>
 </body>
 </html>
