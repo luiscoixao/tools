@@ -1,0 +1,783 @@
+{
+ "v": 1,
+ "note": "Banque de questions complémentaires, chargée à chaque ouverture de l'appli. Ajouter des questions et augmenter v.",
+ "q": [
+  {
+   "id": "ana001",
+   "chap": "ana",
+   "q": "Dérivée de $4x^3$ ?",
+   "a": [
+    "$12x^2$",
+    "$4x^2$",
+    "$12x^3$",
+    "$x^4$"
+   ],
+   "why": "$4\\times3x^2=12x^2$.",
+   "hint": "Descends l'exposant devant, puis enlève 1 à l'exposant."
+  },
+  {
+   "id": "ana002",
+   "chap": "ana",
+   "q": "Dérivée de $e^x$ ?",
+   "a": [
+    "$e^x$",
+    "$xe^{x-1}$",
+    "$1$",
+    "$\\ln x$"
+   ],
+   "why": "L\\'exponentielle est sa propre dérivée.",
+   "hint": "C'est la fonction « magique » qui ne change pas quand on la dérive."
+  },
+  {
+   "id": "ana003",
+   "chap": "ana",
+   "q": "Dérivée de $\\ln x$ ?",
+   "a": [
+    "$\\dfrac1x$",
+    "$\\ln x$",
+    "$x$",
+    "$e^x$"
+   ],
+   "why": "$(\\ln x)\\'=\\dfrac1x$ pour $x>0$.",
+   "hint": "À connaître par cœur, comme $(e^x)'=e^x$."
+  },
+  {
+   "id": "ana004",
+   "chap": "ana",
+   "q": "Si $f\\'(x)>0$ sur un intervalle, alors $f$ y est…",
+   "a": [
+    "croissante",
+    "décroissante",
+    "constante",
+    "nulle"
+   ],
+   "why": "Une dérivée positive veut dire une pente positive : la courbe <b>monte</b>.",
+   "hint": "La dérivée, c'est la pente."
+  },
+  {
+   "id": "ana005",
+   "chap": "ana",
+   "q": "Pente de la tangente à $y=x^2$ en $x=3$ ?",
+   "a": [
+    "$6$",
+    "$9$",
+    "$3$",
+    "$2$"
+   ],
+   "why": "La pente de la tangente est $f\\'(3)$ ; $f\\'(x)=2x$ donc $f\\'(3)=6$.",
+   "hint": "Calcule la dérivée, puis remplace x par 3."
+  },
+  {
+   "id": "alg006",
+   "chap": "alg",
+   "q": "Développe $(x-2)^2$",
+   "a": [
+    "$x^2-4x+4$",
+    "$x^2+4$",
+    "$x^2-4$",
+    "$x^2-2x+4$"
+   ],
+   "why": "$(a-b)^2=a^2-2ab+b^2$ : $x^2-2\\times x\\times2+4$.",
+   "hint": "Identité remarquable : (a − b)² = a² − 2ab + b²."
+  },
+  {
+   "id": "alg007",
+   "chap": "alg",
+   "q": "Résous $3x-7=8$",
+   "a": [
+    "$x=5$",
+    "$x=\\dfrac13$",
+    "$x=15$",
+    "$x=-5$"
+   ],
+   "why": "$3x=8+7=15$, donc $x=15\\div3=5$.",
+   "hint": "Ajoute 7 des deux côtés, puis divise par 3."
+  },
+  {
+   "id": "alg008",
+   "chap": "alg",
+   "q": "Factorise $x^2+6x+9$",
+   "a": [
+    "$(x+3)^2$",
+    "$(x+9)^2$",
+    "$(x+3)(x-3)$",
+    "$(x+6)^2$"
+   ],
+   "why": "$x^2+2\\times3\\times x+3^2=(x+3)^2$.",
+   "hint": "Reconnais a² + 2ab + b²."
+  },
+  {
+   "id": "alg009",
+   "chap": "alg",
+   "q": "Solutions de $x^2=7$ ?",
+   "a": [
+    "$\\sqrt7$ et $-\\sqrt7$",
+    "$\\sqrt7$ seulement",
+    "$49$",
+    "$3{,}5$"
+   ],
+   "why": "Deux nombres ont pour carré 7 : $\\sqrt7$ et $-\\sqrt7$.",
+   "hint": "N'oublie pas la solution négative."
+  },
+  {
+   "id": "geo010",
+   "chap": "geo",
+   "q": "Périmètre d\\'un cercle de rayon $3$ ?",
+   "a": [
+    "$6\\pi$",
+    "$9\\pi$",
+    "$3\\pi$",
+    "$6$"
+   ],
+   "why": "Périmètre $=2\\pi r=2\\pi\\times3=6\\pi$.",
+   "hint": "Périmètre d'un cercle : 2 × π × rayon."
+  },
+  {
+   "id": "geo011",
+   "chap": "geo",
+   "q": "Aire d\\'un rectangle de $7$ sur $4$ ?",
+   "a": [
+    "$28$",
+    "$22$",
+    "$11$",
+    "$14$"
+   ],
+   "why": "$7\\times4=28$. (22 serait le périmètre.)",
+   "hint": "Longueur × largeur."
+  },
+  {
+   "id": "geo012",
+   "chap": "geo",
+   "q": "Triangle rectangle : hypoténuse $13$, un côté $5$. L\\'autre côté ?",
+   "a": [
+    "$12$",
+    "$8$",
+    "$18$",
+    "$\\sqrt{194}$"
+   ],
+   "why": "$13^2-5^2=169-25=144=12^2$.",
+   "hint": "Pythagore à l'envers : côté² = hypoténuse² − autre côté²."
+  },
+  {
+   "id": "geo013",
+   "chap": "geo",
+   "q": "Volume d\\'un cube d\\'arête $3$ ?",
+   "a": [
+    "$27$",
+    "$9$",
+    "$18$",
+    "$12$"
+   ],
+   "why": "$3\\times3\\times3=27$.",
+   "hint": "Arête × arête × arête."
+  },
+  {
+   "id": "tri014",
+   "chap": "tri",
+   "q": "$\\cos\\dfrac{\\pi}{2}$ ?",
+   "a": [
+    "$0$",
+    "$1$",
+    "$-1$",
+    "$\\dfrac12$"
+   ],
+   "why": "Un quart de tour mène au point $(0\\,;1)$ : abscisse $0$.",
+   "hint": "Le cosinus, c'est l'abscisse du point sur le cercle."
+  },
+  {
+   "id": "tri015",
+   "chap": "tri",
+   "q": "$\\cos\\pi$ ?",
+   "a": [
+    "$-1$",
+    "$0$",
+    "$1$",
+    "$\\pi$"
+   ],
+   "why": "Un demi-tour mène au point $(-1\\,;0)$.",
+   "hint": "Fais un demi-tour sur le cercle."
+  },
+  {
+   "id": "tri016",
+   "chap": "tri",
+   "q": "$90^\\circ$ en radians ?",
+   "a": [
+    "$\\dfrac{\\pi}{2}$",
+    "$\\pi$",
+    "$2\\pi$",
+    "$\\dfrac{\\pi}{4}$"
+   ],
+   "why": "$180^\\circ=\\pi$, donc $90^\\circ=\\dfrac{\\pi}{2}$.",
+   "hint": "180° = π radians."
+  },
+  {
+   "id": "tri017",
+   "chap": "tri",
+   "q": "Dans un triangle rectangle, le sinus d\\'un angle vaut…",
+   "a": [
+    "$\\dfrac{\\text{opposé}}{\\text{hypoténuse}}$",
+    "$\\dfrac{\\text{adjacent}}{\\text{hypoténuse}}$",
+    "$\\dfrac{\\text{opposé}}{\\text{adjacent}}$"
+   ],
+   "why": "Moyen mnémotechnique : <b>SOH</b>-CAH-TOA, Sinus = Opposé / Hypoténuse.",
+   "hint": "Pense à SOH-CAH-TOA."
+  },
+  {
+   "id": "sta018",
+   "chap": "sta",
+   "q": "Moyenne de $10,\\ 12,\\ 14,\\ 16$ ?",
+   "a": [
+    "$13$",
+    "$12$",
+    "$14$",
+    "$52$"
+   ],
+   "why": "$(10+12+14+16)\\div4=52\\div4=13$.",
+   "hint": "Additionne, puis divise par le nombre de valeurs."
+  },
+  {
+   "id": "sta019",
+   "chap": "sta",
+   "q": "Étendue de $7,\\ 2,\\ 15,\\ 9$ ?",
+   "a": [
+    "$13$",
+    "$15$",
+    "$8$",
+    "$6$"
+   ],
+   "why": "$15-2=13$.",
+   "hint": "Plus grande valeur − plus petite."
+  },
+  {
+   "id": "sta020",
+   "chap": "sta",
+   "q": "Médiane de $1,\\ 3,\\ 8,\\ 9,\\ 10,\\ 12$ ?",
+   "a": [
+    "$8{,}5$",
+    "$8$",
+    "$9$",
+    "$7{,}2$"
+   ],
+   "why": "Six valeurs : on prend la moyenne des deux du milieu, $\\dfrac{8+9}{2}=8{,}5$.",
+   "hint": "Nombre pair de valeurs : moyenne des deux du milieu."
+  },
+  {
+   "id": "sta021",
+   "chap": "sta",
+   "q": "$5$ notes ont une moyenne de $12$. Leur somme ?",
+   "a": [
+    "$60$",
+    "$17$",
+    "$2{,}4$",
+    "$12$"
+   ],
+   "why": "Somme $=$ moyenne × nombre $=12\\times5=60$.",
+   "hint": "Moyenne = somme ÷ nombre, donc somme = ?"
+  },
+  {
+   "id": "pro022",
+   "chap": "pro",
+   "q": "$P(A)=0{,}25$. Probabilité de l\\'événement contraire ?",
+   "a": [
+    "$0{,}75$",
+    "$0{,}25$",
+    "$1{,}25$",
+    "$0$"
+   ],
+   "why": "$1-0{,}25=0{,}75$.",
+   "hint": "P(contraire) = 1 − P(A)."
+  },
+  {
+   "id": "pro023",
+   "chap": "pro",
+   "q": "On tire une carte d\\'un jeu de $32$. Probabilité d\\'un as ?",
+   "a": [
+    "$\\dfrac18$",
+    "$\\dfrac{1}{32}$",
+    "$\\dfrac14$",
+    "$\\dfrac{1}{13}$"
+   ],
+   "why": "4 as sur 32 cartes : $\\dfrac{4}{32}=\\dfrac18$.",
+   "hint": "Combien y a-t-il d'as ?"
+  },
+  {
+   "id": "pro024",
+   "chap": "pro",
+   "q": "On lance deux dés. Probabilité que la somme fasse $12$ ?",
+   "a": [
+    "$\\dfrac{1}{36}$",
+    "$\\dfrac{1}{12}$",
+    "$\\dfrac16$",
+    "$\\dfrac{2}{36}$"
+   ],
+   "why": "Il faut 6 et 6 : une seule issue sur $6\\times6=36$.",
+   "hint": "Combien de façons de faire 12 ? Combien d'issues en tout ?"
+  },
+  {
+   "id": "pro025",
+   "chap": "pro",
+   "q": "On lance 3 pièces. Probabilité d\\'obtenir 3 Piles ?",
+   "a": [
+    "$\\dfrac18$",
+    "$\\dfrac12$",
+    "$\\dfrac38$",
+    "$\\dfrac16$"
+   ],
+   "why": "$\\dfrac12\\times\\dfrac12\\times\\dfrac12=\\dfrac18$.",
+   "hint": "Les lancers sont indépendants : on multiplie."
+  },
+  {
+   "id": "pro026",
+   "chap": "pro",
+   "q": "$P(A)=0{,}5$, $P(B)=0{,}4$, $A$ et $B$ indépendants. $P(A\\cap B)$ ?",
+   "a": [
+    "$0{,}2$",
+    "$0{,}9$",
+    "$0{,}1$",
+    "$0{,}45$"
+   ],
+   "why": "Indépendants : $0{,}5\\times0{,}4=0{,}2$.",
+   "hint": "« Et » + indépendants → on multiplie."
+  },
+  {
+   "id": "mat027",
+   "chap": "mat",
+   "q": "Norme de $\\vec u(3\\,;4)$ ?",
+   "a": [
+    "$5$",
+    "$7$",
+    "$25$",
+    "$1$"
+   ],
+   "why": "$\\sqrt{3^2+4^2}=\\sqrt{25}=5$.",
+   "hint": "C'est Pythagore : √(x² + y²)."
+  },
+  {
+   "id": "mat028",
+   "chap": "mat",
+   "q": "$\\vec u(1\\,;-3)$. Coordonnées de $2\\vec u$ ?",
+   "a": [
+    "$(2\\,;-6)$",
+    "$(3\\,;-1)$",
+    "$(2\\,;-3)$",
+    "$(1\\,;-6)$"
+   ],
+   "why": "On multiplie chaque coordonnée par 2.",
+   "hint": "Multiplie chaque coordonnée."
+  },
+  {
+   "id": "mat029",
+   "chap": "mat",
+   "q": "$A(1\\,;2)$ et $B(4\\,;6)$. Coordonnées de $\\vec{AB}$ ?",
+   "a": [
+    "$(3\\,;4)$",
+    "$(5\\,;8)$",
+    "$(-3\\,;-4)$",
+    "$(4\\,;6)$"
+   ],
+   "why": "Arrivée − départ : $(4-1\\,;6-2)=(3\\,;4)$.",
+   "hint": "Coordonnées de B moins celles de A."
+  },
+  {
+   "id": "mat030",
+   "chap": "mat",
+   "q": "$(2\\,;1)\\cdot(-1\\,;2)$ ?",
+   "a": [
+    "$0$",
+    "$3$",
+    "$(-2\\,;2)$",
+    "$4$"
+   ],
+   "why": "$2\\times(-1)+1\\times2=0$ : les vecteurs sont perpendiculaires.",
+   "hint": "xx' + yy'."
+  },
+  {
+   "id": "rac031",
+   "chap": "rac",
+   "q": "$\\sqrt{81}$ ?",
+   "a": [
+    "$9$",
+    "$8$",
+    "$40{,}5$",
+    "$18$"
+   ],
+   "why": "$9^2=81$.",
+   "hint": "Quel nombre au carré donne 81 ?"
+  },
+  {
+   "id": "rac032",
+   "chap": "rac",
+   "q": "Simplifie $\\sqrt{50}$",
+   "a": [
+    "$5\\sqrt2$",
+    "$2\\sqrt5$",
+    "$25\\sqrt2$",
+    "$10\\sqrt5$"
+   ],
+   "why": "$\\sqrt{25\\times2}=5\\sqrt2$.",
+   "hint": "Cherche un carré caché dans 50."
+  },
+  {
+   "id": "rac033",
+   "chap": "rac",
+   "q": "$(\\sqrt5)^2$ ?",
+   "a": [
+    "$5$",
+    "$25$",
+    "$\\sqrt5$",
+    "$10$"
+   ],
+   "why": "Le carré annule la racine.",
+   "hint": "Racine et carré s'annulent."
+  },
+  {
+   "id": "rac034",
+   "chap": "rac",
+   "q": "$\\sqrt{9+16}$ ?",
+   "a": [
+    "$5$",
+    "$7$",
+    "$25$",
+    "$12$"
+   ],
+   "why": "D\\'abord la somme : $\\sqrt{25}=5$. Piège : ce n\\'est pas $3+4$ !",
+   "hint": "Calcule d'abord ce qu'il y a sous la racine."
+  },
+  {
+   "id": "pui035",
+   "chap": "pui",
+   "q": "$3^4$ ?",
+   "a": [
+    "$81$",
+    "$12$",
+    "$64$",
+    "$7$"
+   ],
+   "why": "$3\\times3\\times3\\times3=81$.",
+   "hint": "3 multiplié 4 fois par lui-même."
+  },
+  {
+   "id": "pui036",
+   "chap": "pui",
+   "q": "$\\dfrac{5^7}{5^4}$ ?",
+   "a": [
+    "$5^3$",
+    "$5^{11}$",
+    "$1^3$",
+    "$5^{28}$"
+   ],
+   "why": "On soustrait les exposants : $7-4=3$.",
+   "hint": "Division → on soustrait les exposants."
+  },
+  {
+   "id": "pui037",
+   "chap": "pui",
+   "q": "$2^{-3}$ ?",
+   "a": [
+    "$\\dfrac18$",
+    "$-8$",
+    "$-6$",
+    "$\\dfrac16$"
+   ],
+   "why": "$2^{-3}=\\dfrac{1}{2^3}=\\dfrac18$.",
+   "hint": "Un exposant négatif, c'est l'inverse."
+  },
+  {
+   "id": "pui038",
+   "chap": "pui",
+   "q": "$10^3\\times10^{-5}$ ?",
+   "a": [
+    "$10^{-2}$",
+    "$10^{-15}$",
+    "$10^{8}$",
+    "$100$"
+   ],
+   "why": "$3+(-5)=-2$.",
+   "hint": "Multiplication → on additionne les exposants."
+  },
+  {
+   "id": "ens039",
+   "chap": "ens",
+   "q": "$\\dfrac12$ appartient au plus petit ensemble…",
+   "a": [
+    "$\\mathbb Q$",
+    "$\\mathbb Z$",
+    "$\\mathbb N$",
+    "$\\mathbb R$ seulement"
+   ],
+   "why": "$\\dfrac12$ est une fraction : un rationnel.",
+   "hint": "Q comme « quotient »."
+  },
+  {
+   "id": "ens040",
+   "chap": "ens",
+   "q": "$A=\\{1,2,3,4\\}$, $B=\\{3,4,5\\}$. Combien d\\'éléments dans $A\\cup B$ ?",
+   "a": [
+    "$5$",
+    "$7$",
+    "$2$",
+    "$4$"
+   ],
+   "why": "$A\\cup B=\\{1,2,3,4,5\\}$ : 5 éléments (sans doublon).",
+   "hint": "Réunis tout, sans compter deux fois 3 et 4."
+  },
+  {
+   "id": "ens041",
+   "chap": "ens",
+   "q": "$-5$ appartient-il à $\\mathbb N$ ?",
+   "a": [
+    "Non",
+    "Oui"
+   ],
+   "why": "$\\mathbb N$ ne contient que les entiers positifs ou nuls.",
+   "hint": "N = 0, 1, 2, 3…"
+  },
+  {
+   "id": "fon042",
+   "chap": "fon",
+   "q": "$f(x)=x^2-3$. Combien vaut $f(-2)$ ?",
+   "a": [
+    "$1$",
+    "$-7$",
+    "$7$",
+    "$-1$"
+   ],
+   "why": "$(-2)^2-3=4-3=1$.",
+   "hint": "Attention : (−2)² = 4."
+  },
+  {
+   "id": "fon043",
+   "chap": "fon",
+   "q": "Ordonnée à l\\'origine de $y=5x-2$ ?",
+   "a": [
+    "$-2$",
+    "$5$",
+    "$2$",
+    "$0$"
+   ],
+   "why": "C\\'est la valeur pour $x=0$ : $-2$.",
+   "hint": "Remplace x par 0."
+  },
+  {
+   "id": "fon044",
+   "chap": "fon",
+   "q": "Sommet de la parabole $y=(x-1)^2+3$ ?",
+   "a": [
+    "$(1\\,;3)$",
+    "$(-1\\,;3)$",
+    "$(3\\,;1)$",
+    "$(1\\,;-3)$"
+   ],
+   "why": "$(x-1)^2$ est nul en $x=1$ : le minimum vaut $3$.",
+   "hint": "Pour quel x le carré est-il nul ?"
+  },
+  {
+   "id": "fon045",
+   "chap": "fon",
+   "q": "Nombre de solutions de $x^2+x+5=0$ ?",
+   "a": [
+    "$0$",
+    "$1$",
+    "$2$",
+    "une infinité"
+   ],
+   "why": "$\\Delta=1-20=-19<0$ : aucune solution.",
+   "hint": "Calcule Δ = b² − 4ac."
+  },
+  {
+   "id": "sui046",
+   "chap": "sui",
+   "q": "Suite arithmétique : $u_0=10$, raison $-2$. $u_3$ ?",
+   "a": [
+    "$4$",
+    "$16$",
+    "$8$",
+    "$6$"
+   ],
+   "why": "$10-2-2-2=4$.",
+   "hint": "On enlève 2 à chaque étape."
+  },
+  {
+   "id": "sui047",
+   "chap": "sui",
+   "q": "Suite géométrique : $u_0=1$, raison $10$. $u_3$ ?",
+   "a": [
+    "$1000$",
+    "$30$",
+    "$100$",
+    "$13$"
+   ],
+   "why": "$1\\times10^3=1000$.",
+   "hint": "On multiplie par 10 à chaque étape."
+  },
+  {
+   "id": "sui048",
+   "chap": "sui",
+   "q": "$u_n=2n+1$. Combien vaut $u_{10}$ ?",
+   "a": [
+    "$21$",
+    "$12$",
+    "$20$",
+    "$11$"
+   ],
+   "why": "$2\\times10+1=21$.",
+   "hint": "Remplace n par 10."
+  },
+  {
+   "id": "sui049",
+   "chap": "sui",
+   "q": "La suite $5,\\ 15,\\ 45,\\dots$ est…",
+   "a": [
+    "géométrique de raison $3$",
+    "arithmétique de raison $10$",
+    "géométrique de raison $10$",
+    "arithmétique de raison $3$"
+   ],
+   "why": "On multiplie par 3 à chaque fois.",
+   "hint": "Compare les quotients et les différences."
+  },
+  {
+   "id": "exp050",
+   "chap": "exp",
+   "q": "$e^2\\times e^3$ ?",
+   "a": [
+    "$e^5$",
+    "$e^6$",
+    "$2e^5$",
+    "$e$"
+   ],
+   "why": "$e^{2+3}=e^5$.",
+   "hint": "Comme pour les puissances : on additionne."
+  },
+  {
+   "id": "exp051",
+   "chap": "exp",
+   "q": "$\\ln(e^7)$ ?",
+   "a": [
+    "$7$",
+    "$e^7$",
+    "$1$",
+    "$0$"
+   ],
+   "why": "$\\ln$ et $e$ s\\'annulent.",
+   "hint": "ln « défait » l'exponentielle."
+  },
+  {
+   "id": "exp052",
+   "chap": "exp",
+   "q": "Résous $e^x=1$",
+   "a": [
+    "$x=0$",
+    "$x=1$",
+    "$x=e$",
+    "pas de solution"
+   ],
+   "why": "$e^0=1$.",
+   "hint": "Quelle puissance de e donne 1 ?"
+  },
+  {
+   "id": "exp053",
+   "chap": "exp",
+   "q": "$\\ln 8$ s\\'écrit aussi…",
+   "a": [
+    "$3\\ln2$",
+    "$4\\ln2$",
+    "$2\\ln3$",
+    "$8\\ln1$"
+   ],
+   "why": "$8=2^3$ et $\\ln(a^n)=n\\ln a$.",
+   "hint": "8 = 2 × 2 × 2."
+  },
+  {
+   "id": "pct054",
+   "chap": "pct",
+   "q": "$15\\,\\%$ de $200$ ?",
+   "a": [
+    "$30$",
+    "$15$",
+    "$3$",
+    "$185$"
+   ],
+   "why": "$200\\times0{,}15=30$.",
+   "hint": "15 % = 0,15."
+  },
+  {
+   "id": "pct055",
+   "chap": "pct",
+   "q": "Coefficient multiplicateur d\\'une baisse de $30\\,\\%$ ?",
+   "a": [
+    "$0{,}7$",
+    "$1{,}3$",
+    "$0{,}3$",
+    "$-30$"
+   ],
+   "why": "$1-0{,}30=0{,}7$.",
+   "hint": "Baisse de t % → × (1 − t/100)."
+  },
+  {
+   "id": "pct056",
+   "chap": "pct",
+   "q": "Un prix de $120$ € augmente de $50\\,\\%$. Nouveau prix ?",
+   "a": [
+    "$180$ €",
+    "$170$ €",
+    "$60$ €",
+    "$125$ €"
+   ],
+   "why": "$120\\times1{,}5=180$.",
+   "hint": "+50 % → × 1,5."
+  },
+  {
+   "id": "pct057",
+   "chap": "pct",
+   "q": "Deux hausses successives de $10\\,\\%$ : hausse totale ?",
+   "a": [
+    "$+21\\,\\%$",
+    "$+20\\,\\%$",
+    "$+11\\,\\%$",
+    "$+100\\,\\%$"
+   ],
+   "why": "$1{,}1\\times1{,}1=1{,}21$.",
+   "hint": "On multiplie les coefficients."
+  },
+  {
+   "id": "int058",
+   "chap": "int",
+   "q": "Si $f\\geq0$ sur $[a\\,;b]$, alors $\\displaystyle\\int_a^b f(x)\\,dx$ est…",
+   "a": [
+    "positive ou nulle",
+    "négative",
+    "toujours égale à 1",
+    "impossible à savoir"
+   ],
+   "why": "Courbe au-dessus de l\\'axe : l\\'aire compte en positif.",
+   "hint": "Où est la courbe par rapport à l'axe ?"
+  },
+  {
+   "id": "int059",
+   "chap": "int",
+   "q": "Combien vaut $\\displaystyle\\int_a^a f(x)\\,dx$ ?",
+   "a": [
+    "$0$",
+    "$f(a)$",
+    "$a$",
+    "$1$"
+   ],
+   "why": "Une zone de largeur nulle a une aire nulle.",
+   "hint": "Quelle est la largeur de la zone ?"
+  },
+  {
+   "id": "int060",
+   "chap": "int",
+   "q": "$\\displaystyle\\int_b^a f(x)\\,dx$ est égale à…",
+   "a": [
+    "$-\\displaystyle\\int_a^b f(x)\\,dx$",
+    "$\\displaystyle\\int_a^b f(x)\\,dx$",
+    "$0$",
+    "$2\\displaystyle\\int_a^b f(x)\\,dx$"
+   ],
+   "why": "Inverser les bornes change le signe : $F(a)-F(b)=-(F(b)-F(a))$.",
+   "hint": "Écris avec une primitive : F(a) − F(b)."
+  }
+ ]
+}
