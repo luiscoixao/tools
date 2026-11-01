@@ -1,5 +1,5 @@
 {
- "v": 2,
+ "v": 3,
  "note": "Banque de questions complémentaires, chargée à chaque ouverture de l'appli. Ajouter des questions et augmenter v.",
  "q": [
   {
@@ -778,6 +778,3928 @@
    ],
    "why": "Inverser les bornes change le signe : $F(a)-F(b)=-(F(b)-F(a))$.",
    "hint": "Écris avec une primitive : F(a) − F(b)."
+  },
+  {
+   "chap": "ana",
+   "q": "Dérivée de $3x^{2}$ ?",
+   "a": [
+    "$6x$",
+    "$3x$",
+    "$6x^{2}$",
+    "$2x$"
+   ],
+   "why": "On descend l'exposant et on enlève 1 : $3\\times2x^{1}=6x$.",
+   "hint": "Règle : (axⁿ)' = a·n·xⁿ⁻¹.",
+   "id": "ana-r001"
+  },
+  {
+   "chap": "ana",
+   "q": "Dérivée de $5x^{4}$ ?",
+   "a": [
+    "$20x^{3}$",
+    "$5x^{3}$",
+    "$20x^{4}$",
+    "$4x^{3}$"
+   ],
+   "why": "On descend l'exposant et on enlève 1 : $5\\times4x^{3}=20x^{3}$.",
+   "hint": "Règle : (axⁿ)' = a·n·xⁿ⁻¹.",
+   "id": "ana-r002"
+  },
+  {
+   "chap": "ana",
+   "q": "Dérivée de $2x^{5}$ ?",
+   "a": [
+    "$10x^{4}$",
+    "$2x^{4}$",
+    "$10x^{5}$",
+    "$5x^{4}$"
+   ],
+   "why": "On descend l'exposant et on enlève 1 : $2\\times5x^{4}=10x^{4}$.",
+   "hint": "Règle : (axⁿ)' = a·n·xⁿ⁻¹.",
+   "id": "ana-r003"
+  },
+  {
+   "chap": "ana",
+   "q": "Dérivée de $7x^{3}$ ?",
+   "a": [
+    "$21x^{2}$",
+    "$7x^{2}$",
+    "$21x^{3}$",
+    "$3x^{2}$"
+   ],
+   "why": "On descend l'exposant et on enlève 1 : $7\\times3x^{2}=21x^{2}$.",
+   "hint": "Règle : (axⁿ)' = a·n·xⁿ⁻¹.",
+   "id": "ana-r004"
+  },
+  {
+   "chap": "ana",
+   "q": "Dérivée de $6x^{2}$ ?",
+   "a": [
+    "$12x$",
+    "$6x$",
+    "$12x^{2}$",
+    "$2x$"
+   ],
+   "why": "On descend l'exposant et on enlève 1 : $6\\times2x^{1}=12x$.",
+   "hint": "Règle : (axⁿ)' = a·n·xⁿ⁻¹.",
+   "id": "ana-r005"
+  },
+  {
+   "chap": "ana",
+   "q": "Dérivée de $4x^{5}$ ?",
+   "a": [
+    "$20x^{4}$",
+    "$4x^{4}$",
+    "$20x^{5}$",
+    "$5x^{4}$"
+   ],
+   "why": "On descend l'exposant et on enlève 1 : $4\\times5x^{4}=20x^{4}$.",
+   "hint": "Règle : (axⁿ)' = a·n·xⁿ⁻¹.",
+   "id": "ana-r006"
+  },
+  {
+   "chap": "ana",
+   "q": "Dérivée de $3x^{2}+2x+5$ ?",
+   "a": [
+    "$6x+2$",
+    "$6x+2+5$",
+    "$3x+2$",
+    "$6x^{2}+2x$"
+   ],
+   "why": "On dérive chaque morceau : $(3x^{2})'=6x$, $(2x)'=2$, et la constante donne $0$.",
+   "hint": "Morceau par morceau ; une constante disparaît.",
+   "id": "ana-r007"
+  },
+  {
+   "chap": "ana",
+   "q": "Dérivée de $2x^{2}-4x+1$ ?",
+   "a": [
+    "$4x-4$",
+    "$4x-4+1$",
+    "$2x-4$",
+    "$4x^{2}-4x$"
+   ],
+   "why": "On dérive chaque morceau : $(2x^{2})'=4x$, $(-4x)'=-4$, et la constante donne $0$.",
+   "hint": "Morceau par morceau ; une constante disparaît.",
+   "id": "ana-r008"
+  },
+  {
+   "chap": "ana",
+   "q": "Dérivée de $5x^{2}+3x-2$ ?",
+   "a": [
+    "$10x+3$",
+    "$10x+3-2$",
+    "$5x+3$",
+    "$10x^{2}+3x$"
+   ],
+   "why": "On dérive chaque morceau : $(5x^{2})'=10x$, $(3x)'=3$, et la constante donne $0$.",
+   "hint": "Morceau par morceau ; une constante disparaît.",
+   "id": "ana-r009"
+  },
+  {
+   "chap": "ana",
+   "q": "Dérivée de $x^{2}+6x+7$ ?",
+   "a": [
+    "$2x+6$",
+    "$2x+6+7$",
+    "$x+6$",
+    "$2x^{2}+6x$"
+   ],
+   "why": "On dérive chaque morceau : $(x^{2})'=2x$, $(6x)'=6$, et la constante donne $0$.",
+   "hint": "Morceau par morceau ; une constante disparaît.",
+   "id": "ana-r010"
+  },
+  {
+   "chap": "ana",
+   "q": "$f(x)=x^{2}+3x$. Combien vaut $f'(2)$ ?",
+   "a": [
+    "$7$",
+    "$10$",
+    "$4$",
+    "$8$"
+   ],
+   "why": "$f'(x)=2x+3$, donc $f'(2)=2\\times(2)+3=7$.",
+   "hint": "Dérive d'abord, puis remplace x.",
+   "id": "ana-r011"
+  },
+  {
+   "chap": "ana",
+   "q": "$f(x)=x^{2}-x$. Combien vaut $f'(4)$ ?",
+   "a": [
+    "$7$",
+    "$12$",
+    "$8$",
+    "$5$"
+   ],
+   "why": "$f'(x)=2x-1$, donc $f'(4)=2\\times(4)-1=7$.",
+   "hint": "Dérive d'abord, puis remplace x.",
+   "id": "ana-r012"
+  },
+  {
+   "chap": "ana",
+   "q": "$f(x)=x^{2}+5x$. Combien vaut $f'(-1)$ ?",
+   "a": [
+    "$3$",
+    "$-4$",
+    "$-2$",
+    "$4$"
+   ],
+   "why": "$f'(x)=2x+5$, donc $f'(-1)=2\\times(-1)+5=3$.",
+   "hint": "Dérive d'abord, puis remplace x.",
+   "id": "ana-r013"
+  },
+  {
+   "chap": "ana",
+   "q": "Équation de la tangente à $y=x^2$ au point d'abscisse $1$ ?",
+   "a": [
+    "$y=2x-1$",
+    "$y=2x+1$",
+    "$y=x$",
+    "$y=2x$"
+   ],
+   "why": "Tangente : $y=f'(1)(x-1)+f(1)=2(x-1)+1=2x-1$.",
+   "hint": "y = f'(a)(x − a) + f(a).",
+   "id": "ana-r014"
+  },
+  {
+   "chap": "ana",
+   "q": "Équation de la tangente à $y=x^2$ au point d'abscisse $2$ ?",
+   "a": [
+    "$y=4x-4$",
+    "$y=4x+4$",
+    "$y=2x$",
+    "$y=4x$"
+   ],
+   "why": "Tangente : $y=f'(2)(x-2)+f(2)=4(x-2)+4=4x-4$.",
+   "hint": "y = f'(a)(x − a) + f(a).",
+   "id": "ana-r015"
+  },
+  {
+   "chap": "ana",
+   "q": "Équation de la tangente à $y=x^2$ au point d'abscisse $3$ ?",
+   "a": [
+    "$y=6x-9$",
+    "$y=6x+9$",
+    "$y=3x$",
+    "$y=6x$"
+   ],
+   "why": "Tangente : $y=f'(3)(x-3)+f(3)=6(x-3)+9=6x-9$.",
+   "hint": "y = f'(a)(x − a) + f(a).",
+   "id": "ana-r016"
+  },
+  {
+   "chap": "ana",
+   "q": "$f'(x)=2x-6$. En quelle valeur $f$ atteint-elle son minimum ?",
+   "a": [
+    "$3$",
+    "$6$",
+    "$-3$",
+    "$2$"
+   ],
+   "why": "Le minimum est là où $f'$ s'annule : $2x-6=0$, soit $x=3$ ($f'$ passe de négative à positive).",
+   "hint": "Cherche où f' = 0.",
+   "id": "ana-r017"
+  },
+  {
+   "chap": "ana",
+   "q": "$f'(x)=2x-10$. En quelle valeur $f$ atteint-elle son minimum ?",
+   "a": [
+    "$5$",
+    "$10$",
+    "$-5$",
+    "$2$"
+   ],
+   "why": "Le minimum est là où $f'$ s'annule : $2x-10=0$, soit $x=5$ ($f'$ passe de négative à positive).",
+   "hint": "Cherche où f' = 0.",
+   "id": "ana-r018"
+  },
+  {
+   "chap": "ana",
+   "q": "Dérivée de $e^{3x}$ ?",
+   "a": [
+    "$3e^{3x}$",
+    "$e^{3x}$",
+    "$3xe^{3x-1}$",
+    "$e^{3}$"
+   ],
+   "why": "$(e^{u})'=u'e^{u}$ avec $u=3x$, $u'=3$.",
+   "hint": "Le nombre devant x « sort » devant.",
+   "id": "ana-r019"
+  },
+  {
+   "chap": "ana",
+   "q": "Dérivée de $e^{5x}$ ?",
+   "a": [
+    "$5e^{5x}$",
+    "$e^{5x}$",
+    "$5xe^{5x-1}$",
+    "$e^{5}$"
+   ],
+   "why": "$(e^{u})'=u'e^{u}$ avec $u=5x$, $u'=5$.",
+   "hint": "Le nombre devant x « sort » devant.",
+   "id": "ana-r020"
+  },
+  {
+   "chap": "int",
+   "q": "Calcule $\\displaystyle\\int_0^{3}2x\\,dx$",
+   "a": [
+    "$9$",
+    "$18$",
+    "$6$",
+    "$\\dfrac{9}{2}$"
+   ],
+   "why": "Primitive de $2x$ : $\\dfrac{2x^2}{2}$. Donc $\\dfrac{2\\times3^2}{2}-0=9$.",
+   "hint": "Primitive de kx : kx²/2.",
+   "id": "int-r001"
+  },
+  {
+   "chap": "int",
+   "q": "Calcule $\\displaystyle\\int_0^{2}4x\\,dx$",
+   "a": [
+    "$8$",
+    "$16$",
+    "$4$"
+   ],
+   "why": "Primitive de $4x$ : $\\dfrac{4x^2}{2}$. Donc $\\dfrac{4\\times2^2}{2}-0=8$.",
+   "hint": "Primitive de kx : kx²/2.",
+   "id": "int-r002"
+  },
+  {
+   "chap": "int",
+   "q": "Calcule $\\displaystyle\\int_0^{1}6x\\,dx$",
+   "a": [
+    "$3$",
+    "$6$",
+    "$\\dfrac{3}{2}$"
+   ],
+   "why": "Primitive de $6x$ : $\\dfrac{6x^2}{2}$. Donc $\\dfrac{6\\times1^2}{2}-0=3$.",
+   "hint": "Primitive de kx : kx²/2.",
+   "id": "int-r003"
+  },
+  {
+   "chap": "int",
+   "q": "Calcule $\\displaystyle\\int_0^{4}3x\\,dx$",
+   "a": [
+    "$24$",
+    "$48$",
+    "$12$"
+   ],
+   "why": "Primitive de $3x$ : $\\dfrac{3x^2}{2}$. Donc $\\dfrac{3\\times4^2}{2}-0=24$.",
+   "hint": "Primitive de kx : kx²/2.",
+   "id": "int-r004"
+  },
+  {
+   "chap": "int",
+   "q": "Calcule $\\displaystyle\\int_{0}^{3}x^2\\,dx$",
+   "a": [
+    "$9$",
+    "$27$",
+    "$\\dfrac{9}{2}$",
+    "$10$"
+   ],
+   "why": "$\\left[\\dfrac{x^3}{3}\\right]_{0}^{3}=\\dfrac{27-0}{3}=9$.",
+   "hint": "Primitive de x² : x³/3.",
+   "id": "int-r005"
+  },
+  {
+   "chap": "int",
+   "q": "Calcule $\\displaystyle\\int_{1}^{2}x^2\\,dx$",
+   "a": [
+    "$\\dfrac{7}{3}$",
+    "$7$",
+    "$\\dfrac{3}{2}$",
+    "$\\dfrac{10}{3}$"
+   ],
+   "why": "$\\left[\\dfrac{x^3}{3}\\right]_{1}^{2}=\\dfrac{8-1}{3}=\\dfrac{7}{3}$.",
+   "hint": "Primitive de x² : x³/3.",
+   "id": "int-r006"
+  },
+  {
+   "chap": "int",
+   "q": "Calcule $\\displaystyle\\int_{0}^{6}x^2\\,dx$",
+   "a": [
+    "$72$",
+    "$216$",
+    "$18$",
+    "$73$"
+   ],
+   "why": "$\\left[\\dfrac{x^3}{3}\\right]_{0}^{6}=\\dfrac{216-0}{3}=72$.",
+   "hint": "Primitive de x² : x³/3.",
+   "id": "int-r007"
+  },
+  {
+   "chap": "int",
+   "q": "Calcule $\\displaystyle\\int_0^{2}(x+1)\\,dx$",
+   "a": [
+    "$4$",
+    "$2$",
+    "$3$",
+    "$5$"
+   ],
+   "why": "Primitive : $\\dfrac{x^2}{2}+x$. En $2$ : $2+2=4$ ; en $0$ : $0$.",
+   "hint": "Primitive de x : x²/2 ; d'un nombre c : cx.",
+   "id": "int-r008"
+  },
+  {
+   "chap": "int",
+   "q": "Calcule $\\displaystyle\\int_0^{2}(x+3)\\,dx$",
+   "a": [
+    "$8$",
+    "$2$",
+    "$5$",
+    "$11$"
+   ],
+   "why": "Primitive : $\\dfrac{x^2}{2}+3x$. En $2$ : $2+6=8$ ; en $0$ : $0$.",
+   "hint": "Primitive de x : x²/2 ; d'un nombre c : cx.",
+   "id": "int-r009"
+  },
+  {
+   "chap": "int",
+   "q": "Calcule $\\displaystyle\\int_0^{4}(x+2)\\,dx$",
+   "a": [
+    "$16$",
+    "$8$",
+    "$6$",
+    "$18$"
+   ],
+   "why": "Primitive : $\\dfrac{x^2}{2}+2x$. En $4$ : $8+8=16$ ; en $0$ : $0$.",
+   "hint": "Primitive de x : x²/2 ; d'un nombre c : cx.",
+   "id": "int-r010"
+  },
+  {
+   "chap": "int",
+   "q": "Une primitive de $8x^{3}$ ?",
+   "a": [
+    "$2x^{4}$",
+    "$8x^{4}$",
+    "$24x^{2}$",
+    "$2x^{3}$"
+   ],
+   "why": "On ajoute 1 à l'exposant et on divise : $\\dfrac{8}{4}x^{4}=2x^{4}$.",
+   "hint": "xⁿ → xⁿ⁺¹ / (n+1).",
+   "id": "int-r011"
+  },
+  {
+   "chap": "int",
+   "q": "Une primitive de $10x^{4}$ ?",
+   "a": [
+    "$2x^{5}$",
+    "$10x^{5}$",
+    "$40x^{3}$",
+    "$2x^{4}$"
+   ],
+   "why": "On ajoute 1 à l'exposant et on divise : $\\dfrac{10}{5}x^{5}=2x^{5}$.",
+   "hint": "xⁿ → xⁿ⁺¹ / (n+1).",
+   "id": "int-r012"
+  },
+  {
+   "chap": "int",
+   "q": "Une primitive de $9x^{2}$ ?",
+   "a": [
+    "$3x^{3}$",
+    "$9x^{3}$",
+    "$18x$",
+    "$3x^{2}$"
+   ],
+   "why": "On ajoute 1 à l'exposant et on divise : $\\dfrac{9}{3}x^{3}=3x^{3}$.",
+   "hint": "xⁿ → xⁿ⁺¹ / (n+1).",
+   "id": "int-r013"
+  },
+  {
+   "chap": "int",
+   "q": "Une primitive de $12x^{5}$ ?",
+   "a": [
+    "$2x^{6}$",
+    "$12x^{6}$",
+    "$60x^{4}$",
+    "$2x^{5}$"
+   ],
+   "why": "On ajoute 1 à l'exposant et on divise : $\\dfrac{12}{6}x^{6}=2x^{6}$.",
+   "hint": "xⁿ → xⁿ⁺¹ / (n+1).",
+   "id": "int-r014"
+  },
+  {
+   "chap": "int",
+   "q": "Calcule $\\displaystyle\\int_1^{e}\\dfrac{3}{x}\\,dx$",
+   "a": [
+    "$3$",
+    "$3e$",
+    "$0$"
+   ],
+   "why": "$\\left[3\\ln x\\right]_1^{e}=3\\times1-0=3$.",
+   "hint": "Primitive de 1/x : ln x.",
+   "id": "int-r015"
+  },
+  {
+   "chap": "int",
+   "q": "Calcule $\\displaystyle\\int_1^{e^2}\\dfrac{2}{x}\\,dx$",
+   "a": [
+    "$4$",
+    "$2$",
+    "$2e^2$",
+    "$0$"
+   ],
+   "why": "$\\left[2\\ln x\\right]_1^{e^2}=2\\times2-0=4$.",
+   "hint": "Primitive de 1/x : ln x.",
+   "id": "int-r016"
+  },
+  {
+   "chap": "int",
+   "q": "$\\displaystyle\\int_0^1 f=3$ et $\\displaystyle\\int_0^1 g=5$. Combien vaut $\\displaystyle\\int_0^1 (f+g)$ ?",
+   "a": [
+    "$8$",
+    "$15$",
+    "$-2$",
+    "$3$"
+   ],
+   "why": "L'intégrale est <b>linéaire</b> : $3+(5)=8$.",
+   "hint": "L'intégrale d'une somme est la somme des intégrales.",
+   "id": "int-r017"
+  },
+  {
+   "chap": "int",
+   "q": "$\\displaystyle\\int_0^1 f=4$ et $\\displaystyle\\int_0^1 g=-1$. Combien vaut $\\displaystyle\\int_0^1 (f+g)$ ?",
+   "a": [
+    "$3$",
+    "$-4$",
+    "$5$",
+    "$4$"
+   ],
+   "why": "L'intégrale est <b>linéaire</b> : $4+(-1)=3$.",
+   "hint": "L'intégrale d'une somme est la somme des intégrales.",
+   "id": "int-r018"
+  },
+  {
+   "chap": "int",
+   "q": "$\\displaystyle\\int_0^2 f(x)\\,dx=4$. Combien vaut $\\displaystyle\\int_0^2 3f(x)\\,dx$ ?",
+   "a": [
+    "$12$",
+    "$7$",
+    "$4$",
+    "$\\dfrac{4}{3}$"
+   ],
+   "why": "On peut sortir le nombre : $3\\times(4)=12$.",
+   "hint": "Un facteur constant sort de l'intégrale.",
+   "id": "int-r019"
+  },
+  {
+   "chap": "int",
+   "q": "$\\displaystyle\\int_0^2 f(x)\\,dx=-2$. Combien vaut $\\displaystyle\\int_0^2 5f(x)\\,dx$ ?",
+   "a": [
+    "$-10$",
+    "$3$",
+    "$-2$",
+    "$-\\dfrac{2}{5}$"
+   ],
+   "why": "On peut sortir le nombre : $5\\times(-2)=-10$.",
+   "hint": "Un facteur constant sort de l'intégrale.",
+   "id": "int-r020"
+  },
+  {
+   "chap": "alg",
+   "q": "Résous $2x+3=11$",
+   "a": [
+    "$x=4$",
+    "$x=7$",
+    "$x=-4$",
+    "$x=8$"
+   ],
+   "why": "$2x=11-3=8$, puis $x=8\\div2=4$.",
+   "hint": "Isole x : passe le nombre de l'autre côté, puis divise.",
+   "id": "alg-r001"
+  },
+  {
+   "chap": "alg",
+   "q": "Résous $5x-2=13$",
+   "a": [
+    "$x=3$",
+    "$x=\\dfrac{11}{5}$",
+    "$x=-3$",
+    "$x=15$"
+   ],
+   "why": "$5x=13+2=15$, puis $x=15\\div5=3$.",
+   "hint": "Isole x : passe le nombre de l'autre côté, puis divise.",
+   "id": "alg-r002"
+  },
+  {
+   "chap": "alg",
+   "q": "Résous $4x+7=-1$",
+   "a": [
+    "$x=-2$",
+    "$x=\\dfrac{3}{2}$",
+    "$x=2$",
+    "$x=-8$"
+   ],
+   "why": "$4x=-1-7=-8$, puis $x=-8\\div4=-2$.",
+   "hint": "Isole x : passe le nombre de l'autre côté, puis divise.",
+   "id": "alg-r003"
+  },
+  {
+   "chap": "alg",
+   "q": "Résous $3x-6=9$",
+   "a": [
+    "$x=5$",
+    "$x=1$",
+    "$x=-5$",
+    "$x=15$"
+   ],
+   "why": "$3x=9+6=15$, puis $x=15\\div3=5$.",
+   "hint": "Isole x : passe le nombre de l'autre côté, puis divise.",
+   "id": "alg-r004"
+  },
+  {
+   "chap": "alg",
+   "q": "Résous $7x+1=15$",
+   "a": [
+    "$x=2$",
+    "$x=\\dfrac{16}{7}$",
+    "$x=-2$",
+    "$x=14$"
+   ],
+   "why": "$7x=15-1=14$, puis $x=14\\div7=2$.",
+   "hint": "Isole x : passe le nombre de l'autre côté, puis divise.",
+   "id": "alg-r005"
+  },
+  {
+   "chap": "alg",
+   "q": "Développe $(x+5)^2$",
+   "a": [
+    "$x^2+10x+25$",
+    "$x^2+25$",
+    "$x^2+5x+25$",
+    "$x^2+10x+10$"
+   ],
+   "why": "$(a+b)^2=a^2+2ab+b^2$ : $x^2+2\\times5x+5^2$.",
+   "hint": "Identité remarquable (a ± b)².",
+   "id": "alg-r006"
+  },
+  {
+   "chap": "alg",
+   "q": "Développe $(x-3)^2$",
+   "a": [
+    "$x^2-6x+9$",
+    "$x^2+9$",
+    "$x^2-3x+9$",
+    "$x^2-6x+6$"
+   ],
+   "why": "$(a-b)^2=a^2-2ab+b^2$ : $x^2-2\\times3x+3^2$.",
+   "hint": "Identité remarquable (a ± b)².",
+   "id": "alg-r007"
+  },
+  {
+   "chap": "alg",
+   "q": "Développe $(x+7)^2$",
+   "a": [
+    "$x^2+14x+49$",
+    "$x^2+49$",
+    "$x^2+7x+49$",
+    "$x^2+14x+14$"
+   ],
+   "why": "$(a+b)^2=a^2+2ab+b^2$ : $x^2+2\\times7x+7^2$.",
+   "hint": "Identité remarquable (a ± b)².",
+   "id": "alg-r008"
+  },
+  {
+   "chap": "alg",
+   "q": "Développe $(x-4)^2$",
+   "a": [
+    "$x^2-8x+16$",
+    "$x^2+16$",
+    "$x^2-4x+16$",
+    "$x^2-8x+8$"
+   ],
+   "why": "$(a-b)^2=a^2-2ab+b^2$ : $x^2-2\\times4x+4^2$.",
+   "hint": "Identité remarquable (a ± b)².",
+   "id": "alg-r009"
+  },
+  {
+   "chap": "alg",
+   "q": "Factorise $x^2-25$",
+   "a": [
+    "$(x-5)(x+5)$",
+    "$(x-5)^2$",
+    "$(x-25)(x+1)$",
+    "$x(x-25)$"
+   ],
+   "why": "$a^2-b^2=(a-b)(a+b)$ avec $b=5$.",
+   "hint": "Reconnais a² − b².",
+   "id": "alg-r010"
+  },
+  {
+   "chap": "alg",
+   "q": "Factorise $x^2-64$",
+   "a": [
+    "$(x-8)(x+8)$",
+    "$(x-8)^2$",
+    "$(x-64)(x+1)$",
+    "$x(x-64)$"
+   ],
+   "why": "$a^2-b^2=(a-b)(a+b)$ avec $b=8$.",
+   "hint": "Reconnais a² − b².",
+   "id": "alg-r011"
+  },
+  {
+   "chap": "alg",
+   "q": "Factorise $x^2-121$",
+   "a": [
+    "$(x-11)(x+11)$",
+    "$(x-11)^2$",
+    "$(x-121)(x+1)$",
+    "$x(x-121)$"
+   ],
+   "why": "$a^2-b^2=(a-b)(a+b)$ avec $b=11$.",
+   "hint": "Reconnais a² − b².",
+   "id": "alg-r012"
+  },
+  {
+   "chap": "alg",
+   "q": "Solutions de $(x-2)(x+5)=0$ ?",
+   "a": [
+    "$2\\text{ et }-5$",
+    "$-2\\text{ et }5$",
+    "$2\\text{ et }5$",
+    "$-10$"
+   ],
+   "why": "Un produit est nul si l'un des facteurs est nul : $x=2$ ou $x=-5$.",
+   "hint": "Produit nul : un des facteurs vaut 0.",
+   "id": "alg-r013"
+  },
+  {
+   "chap": "alg",
+   "q": "Solutions de $(x+3)(x+4)=0$ ?",
+   "a": [
+    "$-3\\text{ et }-4$",
+    "$3\\text{ et }4$",
+    "$-3\\text{ et }4$",
+    "$12$"
+   ],
+   "why": "Un produit est nul si l'un des facteurs est nul : $x=-3$ ou $x=-4$.",
+   "hint": "Produit nul : un des facteurs vaut 0.",
+   "id": "alg-r014"
+  },
+  {
+   "chap": "alg",
+   "q": "Solutions de $(x-1)(x-6)=0$ ?",
+   "a": [
+    "$1\\text{ et }6$",
+    "$-1\\text{ et }-6$",
+    "$1\\text{ et }-6$",
+    "$6$"
+   ],
+   "why": "Un produit est nul si l'un des facteurs est nul : $x=1$ ou $x=6$.",
+   "hint": "Produit nul : un des facteurs vaut 0.",
+   "id": "alg-r015"
+  },
+  {
+   "chap": "alg",
+   "q": "Résous $2x-4>0$",
+   "a": [
+    "$x>2$",
+    "$x<2$",
+    "$x>-2$",
+    "$x>4$"
+   ],
+   "why": "$2x>4$ donc $x>2$ (on divise par $2>0$, le sens ne change pas).",
+   "hint": "Comme une équation ; attention au signe si on divise par un négatif.",
+   "id": "alg-r016"
+  },
+  {
+   "chap": "alg",
+   "q": "Résous $3x+9>0$",
+   "a": [
+    "$x>-3$",
+    "$x<-3$",
+    "$x>3$",
+    "$x>-9$"
+   ],
+   "why": "$3x>-9$ donc $x>-3$ (on divise par $3>0$, le sens ne change pas).",
+   "hint": "Comme une équation ; attention au signe si on divise par un négatif.",
+   "id": "alg-r017"
+  },
+  {
+   "chap": "alg",
+   "q": "Résous $5x-10>0$",
+   "a": [
+    "$x>2$",
+    "$x<2$",
+    "$x>-2$",
+    "$x>10$"
+   ],
+   "why": "$5x>10$ donc $x>2$ (on divise par $5>0$, le sens ne change pas).",
+   "hint": "Comme une équation ; attention au signe si on divise par un négatif.",
+   "id": "alg-r018"
+  },
+  {
+   "chap": "alg",
+   "q": "$x+y=10$ et $x-y=4$. Que vaut $x$ ?",
+   "a": [
+    "$7$",
+    "$3$",
+    "$10$",
+    "$4$"
+   ],
+   "why": "En additionnant les deux équations : $2x=14$, donc $x=7$ (et $y=3$).",
+   "hint": "Additionne les deux équations.",
+   "id": "alg-r019"
+  },
+  {
+   "chap": "alg",
+   "q": "$x+y=9$ et $x-y=1$. Que vaut $x$ ?",
+   "a": [
+    "$5$",
+    "$4$",
+    "$9$",
+    "$1$"
+   ],
+   "why": "En additionnant les deux équations : $2x=10$, donc $x=5$ (et $y=4$).",
+   "hint": "Additionne les deux équations.",
+   "id": "alg-r020"
+  },
+  {
+   "chap": "geo",
+   "q": "Combien mesure l'hypoténuse ?",
+   "a": [
+    "$10$",
+    "$14$",
+    "$11$",
+    "$8$"
+   ],
+   "why": "$6^2+8^2=36+64=100=10^2$.",
+   "hint": "Pythagore : a² + b² = c².",
+   "img": "<svg viewBox=\"0 0 300 205\" class=\"fig\"><path d=\"M60 160 L240 160 L60 40 Z\" fill=\"#ccfbf1\" stroke=\"#1f1b3a\" stroke-width=\"4\" stroke-linejoin=\"round\"/><path d=\"M60 142 h18 v18\" fill=\"none\" stroke=\"#1f1b3a\" stroke-width=\"3\"/><text x=\"150\" y=\"190\" class=\"sl\" fill=\"#f97316\">6</text><text x=\"34\" y=\"108\" class=\"sl\" fill=\"#0d9488\">8</text><text x=\"168\" y=\"92\" class=\"sl\" fill=\"#8b5cf6\">?</text></svg>",
+   "id": "geo-r001"
+  },
+  {
+   "chap": "geo",
+   "q": "Combien mesure l'hypoténuse ?",
+   "a": [
+    "$13$",
+    "$17$",
+    "$14$",
+    "$11$"
+   ],
+   "why": "$5^2+12^2=25+144=169=13^2$.",
+   "hint": "Pythagore : a² + b² = c².",
+   "img": "<svg viewBox=\"0 0 300 205\" class=\"fig\"><path d=\"M60 160 L240 160 L60 40 Z\" fill=\"#ccfbf1\" stroke=\"#1f1b3a\" stroke-width=\"4\" stroke-linejoin=\"round\"/><path d=\"M60 142 h18 v18\" fill=\"none\" stroke=\"#1f1b3a\" stroke-width=\"3\"/><text x=\"150\" y=\"190\" class=\"sl\" fill=\"#f97316\">5</text><text x=\"34\" y=\"108\" class=\"sl\" fill=\"#0d9488\">12</text><text x=\"168\" y=\"92\" class=\"sl\" fill=\"#8b5cf6\">?</text></svg>",
+   "id": "geo-r002"
+  },
+  {
+   "chap": "geo",
+   "q": "Combien mesure l'hypoténuse ?",
+   "a": [
+    "$17$",
+    "$23$",
+    "$18$",
+    "$15$"
+   ],
+   "why": "$8^2+15^2=64+225=289=17^2$.",
+   "hint": "Pythagore : a² + b² = c².",
+   "img": "<svg viewBox=\"0 0 300 205\" class=\"fig\"><path d=\"M60 160 L240 160 L60 40 Z\" fill=\"#ccfbf1\" stroke=\"#1f1b3a\" stroke-width=\"4\" stroke-linejoin=\"round\"/><path d=\"M60 142 h18 v18\" fill=\"none\" stroke=\"#1f1b3a\" stroke-width=\"3\"/><text x=\"150\" y=\"190\" class=\"sl\" fill=\"#f97316\">8</text><text x=\"34\" y=\"108\" class=\"sl\" fill=\"#0d9488\">15</text><text x=\"168\" y=\"92\" class=\"sl\" fill=\"#8b5cf6\">?</text></svg>",
+   "id": "geo-r003"
+  },
+  {
+   "chap": "geo",
+   "q": "Combien mesure l'hypoténuse ?",
+   "a": [
+    "$15$",
+    "$21$",
+    "$16$",
+    "$13$"
+   ],
+   "why": "$9^2+12^2=81+144=225=15^2$.",
+   "hint": "Pythagore : a² + b² = c².",
+   "img": "<svg viewBox=\"0 0 300 205\" class=\"fig\"><path d=\"M60 160 L240 160 L60 40 Z\" fill=\"#ccfbf1\" stroke=\"#1f1b3a\" stroke-width=\"4\" stroke-linejoin=\"round\"/><path d=\"M60 142 h18 v18\" fill=\"none\" stroke=\"#1f1b3a\" stroke-width=\"3\"/><text x=\"150\" y=\"190\" class=\"sl\" fill=\"#f97316\">9</text><text x=\"34\" y=\"108\" class=\"sl\" fill=\"#0d9488\">12</text><text x=\"168\" y=\"92\" class=\"sl\" fill=\"#8b5cf6\">?</text></svg>",
+   "id": "geo-r004"
+  },
+  {
+   "chap": "geo",
+   "q": "Combien mesure l'hypoténuse ?",
+   "a": [
+    "$25$",
+    "$31$",
+    "$26$",
+    "$23$"
+   ],
+   "why": "$7^2+24^2=49+576=625=25^2$.",
+   "hint": "Pythagore : a² + b² = c².",
+   "img": "<svg viewBox=\"0 0 300 205\" class=\"fig\"><path d=\"M60 160 L240 160 L60 40 Z\" fill=\"#ccfbf1\" stroke=\"#1f1b3a\" stroke-width=\"4\" stroke-linejoin=\"round\"/><path d=\"M60 142 h18 v18\" fill=\"none\" stroke=\"#1f1b3a\" stroke-width=\"3\"/><text x=\"150\" y=\"190\" class=\"sl\" fill=\"#f97316\">7</text><text x=\"34\" y=\"108\" class=\"sl\" fill=\"#0d9488\">24</text><text x=\"168\" y=\"92\" class=\"sl\" fill=\"#8b5cf6\">?</text></svg>",
+   "id": "geo-r005"
+  },
+  {
+   "chap": "geo",
+   "q": "Combien mesure le côté manquant ?",
+   "a": [
+    "$4$",
+    "$2$",
+    "$8$",
+    "$5$"
+   ],
+   "why": "$5^2-3^2=16=4^2$.",
+   "hint": "côté² = hypoténuse² − autre côté².",
+   "img": "<svg viewBox=\"0 0 300 205\" class=\"fig\"><path d=\"M60 160 L240 160 L60 40 Z\" fill=\"#ccfbf1\" stroke=\"#1f1b3a\" stroke-width=\"4\" stroke-linejoin=\"round\"/><path d=\"M60 142 h18 v18\" fill=\"none\" stroke=\"#1f1b3a\" stroke-width=\"3\"/><text x=\"150\" y=\"190\" class=\"sl\" fill=\"#f97316\">3</text><text x=\"34\" y=\"108\" class=\"sl\" fill=\"#0d9488\">?</text><text x=\"168\" y=\"92\" class=\"sl\" fill=\"#8b5cf6\">5</text></svg>",
+   "id": "geo-r006"
+  },
+  {
+   "chap": "geo",
+   "q": "Combien mesure le côté manquant ?",
+   "a": [
+    "$6$",
+    "$2$",
+    "$18$",
+    "$7$"
+   ],
+   "why": "$10^2-8^2=36=6^2$.",
+   "hint": "côté² = hypoténuse² − autre côté².",
+   "img": "<svg viewBox=\"0 0 300 205\" class=\"fig\"><path d=\"M60 160 L240 160 L60 40 Z\" fill=\"#ccfbf1\" stroke=\"#1f1b3a\" stroke-width=\"4\" stroke-linejoin=\"round\"/><path d=\"M60 142 h18 v18\" fill=\"none\" stroke=\"#1f1b3a\" stroke-width=\"3\"/><text x=\"150\" y=\"190\" class=\"sl\" fill=\"#f97316\">8</text><text x=\"34\" y=\"108\" class=\"sl\" fill=\"#0d9488\">?</text><text x=\"168\" y=\"92\" class=\"sl\" fill=\"#8b5cf6\">10</text></svg>",
+   "id": "geo-r007"
+  },
+  {
+   "chap": "geo",
+   "q": "Combien mesure le côté manquant ?",
+   "a": [
+    "$5$",
+    "$1$",
+    "$25$",
+    "$6$"
+   ],
+   "why": "$13^2-12^2=25=5^2$.",
+   "hint": "côté² = hypoténuse² − autre côté².",
+   "img": "<svg viewBox=\"0 0 300 205\" class=\"fig\"><path d=\"M60 160 L240 160 L60 40 Z\" fill=\"#ccfbf1\" stroke=\"#1f1b3a\" stroke-width=\"4\" stroke-linejoin=\"round\"/><path d=\"M60 142 h18 v18\" fill=\"none\" stroke=\"#1f1b3a\" stroke-width=\"3\"/><text x=\"150\" y=\"190\" class=\"sl\" fill=\"#f97316\">12</text><text x=\"34\" y=\"108\" class=\"sl\" fill=\"#0d9488\">?</text><text x=\"168\" y=\"92\" class=\"sl\" fill=\"#8b5cf6\">13</text></svg>",
+   "id": "geo-r008"
+  },
+  {
+   "chap": "geo",
+   "q": "Aire d'un disque de rayon $2$ ?",
+   "a": [
+    "$4\\pi$",
+    "$2\\pi$",
+    "$4$"
+   ],
+   "why": "$\\pi r^2=\\pi\\times2^2=4\\pi$.",
+   "hint": "Aire = π × rayon².",
+   "img": "<svg viewBox=\"0 0 300 200\" class=\"fig\"><circle cx=\"150\" cy=\"100\" r=\"80\" fill=\"#ccfbf1\" stroke=\"#1f1b3a\" stroke-width=\"4\"/><line x1=\"150\" y1=\"100\" x2=\"230\" y2=\"100\" stroke=\"#f97316\" stroke-width=\"4\"/><circle cx=\"150\" cy=\"100\" r=\"5\" fill=\"#1f1b3a\"/><text x=\"190\" y=\"90\" class=\"sl\" fill=\"#f97316\">2</text></svg>",
+   "id": "geo-r009"
+  },
+  {
+   "chap": "geo",
+   "q": "Aire d'un disque de rayon $5$ ?",
+   "a": [
+    "$25\\pi$",
+    "$10\\pi$",
+    "$5\\pi$",
+    "$25$"
+   ],
+   "why": "$\\pi r^2=\\pi\\times5^2=25\\pi$.",
+   "hint": "Aire = π × rayon².",
+   "img": "<svg viewBox=\"0 0 300 200\" class=\"fig\"><circle cx=\"150\" cy=\"100\" r=\"80\" fill=\"#ccfbf1\" stroke=\"#1f1b3a\" stroke-width=\"4\"/><line x1=\"150\" y1=\"100\" x2=\"230\" y2=\"100\" stroke=\"#f97316\" stroke-width=\"4\"/><circle cx=\"150\" cy=\"100\" r=\"5\" fill=\"#1f1b3a\"/><text x=\"190\" y=\"90\" class=\"sl\" fill=\"#f97316\">5</text></svg>",
+   "id": "geo-r010"
+  },
+  {
+   "chap": "geo",
+   "q": "Périmètre d'un cercle de rayon $4$ ?",
+   "a": [
+    "$8\\pi$",
+    "$16\\pi$",
+    "$4\\pi$",
+    "$8$"
+   ],
+   "why": "$2\\pi r=2\\pi\\times4=8\\pi$.",
+   "hint": "Périmètre = 2 × π × rayon.",
+   "img": "<svg viewBox=\"0 0 300 200\" class=\"fig\"><circle cx=\"150\" cy=\"100\" r=\"80\" fill=\"#ccfbf1\" stroke=\"#1f1b3a\" stroke-width=\"4\"/><line x1=\"150\" y1=\"100\" x2=\"230\" y2=\"100\" stroke=\"#f97316\" stroke-width=\"4\"/><circle cx=\"150\" cy=\"100\" r=\"5\" fill=\"#1f1b3a\"/><text x=\"190\" y=\"90\" class=\"sl\" fill=\"#f97316\">4</text></svg>",
+   "id": "geo-r011"
+  },
+  {
+   "chap": "geo",
+   "q": "Périmètre d'un cercle de rayon $7$ ?",
+   "a": [
+    "$14\\pi$",
+    "$49\\pi$",
+    "$7\\pi$",
+    "$14$"
+   ],
+   "why": "$2\\pi r=2\\pi\\times7=14\\pi$.",
+   "hint": "Périmètre = 2 × π × rayon.",
+   "img": "<svg viewBox=\"0 0 300 200\" class=\"fig\"><circle cx=\"150\" cy=\"100\" r=\"80\" fill=\"#ccfbf1\" stroke=\"#1f1b3a\" stroke-width=\"4\"/><line x1=\"150\" y1=\"100\" x2=\"230\" y2=\"100\" stroke=\"#f97316\" stroke-width=\"4\"/><circle cx=\"150\" cy=\"100\" r=\"5\" fill=\"#1f1b3a\"/><text x=\"190\" y=\"90\" class=\"sl\" fill=\"#f97316\">7</text></svg>",
+   "id": "geo-r012"
+  },
+  {
+   "chap": "geo",
+   "q": "Périmètre d'un rectangle de $9$ sur $4$ ?",
+   "a": [
+    "$26$",
+    "$36$",
+    "$13$",
+    "$22$"
+   ],
+   "why": "$2\\times(9+4)=26$. (L'aire serait $36$.)",
+   "hint": "On fait le tour : 2 × (longueur + largeur).",
+   "id": "geo-r013"
+  },
+  {
+   "chap": "geo",
+   "q": "Périmètre d'un rectangle de $12$ sur $5$ ?",
+   "a": [
+    "$34$",
+    "$60$",
+    "$17$",
+    "$29$"
+   ],
+   "why": "$2\\times(12+5)=34$. (L'aire serait $60$.)",
+   "hint": "On fait le tour : 2 × (longueur + largeur).",
+   "id": "geo-r014"
+  },
+  {
+   "chap": "geo",
+   "q": "Un triangle a deux angles de $35^\\circ$ et $75^\\circ$. Le troisième ?",
+   "a": [
+    "$70^\\circ$",
+    "$250^\\circ$",
+    "$110^\\circ$",
+    "$80^\\circ$"
+   ],
+   "why": "$180-35-75=70$.",
+   "hint": "La somme des angles d'un triangle vaut 180°.",
+   "id": "geo-r015"
+  },
+  {
+   "chap": "geo",
+   "q": "Un triangle a deux angles de $90^\\circ$ et $25^\\circ$. Le troisième ?",
+   "a": [
+    "$65^\\circ$",
+    "$245^\\circ$",
+    "$115^\\circ$",
+    "$75^\\circ$"
+   ],
+   "why": "$180-90-25=65$.",
+   "hint": "La somme des angles d'un triangle vaut 180°.",
+   "id": "geo-r016"
+  },
+  {
+   "chap": "geo",
+   "q": "Un triangle a deux angles de $110^\\circ$ et $40^\\circ$. Le troisième ?",
+   "a": [
+    "$30^\\circ$",
+    "$210^\\circ$",
+    "$150^\\circ$",
+    "$40^\\circ$"
+   ],
+   "why": "$180-110-40=30$.",
+   "hint": "La somme des angles d'un triangle vaut 180°.",
+   "id": "geo-r017"
+  },
+  {
+   "chap": "geo",
+   "q": "Volume d'un pavé de $2\\times3\\times4$ ?",
+   "a": [
+    "$24$",
+    "$9$",
+    "$52$",
+    "$6$"
+   ],
+   "why": "$V=2\\times3\\times4=24$.",
+   "hint": "Volume = longueur × largeur × hauteur.",
+   "id": "geo-r018"
+  },
+  {
+   "chap": "geo",
+   "q": "Volume d'un pavé de $5\\times2\\times3$ ?",
+   "a": [
+    "$30$",
+    "$10$",
+    "$62$"
+   ],
+   "why": "$V=5\\times2\\times3=30$.",
+   "hint": "Volume = longueur × largeur × hauteur.",
+   "id": "geo-r019"
+  },
+  {
+   "chap": "geo",
+   "q": "Volume d'un pavé de $4\\times4\\times4$ ?",
+   "a": [
+    "$64$",
+    "$12$",
+    "$96$",
+    "$16$"
+   ],
+   "why": "$V=4\\times4\\times4=64$.",
+   "hint": "Volume = longueur × largeur × hauteur.",
+   "id": "geo-r020"
+  },
+  {
+   "chap": "tri",
+   "q": "$30^\\circ$ en radians ?",
+   "a": [
+    "$\\dfrac{\\pi}{6}$",
+    "$\\dfrac{3\\pi}{2}$",
+    "$\\dfrac{\\pi}{3}$",
+    "$\\dfrac{3\\pi}{4}$"
+   ],
+   "why": "$180^\\circ=\\pi$, donc $30^\\circ=\\dfrac{30}{180}\\pi=\\dfrac{\\pi}{6}$.",
+   "hint": "Multiplie par π puis divise par 180.",
+   "img": "<svg viewBox=\"0 0 300 210\" class=\"fig\"><circle cx=\"150\" cy=\"105\" r=\"80\" fill=\"none\" stroke=\"#e4e2ee\" stroke-width=\"3\"/><line x1=\"60\" y1=\"105\" x2=\"240\" y2=\"105\" stroke=\"#1f1b3a\" stroke-width=\"2\"/><line x1=\"150\" y1=\"20\" x2=\"150\" y2=\"190\" stroke=\"#1f1b3a\" stroke-width=\"2\"/><path d=\"M180 105 A30 30 0 0 0 176.0 90.0\" fill=\"none\" stroke=\"#db2777\" stroke-width=\"4\"/><line x1=\"150\" y1=\"105\" x2=\"219.3\" y2=\"65.0\" stroke=\"#db2777\" stroke-width=\"4\"/><circle cx=\"219.3\" cy=\"65.0\" r=\"6\" fill=\"#db2777\"/></svg>",
+   "id": "tri-r001"
+  },
+  {
+   "chap": "tri",
+   "q": "$45^\\circ$ en radians ?",
+   "a": [
+    "$\\dfrac{\\pi}{4}$",
+    "$\\dfrac{\\pi}{6}$",
+    "$\\dfrac{\\pi}{3}$",
+    "$\\dfrac{2\\pi}{3}$"
+   ],
+   "why": "$180^\\circ=\\pi$, donc $45^\\circ=\\dfrac{45}{180}\\pi=\\dfrac{\\pi}{4}$.",
+   "hint": "Multiplie par π puis divise par 180.",
+   "img": "<svg viewBox=\"0 0 300 210\" class=\"fig\"><circle cx=\"150\" cy=\"105\" r=\"80\" fill=\"none\" stroke=\"#e4e2ee\" stroke-width=\"3\"/><line x1=\"60\" y1=\"105\" x2=\"240\" y2=\"105\" stroke=\"#1f1b3a\" stroke-width=\"2\"/><line x1=\"150\" y1=\"20\" x2=\"150\" y2=\"190\" stroke=\"#1f1b3a\" stroke-width=\"2\"/><path d=\"M180 105 A30 30 0 0 0 171.2 83.8\" fill=\"none\" stroke=\"#db2777\" stroke-width=\"4\"/><line x1=\"150\" y1=\"105\" x2=\"206.6\" y2=\"48.4\" stroke=\"#db2777\" stroke-width=\"4\"/><circle cx=\"206.6\" cy=\"48.4\" r=\"6\" fill=\"#db2777\"/></svg>",
+   "id": "tri-r002"
+  },
+  {
+   "chap": "tri",
+   "q": "$60^\\circ$ en radians ?",
+   "a": [
+    "$\\dfrac{\\pi}{3}$",
+    "$\\dfrac{2\\pi}{3}$",
+    "$\\dfrac{\\pi}{2}$",
+    "$\\dfrac{3\\pi}{4}$"
+   ],
+   "why": "$180^\\circ=\\pi$, donc $60^\\circ=\\dfrac{60}{180}\\pi=\\dfrac{\\pi}{3}$.",
+   "hint": "Multiplie par π puis divise par 180.",
+   "img": "<svg viewBox=\"0 0 300 210\" class=\"fig\"><circle cx=\"150\" cy=\"105\" r=\"80\" fill=\"none\" stroke=\"#e4e2ee\" stroke-width=\"3\"/><line x1=\"60\" y1=\"105\" x2=\"240\" y2=\"105\" stroke=\"#1f1b3a\" stroke-width=\"2\"/><line x1=\"150\" y1=\"20\" x2=\"150\" y2=\"190\" stroke=\"#1f1b3a\" stroke-width=\"2\"/><path d=\"M180 105 A30 30 0 0 0 165.0 79.0\" fill=\"none\" stroke=\"#db2777\" stroke-width=\"4\"/><line x1=\"150\" y1=\"105\" x2=\"190.0\" y2=\"35.7\" stroke=\"#db2777\" stroke-width=\"4\"/><circle cx=\"190.0\" cy=\"35.7\" r=\"6\" fill=\"#db2777\"/></svg>",
+   "id": "tri-r003"
+  },
+  {
+   "chap": "tri",
+   "q": "$120^\\circ$ en radians ?",
+   "a": [
+    "$\\dfrac{2\\pi}{3}$",
+    "$\\dfrac{3\\pi}{2}$",
+    "$\\dfrac{\\pi}{4}$",
+    "$\\dfrac{\\pi}{3}$"
+   ],
+   "why": "$180^\\circ=\\pi$, donc $120^\\circ=\\dfrac{120}{180}\\pi=\\dfrac{2\\pi}{3}$.",
+   "hint": "Multiplie par π puis divise par 180.",
+   "img": "<svg viewBox=\"0 0 300 210\" class=\"fig\"><circle cx=\"150\" cy=\"105\" r=\"80\" fill=\"none\" stroke=\"#e4e2ee\" stroke-width=\"3\"/><line x1=\"60\" y1=\"105\" x2=\"240\" y2=\"105\" stroke=\"#1f1b3a\" stroke-width=\"2\"/><line x1=\"150\" y1=\"20\" x2=\"150\" y2=\"190\" stroke=\"#1f1b3a\" stroke-width=\"2\"/><path d=\"M180 105 A30 30 0 0 0 135.0 79.0\" fill=\"none\" stroke=\"#db2777\" stroke-width=\"4\"/><line x1=\"150\" y1=\"105\" x2=\"110.0\" y2=\"35.7\" stroke=\"#db2777\" stroke-width=\"4\"/><circle cx=\"110.0\" cy=\"35.7\" r=\"6\" fill=\"#db2777\"/></svg>",
+   "id": "tri-r004"
+  },
+  {
+   "chap": "tri",
+   "q": "$135^\\circ$ en radians ?",
+   "a": [
+    "$\\dfrac{3\\pi}{4}$",
+    "$\\dfrac{\\pi}{6}$",
+    "$\\dfrac{3\\pi}{2}$",
+    "$\\dfrac{2\\pi}{3}$"
+   ],
+   "why": "$180^\\circ=\\pi$, donc $135^\\circ=\\dfrac{135}{180}\\pi=\\dfrac{3\\pi}{4}$.",
+   "hint": "Multiplie par π puis divise par 180.",
+   "img": "<svg viewBox=\"0 0 300 210\" class=\"fig\"><circle cx=\"150\" cy=\"105\" r=\"80\" fill=\"none\" stroke=\"#e4e2ee\" stroke-width=\"3\"/><line x1=\"60\" y1=\"105\" x2=\"240\" y2=\"105\" stroke=\"#1f1b3a\" stroke-width=\"2\"/><line x1=\"150\" y1=\"20\" x2=\"150\" y2=\"190\" stroke=\"#1f1b3a\" stroke-width=\"2\"/><path d=\"M180 105 A30 30 0 0 0 128.8 83.8\" fill=\"none\" stroke=\"#db2777\" stroke-width=\"4\"/><line x1=\"150\" y1=\"105\" x2=\"93.4\" y2=\"48.4\" stroke=\"#db2777\" stroke-width=\"4\"/><circle cx=\"93.4\" cy=\"48.4\" r=\"6\" fill=\"#db2777\"/></svg>",
+   "id": "tri-r005"
+  },
+  {
+   "chap": "tri",
+   "q": "$270^\\circ$ en radians ?",
+   "a": [
+    "$\\dfrac{3\\pi}{2}$",
+    "$\\dfrac{\\pi}{4}$",
+    "$\\dfrac{\\pi}{6}$",
+    "$\\dfrac{3\\pi}{4}$"
+   ],
+   "why": "$180^\\circ=\\pi$, donc $270^\\circ=\\dfrac{270}{180}\\pi=\\dfrac{3\\pi}{2}$.",
+   "hint": "Multiplie par π puis divise par 180.",
+   "img": "<svg viewBox=\"0 0 300 210\" class=\"fig\"><circle cx=\"150\" cy=\"105\" r=\"80\" fill=\"none\" stroke=\"#e4e2ee\" stroke-width=\"3\"/><line x1=\"60\" y1=\"105\" x2=\"240\" y2=\"105\" stroke=\"#1f1b3a\" stroke-width=\"2\"/><line x1=\"150\" y1=\"20\" x2=\"150\" y2=\"190\" stroke=\"#1f1b3a\" stroke-width=\"2\"/><path d=\"M180 105 A30 30 0 1 0 150.0 135.0\" fill=\"none\" stroke=\"#db2777\" stroke-width=\"4\"/><line x1=\"150\" y1=\"105\" x2=\"150.0\" y2=\"185.0\" stroke=\"#db2777\" stroke-width=\"4\"/><circle cx=\"150.0\" cy=\"185.0\" r=\"6\" fill=\"#db2777\"/></svg>",
+   "id": "tri-r006"
+  },
+  {
+   "chap": "tri",
+   "q": "$\\dfrac{\\pi}{6}$ radians en degrés ?",
+   "a": [
+    "$30^\\circ$",
+    "$15^\\circ$",
+    "$60^\\circ$"
+   ],
+   "why": "On remplace $\\pi$ par $180^\\circ$ : $\\dfrac{\\pi}{6}\\to30^\\circ$.",
+   "hint": "π radians = 180°.",
+   "img": "<svg viewBox=\"0 0 300 210\" class=\"fig\"><circle cx=\"150\" cy=\"105\" r=\"80\" fill=\"none\" stroke=\"#e4e2ee\" stroke-width=\"3\"/><line x1=\"60\" y1=\"105\" x2=\"240\" y2=\"105\" stroke=\"#1f1b3a\" stroke-width=\"2\"/><line x1=\"150\" y1=\"20\" x2=\"150\" y2=\"190\" stroke=\"#1f1b3a\" stroke-width=\"2\"/><path d=\"M180 105 A30 30 0 0 0 176.0 90.0\" fill=\"none\" stroke=\"#db2777\" stroke-width=\"4\"/><line x1=\"150\" y1=\"105\" x2=\"219.3\" y2=\"65.0\" stroke=\"#db2777\" stroke-width=\"4\"/><circle cx=\"219.3\" cy=\"65.0\" r=\"6\" fill=\"#db2777\"/></svg>",
+   "id": "tri-r007"
+  },
+  {
+   "chap": "tri",
+   "q": "$\\dfrac{5\\pi}{6}$ radians en degrés ?",
+   "a": [
+    "$150^\\circ$",
+    "$75^\\circ$",
+    "$300^\\circ$",
+    "$180^\\circ$"
+   ],
+   "why": "On remplace $\\pi$ par $180^\\circ$ : $\\dfrac{5\\pi}{6}\\to150^\\circ$.",
+   "hint": "π radians = 180°.",
+   "img": "<svg viewBox=\"0 0 300 210\" class=\"fig\"><circle cx=\"150\" cy=\"105\" r=\"80\" fill=\"none\" stroke=\"#e4e2ee\" stroke-width=\"3\"/><line x1=\"60\" y1=\"105\" x2=\"240\" y2=\"105\" stroke=\"#1f1b3a\" stroke-width=\"2\"/><line x1=\"150\" y1=\"20\" x2=\"150\" y2=\"190\" stroke=\"#1f1b3a\" stroke-width=\"2\"/><path d=\"M180 105 A30 30 0 0 0 124.0 90.0\" fill=\"none\" stroke=\"#db2777\" stroke-width=\"4\"/><line x1=\"150\" y1=\"105\" x2=\"80.7\" y2=\"65.0\" stroke=\"#db2777\" stroke-width=\"4\"/><circle cx=\"80.7\" cy=\"65.0\" r=\"6\" fill=\"#db2777\"/></svg>",
+   "id": "tri-r008"
+  },
+  {
+   "chap": "tri",
+   "q": "$2\\pi$ radians en degrés ?",
+   "a": [
+    "$360^\\circ$",
+    "$180^\\circ$",
+    "$390^\\circ$"
+   ],
+   "why": "On remplace $\\pi$ par $180^\\circ$ : $2\\pi\\to360^\\circ$.",
+   "hint": "π radians = 180°.",
+   "img": "<svg viewBox=\"0 0 300 210\" class=\"fig\"><circle cx=\"150\" cy=\"105\" r=\"80\" fill=\"none\" stroke=\"#e4e2ee\" stroke-width=\"3\"/><line x1=\"60\" y1=\"105\" x2=\"240\" y2=\"105\" stroke=\"#1f1b3a\" stroke-width=\"2\"/><line x1=\"150\" y1=\"20\" x2=\"150\" y2=\"190\" stroke=\"#1f1b3a\" stroke-width=\"2\"/><path d=\"M180 105 A30 30 0 1 0 180.0 105.1\" fill=\"none\" stroke=\"#db2777\" stroke-width=\"4\"/><line x1=\"150\" y1=\"105\" x2=\"230.0\" y2=\"105.1\" stroke=\"#db2777\" stroke-width=\"4\"/><circle cx=\"230.0\" cy=\"105.1\" r=\"6\" fill=\"#db2777\"/></svg>",
+   "id": "tri-r009"
+  },
+  {
+   "chap": "tri",
+   "q": "Valeur de $\\cos\\dfrac{\\pi}{3}$ ?",
+   "a": [
+    "$\\dfrac12$",
+    "$\\dfrac{\\sqrt3}{2}$",
+    "$\\dfrac{\\sqrt2}{2}$",
+    "$0$"
+   ],
+   "why": "Valeur à connaître : $\\cos\\dfrac{\\pi}{3}=\\dfrac12$ (voir le cercle trigonométrique).",
+   "hint": "Retiens le tableau : π/6, π/4, π/3.",
+   "id": "tri-r010"
+  },
+  {
+   "chap": "tri",
+   "q": "Valeur de $\\sin\\dfrac{\\pi}{6}$ ?",
+   "a": [
+    "$\\dfrac12$",
+    "$\\dfrac{\\sqrt3}{2}$",
+    "$\\dfrac{\\sqrt2}{2}$",
+    "$0$"
+   ],
+   "why": "Valeur à connaître : $\\sin\\dfrac{\\pi}{6}=\\dfrac12$ (voir le cercle trigonométrique).",
+   "hint": "Retiens le tableau : π/6, π/4, π/3.",
+   "id": "tri-r011"
+  },
+  {
+   "chap": "tri",
+   "q": "Valeur de $\\cos\\dfrac{\\pi}{6}$ ?",
+   "a": [
+    "$\\dfrac{\\sqrt3}{2}$",
+    "$\\dfrac12$",
+    "$\\dfrac{\\sqrt2}{2}$",
+    "$0$"
+   ],
+   "why": "Valeur à connaître : $\\cos\\dfrac{\\pi}{6}=\\dfrac{\\sqrt3}{2}$ (voir le cercle trigonométrique).",
+   "hint": "Retiens le tableau : π/6, π/4, π/3.",
+   "id": "tri-r012"
+  },
+  {
+   "chap": "tri",
+   "q": "Valeur de $\\sin\\dfrac{\\pi}{3}$ ?",
+   "a": [
+    "$\\dfrac{\\sqrt3}{2}$",
+    "$\\dfrac12$",
+    "$\\dfrac{\\sqrt2}{2}$",
+    "$0$"
+   ],
+   "why": "Valeur à connaître : $\\sin\\dfrac{\\pi}{3}=\\dfrac{\\sqrt3}{2}$ (voir le cercle trigonométrique).",
+   "hint": "Retiens le tableau : π/6, π/4, π/3.",
+   "id": "tri-r013"
+  },
+  {
+   "chap": "tri",
+   "q": "Valeur de $\\cos\\dfrac{\\pi}{4}$ ?",
+   "a": [
+    "$\\dfrac{\\sqrt2}{2}$",
+    "$\\dfrac12$",
+    "$\\dfrac{\\sqrt3}{2}$",
+    "$0$"
+   ],
+   "why": "Valeur à connaître : $\\cos\\dfrac{\\pi}{4}=\\dfrac{\\sqrt2}{2}$ (voir le cercle trigonométrique).",
+   "hint": "Retiens le tableau : π/6, π/4, π/3.",
+   "id": "tri-r014"
+  },
+  {
+   "chap": "tri",
+   "q": "Valeur de $\\sin\\pi$ ?",
+   "a": [
+    "$0$",
+    "$\\dfrac12$",
+    "$\\dfrac{\\sqrt3}{2}$",
+    "$\\dfrac{\\sqrt2}{2}$"
+   ],
+   "why": "Valeur à connaître : $\\sin\\pi=0$ (voir le cercle trigonométrique).",
+   "hint": "Retiens le tableau : π/6, π/4, π/3.",
+   "id": "tri-r015"
+  },
+  {
+   "chap": "tri",
+   "q": "$\\cos x=\\dfrac{3}{5}$ et $\\sin x>0$. Que vaut $\\sin x$ ?",
+   "a": [
+    "$\\dfrac{4}{5}$",
+    "$\\dfrac{2}{5}$",
+    "$\\dfrac{16}{25}$",
+    "$\\dfrac{3}{5}$"
+   ],
+   "why": "$\\sin^2x=1-\\cos^2x=1-\\dfrac{9}{25}=\\dfrac{16}{25}$, donc $\\sin x=\\dfrac{4}{5}$.",
+   "hint": "cos² x + sin² x = 1.",
+   "id": "tri-r016"
+  },
+  {
+   "chap": "tri",
+   "q": "$\\cos x=\\dfrac{5}{13}$ et $\\sin x>0$. Que vaut $\\sin x$ ?",
+   "a": [
+    "$\\dfrac{12}{13}$",
+    "$\\dfrac{8}{13}$",
+    "$\\dfrac{144}{169}$",
+    "$\\dfrac{5}{13}$"
+   ],
+   "why": "$\\sin^2x=1-\\cos^2x=1-\\dfrac{25}{169}=\\dfrac{144}{169}$, donc $\\sin x=\\dfrac{12}{13}$.",
+   "hint": "cos² x + sin² x = 1.",
+   "id": "tri-r017"
+  },
+  {
+   "chap": "tri",
+   "q": "$\\cos x=\\dfrac{8}{17}$ et $\\sin x>0$. Que vaut $\\sin x$ ?",
+   "a": [
+    "$\\dfrac{15}{17}$",
+    "$\\dfrac{9}{17}$",
+    "$\\dfrac{225}{289}$",
+    "$\\dfrac{8}{17}$"
+   ],
+   "why": "$\\sin^2x=1-\\cos^2x=1-\\dfrac{64}{289}=\\dfrac{225}{289}$, donc $\\sin x=\\dfrac{15}{17}$.",
+   "hint": "cos² x + sin² x = 1.",
+   "id": "tri-r018"
+  },
+  {
+   "chap": "tri",
+   "q": "Dans ce triangle, que vaut le sinus de l'angle en bas à droite ?",
+   "a": [
+    "$\\dfrac35$",
+    "$\\dfrac45$",
+    "$\\dfrac34$",
+    "$\\dfrac53$"
+   ],
+   "why": "SOH : opposé / hypoténuse $=\\dfrac35$ (le côté 3 est en face de l'angle).",
+   "hint": "SOH-CAH-TOA.",
+   "img": "<svg viewBox=\"0 0 300 205\" class=\"fig\"><path d=\"M60 160 L240 160 L60 40 Z\" fill=\"#ccfbf1\" stroke=\"#1f1b3a\" stroke-width=\"4\" stroke-linejoin=\"round\"/><path d=\"M60 142 h18 v18\" fill=\"none\" stroke=\"#1f1b3a\" stroke-width=\"3\"/><text x=\"150\" y=\"190\" class=\"sl\" fill=\"#f97316\">4</text><text x=\"34\" y=\"108\" class=\"sl\" fill=\"#0d9488\">3</text><text x=\"168\" y=\"92\" class=\"sl\" fill=\"#8b5cf6\">5</text></svg>",
+   "id": "tri-r019"
+  },
+  {
+   "chap": "tri",
+   "q": "Dans ce triangle, que vaut le cosinus de l'angle en bas à droite ?",
+   "a": [
+    "$\\dfrac45$",
+    "$\\dfrac35$",
+    "$\\dfrac43$",
+    "$\\dfrac54$"
+   ],
+   "why": "CAH : adjacent / hypoténuse $=\\dfrac45$.",
+   "hint": "SOH-CAH-TOA.",
+   "img": "<svg viewBox=\"0 0 300 205\" class=\"fig\"><path d=\"M60 160 L240 160 L60 40 Z\" fill=\"#ccfbf1\" stroke=\"#1f1b3a\" stroke-width=\"4\" stroke-linejoin=\"round\"/><path d=\"M60 142 h18 v18\" fill=\"none\" stroke=\"#1f1b3a\" stroke-width=\"3\"/><text x=\"150\" y=\"190\" class=\"sl\" fill=\"#f97316\">4</text><text x=\"34\" y=\"108\" class=\"sl\" fill=\"#0d9488\">3</text><text x=\"168\" y=\"92\" class=\"sl\" fill=\"#8b5cf6\">5</text></svg>",
+   "id": "tri-r020"
+  },
+  {
+   "chap": "sta",
+   "q": "Moyenne de $4,\\ 6,\\ 8,\\ 10,\\ 12$ ?",
+   "a": [
+    "$8$",
+    "$40$",
+    "$9$"
+   ],
+   "why": "$(4+6+8+10+12)\\div5=40\\div5=8$.",
+   "hint": "Somme ÷ nombre de valeurs.",
+   "id": "sta-r001"
+  },
+  {
+   "chap": "sta",
+   "q": "Moyenne de $15,\\ 9,\\ 12$ ?",
+   "a": [
+    "$12$",
+    "$36$",
+    "$13$"
+   ],
+   "why": "$(15+9+12)\\div3=36\\div3=12$.",
+   "hint": "Somme ÷ nombre de valeurs.",
+   "id": "sta-r002"
+  },
+  {
+   "chap": "sta",
+   "q": "Moyenne de $3,\\ 7,\\ 7,\\ 11$ ?",
+   "a": [
+    "$7$",
+    "$28$",
+    "$8$"
+   ],
+   "why": "$(3+7+7+11)\\div4=28\\div4=7$.",
+   "hint": "Somme ÷ nombre de valeurs.",
+   "id": "sta-r003"
+  },
+  {
+   "chap": "sta",
+   "q": "Moyenne de $20,\\ 10,\\ 30,\\ 40$ ?",
+   "a": [
+    "$25$",
+    "$100$",
+    "$26$",
+    "$30$"
+   ],
+   "why": "$(20+10+30+40)\\div4=100\\div4=25$.",
+   "hint": "Somme ÷ nombre de valeurs.",
+   "id": "sta-r004"
+  },
+  {
+   "chap": "sta",
+   "q": "Moyenne de $5,\\ 5,\\ 8,\\ 9,\\ 13$ ?",
+   "a": [
+    "$8$",
+    "$40$",
+    "$9$"
+   ],
+   "why": "$(5+5+8+9+13)\\div5=40\\div5=8$.",
+   "hint": "Somme ÷ nombre de valeurs.",
+   "id": "sta-r005"
+  },
+  {
+   "chap": "sta",
+   "q": "Médiane de $2,\\ 9,\\ 4,\\ 7,\\ 5$ ?",
+   "a": [
+    "$5$",
+    "$4$",
+    "$\\dfrac{27}{5}$",
+    "$9$"
+   ],
+   "why": "On range : $2,\\ 4,\\ 5,\\ 7,\\ 9$ ; la valeur du milieu est $5$.",
+   "hint": "Range d'abord les valeurs dans l'ordre !",
+   "id": "sta-r006"
+  },
+  {
+   "chap": "sta",
+   "q": "Médiane de $11,\\ 3,\\ 8$ ?",
+   "a": [
+    "$8$",
+    "$3$",
+    "$\\dfrac{22}{3}$",
+    "$11$"
+   ],
+   "why": "On range : $3,\\ 8,\\ 11$ ; la valeur du milieu est $8$.",
+   "hint": "Range d'abord les valeurs dans l'ordre !",
+   "id": "sta-r007"
+  },
+  {
+   "chap": "sta",
+   "q": "Médiane de $6,\\ 1,\\ 9,\\ 3,\\ 12$ ?",
+   "a": [
+    "$6$",
+    "$9$",
+    "$\\dfrac{31}{5}$",
+    "$12$"
+   ],
+   "why": "On range : $1,\\ 3,\\ 6,\\ 9,\\ 12$ ; la valeur du milieu est $6$.",
+   "hint": "Range d'abord les valeurs dans l'ordre !",
+   "id": "sta-r008"
+  },
+  {
+   "chap": "sta",
+   "q": "Médiane de $1,\\ 4,\\ 6,\\ 10$ ?",
+   "a": [
+    "$5$",
+    "$4$",
+    "$6$",
+    "$\\dfrac{21}{4}$"
+   ],
+   "why": "Nombre pair de valeurs : $\\dfrac{4+6}{2}=5$.",
+   "hint": "Moyenne des deux valeurs du milieu.",
+   "id": "sta-r009"
+  },
+  {
+   "chap": "sta",
+   "q": "Médiane de $2,\\ 3,\\ 9,\\ 14$ ?",
+   "a": [
+    "$6$",
+    "$3$",
+    "$9$",
+    "$7$"
+   ],
+   "why": "Nombre pair de valeurs : $\\dfrac{3+9}{2}=6$.",
+   "hint": "Moyenne des deux valeurs du milieu.",
+   "id": "sta-r010"
+  },
+  {
+   "chap": "sta",
+   "q": "Étendue de $12,\\ 5,\\ 19,\\ 8$ ?",
+   "a": [
+    "$14$",
+    "$19$",
+    "$24$",
+    "$-4$"
+   ],
+   "why": "$19-5=14$.",
+   "hint": "Max − min.",
+   "id": "sta-r011"
+  },
+  {
+   "chap": "sta",
+   "q": "Étendue de $30,\\ 45,\\ 22,\\ 38$ ?",
+   "a": [
+    "$23$",
+    "$45$",
+    "$67$",
+    "$8$"
+   ],
+   "why": "$45-22=23$.",
+   "hint": "Max − min.",
+   "id": "sta-r012"
+  },
+  {
+   "chap": "sta",
+   "q": "Étendue de $7,\\ 7,\\ 3,\\ 15$ ?",
+   "a": [
+    "$12$",
+    "$15$",
+    "$18$",
+    "$8$"
+   ],
+   "why": "$15-3=12$.",
+   "hint": "Max − min.",
+   "id": "sta-r013"
+  },
+  {
+   "chap": "sta",
+   "q": "Notes : $8$ (coef. $1$) et $14$ (coef. $2$). Moyenne ?",
+   "a": [
+    "$12$",
+    "$11$",
+    "$36$",
+    "$13$"
+   ],
+   "why": "$\\dfrac{8\\times1+14\\times2}{3}=\\dfrac{36}{3}=12$.",
+   "hint": "Chaque note compte autant de fois que son coefficient.",
+   "id": "sta-r014"
+  },
+  {
+   "chap": "sta",
+   "q": "Notes : $12$ (coef. $3$) et $16$ (coef. $1$). Moyenne ?",
+   "a": [
+    "$13$",
+    "$14$",
+    "$52$"
+   ],
+   "why": "$\\dfrac{12\\times3+16\\times1}{4}=\\dfrac{52}{4}=13$.",
+   "hint": "Chaque note compte autant de fois que son coefficient.",
+   "id": "sta-r015"
+  },
+  {
+   "chap": "sta",
+   "q": "Notes : $9$ (coef. $2$) et $15$ (coef. $4$). Moyenne ?",
+   "a": [
+    "$13$",
+    "$12$",
+    "$78$",
+    "$14$"
+   ],
+   "why": "$\\dfrac{9\\times2+15\\times4}{6}=\\dfrac{78}{6}=13$.",
+   "hint": "Chaque note compte autant de fois que son coefficient.",
+   "id": "sta-r016"
+  },
+  {
+   "chap": "sta",
+   "q": "D'après le diagramme, quel est l'effectif total ?",
+   "a": [
+    "$17$",
+    "$7$",
+    "$19$",
+    "$4$"
+   ],
+   "why": "On additionne les hauteurs : $3+7+5+2=17$.",
+   "hint": "Additionne toutes les barres.",
+   "img": "<svg viewBox=\"0 0 260 195\" class=\"fig\"><rect x=\"40\" y=\"108.57142857142857\" width=\"34\" height=\"51.42857142857143\" rx=\"5\" fill=\"#2563eb\" opacity=\"0.55\"/><text x=\"57\" y=\"100.57142857142857\" class=\"ax\">3</text><text x=\"57\" y=\"182\" class=\"ax big\" fill=\"#2563eb\">A</text><rect x=\"90\" y=\"40.0\" width=\"34\" height=\"120.0\" rx=\"5\" fill=\"#2563eb\" opacity=\"0.63\"/><text x=\"107\" y=\"32.0\" class=\"ax\">7</text><text x=\"107\" y=\"182\" class=\"ax big\" fill=\"#2563eb\">B</text><rect x=\"140\" y=\"74.28571428571429\" width=\"34\" height=\"85.71428571428571\" rx=\"5\" fill=\"#2563eb\" opacity=\"0.7100000000000001\"/><text x=\"157\" y=\"66.28571428571429\" class=\"ax\">5</text><text x=\"157\" y=\"182\" class=\"ax big\" fill=\"#2563eb\">C</text><rect x=\"190\" y=\"125.71428571428572\" width=\"34\" height=\"34.285714285714285\" rx=\"5\" fill=\"#2563eb\" opacity=\"0.79\"/><text x=\"207\" y=\"117.71428571428572\" class=\"ax\">2</text><text x=\"207\" y=\"182\" class=\"ax big\" fill=\"#2563eb\">D</text><line x1=\"30\" y1=\"160\" x2=\"240\" y2=\"160\" stroke=\"#1f1b3a\" stroke-width=\"3\"/></svg>",
+   "id": "sta-r017"
+  },
+  {
+   "chap": "sta",
+   "q": "D'après le diagramme, quelle catégorie est la plus fréquente ?",
+   "a": [
+    "B",
+    "A",
+    "C",
+    "D"
+   ],
+   "why": "C'est la barre la plus haute.",
+   "hint": "Cherche la plus haute barre.",
+   "img": "<svg viewBox=\"0 0 260 195\" class=\"fig\"><rect x=\"40\" y=\"108.57142857142857\" width=\"34\" height=\"51.42857142857143\" rx=\"5\" fill=\"#0284c7\" opacity=\"0.55\"/><text x=\"57\" y=\"100.57142857142857\" class=\"ax\">3</text><text x=\"57\" y=\"182\" class=\"ax big\" fill=\"#0284c7\">A</text><rect x=\"90\" y=\"40.0\" width=\"34\" height=\"120.0\" rx=\"5\" fill=\"#0284c7\" opacity=\"0.63\"/><text x=\"107\" y=\"32.0\" class=\"ax\">7</text><text x=\"107\" y=\"182\" class=\"ax big\" fill=\"#0284c7\">B</text><rect x=\"140\" y=\"74.28571428571429\" width=\"34\" height=\"85.71428571428571\" rx=\"5\" fill=\"#0284c7\" opacity=\"0.7100000000000001\"/><text x=\"157\" y=\"66.28571428571429\" class=\"ax\">5</text><text x=\"157\" y=\"182\" class=\"ax big\" fill=\"#0284c7\">C</text><rect x=\"190\" y=\"125.71428571428572\" width=\"34\" height=\"34.285714285714285\" rx=\"5\" fill=\"#0284c7\" opacity=\"0.79\"/><text x=\"207\" y=\"117.71428571428572\" class=\"ax\">2</text><text x=\"207\" y=\"182\" class=\"ax big\" fill=\"#0284c7\">D</text><line x1=\"30\" y1=\"160\" x2=\"240\" y2=\"160\" stroke=\"#1f1b3a\" stroke-width=\"3\"/></svg>",
+   "id": "sta-r018"
+  },
+  {
+   "chap": "sta",
+   "q": "D'après le diagramme, quel est l'effectif total ?",
+   "a": [
+    "$20$",
+    "$8$",
+    "$22$",
+    "$4$"
+   ],
+   "why": "On additionne les hauteurs : $4+2+6+8=20$.",
+   "hint": "Additionne toutes les barres.",
+   "img": "<svg viewBox=\"0 0 260 195\" class=\"fig\"><rect x=\"40\" y=\"100.0\" width=\"34\" height=\"60.0\" rx=\"5\" fill=\"#2563eb\" opacity=\"0.55\"/><text x=\"57\" y=\"92.0\" class=\"ax\">4</text><text x=\"57\" y=\"182\" class=\"ax big\" fill=\"#2563eb\">L</text><rect x=\"90\" y=\"130.0\" width=\"34\" height=\"30.0\" rx=\"5\" fill=\"#2563eb\" opacity=\"0.63\"/><text x=\"107\" y=\"122.0\" class=\"ax\">2</text><text x=\"107\" y=\"182\" class=\"ax big\" fill=\"#2563eb\">M</text><rect x=\"140\" y=\"70.0\" width=\"34\" height=\"90.0\" rx=\"5\" fill=\"#2563eb\" opacity=\"0.7100000000000001\"/><text x=\"157\" y=\"62.0\" class=\"ax\">6</text><text x=\"157\" y=\"182\" class=\"ax big\" fill=\"#2563eb\">J</text><rect x=\"190\" y=\"40.0\" width=\"34\" height=\"120.0\" rx=\"5\" fill=\"#2563eb\" opacity=\"0.79\"/><text x=\"207\" y=\"32.0\" class=\"ax\">8</text><text x=\"207\" y=\"182\" class=\"ax big\" fill=\"#2563eb\">V</text><line x1=\"30\" y1=\"160\" x2=\"240\" y2=\"160\" stroke=\"#1f1b3a\" stroke-width=\"3\"/></svg>",
+   "id": "sta-r019"
+  },
+  {
+   "chap": "sta",
+   "q": "D'après le diagramme, quelle catégorie est la plus fréquente ?",
+   "a": [
+    "V",
+    "L",
+    "M",
+    "J"
+   ],
+   "why": "C'est la barre la plus haute.",
+   "hint": "Cherche la plus haute barre.",
+   "img": "<svg viewBox=\"0 0 260 195\" class=\"fig\"><rect x=\"40\" y=\"100.0\" width=\"34\" height=\"60.0\" rx=\"5\" fill=\"#0284c7\" opacity=\"0.55\"/><text x=\"57\" y=\"92.0\" class=\"ax\">4</text><text x=\"57\" y=\"182\" class=\"ax big\" fill=\"#0284c7\">L</text><rect x=\"90\" y=\"130.0\" width=\"34\" height=\"30.0\" rx=\"5\" fill=\"#0284c7\" opacity=\"0.63\"/><text x=\"107\" y=\"122.0\" class=\"ax\">2</text><text x=\"107\" y=\"182\" class=\"ax big\" fill=\"#0284c7\">M</text><rect x=\"140\" y=\"70.0\" width=\"34\" height=\"90.0\" rx=\"5\" fill=\"#0284c7\" opacity=\"0.7100000000000001\"/><text x=\"157\" y=\"62.0\" class=\"ax\">6</text><text x=\"157\" y=\"182\" class=\"ax big\" fill=\"#0284c7\">J</text><rect x=\"190\" y=\"40.0\" width=\"34\" height=\"120.0\" rx=\"5\" fill=\"#0284c7\" opacity=\"0.79\"/><text x=\"207\" y=\"32.0\" class=\"ax\">8</text><text x=\"207\" y=\"182\" class=\"ax big\" fill=\"#0284c7\">V</text><line x1=\"30\" y1=\"160\" x2=\"240\" y2=\"160\" stroke=\"#1f1b3a\" stroke-width=\"3\"/></svg>",
+   "id": "sta-r020"
+  },
+  {
+   "chap": "pro",
+   "q": "On lance un dé. Probabilité d'obtenir un nombre supérieur à $4$ ?",
+   "a": [
+    "$\\dfrac{1}{3}$",
+    "$\\dfrac{1}{2}$",
+    "$\\dfrac{2}{3}$",
+    "$\\dfrac{1}{6}$"
+   ],
+   "why": "5 et 6 : 2 faces sur 6.",
+   "hint": "Cas favorables ÷ 6.",
+   "img": "<svg viewBox=\"0 0 590 100\" class=\"fig\"><rect x=\"14\" y=\"4\" width=\"88\" height=\"88\" rx=\"18\" fill=\"#fff\" stroke=\"#0284c7\" stroke-width=\"5\"/><circle cx=\"60\" cy=\"50\" r=\"9\" fill=\"#0284c7\"/><rect x=\"109\" y=\"4\" width=\"88\" height=\"88\" rx=\"18\" fill=\"#fff\" stroke=\"#0284c7\" stroke-width=\"5\"/><circle cx=\"133\" cy=\"28\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"177\" cy=\"72\" r=\"9\" fill=\"#0284c7\"/><rect x=\"204\" y=\"4\" width=\"88\" height=\"88\" rx=\"18\" fill=\"#fff\" stroke=\"#0284c7\" stroke-width=\"5\"/><circle cx=\"226\" cy=\"26\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"250\" cy=\"50\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"274\" cy=\"74\" r=\"9\" fill=\"#0284c7\"/><rect x=\"299\" y=\"4\" width=\"88\" height=\"88\" rx=\"18\" fill=\"#fff\" stroke=\"#0284c7\" stroke-width=\"5\"/><circle cx=\"323\" cy=\"28\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"367\" cy=\"28\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"323\" cy=\"72\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"367\" cy=\"72\" r=\"9\" fill=\"#0284c7\"/><rect x=\"394\" y=\"4\" width=\"88\" height=\"88\" rx=\"18\" fill=\"#fff\" stroke=\"#0284c7\" stroke-width=\"5\"/><circle cx=\"416\" cy=\"26\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"464\" cy=\"26\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"440\" cy=\"50\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"416\" cy=\"74\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"464\" cy=\"74\" r=\"9\" fill=\"#0284c7\"/><rect x=\"489\" y=\"4\" width=\"88\" height=\"88\" rx=\"18\" fill=\"#fff\" stroke=\"#0284c7\" stroke-width=\"5\"/><circle cx=\"513\" cy=\"24\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"557\" cy=\"24\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"513\" cy=\"50\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"557\" cy=\"50\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"513\" cy=\"76\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"557\" cy=\"76\" r=\"9\" fill=\"#0284c7\"/></svg>",
+   "id": "pro-r001"
+  },
+  {
+   "chap": "pro",
+   "q": "On lance un dé. Probabilité d'obtenir un multiple de $3$ ?",
+   "a": [
+    "$\\dfrac{1}{3}$",
+    "$\\dfrac{1}{2}$",
+    "$\\dfrac{1}{6}$",
+    "$\\dfrac{2}{3}$"
+   ],
+   "why": "3 et 6 : 2 faces sur 6.",
+   "hint": "Cas favorables ÷ 6.",
+   "img": "<svg viewBox=\"0 0 590 100\" class=\"fig\"><rect x=\"14\" y=\"4\" width=\"88\" height=\"88\" rx=\"18\" fill=\"#fff\" stroke=\"#0284c7\" stroke-width=\"5\"/><circle cx=\"60\" cy=\"50\" r=\"9\" fill=\"#0284c7\"/><rect x=\"109\" y=\"4\" width=\"88\" height=\"88\" rx=\"18\" fill=\"#fff\" stroke=\"#0284c7\" stroke-width=\"5\"/><circle cx=\"133\" cy=\"28\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"177\" cy=\"72\" r=\"9\" fill=\"#0284c7\"/><rect x=\"204\" y=\"4\" width=\"88\" height=\"88\" rx=\"18\" fill=\"#fff\" stroke=\"#0284c7\" stroke-width=\"5\"/><circle cx=\"226\" cy=\"26\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"250\" cy=\"50\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"274\" cy=\"74\" r=\"9\" fill=\"#0284c7\"/><rect x=\"299\" y=\"4\" width=\"88\" height=\"88\" rx=\"18\" fill=\"#fff\" stroke=\"#0284c7\" stroke-width=\"5\"/><circle cx=\"323\" cy=\"28\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"367\" cy=\"28\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"323\" cy=\"72\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"367\" cy=\"72\" r=\"9\" fill=\"#0284c7\"/><rect x=\"394\" y=\"4\" width=\"88\" height=\"88\" rx=\"18\" fill=\"#fff\" stroke=\"#0284c7\" stroke-width=\"5\"/><circle cx=\"416\" cy=\"26\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"464\" cy=\"26\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"440\" cy=\"50\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"416\" cy=\"74\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"464\" cy=\"74\" r=\"9\" fill=\"#0284c7\"/><rect x=\"489\" y=\"4\" width=\"88\" height=\"88\" rx=\"18\" fill=\"#fff\" stroke=\"#0284c7\" stroke-width=\"5\"/><circle cx=\"513\" cy=\"24\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"557\" cy=\"24\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"513\" cy=\"50\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"557\" cy=\"50\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"513\" cy=\"76\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"557\" cy=\"76\" r=\"9\" fill=\"#0284c7\"/></svg>",
+   "id": "pro-r002"
+  },
+  {
+   "chap": "pro",
+   "q": "On lance un dé. Probabilité d'obtenir un nombre premier ?",
+   "a": [
+    "$\\dfrac{1}{2}$",
+    "$\\dfrac{1}{3}$",
+    "$\\dfrac{2}{3}$",
+    "$\\dfrac{1}{6}$"
+   ],
+   "why": "2, 3 et 5 : 3 faces sur 6.",
+   "hint": "Cas favorables ÷ 6.",
+   "img": "<svg viewBox=\"0 0 590 100\" class=\"fig\"><rect x=\"14\" y=\"4\" width=\"88\" height=\"88\" rx=\"18\" fill=\"#fff\" stroke=\"#0284c7\" stroke-width=\"5\"/><circle cx=\"60\" cy=\"50\" r=\"9\" fill=\"#0284c7\"/><rect x=\"109\" y=\"4\" width=\"88\" height=\"88\" rx=\"18\" fill=\"#fff\" stroke=\"#0284c7\" stroke-width=\"5\"/><circle cx=\"133\" cy=\"28\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"177\" cy=\"72\" r=\"9\" fill=\"#0284c7\"/><rect x=\"204\" y=\"4\" width=\"88\" height=\"88\" rx=\"18\" fill=\"#fff\" stroke=\"#0284c7\" stroke-width=\"5\"/><circle cx=\"226\" cy=\"26\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"250\" cy=\"50\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"274\" cy=\"74\" r=\"9\" fill=\"#0284c7\"/><rect x=\"299\" y=\"4\" width=\"88\" height=\"88\" rx=\"18\" fill=\"#fff\" stroke=\"#0284c7\" stroke-width=\"5\"/><circle cx=\"323\" cy=\"28\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"367\" cy=\"28\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"323\" cy=\"72\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"367\" cy=\"72\" r=\"9\" fill=\"#0284c7\"/><rect x=\"394\" y=\"4\" width=\"88\" height=\"88\" rx=\"18\" fill=\"#fff\" stroke=\"#0284c7\" stroke-width=\"5\"/><circle cx=\"416\" cy=\"26\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"464\" cy=\"26\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"440\" cy=\"50\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"416\" cy=\"74\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"464\" cy=\"74\" r=\"9\" fill=\"#0284c7\"/><rect x=\"489\" y=\"4\" width=\"88\" height=\"88\" rx=\"18\" fill=\"#fff\" stroke=\"#0284c7\" stroke-width=\"5\"/><circle cx=\"513\" cy=\"24\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"557\" cy=\"24\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"513\" cy=\"50\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"557\" cy=\"50\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"513\" cy=\"76\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"557\" cy=\"76\" r=\"9\" fill=\"#0284c7\"/></svg>",
+   "id": "pro-r003"
+  },
+  {
+   "chap": "pro",
+   "q": "On lance un dé. Probabilité d'obtenir un $6$ ou un $1$ ?",
+   "a": [
+    "$\\dfrac{1}{3}$",
+    "$\\dfrac{1}{6}$",
+    "$\\dfrac{1}{2}$",
+    "$\\dfrac{1}{36}$"
+   ],
+   "why": "2 faces sur 6.",
+   "hint": "Cas favorables ÷ 6.",
+   "img": "<svg viewBox=\"0 0 590 100\" class=\"fig\"><rect x=\"14\" y=\"4\" width=\"88\" height=\"88\" rx=\"18\" fill=\"#fff\" stroke=\"#0284c7\" stroke-width=\"5\"/><circle cx=\"60\" cy=\"50\" r=\"9\" fill=\"#0284c7\"/><rect x=\"109\" y=\"4\" width=\"88\" height=\"88\" rx=\"18\" fill=\"#fff\" stroke=\"#0284c7\" stroke-width=\"5\"/><circle cx=\"133\" cy=\"28\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"177\" cy=\"72\" r=\"9\" fill=\"#0284c7\"/><rect x=\"204\" y=\"4\" width=\"88\" height=\"88\" rx=\"18\" fill=\"#fff\" stroke=\"#0284c7\" stroke-width=\"5\"/><circle cx=\"226\" cy=\"26\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"250\" cy=\"50\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"274\" cy=\"74\" r=\"9\" fill=\"#0284c7\"/><rect x=\"299\" y=\"4\" width=\"88\" height=\"88\" rx=\"18\" fill=\"#fff\" stroke=\"#0284c7\" stroke-width=\"5\"/><circle cx=\"323\" cy=\"28\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"367\" cy=\"28\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"323\" cy=\"72\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"367\" cy=\"72\" r=\"9\" fill=\"#0284c7\"/><rect x=\"394\" y=\"4\" width=\"88\" height=\"88\" rx=\"18\" fill=\"#fff\" stroke=\"#0284c7\" stroke-width=\"5\"/><circle cx=\"416\" cy=\"26\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"464\" cy=\"26\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"440\" cy=\"50\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"416\" cy=\"74\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"464\" cy=\"74\" r=\"9\" fill=\"#0284c7\"/><rect x=\"489\" y=\"4\" width=\"88\" height=\"88\" rx=\"18\" fill=\"#fff\" stroke=\"#0284c7\" stroke-width=\"5\"/><circle cx=\"513\" cy=\"24\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"557\" cy=\"24\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"513\" cy=\"50\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"557\" cy=\"50\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"513\" cy=\"76\" r=\"9\" fill=\"#0284c7\"/><circle cx=\"557\" cy=\"76\" r=\"9\" fill=\"#0284c7\"/></svg>",
+   "id": "pro-r004"
+  },
+  {
+   "chap": "pro",
+   "q": "On tire une boule au hasard. Probabilité qu'elle soit <b style=\"color:#e11d48\">rouge</b> ?",
+   "a": [
+    "$\\dfrac{2}{5}$",
+    "$\\dfrac{3}{5}$",
+    "$\\dfrac{2}{3}$",
+    "$\\dfrac{1}{5}$"
+   ],
+   "why": "2 boules rouges sur 5 au total : $\\dfrac{2}{5}$.",
+   "hint": "Compte les rouges et le total.",
+   "img": "<svg viewBox=\"0 0 300 200\" class=\"fig\"><path d=\"M70 50 Q60 190 150 190 Q240 190 230 50 Z\" fill=\"#f4f2fb\" stroke=\"#1f1b3a\" stroke-width=\"4\"/><ellipse cx=\"150\" cy=\"50\" rx=\"80\" ry=\"12\" fill=\"#fff\" stroke=\"#1f1b3a\" stroke-width=\"4\"/><circle cx=\"100\" cy=\"170\" r=\"11\" fill=\"#2563eb\"/><circle cx=\"125\" cy=\"170\" r=\"11\" fill=\"#e11d48\"/><circle cx=\"150\" cy=\"170\" r=\"11\" fill=\"#2563eb\"/><circle cx=\"175\" cy=\"170\" r=\"11\" fill=\"#e11d48\"/><circle cx=\"200\" cy=\"170\" r=\"11\" fill=\"#2563eb\"/></svg>",
+   "id": "pro-r005"
+  },
+  {
+   "chap": "pro",
+   "q": "On tire une boule au hasard. Probabilité qu'elle soit <b style=\"color:#e11d48\">rouge</b> ?",
+   "a": [
+    "$\\dfrac{4}{5}$",
+    "$\\dfrac{1}{5}$",
+    "$4$"
+   ],
+   "why": "4 boules rouges sur 5 au total : $\\dfrac{4}{5}$.",
+   "hint": "Compte les rouges et le total.",
+   "img": "<svg viewBox=\"0 0 300 200\" class=\"fig\"><path d=\"M70 50 Q60 190 150 190 Q240 190 230 50 Z\" fill=\"#f4f2fb\" stroke=\"#1f1b3a\" stroke-width=\"4\"/><ellipse cx=\"150\" cy=\"50\" rx=\"80\" ry=\"12\" fill=\"#fff\" stroke=\"#1f1b3a\" stroke-width=\"4\"/><circle cx=\"100\" cy=\"170\" r=\"11\" fill=\"#2563eb\"/><circle cx=\"125\" cy=\"170\" r=\"11\" fill=\"#e11d48\"/><circle cx=\"150\" cy=\"170\" r=\"11\" fill=\"#e11d48\"/><circle cx=\"175\" cy=\"170\" r=\"11\" fill=\"#e11d48\"/><circle cx=\"200\" cy=\"170\" r=\"11\" fill=\"#e11d48\"/></svg>",
+   "id": "pro-r006"
+  },
+  {
+   "chap": "pro",
+   "q": "On tire une boule au hasard. Probabilité qu'elle soit <b style=\"color:#e11d48\">rouge</b> ?",
+   "a": [
+    "$\\dfrac{3}{8}$",
+    "$\\dfrac{3}{5}$",
+    "$\\dfrac{1}{8}$"
+   ],
+   "why": "3 boules rouges sur 8 au total : $\\dfrac{3}{8}$.",
+   "hint": "Compte les rouges et le total.",
+   "img": "<svg viewBox=\"0 0 300 200\" class=\"fig\"><path d=\"M70 50 Q60 190 150 190 Q240 190 230 50 Z\" fill=\"#f4f2fb\" stroke=\"#1f1b3a\" stroke-width=\"4\"/><ellipse cx=\"150\" cy=\"50\" rx=\"80\" ry=\"12\" fill=\"#fff\" stroke=\"#1f1b3a\" stroke-width=\"4\"/><circle cx=\"100\" cy=\"170\" r=\"11\" fill=\"#16a34a\"/><circle cx=\"125\" cy=\"170\" r=\"11\" fill=\"#2563eb\"/><circle cx=\"150\" cy=\"170\" r=\"11\" fill=\"#e11d48\"/><circle cx=\"175\" cy=\"170\" r=\"11\" fill=\"#2563eb\"/><circle cx=\"200\" cy=\"170\" r=\"11\" fill=\"#e11d48\"/><circle cx=\"112\" cy=\"144\" r=\"11\" fill=\"#2563eb\"/><circle cx=\"137\" cy=\"144\" r=\"11\" fill=\"#16a34a\"/><circle cx=\"162\" cy=\"144\" r=\"11\" fill=\"#e11d48\"/></svg>",
+   "id": "pro-r007"
+  },
+  {
+   "chap": "pro",
+   "q": "On tire une boule au hasard. Probabilité qu'elle soit <b style=\"color:#e11d48\">rouge</b> ?",
+   "a": [
+    "$\\dfrac{1}{8}$",
+    "$\\dfrac{1}{2}$",
+    "$\\dfrac{1}{7}$"
+   ],
+   "why": "1 boule rouge sur 8 au total : $\\dfrac{1}{8}$.",
+   "hint": "Compte les rouges et le total.",
+   "img": "<svg viewBox=\"0 0 300 200\" class=\"fig\"><path d=\"M70 50 Q60 190 150 190 Q240 190 230 50 Z\" fill=\"#f4f2fb\" stroke=\"#1f1b3a\" stroke-width=\"4\"/><ellipse cx=\"150\" cy=\"50\" rx=\"80\" ry=\"12\" fill=\"#fff\" stroke=\"#1f1b3a\" stroke-width=\"4\"/><circle cx=\"100\" cy=\"170\" r=\"11\" fill=\"#2563eb\"/><circle cx=\"125\" cy=\"170\" r=\"11\" fill=\"#16a34a\"/><circle cx=\"150\" cy=\"170\" r=\"11\" fill=\"#e11d48\"/><circle cx=\"175\" cy=\"170\" r=\"11\" fill=\"#16a34a\"/><circle cx=\"200\" cy=\"170\" r=\"11\" fill=\"#16a34a\"/><circle cx=\"112\" cy=\"144\" r=\"11\" fill=\"#2563eb\"/><circle cx=\"137\" cy=\"144\" r=\"11\" fill=\"#2563eb\"/><circle cx=\"162\" cy=\"144\" r=\"11\" fill=\"#2563eb\"/></svg>",
+   "id": "pro-r008"
+  },
+  {
+   "chap": "pro",
+   "q": "$P(A)=0{,}35$. Que vaut $P(\\bar A)$ ?",
+   "a": [
+    "$0{,}65$",
+    "$0{,}35$",
+    "$1$",
+    "$0{,}5$"
+   ],
+   "why": "$P(\\bar A)=1-P(A)=1-0{,}35=0{,}65$.",
+   "hint": "Événement contraire : 1 − P(A).",
+   "id": "pro-r009"
+  },
+  {
+   "chap": "pro",
+   "q": "$P(A)=0{,}9$. Que vaut $P(\\bar A)$ ?",
+   "a": [
+    "$0{,}1$",
+    "$0{,}9$",
+    "$1$",
+    "$0{,}5$"
+   ],
+   "why": "$P(\\bar A)=1-P(A)=1-0{,}9=0{,}1$.",
+   "hint": "Événement contraire : 1 − P(A).",
+   "id": "pro-r010"
+  },
+  {
+   "chap": "pro",
+   "q": "$P(A)=\\dfrac27$. Que vaut $P(\\bar A)$ ?",
+   "a": [
+    "$\\dfrac57$",
+    "$\\dfrac27$",
+    "$1$",
+    "$0{,}5$"
+   ],
+   "why": "$P(\\bar A)=1-P(A)=1-\\dfrac27=\\dfrac57$.",
+   "hint": "Événement contraire : 1 − P(A).",
+   "id": "pro-r011"
+  },
+  {
+   "chap": "pro",
+   "q": "$A$ et $B$ indépendants, $P(A)=0{,}5$, $P(B)=0{,}3$. $P(A\\cap B)$ ?",
+   "a": [
+    "$0{,}15$",
+    "$0{,}8$",
+    "$0{,}5$",
+    "$0{,}3$"
+   ],
+   "why": "Indépendants : $P(A\\cap B)=P(A)\\times P(B)=0{,}5\\times0{,}3=0{,}15$.",
+   "hint": "« Et » + indépendants : on multiplie.",
+   "id": "pro-r012"
+  },
+  {
+   "chap": "pro",
+   "q": "$A$ et $B$ indépendants, $P(A)=0{,}2$, $P(B)=0{,}5$. $P(A\\cap B)$ ?",
+   "a": [
+    "$0{,}1$",
+    "$0{,}7$",
+    "$0{,}2$",
+    "$0{,}5$"
+   ],
+   "why": "Indépendants : $P(A\\cap B)=P(A)\\times P(B)=0{,}2\\times0{,}5=0{,}1$.",
+   "hint": "« Et » + indépendants : on multiplie.",
+   "id": "pro-r013"
+  },
+  {
+   "chap": "pro",
+   "q": "$A$ et $B$ indépendants, $P(A)=\\dfrac13$, $P(B)=\\dfrac12$. $P(A\\cap B)$ ?",
+   "a": [
+    "$\\dfrac16$",
+    "$\\dfrac56$",
+    "$\\dfrac13$",
+    "$\\dfrac12$"
+   ],
+   "why": "Indépendants : $P(A\\cap B)=P(A)\\times P(B)=\\dfrac13\\times\\dfrac12=\\dfrac16$.",
+   "hint": "« Et » + indépendants : on multiplie.",
+   "id": "pro-r014"
+  },
+  {
+   "chap": "pro",
+   "q": "On lance 2 pièces. Probabilité d'obtenir exactement 1 Pile ?",
+   "a": [
+    "$\\dfrac12$",
+    "$\\dfrac14$",
+    "$\\dfrac34$",
+    "$\\dfrac13$"
+   ],
+   "why": "Issues : PP, PF, FP, FF. Exactement 1 Pile : PF et FP, soit $\\dfrac24=\\dfrac12$.",
+   "hint": "Liste les 4 issues.",
+   "id": "pro-r015"
+  },
+  {
+   "chap": "pro",
+   "q": "On lance 2 pièces. Probabilité d'obtenir au moins 1 Face ?",
+   "a": [
+    "$\\dfrac34$",
+    "$\\dfrac12$",
+    "$\\dfrac14$",
+    "$1$"
+   ],
+   "why": "Seule PP n'a pas de Face : $1-\\dfrac14=\\dfrac34$.",
+   "hint": "Pense à l'événement contraire.",
+   "id": "pro-r016"
+  },
+  {
+   "chap": "pro",
+   "q": "$X$ suit une loi binomiale $\\mathcal B(4\\,;\\tfrac12)$. Que vaut $P(X=2)$ ?",
+   "a": [
+    "$\\dfrac38$",
+    "$\\dfrac12$",
+    "$\\dfrac14$",
+    "$\\dfrac{1}{16}$"
+   ],
+   "why": "$\\dbinom42\\left(\\tfrac12\\right)^4=\\dfrac{6}{16}=\\dfrac38$.",
+   "hint": "P(X=k) = (n parmi k) pᵏ (1−p)ⁿ⁻ᵏ.",
+   "id": "pro-r017"
+  },
+  {
+   "chap": "pro",
+   "q": "$X$ suit $\\mathcal B(3\\,;\\tfrac12)$. Que vaut $P(X=0)$ ?",
+   "a": [
+    "$\\dfrac18$",
+    "$0$",
+    "$\\dfrac12$",
+    "$\\dfrac38$"
+   ],
+   "why": "Aucun succès : $\\left(\\tfrac12\\right)^3=\\dfrac18$.",
+   "hint": "Trois échecs de suite.",
+   "id": "pro-r018"
+  },
+  {
+   "chap": "pro",
+   "q": "Espérance du résultat d'un dé équilibré ?",
+   "a": [
+    "$3{,}5$",
+    "$3$",
+    "$6$",
+    "$21$"
+   ],
+   "why": "$\\dfrac{1+2+3+4+5+6}{6}=\\dfrac{21}{6}=3{,}5$.",
+   "hint": "C'est la moyenne des faces.",
+   "id": "pro-r019"
+  },
+  {
+   "chap": "pro",
+   "q": "$X$ suit $\\mathcal B(20\\,;0{,}3)$. Espérance de $X$ ?",
+   "a": [
+    "$6$",
+    "$0{,}3$",
+    "$20$",
+    "$14$"
+   ],
+   "why": "Pour une loi binomiale, $E(X)=np=20\\times0{,}3=6$.",
+   "hint": "E(X) = n × p.",
+   "id": "pro-r020"
+  },
+  {
+   "chap": "mat",
+   "q": "Norme de $\\vec u(6\\,;8)$ ?",
+   "a": [
+    "$10$",
+    "$14$",
+    "$100$",
+    "$11$"
+   ],
+   "why": "$\\sqrt{6^2+8^2}=\\sqrt{100}=10$.",
+   "hint": "‖u‖ = √(x² + y²).",
+   "id": "mat-r001"
+  },
+  {
+   "chap": "mat",
+   "q": "Norme de $\\vec u(5\\,;12)$ ?",
+   "a": [
+    "$13$",
+    "$17$",
+    "$169$",
+    "$14$"
+   ],
+   "why": "$\\sqrt{5^2+12^2}=\\sqrt{169}=13$.",
+   "hint": "‖u‖ = √(x² + y²).",
+   "id": "mat-r002"
+  },
+  {
+   "chap": "mat",
+   "q": "Norme de $\\vec u(0\\,;7)$ ?",
+   "a": [
+    "$7$",
+    "$49$",
+    "$8$"
+   ],
+   "why": "$\\sqrt{0^2+7^2}=\\sqrt{49}=7$.",
+   "hint": "‖u‖ = √(x² + y²).",
+   "id": "mat-r003"
+  },
+  {
+   "chap": "mat",
+   "q": "Norme de $\\vec u(8\\,;6)$ ?",
+   "a": [
+    "$10$",
+    "$14$",
+    "$100$",
+    "$11$"
+   ],
+   "why": "$\\sqrt{8^2+6^2}=\\sqrt{100}=10$.",
+   "hint": "‖u‖ = √(x² + y²).",
+   "id": "mat-r004"
+  },
+  {
+   "chap": "mat",
+   "q": "Coordonnées de $\\vec{AB}$ avec $A(1\\,;1)$ et $B(4\\,;3)$ ?",
+   "a": [
+    "$(3\\,;2)$",
+    "$(-3\\,;-2)$",
+    "$(5\\,;4)$",
+    "$(2\\,;3)$"
+   ],
+   "why": "Arrivée − départ : $(4-1\\,;3-1)=(3\\,;2)$.",
+   "hint": "Coordonnées de B − coordonnées de A.",
+   "img": "<svg viewBox=\"0 0 300 230\" class=\"fig\"><line x1=\"20.0\" y1=\"210.0\" x2=\"20.0\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"63.33333333333333\" y1=\"210.0\" x2=\"63.33333333333333\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"106.66666666666666\" y1=\"210.0\" x2=\"106.66666666666666\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"150.0\" y1=\"210.0\" x2=\"150.0\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"193.33333333333331\" y1=\"210.0\" x2=\"193.33333333333331\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"236.66666666666669\" y1=\"210.0\" x2=\"236.66666666666669\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"280.0\" y1=\"210.0\" x2=\"280.0\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"210.0\" x2=\"280.0\" y2=\"210.0\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"172.0\" x2=\"280.0\" y2=\"172.0\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"134.0\" x2=\"280.0\" y2=\"134.0\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"96.0\" x2=\"280.0\" y2=\"96.0\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"58.0\" x2=\"280.0\" y2=\"58.0\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"20.0\" x2=\"280.0\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"172.0\" x2=\"280.0\" y2=\"172.0\" stroke=\"#1f1b3a\" stroke-width=\"2.2\"/><line x1=\"63.33333333333333\" y1=\"210.0\" x2=\"63.33333333333333\" y2=\"20.0\" stroke=\"#1f1b3a\" stroke-width=\"2.2\"/><text x=\"20.0\" y=\"187.0\" class=\"ax\">-1</text><text x=\"106.66666666666666\" y=\"187.0\" class=\"ax\">1</text><text x=\"150.0\" y=\"187.0\" class=\"ax\">2</text><text x=\"193.33333333333331\" y=\"187.0\" class=\"ax\">3</text><text x=\"236.66666666666669\" y=\"187.0\" class=\"ax\">4</text><text x=\"280.0\" y=\"187.0\" class=\"ax\">5</text><text x=\"55.33333333333333\" y=\"214.0\" class=\"ax\" text-anchor=\"end\">-1</text><text x=\"55.33333333333333\" y=\"138.0\" class=\"ax\" text-anchor=\"end\">1</text><text x=\"55.33333333333333\" y=\"100.0\" class=\"ax\" text-anchor=\"end\">2</text><text x=\"55.33333333333333\" y=\"62.0\" class=\"ax\" text-anchor=\"end\">3</text><text x=\"55.33333333333333\" y=\"24.0\" class=\"ax\" text-anchor=\"end\">4</text><defs><marker id=\"ah\" markerWidth=\"8\" markerHeight=\"8\" refX=\"6\" refY=\"4\" orient=\"auto\"><path d=\"M0 0 L8 4 L0 8 Z\" fill=\"#16a34a\"/></marker></defs><line x1=\"106.66666666666666\" y1=\"134.0\" x2=\"236.66666666666669\" y2=\"58.0\" stroke=\"#16a34a\" stroke-width=\"4\" marker-end=\"url(#ah)\"/><circle cx=\"106.66666666666666\" cy=\"134.0\" r=\"5\" fill=\"#1f1b3a\"/><text x=\"94.66666666666666\" y=\"152.0\" class=\"ax big\">A</text><text x=\"248.66666666666669\" y=\"52.0\" class=\"ax big\">B</text></svg>",
+   "id": "mat-r005"
+  },
+  {
+   "chap": "mat",
+   "q": "Coordonnées de $\\vec{AB}$ avec $A(0\\,;2)$ et $B(3\\,;5)$ ?",
+   "a": [
+    "$(3\\,;3)$",
+    "$(-3\\,;-3)$",
+    "$(3\\,;7)$"
+   ],
+   "why": "Arrivée − départ : $(3-0\\,;5-2)=(3\\,;3)$.",
+   "hint": "Coordonnées de B − coordonnées de A.",
+   "img": "<svg viewBox=\"0 0 300 230\" class=\"fig\"><line x1=\"20.0\" y1=\"210.0\" x2=\"20.0\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"72.0\" y1=\"210.0\" x2=\"72.0\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"124.0\" y1=\"210.0\" x2=\"124.0\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"176.0\" y1=\"210.0\" x2=\"176.0\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"228.0\" y1=\"210.0\" x2=\"228.0\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"280.0\" y1=\"210.0\" x2=\"280.0\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"210.0\" x2=\"280.0\" y2=\"210.0\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"182.85714285714286\" x2=\"280.0\" y2=\"182.85714285714286\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"155.71428571428572\" x2=\"280.0\" y2=\"155.71428571428572\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"128.57142857142856\" x2=\"280.0\" y2=\"128.57142857142856\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"101.42857142857143\" x2=\"280.0\" y2=\"101.42857142857143\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"74.28571428571428\" x2=\"280.0\" y2=\"74.28571428571428\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"47.14285714285714\" x2=\"280.0\" y2=\"47.14285714285714\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"20.0\" x2=\"280.0\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"182.85714285714286\" x2=\"280.0\" y2=\"182.85714285714286\" stroke=\"#1f1b3a\" stroke-width=\"2.2\"/><line x1=\"72.0\" y1=\"210.0\" x2=\"72.0\" y2=\"20.0\" stroke=\"#1f1b3a\" stroke-width=\"2.2\"/><text x=\"20.0\" y=\"197.85714285714286\" class=\"ax\">-1</text><text x=\"124.0\" y=\"197.85714285714286\" class=\"ax\">1</text><text x=\"176.0\" y=\"197.85714285714286\" class=\"ax\">2</text><text x=\"228.0\" y=\"197.85714285714286\" class=\"ax\">3</text><text x=\"280.0\" y=\"197.85714285714286\" class=\"ax\">4</text><text x=\"64.0\" y=\"214.0\" class=\"ax\" text-anchor=\"end\">-1</text><text x=\"64.0\" y=\"159.71428571428572\" class=\"ax\" text-anchor=\"end\">1</text><text x=\"64.0\" y=\"132.57142857142856\" class=\"ax\" text-anchor=\"end\">2</text><text x=\"64.0\" y=\"105.42857142857143\" class=\"ax\" text-anchor=\"end\">3</text><text x=\"64.0\" y=\"78.28571428571428\" class=\"ax\" text-anchor=\"end\">4</text><text x=\"64.0\" y=\"51.14285714285714\" class=\"ax\" text-anchor=\"end\">5</text><text x=\"64.0\" y=\"24.0\" class=\"ax\" text-anchor=\"end\">6</text><defs><marker id=\"ah\" markerWidth=\"8\" markerHeight=\"8\" refX=\"6\" refY=\"4\" orient=\"auto\"><path d=\"M0 0 L8 4 L0 8 Z\" fill=\"#16a34a\"/></marker></defs><line x1=\"72.0\" y1=\"128.57142857142856\" x2=\"228.0\" y2=\"47.14285714285714\" stroke=\"#16a34a\" stroke-width=\"4\" marker-end=\"url(#ah)\"/><circle cx=\"72.0\" cy=\"128.57142857142856\" r=\"5\" fill=\"#1f1b3a\"/><text x=\"60.0\" y=\"146.57142857142856\" class=\"ax big\">A</text><text x=\"240.0\" y=\"41.14285714285714\" class=\"ax big\">B</text></svg>",
+   "id": "mat-r006"
+  },
+  {
+   "chap": "mat",
+   "q": "Coordonnées de $\\vec{AB}$ avec $A(2\\,;4)$ et $B(5\\,;1)$ ?",
+   "a": [
+    "$(3\\,;-3)$",
+    "$(-3\\,;3)$",
+    "$(7\\,;5)$"
+   ],
+   "why": "Arrivée − départ : $(5-2\\,;1-4)=(3\\,;-3)$.",
+   "hint": "Coordonnées de B − coordonnées de A.",
+   "img": "<svg viewBox=\"0 0 300 230\" class=\"fig\"><line x1=\"20.0\" y1=\"210.0\" x2=\"20.0\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"57.14285714285714\" y1=\"210.0\" x2=\"57.14285714285714\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"94.28571428571428\" y1=\"210.0\" x2=\"94.28571428571428\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"131.42857142857142\" y1=\"210.0\" x2=\"131.42857142857142\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"168.57142857142856\" y1=\"210.0\" x2=\"168.57142857142856\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"205.71428571428572\" y1=\"210.0\" x2=\"205.71428571428572\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"242.85714285714283\" y1=\"210.0\" x2=\"242.85714285714283\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"280.0\" y1=\"210.0\" x2=\"280.0\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"210.0\" x2=\"280.0\" y2=\"210.0\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"178.33333333333334\" x2=\"280.0\" y2=\"178.33333333333334\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"146.66666666666669\" x2=\"280.0\" y2=\"146.66666666666669\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"115.0\" x2=\"280.0\" y2=\"115.0\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"83.33333333333334\" x2=\"280.0\" y2=\"83.33333333333334\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"51.66666666666666\" x2=\"280.0\" y2=\"51.66666666666666\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"20.0\" x2=\"280.0\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"178.33333333333334\" x2=\"280.0\" y2=\"178.33333333333334\" stroke=\"#1f1b3a\" stroke-width=\"2.2\"/><line x1=\"57.14285714285714\" y1=\"210.0\" x2=\"57.14285714285714\" y2=\"20.0\" stroke=\"#1f1b3a\" stroke-width=\"2.2\"/><text x=\"20.0\" y=\"193.33333333333334\" class=\"ax\">-1</text><text x=\"94.28571428571428\" y=\"193.33333333333334\" class=\"ax\">1</text><text x=\"131.42857142857142\" y=\"193.33333333333334\" class=\"ax\">2</text><text x=\"168.57142857142856\" y=\"193.33333333333334\" class=\"ax\">3</text><text x=\"205.71428571428572\" y=\"193.33333333333334\" class=\"ax\">4</text><text x=\"242.85714285714283\" y=\"193.33333333333334\" class=\"ax\">5</text><text x=\"280.0\" y=\"193.33333333333334\" class=\"ax\">6</text><text x=\"49.14285714285714\" y=\"214.0\" class=\"ax\" text-anchor=\"end\">-1</text><text x=\"49.14285714285714\" y=\"150.66666666666669\" class=\"ax\" text-anchor=\"end\">1</text><text x=\"49.14285714285714\" y=\"119.0\" class=\"ax\" text-anchor=\"end\">2</text><text x=\"49.14285714285714\" y=\"87.33333333333334\" class=\"ax\" text-anchor=\"end\">3</text><text x=\"49.14285714285714\" y=\"55.66666666666666\" class=\"ax\" text-anchor=\"end\">4</text><text x=\"49.14285714285714\" y=\"24.0\" class=\"ax\" text-anchor=\"end\">5</text><defs><marker id=\"ah\" markerWidth=\"8\" markerHeight=\"8\" refX=\"6\" refY=\"4\" orient=\"auto\"><path d=\"M0 0 L8 4 L0 8 Z\" fill=\"#16a34a\"/></marker></defs><line x1=\"131.42857142857142\" y1=\"51.66666666666666\" x2=\"242.85714285714283\" y2=\"146.66666666666669\" stroke=\"#16a34a\" stroke-width=\"4\" marker-end=\"url(#ah)\"/><circle cx=\"131.42857142857142\" cy=\"51.66666666666666\" r=\"5\" fill=\"#1f1b3a\"/><text x=\"119.42857142857142\" y=\"69.66666666666666\" class=\"ax big\">A</text><text x=\"254.85714285714283\" y=\"140.66666666666669\" class=\"ax big\">B</text></svg>",
+   "id": "mat-r007"
+  },
+  {
+   "chap": "mat",
+   "q": "Coordonnées de $\\vec{AB}$ avec $A(1\\,;3)$ et $B(4\\,;3)$ ?",
+   "a": [
+    "$(3\\,;0)$",
+    "$(-3\\,;0)$",
+    "$(5\\,;6)$",
+    "$(0\\,;3)$"
+   ],
+   "why": "Arrivée − départ : $(4-1\\,;3-3)=(3\\,;0)$.",
+   "hint": "Coordonnées de B − coordonnées de A.",
+   "img": "<svg viewBox=\"0 0 300 230\" class=\"fig\"><line x1=\"20.0\" y1=\"210.0\" x2=\"20.0\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"63.33333333333333\" y1=\"210.0\" x2=\"63.33333333333333\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"106.66666666666666\" y1=\"210.0\" x2=\"106.66666666666666\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"150.0\" y1=\"210.0\" x2=\"150.0\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"193.33333333333331\" y1=\"210.0\" x2=\"193.33333333333331\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"236.66666666666669\" y1=\"210.0\" x2=\"236.66666666666669\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"280.0\" y1=\"210.0\" x2=\"280.0\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"210.0\" x2=\"280.0\" y2=\"210.0\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"172.0\" x2=\"280.0\" y2=\"172.0\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"134.0\" x2=\"280.0\" y2=\"134.0\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"96.0\" x2=\"280.0\" y2=\"96.0\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"58.0\" x2=\"280.0\" y2=\"58.0\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"20.0\" x2=\"280.0\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"172.0\" x2=\"280.0\" y2=\"172.0\" stroke=\"#1f1b3a\" stroke-width=\"2.2\"/><line x1=\"63.33333333333333\" y1=\"210.0\" x2=\"63.33333333333333\" y2=\"20.0\" stroke=\"#1f1b3a\" stroke-width=\"2.2\"/><text x=\"20.0\" y=\"187.0\" class=\"ax\">-1</text><text x=\"106.66666666666666\" y=\"187.0\" class=\"ax\">1</text><text x=\"150.0\" y=\"187.0\" class=\"ax\">2</text><text x=\"193.33333333333331\" y=\"187.0\" class=\"ax\">3</text><text x=\"236.66666666666669\" y=\"187.0\" class=\"ax\">4</text><text x=\"280.0\" y=\"187.0\" class=\"ax\">5</text><text x=\"55.33333333333333\" y=\"214.0\" class=\"ax\" text-anchor=\"end\">-1</text><text x=\"55.33333333333333\" y=\"138.0\" class=\"ax\" text-anchor=\"end\">1</text><text x=\"55.33333333333333\" y=\"100.0\" class=\"ax\" text-anchor=\"end\">2</text><text x=\"55.33333333333333\" y=\"62.0\" class=\"ax\" text-anchor=\"end\">3</text><text x=\"55.33333333333333\" y=\"24.0\" class=\"ax\" text-anchor=\"end\">4</text><defs><marker id=\"ah\" markerWidth=\"8\" markerHeight=\"8\" refX=\"6\" refY=\"4\" orient=\"auto\"><path d=\"M0 0 L8 4 L0 8 Z\" fill=\"#16a34a\"/></marker></defs><line x1=\"106.66666666666666\" y1=\"58.0\" x2=\"236.66666666666669\" y2=\"58.0\" stroke=\"#16a34a\" stroke-width=\"4\" marker-end=\"url(#ah)\"/><circle cx=\"106.66666666666666\" cy=\"58.0\" r=\"5\" fill=\"#1f1b3a\"/><text x=\"94.66666666666666\" y=\"76.0\" class=\"ax big\">A</text><text x=\"248.66666666666669\" y=\"52.0\" class=\"ax big\">B</text></svg>",
+   "id": "mat-r008"
+  },
+  {
+   "chap": "mat",
+   "q": "$\\vec u(2\\,;1)$, $\\vec v(3\\,;-4)$. Coordonnées de $\\vec u+\\vec v$ ?",
+   "a": [
+    "$(5\\,;-3)$",
+    "$(6\\,;-4)$",
+    "$(-1\\,;5)$",
+    "$(3\\,;-1)$"
+   ],
+   "why": "On additionne coordonnée par coordonnée : $(2+(3)\\,;1+(-4))$.",
+   "hint": "x avec x, y avec y.",
+   "id": "mat-r009"
+  },
+  {
+   "chap": "mat",
+   "q": "$\\vec u(-1\\,;5)$, $\\vec v(4\\,;2)$. Coordonnées de $\\vec u+\\vec v$ ?",
+   "a": [
+    "$(3\\,;7)$",
+    "$(-4\\,;10)$",
+    "$(-5\\,;3)$",
+    "$(4\\,;6)$"
+   ],
+   "why": "On additionne coordonnée par coordonnée : $(-1+(4)\\,;5+(2))$.",
+   "hint": "x avec x, y avec y.",
+   "id": "mat-r010"
+  },
+  {
+   "chap": "mat",
+   "q": "$\\vec u(3\\,;0)$, $\\vec v(-2\\,;6)$. Coordonnées de $\\vec u+\\vec v$ ?",
+   "a": [
+    "$(1\\,;6)$",
+    "$(-6\\,;0)$",
+    "$(5\\,;-6)$",
+    "$(3\\,;4)$"
+   ],
+   "why": "On additionne coordonnée par coordonnée : $(3+(-2)\\,;0+(6))$.",
+   "hint": "x avec x, y avec y.",
+   "id": "mat-r011"
+  },
+  {
+   "chap": "mat",
+   "q": "$\\vec u(1\\,;-2)$, $\\vec v(2\\,;2)$. Coordonnées de $\\vec u+\\vec v$ ?",
+   "a": [
+    "$(3\\,;0)$",
+    "$(2\\,;-4)$",
+    "$(-1\\,;-4)$",
+    "$(-1\\,;4)$"
+   ],
+   "why": "On additionne coordonnée par coordonnée : $(1+(2)\\,;-2+(2))$.",
+   "hint": "x avec x, y avec y.",
+   "id": "mat-r012"
+  },
+  {
+   "chap": "mat",
+   "q": "Produit scalaire $(3\\,;2)\\cdot(1\\,;4)$ ?",
+   "a": [
+    "$11$",
+    "$(3\\,;8)$",
+    "$14$",
+    "$13$"
+   ],
+   "why": "$xx'+yy'=3\\times1+2\\times(4)=11$.",
+   "hint": "xx' + yy'.",
+   "id": "mat-r013"
+  },
+  {
+   "chap": "mat",
+   "q": "Produit scalaire $(2\\,;-1)\\cdot(3\\,;5)$ ?",
+   "a": [
+    "$1$",
+    "$(6\\,;-5)$",
+    "$7$",
+    "$3$"
+   ],
+   "why": "$xx'+yy'=2\\times3+-1\\times(5)=1$.",
+   "hint": "xx' + yy'.",
+   "id": "mat-r014"
+  },
+  {
+   "chap": "mat",
+   "q": "Produit scalaire $(4\\,;1)\\cdot(-1\\,;4)$ ?",
+   "a": [
+    "$0$",
+    "$(-4\\,;4)$",
+    "$15$",
+    "$2$"
+   ],
+   "why": "$xx'+yy'=4\\times-1+1\\times(4)=0$. Nul : les vecteurs sont perpendiculaires.",
+   "hint": "xx' + yy'.",
+   "id": "mat-r015"
+  },
+  {
+   "chap": "mat",
+   "q": "Produit scalaire $(-2\\,;3)\\cdot(6\\,;4)$ ?",
+   "a": [
+    "$0$",
+    "$(-12\\,;12)$",
+    "$10$",
+    "$2$"
+   ],
+   "why": "$xx'+yy'=-2\\times6+3\\times(4)=0$. Nul : les vecteurs sont perpendiculaires.",
+   "hint": "xx' + yy'.",
+   "id": "mat-r016"
+  },
+  {
+   "chap": "mat",
+   "q": "$\\vec u(2\\,;3)$ et $\\vec v(6\\,;9)$ sont-ils colinéaires ?",
+   "a": [
+    "Oui",
+    "Non",
+    "On ne peut pas savoir"
+   ],
+   "why": "$\\det(\\vec u,\\vec v)=2\\times9-3\\times6=0$ : nul, donc colinéaires.",
+   "hint": "Calcule xy' − yx'.",
+   "id": "mat-r017"
+  },
+  {
+   "chap": "mat",
+   "q": "$\\vec u(1\\,;2)$ et $\\vec v(3\\,;5)$ sont-ils colinéaires ?",
+   "a": [
+    "Non",
+    "Oui",
+    "On ne peut pas savoir"
+   ],
+   "why": "$\\det(\\vec u,\\vec v)=1\\times5-2\\times3=-1$ : non nul, donc pas colinéaires.",
+   "hint": "Calcule xy' − yx'.",
+   "id": "mat-r018"
+  },
+  {
+   "chap": "mat",
+   "q": "Milieu de $[AB]$ avec $A(2\\,;4)$ et $B(6\\,;8)$ ?",
+   "a": [
+    "$(4\\,;6)$",
+    "$(8\\,;12)$",
+    "$(4\\,;4)$",
+    "$(6\\,;4)$"
+   ],
+   "why": "Moyenne des abscisses et moyenne des ordonnées.",
+   "hint": "Moyenne des coordonnées.",
+   "id": "mat-r019"
+  },
+  {
+   "chap": "mat",
+   "q": "Milieu de $[AB]$ avec $A(-1\\,;3)$ et $B(5\\,;1)$ ?",
+   "a": [
+    "$(2\\,;2)$",
+    "$(4\\,;4)$",
+    "$(6\\,;-2)$"
+   ],
+   "why": "Moyenne des abscisses et moyenne des ordonnées.",
+   "hint": "Moyenne des coordonnées.",
+   "id": "mat-r020"
+  },
+  {
+   "chap": "rac",
+   "q": "$\\sqrt{64}$ ?",
+   "a": [
+    "$8$",
+    "$32$",
+    "$9$",
+    "$6$"
+   ],
+   "why": "$8^2=64$.",
+   "hint": "Quel nombre au carré donne 64 ?",
+   "id": "rac-r001"
+  },
+  {
+   "chap": "rac",
+   "q": "$\\sqrt{121}$ ?",
+   "a": [
+    "$11$",
+    "$60$",
+    "$12$",
+    "$9$"
+   ],
+   "why": "$11^2=121$.",
+   "hint": "Quel nombre au carré donne 121 ?",
+   "id": "rac-r002"
+  },
+  {
+   "chap": "rac",
+   "q": "$\\sqrt{144}$ ?",
+   "a": [
+    "$12$",
+    "$72$",
+    "$13$",
+    "$10$"
+   ],
+   "why": "$12^2=144$.",
+   "hint": "Quel nombre au carré donne 144 ?",
+   "id": "rac-r003"
+  },
+  {
+   "chap": "rac",
+   "q": "$\\sqrt{225}$ ?",
+   "a": [
+    "$15$",
+    "$112$",
+    "$16$",
+    "$13$"
+   ],
+   "why": "$15^2=225$.",
+   "hint": "Quel nombre au carré donne 225 ?",
+   "id": "rac-r004"
+  },
+  {
+   "chap": "rac",
+   "q": "Simplifie $\\sqrt{18}$",
+   "a": [
+    "$3\\sqrt{2}$",
+    "$2\\sqrt{3}$",
+    "$9\\sqrt{2}$",
+    "$3\\sqrt{6}$"
+   ],
+   "why": "$\\sqrt{18}=\\sqrt{9\\times2}=3\\sqrt{2}$.",
+   "hint": "Cherche le plus grand carré qui divise 18.",
+   "id": "rac-r005"
+  },
+  {
+   "chap": "rac",
+   "q": "Simplifie $\\sqrt{12}$",
+   "a": [
+    "$2\\sqrt{3}$",
+    "$3\\sqrt{2}$",
+    "$4\\sqrt{3}$",
+    "$2\\sqrt{6}$"
+   ],
+   "why": "$\\sqrt{12}=\\sqrt{4\\times3}=2\\sqrt{3}$.",
+   "hint": "Cherche le plus grand carré qui divise 12.",
+   "id": "rac-r006"
+  },
+  {
+   "chap": "rac",
+   "q": "Simplifie $\\sqrt{20}$",
+   "a": [
+    "$2\\sqrt{5}$",
+    "$5\\sqrt{2}$",
+    "$4\\sqrt{5}$",
+    "$2\\sqrt{10}$"
+   ],
+   "why": "$\\sqrt{20}=\\sqrt{4\\times5}=2\\sqrt{5}$.",
+   "hint": "Cherche le plus grand carré qui divise 20.",
+   "id": "rac-r007"
+  },
+  {
+   "chap": "rac",
+   "q": "Simplifie $\\sqrt{50}$",
+   "a": [
+    "$5\\sqrt{2}$",
+    "$2\\sqrt{5}$",
+    "$25\\sqrt{2}$",
+    "$5\\sqrt{10}$"
+   ],
+   "why": "$\\sqrt{50}=\\sqrt{25\\times2}=5\\sqrt{2}$.",
+   "hint": "Cherche le plus grand carré qui divise 50.",
+   "id": "rac-r008"
+  },
+  {
+   "chap": "rac",
+   "q": "Simplifie $\\sqrt{48}$",
+   "a": [
+    "$4\\sqrt{3}$",
+    "$3\\sqrt{4}$",
+    "$16\\sqrt{3}$",
+    "$4\\sqrt{12}$"
+   ],
+   "why": "$\\sqrt{48}=\\sqrt{16\\times3}=4\\sqrt{3}$.",
+   "hint": "Cherche le plus grand carré qui divise 48.",
+   "id": "rac-r009"
+  },
+  {
+   "chap": "rac",
+   "q": "Simplifie $\\sqrt{28}$",
+   "a": [
+    "$2\\sqrt{7}$",
+    "$7\\sqrt{2}$",
+    "$4\\sqrt{7}$",
+    "$2\\sqrt{14}$"
+   ],
+   "why": "$\\sqrt{28}=\\sqrt{4\\times7}=2\\sqrt{7}$.",
+   "hint": "Cherche le plus grand carré qui divise 28.",
+   "id": "rac-r010"
+  },
+  {
+   "chap": "rac",
+   "q": "$\\sqrt{3}\\times\\sqrt{12}$ ?",
+   "a": [
+    "$6$",
+    "$\\sqrt{15}$",
+    "$36$",
+    "$7$"
+   ],
+   "why": "$\\sqrt{3\\times12}=\\sqrt{36}=6$.",
+   "hint": "√a × √b = √(ab).",
+   "id": "rac-r011"
+  },
+  {
+   "chap": "rac",
+   "q": "$\\sqrt{5}\\times\\sqrt{20}$ ?",
+   "a": [
+    "$10$",
+    "$\\sqrt{25}$",
+    "$100$",
+    "$11$"
+   ],
+   "why": "$\\sqrt{5\\times20}=\\sqrt{100}=10$.",
+   "hint": "√a × √b = √(ab).",
+   "id": "rac-r012"
+  },
+  {
+   "chap": "rac",
+   "q": "$\\sqrt{2}\\times\\sqrt{18}$ ?",
+   "a": [
+    "$6$",
+    "$\\sqrt{20}$",
+    "$36$",
+    "$7$"
+   ],
+   "why": "$\\sqrt{2\\times18}=\\sqrt{36}=6$.",
+   "hint": "√a × √b = √(ab).",
+   "id": "rac-r013"
+  },
+  {
+   "chap": "rac",
+   "q": "$\\sqrt{6}\\times\\sqrt{6}$ ?",
+   "a": [
+    "$6$",
+    "$\\sqrt{12}$",
+    "$36$",
+    "$7$"
+   ],
+   "why": "$\\sqrt{6\\times6}=\\sqrt{36}=6$.",
+   "hint": "√a × √b = √(ab).",
+   "id": "rac-r014"
+  },
+  {
+   "chap": "rac",
+   "q": "$\\dfrac{3}{\\sqrt{3}}$ ?",
+   "a": [
+    "$\\sqrt{3}$",
+    "$3$",
+    "$1$",
+    "$\\dfrac{\\sqrt{3}}{3}$"
+   ],
+   "why": "$\\dfrac{3}{\\sqrt{3}}=\\dfrac{\\sqrt{3}\\times\\sqrt{3}}{\\sqrt{3}}=\\sqrt{3}$.",
+   "hint": "Écris 3 = √3 × √3.",
+   "id": "rac-r015"
+  },
+  {
+   "chap": "rac",
+   "q": "$\\dfrac{5}{\\sqrt{5}}$ ?",
+   "a": [
+    "$\\sqrt{5}$",
+    "$5$",
+    "$1$",
+    "$\\dfrac{\\sqrt{5}}{5}$"
+   ],
+   "why": "$\\dfrac{5}{\\sqrt{5}}=\\dfrac{\\sqrt{5}\\times\\sqrt{5}}{\\sqrt{5}}=\\sqrt{5}$.",
+   "hint": "Écris 5 = √5 × √5.",
+   "id": "rac-r016"
+  },
+  {
+   "chap": "rac",
+   "q": "$\\dfrac{7}{\\sqrt{7}}$ ?",
+   "a": [
+    "$\\sqrt{7}$",
+    "$7$",
+    "$1$",
+    "$\\dfrac{\\sqrt{7}}{7}$"
+   ],
+   "why": "$\\dfrac{7}{\\sqrt{7}}=\\dfrac{\\sqrt{7}\\times\\sqrt{7}}{\\sqrt{7}}=\\sqrt{7}$.",
+   "hint": "Écris 7 = √7 × √7.",
+   "id": "rac-r017"
+  },
+  {
+   "chap": "rac",
+   "q": "$\\sqrt{36+64}$ ?",
+   "a": [
+    "$10$",
+    "$14$",
+    "$100$",
+    "$9$"
+   ],
+   "why": "D'abord la somme : $\\sqrt{100}=10$. Attention : $\\sqrt{a+b}\\neq\\sqrt a+\\sqrt b$.",
+   "hint": "Calcule ce qu'il y a sous la racine en premier.",
+   "id": "rac-r018"
+  },
+  {
+   "chap": "rac",
+   "q": "$\\sqrt{9+40}$ ?",
+   "a": [
+    "$7$",
+    "$8$",
+    "$49$",
+    "$6$"
+   ],
+   "why": "D'abord la somme : $\\sqrt{49}=7$. Attention : $\\sqrt{a+b}\\neq\\sqrt a+\\sqrt b$.",
+   "hint": "Calcule ce qu'il y a sous la racine en premier.",
+   "id": "rac-r019"
+  },
+  {
+   "chap": "rac",
+   "q": "$\\sqrt{16+9}$ ?",
+   "a": [
+    "$5$",
+    "$7$",
+    "$25$",
+    "$4$"
+   ],
+   "why": "D'abord la somme : $\\sqrt{25}=5$. Attention : $\\sqrt{a+b}\\neq\\sqrt a+\\sqrt b$.",
+   "hint": "Calcule ce qu'il y a sous la racine en premier.",
+   "id": "rac-r020"
+  },
+  {
+   "chap": "pui",
+   "q": "$2^{5}$ ?",
+   "a": [
+    "$32$",
+    "$10$",
+    "$16$",
+    "$25$"
+   ],
+   "why": "$2\\times2\\times2\\times2\\times2=32$.",
+   "hint": "2 multiplié 5 fois par lui-même.",
+   "id": "pui-r001"
+  },
+  {
+   "chap": "pui",
+   "q": "$5^{3}$ ?",
+   "a": [
+    "$125$",
+    "$15$",
+    "$25$",
+    "$243$"
+   ],
+   "why": "$5\\times5\\times5=125$.",
+   "hint": "5 multiplié 3 fois par lui-même.",
+   "id": "pui-r002"
+  },
+  {
+   "chap": "pui",
+   "q": "$10^{4}$ ?",
+   "a": [
+    "$10000$",
+    "$40$",
+    "$1000$",
+    "$1048576$"
+   ],
+   "why": "$10\\times10\\times10\\times10=10000$.",
+   "hint": "10 multiplié 4 fois par lui-même.",
+   "id": "pui-r003"
+  },
+  {
+   "chap": "pui",
+   "q": "$4^{3}$ ?",
+   "a": [
+    "$64$",
+    "$12$",
+    "$16$",
+    "$81$"
+   ],
+   "why": "$4\\times4\\times4=64$.",
+   "hint": "4 multiplié 3 fois par lui-même.",
+   "id": "pui-r004"
+  },
+  {
+   "chap": "pui",
+   "q": "$3^{2}\\times3^{5}$ ?",
+   "a": [
+    "$3^{7}$",
+    "$3^{10}$",
+    "$9^{7}$",
+    "$3^{-3}$"
+   ],
+   "why": "On additionne les exposants : $2+(5)=7$.",
+   "hint": "Multiplication → on additionne les exposants.",
+   "id": "pui-r005"
+  },
+  {
+   "chap": "pui",
+   "q": "$7^{4}\\times7^{6}$ ?",
+   "a": [
+    "$7^{10}$",
+    "$7^{24}$",
+    "$49^{10}$",
+    "$7^{-2}$"
+   ],
+   "why": "On additionne les exposants : $4+(6)=10$.",
+   "hint": "Multiplication → on additionne les exposants.",
+   "id": "pui-r006"
+  },
+  {
+   "chap": "pui",
+   "q": "$10^{-2}\\times10^{5}$ ?",
+   "a": [
+    "$10^{3}$",
+    "$10^{-10}$",
+    "$100^{3}$",
+    "$10^{-7}$"
+   ],
+   "why": "On additionne les exposants : $-2+(5)=3$.",
+   "hint": "Multiplication → on additionne les exposants.",
+   "id": "pui-r007"
+  },
+  {
+   "chap": "pui",
+   "q": "$2^{3}\\times2^{-8}$ ?",
+   "a": [
+    "$2^{-5}$",
+    "$2^{-24}$",
+    "$4^{-5}$",
+    "$2^{11}$"
+   ],
+   "why": "On additionne les exposants : $3+(-8)=-5$.",
+   "hint": "Multiplication → on additionne les exposants.",
+   "id": "pui-r008"
+  },
+  {
+   "chap": "pui",
+   "q": "$\\dfrac{6^{5}}{6^{5}}$ ?",
+   "a": [
+    "$1$",
+    "$0$",
+    "$6$",
+    "$6^{10}$"
+   ],
+   "why": "Exposants égaux : $6^{5-5}=6^0=1$ (un nombre divisé par lui-même).",
+   "hint": "Un nombre divisé par lui-même…",
+   "id": "pui-r009"
+  },
+  {
+   "chap": "pui",
+   "q": "$\\dfrac{2^{9}}{2^{4}}$ ?",
+   "a": [
+    "$2^{5}$",
+    "$2^{13}$",
+    "$1^{5}$",
+    "$2^{-5}$"
+   ],
+   "why": "On soustrait les exposants : $9-4=5$.",
+   "hint": "Division → on soustrait les exposants.",
+   "id": "pui-r010"
+  },
+  {
+   "chap": "pui",
+   "q": "$\\dfrac{10^{3}}{10^{7}}$ ?",
+   "a": [
+    "$10^{-4}$",
+    "$10^{10}$",
+    "$1^{-4}$",
+    "$10^{4}$"
+   ],
+   "why": "On soustrait les exposants : $3-7=-4$.",
+   "hint": "Division → on soustrait les exposants.",
+   "id": "pui-r011"
+  },
+  {
+   "chap": "pui",
+   "q": "$(2^{3})^{4}$ ?",
+   "a": [
+    "$2^{12}$",
+    "$2^{7}$",
+    "$8^{7}$",
+    "$8^{3}$"
+   ],
+   "why": "On multiplie les exposants : $3\\times4=12$.",
+   "hint": "Puissance de puissance → on multiplie.",
+   "id": "pui-r012"
+  },
+  {
+   "chap": "pui",
+   "q": "$(5^{2})^{3}$ ?",
+   "a": [
+    "$5^{6}$",
+    "$5^{5}$",
+    "$25^{5}$",
+    "$15^{2}$"
+   ],
+   "why": "On multiplie les exposants : $2\\times3=6$.",
+   "hint": "Puissance de puissance → on multiplie.",
+   "id": "pui-r013"
+  },
+  {
+   "chap": "pui",
+   "q": "$(10^{-1})^{2}$ ?",
+   "a": [
+    "$10^{-2}$",
+    "$10^{1}$",
+    "$0.1^{1}$",
+    "$20^{-1}$"
+   ],
+   "why": "On multiplie les exposants : $-1\\times2=-2$.",
+   "hint": "Puissance de puissance → on multiplie.",
+   "id": "pui-r014"
+  },
+  {
+   "chap": "pui",
+   "q": "$10^{-2}$ ?",
+   "a": [
+    "$\\dfrac{1}{100}$",
+    "$-100$",
+    "$-20$",
+    "$\\dfrac{1}{20}$"
+   ],
+   "why": "$10^{-2}=\\dfrac{1}{10^{2}}=\\dfrac{1}{100}$.",
+   "hint": "Exposant négatif → inverse.",
+   "id": "pui-r015"
+  },
+  {
+   "chap": "pui",
+   "q": "$5^{-1}$ ?",
+   "a": [
+    "$\\dfrac{1}{5}$",
+    "$-5$",
+    "$0$"
+   ],
+   "why": "$5^{-1}=\\dfrac{1}{5^{1}}=\\dfrac{1}{5}$.",
+   "hint": "Exposant négatif → inverse.",
+   "id": "pui-r016"
+  },
+  {
+   "chap": "pui",
+   "q": "$3^{-2}$ ?",
+   "a": [
+    "$\\dfrac{1}{9}$",
+    "$-9$",
+    "$-6$",
+    "$\\dfrac{1}{6}$"
+   ],
+   "why": "$3^{-2}=\\dfrac{1}{3^{2}}=\\dfrac{1}{9}$.",
+   "hint": "Exposant négatif → inverse.",
+   "id": "pui-r017"
+  },
+  {
+   "chap": "pui",
+   "q": "Écriture scientifique de $0{,}0034$ ?",
+   "a": [
+    "$3{,}4\\times10^{-3}$",
+    "$3{,}4\\times10^{3}$",
+    "$3{,}4\\times10^{-4}$",
+    "$3{,}4\\times10^{-2}$"
+   ],
+   "why": "On déplace la virgule pour avoir un nombre entre 1 et 10 : $0{,}0034=3{,}4\\times10^{-3}$.",
+   "hint": "Compte de combien de rangs la virgule se déplace.",
+   "id": "pui-r018"
+  },
+  {
+   "chap": "pui",
+   "q": "Écriture scientifique de $52\\,000$ ?",
+   "a": [
+    "$5{,}2\\times10^{4}$",
+    "$5{,}2\\times10^{-4}$",
+    "$5{,}2\\times10^{3}$",
+    "$5{,}2\\times10^{5}$"
+   ],
+   "why": "On déplace la virgule pour avoir un nombre entre 1 et 10 : $52\\,000=5{,}2\\times10^{4}$.",
+   "hint": "Compte de combien de rangs la virgule se déplace.",
+   "id": "pui-r019"
+  },
+  {
+   "chap": "pui",
+   "q": "Écriture scientifique de $0{,}7$ ?",
+   "a": [
+    "$7\\times10^{-1}$",
+    "$7\\times10^{1}$",
+    "$7\\times10^{-2}$",
+    "$7\\times10^{0}$"
+   ],
+   "why": "On déplace la virgule pour avoir un nombre entre 1 et 10 : $0{,}7=7\\times10^{-1}$.",
+   "hint": "Compte de combien de rangs la virgule se déplace.",
+   "id": "pui-r020"
+  },
+  {
+   "chap": "ens",
+   "q": "$A=\\{1,\\,3,\\,5,\\,7\\}$, $B=\\{3,\\,4,\\,5\\}$. $A\\cap B$ ?",
+   "a": [
+    "$\\{3,\\,5\\}$",
+    "$\\{1,\\,3,\\,4,\\,5,\\,7\\}$",
+    "$\\{1,\\,7\\}$",
+    "$\\{4\\}$"
+   ],
+   "why": "Les éléments communs : $\\{3,\\,5\\}$.",
+   "hint": "∩ : dans A ET dans B.",
+   "id": "ens-r001"
+  },
+  {
+   "chap": "ens",
+   "q": "$A=\\{1,\\,3,\\,5,\\,7\\}$, $B=\\{3,\\,4,\\,5\\}$. $A\\cup B$ ?",
+   "a": [
+    "$\\{1,\\,3,\\,4,\\,5,\\,7\\}$",
+    "$\\{3,\\,5\\}$",
+    "$\\{1,\\,3,\\,5,\\,7\\}$",
+    "$\\{1,\\,4,\\,7\\}$"
+   ],
+   "why": "Tout réunir, sans doublon : $\\{1,\\,3,\\,4,\\,5,\\,7\\}$.",
+   "hint": "∪ : dans A OU dans B.",
+   "id": "ens-r002"
+  },
+  {
+   "chap": "ens",
+   "q": "$A=\\{2,\\,4,\\,6\\}$, $B=\\{1,\\,2,\\,3\\}$. $A\\cap B$ ?",
+   "a": [
+    "$\\{2\\}$",
+    "$\\{1,\\,2,\\,3,\\,4,\\,6\\}$",
+    "$\\{4,\\,6\\}$",
+    "$\\{1,\\,3\\}$"
+   ],
+   "why": "Les éléments communs : $\\{2\\}$.",
+   "hint": "∩ : dans A ET dans B.",
+   "id": "ens-r003"
+  },
+  {
+   "chap": "ens",
+   "q": "$A=\\{2,\\,4,\\,6\\}$, $B=\\{1,\\,2,\\,3\\}$. $A\\cup B$ ?",
+   "a": [
+    "$\\{1,\\,2,\\,3,\\,4,\\,6\\}$",
+    "$\\{2\\}$",
+    "$\\{2,\\,4,\\,6\\}$",
+    "$\\{1,\\,3,\\,4,\\,6\\}$"
+   ],
+   "why": "Tout réunir, sans doublon : $\\{1,\\,2,\\,3,\\,4,\\,6\\}$.",
+   "hint": "∪ : dans A OU dans B.",
+   "id": "ens-r004"
+  },
+  {
+   "chap": "ens",
+   "q": "$A=\\{0,\\,5,\\,10\\}$, $B=\\{5,\\,10,\\,15\\}$. $A\\cap B$ ?",
+   "a": [
+    "$\\{5,\\,10\\}$",
+    "$\\{0,\\,5,\\,10,\\,15\\}$",
+    "$\\{0\\}$",
+    "$\\{15\\}$"
+   ],
+   "why": "Les éléments communs : $\\{5,\\,10\\}$.",
+   "hint": "∩ : dans A ET dans B.",
+   "id": "ens-r005"
+  },
+  {
+   "chap": "ens",
+   "q": "$A=\\{0,\\,5,\\,10\\}$, $B=\\{5,\\,10,\\,15\\}$. $A\\cup B$ ?",
+   "a": [
+    "$\\{0,\\,5,\\,10,\\,15\\}$",
+    "$\\{5,\\,10\\}$",
+    "$\\{0,\\,5,\\,10\\}$",
+    "$\\{0,\\,15\\}$"
+   ],
+   "why": "Tout réunir, sans doublon : $\\{0,\\,5,\\,10,\\,15\\}$.",
+   "hint": "∪ : dans A OU dans B.",
+   "id": "ens-r006"
+  },
+  {
+   "chap": "ens",
+   "q": "Plus petit ensemble contenant $-7$ ?",
+   "a": [
+    "$\\mathbb Z$",
+    "$\\mathbb N$",
+    "$\\mathbb Q$",
+    "$\\mathbb R$"
+   ],
+   "why": "$-7$ est entier négatif : $ \\mathbb Z$.",
+   "hint": "ℕ ⊂ ℤ ⊂ ℚ ⊂ ℝ.",
+   "id": "ens-r007"
+  },
+  {
+   "chap": "ens",
+   "q": "Plus petit ensemble contenant $0{,}25$ ?",
+   "a": [
+    "$\\mathbb Q$",
+    "$\\mathbb N$",
+    "$\\mathbb Z$",
+    "$\\mathbb R$"
+   ],
+   "why": "$0{,}25$ est égal à $\\dfrac14$, une fraction : $ \\mathbb Q$.",
+   "hint": "ℕ ⊂ ℤ ⊂ ℚ ⊂ ℝ.",
+   "id": "ens-r008"
+  },
+  {
+   "chap": "ens",
+   "q": "Plus petit ensemble contenant $\\pi$ ?",
+   "a": [
+    "$\\mathbb R$",
+    "$\\mathbb N$",
+    "$\\mathbb Z$",
+    "$\\mathbb Q$"
+   ],
+   "why": "$\\pi$ est irrationnel : $ \\mathbb R$.",
+   "hint": "ℕ ⊂ ℤ ⊂ ℚ ⊂ ℝ.",
+   "id": "ens-r009"
+  },
+  {
+   "chap": "ens",
+   "q": "Plus petit ensemble contenant $\\dfrac{12}{4}$ ?",
+   "a": [
+    "$\\mathbb N$",
+    "$\\mathbb Z$",
+    "$\\mathbb Q$",
+    "$\\mathbb R$"
+   ],
+   "why": "$\\dfrac{12}{4}$ est égal à $3$, un entier positif : $ \\mathbb N$.",
+   "hint": "ℕ ⊂ ℤ ⊂ ℚ ⊂ ℝ.",
+   "id": "ens-r010"
+  },
+  {
+   "chap": "ens",
+   "q": "Plus petit ensemble contenant $\\sqrt{16}$ ?",
+   "a": [
+    "$\\mathbb N$",
+    "$\\mathbb Z$",
+    "$\\mathbb Q$",
+    "$\\mathbb R$"
+   ],
+   "why": "$\\sqrt{16}$ est égal à $4$ : $ \\mathbb N$.",
+   "hint": "ℕ ⊂ ℤ ⊂ ℚ ⊂ ℝ.",
+   "id": "ens-r011"
+  },
+  {
+   "chap": "ens",
+   "q": "Plus petit ensemble contenant $-\\dfrac23$ ?",
+   "a": [
+    "$\\mathbb Q$",
+    "$\\mathbb N$",
+    "$\\mathbb Z$",
+    "$\\mathbb R$"
+   ],
+   "why": "$-\\dfrac23$ est une fraction négative : $ \\mathbb Q$.",
+   "hint": "ℕ ⊂ ℤ ⊂ ℚ ⊂ ℝ.",
+   "id": "ens-r012"
+  },
+  {
+   "chap": "ens",
+   "q": "Plus petit ensemble contenant $\\sqrt3$ ?",
+   "a": [
+    "$\\mathbb R$",
+    "$\\mathbb N$",
+    "$\\mathbb Z$",
+    "$\\mathbb Q$"
+   ],
+   "why": "$\\sqrt3$ est irrationnel : $ \\mathbb R$.",
+   "hint": "ℕ ⊂ ℤ ⊂ ℚ ⊂ ℝ.",
+   "id": "ens-r013"
+  },
+  {
+   "chap": "ens",
+   "q": "Quel nombre appartient à $]1\\,;3]$ ?",
+   "a": [
+    "$3$",
+    "$1$",
+    "$0$",
+    "$4$"
+   ],
+   "why": "Le crochet tourné vers le nombre l'inclut ; tourné vers l'extérieur, il l'exclut.",
+   "hint": "Regarde le sens des crochets.",
+   "id": "ens-r014"
+  },
+  {
+   "chap": "ens",
+   "q": "Quel nombre appartient à $[-2\\,;0[$ ?",
+   "a": [
+    "$-2$",
+    "$0$",
+    "$1$",
+    "$-3$"
+   ],
+   "why": "Le crochet tourné vers le nombre l'inclut ; tourné vers l'extérieur, il l'exclut.",
+   "hint": "Regarde le sens des crochets.",
+   "id": "ens-r015"
+  },
+  {
+   "chap": "ens",
+   "q": "Quel nombre appartient à $]0\\,;+\\infty[$ ?",
+   "a": [
+    "$0{,}001$",
+    "$0$",
+    "$-1$",
+    "$-0{,}5$"
+   ],
+   "why": "Le crochet tourné vers le nombre l'inclut ; tourné vers l'extérieur, il l'exclut.",
+   "hint": "Regarde le sens des crochets.",
+   "id": "ens-r016"
+  },
+  {
+   "chap": "ens",
+   "q": "Quel nombre appartient à $[5\\,;8]$ ?",
+   "a": [
+    "$5$",
+    "$4{,}9$",
+    "$9$",
+    "$0$"
+   ],
+   "why": "Le crochet tourné vers le nombre l'inclut ; tourné vers l'extérieur, il l'exclut.",
+   "hint": "Regarde le sens des crochets.",
+   "id": "ens-r017"
+  },
+  {
+   "chap": "ens",
+   "q": "$A$ a $5$ éléments, $B$ en a $3$, et ils ont $2$ éléments en commun. Combien d'éléments dans $A\\cup B$ ?",
+   "a": [
+    "$6$",
+    "$8$",
+    "$2$",
+    "$7$"
+   ],
+   "why": "$5+3-2=6$ (on ne compte pas deux fois les communs).",
+   "hint": "|A∪B| = |A| + |B| − |A∩B|.",
+   "id": "ens-r018"
+  },
+  {
+   "chap": "ens",
+   "q": "$A$ a $2$ éléments, $B$ en a $4$, et ils ont $1$ élément en commun. Combien d'éléments dans $A\\cup B$ ?",
+   "a": [
+    "$5$",
+    "$6$",
+    "$1$"
+   ],
+   "why": "$2+4-1=5$ (on ne compte pas deux fois les communs).",
+   "hint": "|A∪B| = |A| + |B| − |A∩B|.",
+   "id": "ens-r019"
+  },
+  {
+   "chap": "fon",
+   "q": "$f(x)=3x-5$. Combien vaut $f(4)$ ?",
+   "a": [
+    "$7$",
+    "$9$",
+    "$-7$",
+    "$4$"
+   ],
+   "why": "On remplace $x$ par $4$ : $f(4)=7$.",
+   "hint": "Remplace x par la valeur, avec des parenthèses.",
+   "id": "fon-r001"
+  },
+  {
+   "chap": "fon",
+   "q": "$f(x)=x^2+2x$. Combien vaut $f(-3)$ ?",
+   "a": [
+    "$3$",
+    "$5$",
+    "$-3$"
+   ],
+   "why": "On remplace $x$ par $-3$ : $f(-3)=3$.",
+   "hint": "Remplace x par la valeur, avec des parenthèses.",
+   "id": "fon-r002"
+  },
+  {
+   "chap": "fon",
+   "q": "$f(x)=-2x+7$. Combien vaut $f(5)$ ?",
+   "a": [
+    "$-3$",
+    "$-1$",
+    "$3$",
+    "$5$"
+   ],
+   "why": "On remplace $x$ par $5$ : $f(5)=-3$.",
+   "hint": "Remplace x par la valeur, avec des parenthèses.",
+   "id": "fon-r003"
+  },
+  {
+   "chap": "fon",
+   "q": "$f(x)=x^2-x+1$. Combien vaut $f(2)$ ?",
+   "a": [
+    "$3$",
+    "$5$",
+    "$-3$",
+    "$2$"
+   ],
+   "why": "On remplace $x$ par $2$ : $f(2)=3$.",
+   "hint": "Remplace x par la valeur, avec des parenthèses.",
+   "id": "fon-r004"
+  },
+  {
+   "chap": "fon",
+   "q": "$f(x)=(x-1)^2$. Combien vaut $f(-2)$ ?",
+   "a": [
+    "$9$",
+    "$11$",
+    "$-9$",
+    "$-2$"
+   ],
+   "why": "On remplace $x$ par $-2$ : $f(-2)=9$.",
+   "hint": "Remplace x par la valeur, avec des parenthèses.",
+   "id": "fon-r005"
+  },
+  {
+   "chap": "fon",
+   "q": "Pente de la droite passant par $(1\\,;3)$ et $(3\\,;7)$ ?",
+   "a": [
+    "$2$",
+    "$\\dfrac{1}{2}$",
+    "$-2$",
+    "$4$"
+   ],
+   "why": "$\\dfrac{y_B-y_A}{x_B-x_A}=\\dfrac{7-3}{3-(1)}=2$.",
+   "hint": "Δy ÷ Δx.",
+   "id": "fon-r006"
+  },
+  {
+   "chap": "fon",
+   "q": "Pente de la droite passant par $(0\\,;5)$ et $(2\\,;1)$ ?",
+   "a": [
+    "$-2$",
+    "$-\\dfrac{1}{2}$",
+    "$2$",
+    "$-4$"
+   ],
+   "why": "$\\dfrac{y_B-y_A}{x_B-x_A}=\\dfrac{1-5}{2-(0)}=-2$.",
+   "hint": "Δy ÷ Δx.",
+   "id": "fon-r007"
+  },
+  {
+   "chap": "fon",
+   "q": "Pente de la droite passant par $(-1\\,;2)$ et $(3\\,;2)$ ?",
+   "a": [
+    "$0$",
+    "$1$",
+    "$-1$"
+   ],
+   "why": "$\\dfrac{y_B-y_A}{x_B-x_A}=\\dfrac{2-2}{3-(-1)}=0$.",
+   "hint": "Δy ÷ Δx.",
+   "id": "fon-r008"
+  },
+  {
+   "chap": "fon",
+   "q": "Pente de la droite passant par $(2\\,;1)$ et $(4\\,;6)$ ?",
+   "a": [
+    "$\\dfrac{5}{2}$",
+    "$\\dfrac{2}{5}$",
+    "$-\\dfrac{5}{2}$",
+    "$5$"
+   ],
+   "why": "$\\dfrac{y_B-y_A}{x_B-x_A}=\\dfrac{6-1}{4-(2)}=\\dfrac{5}{2}$.",
+   "hint": "Δy ÷ Δx.",
+   "id": "fon-r009"
+  },
+  {
+   "chap": "fon",
+   "q": "Quelle est l'équation de cette droite ?",
+   "a": [
+    "$y=2x+1$",
+    "$y=x+2$",
+    "$y=-2x+1$",
+    "$y=2x-1$"
+   ],
+   "why": "Elle coupe l'axe vertical en $1$ (ordonnée à l'origine) et monte de $2$ quand $x$ avance de $1$ (pente).",
+   "hint": "Lis d'abord où la droite coupe l'axe vertical.",
+   "img": "<div style=\"overflow:hidden\"><svg viewBox=\"0 0 300 230\" class=\"fig\"><line x1=\"20.0\" y1=\"210.0\" x2=\"20.0\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"63.33333333333333\" y1=\"210.0\" x2=\"63.33333333333333\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"106.66666666666666\" y1=\"210.0\" x2=\"106.66666666666666\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"150.0\" y1=\"210.0\" x2=\"150.0\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"193.33333333333331\" y1=\"210.0\" x2=\"193.33333333333331\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"236.66666666666669\" y1=\"210.0\" x2=\"236.66666666666669\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"280.0\" y1=\"210.0\" x2=\"280.0\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"210.0\" x2=\"280.0\" y2=\"210.0\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"188.88888888888889\" x2=\"280.0\" y2=\"188.88888888888889\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"167.77777777777777\" x2=\"280.0\" y2=\"167.77777777777777\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"146.66666666666669\" x2=\"280.0\" y2=\"146.66666666666669\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"125.55555555555556\" x2=\"280.0\" y2=\"125.55555555555556\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"104.44444444444444\" x2=\"280.0\" y2=\"104.44444444444444\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"83.33333333333334\" x2=\"280.0\" y2=\"83.33333333333334\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"62.22222222222223\" x2=\"280.0\" y2=\"62.22222222222223\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"41.111111111111114\" x2=\"280.0\" y2=\"41.111111111111114\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"20.0\" x2=\"280.0\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"167.77777777777777\" x2=\"280.0\" y2=\"167.77777777777777\" stroke=\"#1f1b3a\" stroke-width=\"2.2\"/><line x1=\"63.33333333333333\" y1=\"210.0\" x2=\"63.33333333333333\" y2=\"20.0\" stroke=\"#1f1b3a\" stroke-width=\"2.2\"/><text x=\"20.0\" y=\"182.77777777777777\" class=\"ax\">-1</text><text x=\"106.66666666666666\" y=\"182.77777777777777\" class=\"ax\">1</text><text x=\"150.0\" y=\"182.77777777777777\" class=\"ax\">2</text><text x=\"193.33333333333331\" y=\"182.77777777777777\" class=\"ax\">3</text><text x=\"236.66666666666669\" y=\"182.77777777777777\" class=\"ax\">4</text><text x=\"280.0\" y=\"182.77777777777777\" class=\"ax\">5</text><text x=\"55.33333333333333\" y=\"214.0\" class=\"ax\" text-anchor=\"end\">-2</text><text x=\"55.33333333333333\" y=\"192.88888888888889\" class=\"ax\" text-anchor=\"end\">-1</text><text x=\"55.33333333333333\" y=\"150.66666666666669\" class=\"ax\" text-anchor=\"end\">1</text><text x=\"55.33333333333333\" y=\"129.55555555555554\" class=\"ax\" text-anchor=\"end\">2</text><text x=\"55.33333333333333\" y=\"108.44444444444444\" class=\"ax\" text-anchor=\"end\">3</text><text x=\"55.33333333333333\" y=\"87.33333333333334\" class=\"ax\" text-anchor=\"end\">4</text><text x=\"55.33333333333333\" y=\"66.22222222222223\" class=\"ax\" text-anchor=\"end\">5</text><text x=\"55.33333333333333\" y=\"45.111111111111114\" class=\"ax\" text-anchor=\"end\">6</text><text x=\"55.33333333333333\" y=\"24.0\" class=\"ax\" text-anchor=\"end\">7</text><line x1=\"20.0\" y1=\"188.88888888888889\" x2=\"193.33333333333331\" y2=\"20.0\" stroke=\"#65a30d\" stroke-width=\"4\"/></svg></div>",
+   "id": "fon-r010"
+  },
+  {
+   "chap": "fon",
+   "q": "Quelle est l'équation de cette droite ?",
+   "a": [
+    "$y=-x+4$",
+    "$y=4x-1$",
+    "$y=x+4$",
+    "$y=-x-4$"
+   ],
+   "why": "Elle coupe l'axe vertical en $4$ (ordonnée à l'origine) et monte de $-1$ quand $x$ avance de $1$ (pente).",
+   "hint": "Lis d'abord où la droite coupe l'axe vertical.",
+   "img": "<div style=\"overflow:hidden\"><svg viewBox=\"0 0 300 230\" class=\"fig\"><line x1=\"20.0\" y1=\"210.0\" x2=\"20.0\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"63.33333333333333\" y1=\"210.0\" x2=\"63.33333333333333\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"106.66666666666666\" y1=\"210.0\" x2=\"106.66666666666666\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"150.0\" y1=\"210.0\" x2=\"150.0\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"193.33333333333331\" y1=\"210.0\" x2=\"193.33333333333331\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"236.66666666666669\" y1=\"210.0\" x2=\"236.66666666666669\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"280.0\" y1=\"210.0\" x2=\"280.0\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"210.0\" x2=\"280.0\" y2=\"210.0\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"188.88888888888889\" x2=\"280.0\" y2=\"188.88888888888889\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"167.77777777777777\" x2=\"280.0\" y2=\"167.77777777777777\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"146.66666666666669\" x2=\"280.0\" y2=\"146.66666666666669\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"125.55555555555556\" x2=\"280.0\" y2=\"125.55555555555556\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"104.44444444444444\" x2=\"280.0\" y2=\"104.44444444444444\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"83.33333333333334\" x2=\"280.0\" y2=\"83.33333333333334\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"62.22222222222223\" x2=\"280.0\" y2=\"62.22222222222223\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"41.111111111111114\" x2=\"280.0\" y2=\"41.111111111111114\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"20.0\" x2=\"280.0\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"167.77777777777777\" x2=\"280.0\" y2=\"167.77777777777777\" stroke=\"#1f1b3a\" stroke-width=\"2.2\"/><line x1=\"63.33333333333333\" y1=\"210.0\" x2=\"63.33333333333333\" y2=\"20.0\" stroke=\"#1f1b3a\" stroke-width=\"2.2\"/><text x=\"20.0\" y=\"182.77777777777777\" class=\"ax\">-1</text><text x=\"106.66666666666666\" y=\"182.77777777777777\" class=\"ax\">1</text><text x=\"150.0\" y=\"182.77777777777777\" class=\"ax\">2</text><text x=\"193.33333333333331\" y=\"182.77777777777777\" class=\"ax\">3</text><text x=\"236.66666666666669\" y=\"182.77777777777777\" class=\"ax\">4</text><text x=\"280.0\" y=\"182.77777777777777\" class=\"ax\">5</text><text x=\"55.33333333333333\" y=\"214.0\" class=\"ax\" text-anchor=\"end\">-2</text><text x=\"55.33333333333333\" y=\"192.88888888888889\" class=\"ax\" text-anchor=\"end\">-1</text><text x=\"55.33333333333333\" y=\"150.66666666666669\" class=\"ax\" text-anchor=\"end\">1</text><text x=\"55.33333333333333\" y=\"129.55555555555554\" class=\"ax\" text-anchor=\"end\">2</text><text x=\"55.33333333333333\" y=\"108.44444444444444\" class=\"ax\" text-anchor=\"end\">3</text><text x=\"55.33333333333333\" y=\"87.33333333333334\" class=\"ax\" text-anchor=\"end\">4</text><text x=\"55.33333333333333\" y=\"66.22222222222223\" class=\"ax\" text-anchor=\"end\">5</text><text x=\"55.33333333333333\" y=\"45.111111111111114\" class=\"ax\" text-anchor=\"end\">6</text><text x=\"55.33333333333333\" y=\"24.0\" class=\"ax\" text-anchor=\"end\">7</text><line x1=\"20.0\" y1=\"62.22222222222223\" x2=\"280.0\" y2=\"188.88888888888889\" stroke=\"#65a30d\" stroke-width=\"4\"/></svg></div>",
+   "id": "fon-r011"
+  },
+  {
+   "chap": "fon",
+   "q": "Quelle est l'équation de cette droite ?",
+   "a": [
+    "$y=3x-2$",
+    "$y=-2x+3$",
+    "$y=-3x-2$",
+    "$y=3x+2$"
+   ],
+   "why": "Elle coupe l'axe vertical en $-2$ (ordonnée à l'origine) et monte de $3$ quand $x$ avance de $1$ (pente).",
+   "hint": "Lis d'abord où la droite coupe l'axe vertical.",
+   "img": "<div style=\"overflow:hidden\"><svg viewBox=\"0 0 300 230\" class=\"fig\"><line x1=\"20.0\" y1=\"210.0\" x2=\"20.0\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"63.33333333333333\" y1=\"210.0\" x2=\"63.33333333333333\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"106.66666666666666\" y1=\"210.0\" x2=\"106.66666666666666\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"150.0\" y1=\"210.0\" x2=\"150.0\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"193.33333333333331\" y1=\"210.0\" x2=\"193.33333333333331\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"236.66666666666669\" y1=\"210.0\" x2=\"236.66666666666669\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"280.0\" y1=\"210.0\" x2=\"280.0\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"210.0\" x2=\"280.0\" y2=\"210.0\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"188.88888888888889\" x2=\"280.0\" y2=\"188.88888888888889\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"167.77777777777777\" x2=\"280.0\" y2=\"167.77777777777777\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"146.66666666666669\" x2=\"280.0\" y2=\"146.66666666666669\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"125.55555555555556\" x2=\"280.0\" y2=\"125.55555555555556\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"104.44444444444444\" x2=\"280.0\" y2=\"104.44444444444444\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"83.33333333333334\" x2=\"280.0\" y2=\"83.33333333333334\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"62.22222222222223\" x2=\"280.0\" y2=\"62.22222222222223\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"41.111111111111114\" x2=\"280.0\" y2=\"41.111111111111114\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"20.0\" x2=\"280.0\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"167.77777777777777\" x2=\"280.0\" y2=\"167.77777777777777\" stroke=\"#1f1b3a\" stroke-width=\"2.2\"/><line x1=\"63.33333333333333\" y1=\"210.0\" x2=\"63.33333333333333\" y2=\"20.0\" stroke=\"#1f1b3a\" stroke-width=\"2.2\"/><text x=\"20.0\" y=\"182.77777777777777\" class=\"ax\">-1</text><text x=\"106.66666666666666\" y=\"182.77777777777777\" class=\"ax\">1</text><text x=\"150.0\" y=\"182.77777777777777\" class=\"ax\">2</text><text x=\"193.33333333333331\" y=\"182.77777777777777\" class=\"ax\">3</text><text x=\"236.66666666666669\" y=\"182.77777777777777\" class=\"ax\">4</text><text x=\"280.0\" y=\"182.77777777777777\" class=\"ax\">5</text><text x=\"55.33333333333333\" y=\"214.0\" class=\"ax\" text-anchor=\"end\">-2</text><text x=\"55.33333333333333\" y=\"192.88888888888889\" class=\"ax\" text-anchor=\"end\">-1</text><text x=\"55.33333333333333\" y=\"150.66666666666669\" class=\"ax\" text-anchor=\"end\">1</text><text x=\"55.33333333333333\" y=\"129.55555555555554\" class=\"ax\" text-anchor=\"end\">2</text><text x=\"55.33333333333333\" y=\"108.44444444444444\" class=\"ax\" text-anchor=\"end\">3</text><text x=\"55.33333333333333\" y=\"87.33333333333334\" class=\"ax\" text-anchor=\"end\">4</text><text x=\"55.33333333333333\" y=\"66.22222222222223\" class=\"ax\" text-anchor=\"end\">5</text><text x=\"55.33333333333333\" y=\"45.111111111111114\" class=\"ax\" text-anchor=\"end\">6</text><text x=\"55.33333333333333\" y=\"24.0\" class=\"ax\" text-anchor=\"end\">7</text><line x1=\"63.33333333333333\" y1=\"210.0\" x2=\"193.33333333333331\" y2=\"20.0\" stroke=\"#65a30d\" stroke-width=\"4\"/></svg></div>",
+   "id": "fon-r012"
+  },
+  {
+   "chap": "fon",
+   "q": "Quelle est l'équation de cette droite ?",
+   "a": [
+    "$y=\\dfrac{1}{2}x+3$",
+    "$y=3x+\\dfrac{1}{2}$",
+    "$y=-\\dfrac{1}{2}x+3$",
+    "$y=\\dfrac{1}{2}x-3$"
+   ],
+   "why": "Elle coupe l'axe vertical en $3$ (ordonnée à l'origine) et monte de $\\dfrac{1}{2}$ quand $x$ avance de $1$ (pente).",
+   "hint": "Lis d'abord où la droite coupe l'axe vertical.",
+   "img": "<div style=\"overflow:hidden\"><svg viewBox=\"0 0 300 230\" class=\"fig\"><line x1=\"20.0\" y1=\"210.0\" x2=\"20.0\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"63.33333333333333\" y1=\"210.0\" x2=\"63.33333333333333\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"106.66666666666666\" y1=\"210.0\" x2=\"106.66666666666666\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"150.0\" y1=\"210.0\" x2=\"150.0\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"193.33333333333331\" y1=\"210.0\" x2=\"193.33333333333331\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"236.66666666666669\" y1=\"210.0\" x2=\"236.66666666666669\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"280.0\" y1=\"210.0\" x2=\"280.0\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"210.0\" x2=\"280.0\" y2=\"210.0\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"188.88888888888889\" x2=\"280.0\" y2=\"188.88888888888889\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"167.77777777777777\" x2=\"280.0\" y2=\"167.77777777777777\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"146.66666666666669\" x2=\"280.0\" y2=\"146.66666666666669\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"125.55555555555556\" x2=\"280.0\" y2=\"125.55555555555556\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"104.44444444444444\" x2=\"280.0\" y2=\"104.44444444444444\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"83.33333333333334\" x2=\"280.0\" y2=\"83.33333333333334\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"62.22222222222223\" x2=\"280.0\" y2=\"62.22222222222223\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"41.111111111111114\" x2=\"280.0\" y2=\"41.111111111111114\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"20.0\" x2=\"280.0\" y2=\"20.0\" stroke=\"#eeecf5\"/><line x1=\"20.0\" y1=\"167.77777777777777\" x2=\"280.0\" y2=\"167.77777777777777\" stroke=\"#1f1b3a\" stroke-width=\"2.2\"/><line x1=\"63.33333333333333\" y1=\"210.0\" x2=\"63.33333333333333\" y2=\"20.0\" stroke=\"#1f1b3a\" stroke-width=\"2.2\"/><text x=\"20.0\" y=\"182.77777777777777\" class=\"ax\">-1</text><text x=\"106.66666666666666\" y=\"182.77777777777777\" class=\"ax\">1</text><text x=\"150.0\" y=\"182.77777777777777\" class=\"ax\">2</text><text x=\"193.33333333333331\" y=\"182.77777777777777\" class=\"ax\">3</text><text x=\"236.66666666666669\" y=\"182.77777777777777\" class=\"ax\">4</text><text x=\"280.0\" y=\"182.77777777777777\" class=\"ax\">5</text><text x=\"55.33333333333333\" y=\"214.0\" class=\"ax\" text-anchor=\"end\">-2</text><text x=\"55.33333333333333\" y=\"192.88888888888889\" class=\"ax\" text-anchor=\"end\">-1</text><text x=\"55.33333333333333\" y=\"150.66666666666669\" class=\"ax\" text-anchor=\"end\">1</text><text x=\"55.33333333333333\" y=\"129.55555555555554\" class=\"ax\" text-anchor=\"end\">2</text><text x=\"55.33333333333333\" y=\"108.44444444444444\" class=\"ax\" text-anchor=\"end\">3</text><text x=\"55.33333333333333\" y=\"87.33333333333334\" class=\"ax\" text-anchor=\"end\">4</text><text x=\"55.33333333333333\" y=\"66.22222222222223\" class=\"ax\" text-anchor=\"end\">5</text><text x=\"55.33333333333333\" y=\"45.111111111111114\" class=\"ax\" text-anchor=\"end\">6</text><text x=\"55.33333333333333\" y=\"24.0\" class=\"ax\" text-anchor=\"end\">7</text><line x1=\"20.0\" y1=\"115.0\" x2=\"280.0\" y2=\"51.66666666666666\" stroke=\"#65a30d\" stroke-width=\"4\"/></svg></div>",
+   "id": "fon-r013"
+  },
+  {
+   "chap": "fon",
+   "q": "Nombre de solutions de $x^{2}-5x+6=0$ ?",
+   "a": [
+    "$2$",
+    "$0$",
+    "$1$",
+    "$3$"
+   ],
+   "why": "$\\Delta=-5^2-4\\times1\\times(6)=1$ > 0 : deux solutions.",
+   "hint": "Calcule Δ = b² − 4ac.",
+   "id": "fon-r014"
+  },
+  {
+   "chap": "fon",
+   "q": "Nombre de solutions de $x^{2}+2x+1=0$ ?",
+   "a": [
+    "$1$",
+    "$0$",
+    "$2$",
+    "$3$"
+   ],
+   "why": "$\\Delta=2^2-4\\times1\\times(1)=0$ = 0 : une solution.",
+   "hint": "Calcule Δ = b² − 4ac.",
+   "id": "fon-r015"
+  },
+  {
+   "chap": "fon",
+   "q": "Nombre de solutions de $2x^{2}+x+3=0$ ?",
+   "a": [
+    "$0$",
+    "$1$",
+    "$2$",
+    "$3$"
+   ],
+   "why": "$\\Delta=1^2-4\\times2\\times(3)=-23$ < 0 : aucune solution.",
+   "hint": "Calcule Δ = b² − 4ac.",
+   "id": "fon-r016"
+  },
+  {
+   "chap": "fon",
+   "q": "Nombre de solutions de $x^{2}-9=0$ ?",
+   "a": [
+    "$2$",
+    "$0$",
+    "$1$",
+    "$3$"
+   ],
+   "why": "$\\Delta=0^2-4\\times1\\times(-9)=36$ > 0 : deux solutions.",
+   "hint": "Calcule Δ = b² − 4ac.",
+   "id": "fon-r017"
+  },
+  {
+   "chap": "fon",
+   "q": "Nombre de solutions de $3x^{2}-6x+3=0$ ?",
+   "a": [
+    "$1$",
+    "$0$",
+    "$2$",
+    "$3$"
+   ],
+   "why": "$\\Delta=-6^2-4\\times3\\times(3)=0$ = 0 : une solution.",
+   "hint": "Calcule Δ = b² − 4ac.",
+   "id": "fon-r018"
+  },
+  {
+   "chap": "fon",
+   "q": "Coordonnées du sommet de $y=(x-2)^2-1$ ?",
+   "a": [
+    "$(2\\,;-1)$",
+    "$(-2\\,;-1)$",
+    "$(-1\\,;2)$",
+    "$(2\\,;1)$"
+   ],
+   "why": "Le carré est nul en $x=2$ ; là, $y=-1$.",
+   "hint": "Pour quel x la parenthèse est-elle nulle ?",
+   "id": "fon-r019"
+  },
+  {
+   "chap": "fon",
+   "q": "Coordonnées du sommet de $y=(x+3)^2+4$ ?",
+   "a": [
+    "$(-3\\,;4)$",
+    "$(3\\,;4)$",
+    "$(4\\,;-3)$",
+    "$(-3\\,;-4)$"
+   ],
+   "why": "Le carré est nul en $x=-3$ ; là, $y=4$.",
+   "hint": "Pour quel x la parenthèse est-elle nulle ?",
+   "id": "fon-r020"
+  },
+  {
+   "chap": "sui",
+   "q": "Suite arithmétique : $u_0=3$, raison $4$. Que vaut $u_{5}$ ?",
+   "a": [
+    "$23$",
+    "$19$",
+    "$3072$",
+    "$24$"
+   ],
+   "why": "$u_n=u_0+nr=3+5\\times(4)=23$.",
+   "hint": "u_n = u_0 + n × r.",
+   "id": "sui-r001"
+  },
+  {
+   "chap": "sui",
+   "q": "Suite arithmétique : $u_0=20$, raison $-3$. Que vaut $u_{4}$ ?",
+   "a": [
+    "$8$",
+    "$11$",
+    "$1620$",
+    "$9$"
+   ],
+   "why": "$u_n=u_0+nr=20+4\\times(-3)=8$.",
+   "hint": "u_n = u_0 + n × r.",
+   "id": "sui-r002"
+  },
+  {
+   "chap": "sui",
+   "q": "Suite arithmétique : $u_0=1$, raison $7$. Que vaut $u_{10}$ ?",
+   "a": [
+    "$71$",
+    "$64$",
+    "$78$",
+    "$72$"
+   ],
+   "why": "$u_n=u_0+nr=1+10\\times(7)=71$.",
+   "hint": "u_n = u_0 + n × r.",
+   "id": "sui-r003"
+  },
+  {
+   "chap": "sui",
+   "q": "Suite arithmétique : $u_0=-5$, raison $2$. Que vaut $u_{6}$ ?",
+   "a": [
+    "$7$",
+    "$5$",
+    "$-320$",
+    "$8$"
+   ],
+   "why": "$u_n=u_0+nr=-5+6\\times(2)=7$.",
+   "hint": "u_n = u_0 + n × r.",
+   "id": "sui-r004"
+  },
+  {
+   "chap": "sui",
+   "q": "Suite arithmétique : $u_0=100$, raison $-10$. Que vaut $u_{8}$ ?",
+   "a": [
+    "$20$",
+    "$30$",
+    "$10$",
+    "$21$"
+   ],
+   "why": "$u_n=u_0+nr=100+8\\times(-10)=20$.",
+   "hint": "u_n = u_0 + n × r.",
+   "id": "sui-r005"
+  },
+  {
+   "chap": "sui",
+   "q": "Suite géométrique : $u_0=2$, raison $3$. Que vaut $u_{4}$ ?",
+   "a": [
+    "$162$",
+    "$14$",
+    "$54$",
+    "$24$"
+   ],
+   "why": "$u_n=u_0\\times q^n=2\\times(3)^{4}=162$.",
+   "hint": "u_n = u_0 × qⁿ.",
+   "id": "sui-r006"
+  },
+  {
+   "chap": "sui",
+   "q": "Suite géométrique : $u_0=5$, raison $2$. Que vaut $u_{5}$ ?",
+   "a": [
+    "$160$",
+    "$15$",
+    "$80$",
+    "$50$"
+   ],
+   "why": "$u_n=u_0\\times q^n=5\\times(2)^{5}=160$.",
+   "hint": "u_n = u_0 × qⁿ.",
+   "id": "sui-r007"
+  },
+  {
+   "chap": "sui",
+   "q": "Suite géométrique : $u_0=1000$, raison $\\dfrac{1}{10}$. Que vaut $u_{2}$ ?",
+   "a": [
+    "$10$",
+    "$\\dfrac{5001}{5}$",
+    "$100$",
+    "$200$"
+   ],
+   "why": "$u_n=u_0\\times q^n=1000\\times(\\dfrac{1}{10})^{2}=10$.",
+   "hint": "u_n = u_0 × qⁿ.",
+   "id": "sui-r008"
+  },
+  {
+   "chap": "sui",
+   "q": "Suite géométrique : $u_0=3$, raison $-2$. Que vaut $u_{3}$ ?",
+   "a": [
+    "$-24$",
+    "$-3$",
+    "$12$",
+    "$-18$"
+   ],
+   "why": "$u_n=u_0\\times q^n=3\\times(-2)^{3}=-24$.",
+   "hint": "u_n = u_0 × qⁿ.",
+   "id": "sui-r009"
+  },
+  {
+   "chap": "sui",
+   "q": "Suite géométrique : $u_0=7$, raison $1$. Que vaut $u_{9}$ ?",
+   "a": [
+    "$7$",
+    "$16$",
+    "$63$"
+   ],
+   "why": "$u_n=u_0\\times q^n=7\\times(1)^{9}=7$.",
+   "hint": "u_n = u_0 × qⁿ.",
+   "id": "sui-r010"
+  },
+  {
+   "chap": "sui",
+   "q": "La suite $4,\\ 9,\\ 14,\\ 19,\\dots$ est…",
+   "a": [
+    "arithmétique de raison $5$",
+    "géométrique de raison $5$",
+    "arithmétique de raison $4$",
+    "ni l'un ni l'autre"
+   ],
+   "why": "On ajoute 5 à chaque fois.",
+   "hint": "Regarde les différences, puis les quotients.",
+   "id": "sui-r011"
+  },
+  {
+   "chap": "sui",
+   "q": "La suite $3,\\ 6,\\ 12,\\ 24,\\dots$ est…",
+   "a": [
+    "géométrique de raison $2$",
+    "arithmétique de raison $3$",
+    "arithmétique de raison $2$",
+    "géométrique de raison $3$"
+   ],
+   "why": "On multiplie par 2 à chaque fois.",
+   "hint": "Regarde les différences, puis les quotients.",
+   "id": "sui-r012"
+  },
+  {
+   "chap": "sui",
+   "q": "La suite $81,\\ 27,\\ 9,\\ 3,\\dots$ est…",
+   "a": [
+    "géométrique de raison $\\dfrac13$",
+    "arithmétique de raison $-54$",
+    "géométrique de raison $3$",
+    "arithmétique de raison $-3$"
+   ],
+   "why": "On divise par 3, c'est-à-dire qu'on multiplie par $\\dfrac13$.",
+   "hint": "Regarde les différences, puis les quotients.",
+   "id": "sui-r013"
+  },
+  {
+   "chap": "sui",
+   "q": "La suite $1,\\ 4,\\ 9,\\ 16,\\dots$ est…",
+   "a": [
+    "ni l'un ni l'autre",
+    "arithmétique de raison $3$",
+    "géométrique de raison $4$",
+    "arithmétique de raison $5$"
+   ],
+   "why": "Ce sont les carrés : les écarts (3, 5, 7) et les quotients changent.",
+   "hint": "Regarde les différences, puis les quotients.",
+   "id": "sui-r014"
+  },
+  {
+   "chap": "sui",
+   "q": "$u_n=3n-2$. Que vaut $u_{7}$ ?",
+   "a": [
+    "$19$",
+    "$22$",
+    "$8$",
+    "$21$"
+   ],
+   "why": "On remplace $n$ par $7$ : $3\\times7-2=19$.",
+   "hint": "Remplace n.",
+   "id": "sui-r015"
+  },
+  {
+   "chap": "sui",
+   "q": "$u_n=5n+1$. Que vaut $u_{4}$ ?",
+   "a": [
+    "$21$",
+    "$26$",
+    "$10$",
+    "$20$"
+   ],
+   "why": "On remplace $n$ par $4$ : $5\\times4+1=21$.",
+   "hint": "Remplace n.",
+   "id": "sui-r016"
+  },
+  {
+   "chap": "sui",
+   "q": "$u_n=-2n+10$. Que vaut $u_{6}$ ?",
+   "a": [
+    "$-2$",
+    "$-4$",
+    "$14$",
+    "$-12$"
+   ],
+   "why": "On remplace $n$ par $6$ : $-2\\times6+10=-2$.",
+   "hint": "Remplace n.",
+   "id": "sui-r017"
+  },
+  {
+   "chap": "sui",
+   "q": "$1+2+3+\\dots+20$ ?",
+   "a": [
+    "$210$",
+    "$200$",
+    "$190$",
+    "$420$"
+   ],
+   "why": "$\\dfrac{n(n+1)}{2}=\\dfrac{20\\times21}{2}=210$.",
+   "hint": "Formule de Gauss : n(n+1)/2.",
+   "id": "sui-r018"
+  },
+  {
+   "chap": "sui",
+   "q": "$1+2+3+\\dots+50$ ?",
+   "a": [
+    "$1275$",
+    "$1250$",
+    "$1225$",
+    "$2550$"
+   ],
+   "why": "$\\dfrac{n(n+1)}{2}=\\dfrac{50\\times51}{2}=1275$.",
+   "hint": "Formule de Gauss : n(n+1)/2.",
+   "id": "sui-r019"
+  },
+  {
+   "chap": "sui",
+   "q": "$1+2+3+\\dots+100$ ?",
+   "a": [
+    "$5050$",
+    "$5000$",
+    "$4950$",
+    "$10100$"
+   ],
+   "why": "$\\dfrac{n(n+1)}{2}=\\dfrac{100\\times101}{2}=5050$.",
+   "hint": "Formule de Gauss : n(n+1)/2.",
+   "id": "sui-r020"
+  },
+  {
+   "chap": "exp",
+   "q": "$e^{4}\\times e^{3}$ ?",
+   "a": [
+    "$e^{7}$",
+    "$e^{12}$",
+    "$2e^{7}$",
+    "$e^{1}$"
+   ],
+   "why": "$e^{4+(3)}=e^{7}$.",
+   "hint": "On additionne les exposants.",
+   "id": "exp-r001"
+  },
+  {
+   "chap": "exp",
+   "q": "$e^{-2}\\times e^{5}$ ?",
+   "a": [
+    "$e^{3}$",
+    "$e^{-10}$",
+    "$2e^{3}$",
+    "$e^{-7}$"
+   ],
+   "why": "$e^{-2+(5)}=e^{3}$.",
+   "hint": "On additionne les exposants.",
+   "id": "exp-r002"
+  },
+  {
+   "chap": "exp",
+   "q": "$e^{7}\\times e^{-7}$ ?",
+   "a": [
+    "$1$",
+    "$e^{-49}$",
+    "$2e^{0}$",
+    "$e^{14}$"
+   ],
+   "why": "$e^{7+(-7)}=e^{0}$ $=1$.",
+   "hint": "On additionne les exposants.",
+   "id": "exp-r003"
+  },
+  {
+   "chap": "exp",
+   "q": "$\\dfrac{e^{5}}{e^{2}}$ ?",
+   "a": [
+    "$e^{3}$",
+    "$e^{7}$",
+    "$e^{\\dfrac{5}{2}}$",
+    "$e^{-3}$"
+   ],
+   "why": "On soustrait : $e^{5-2}=e^{3}$.",
+   "hint": "Division → on soustrait les exposants.",
+   "id": "exp-r004"
+  },
+  {
+   "chap": "exp",
+   "q": "$\\dfrac{e^{3}}{e^{6}}$ ?",
+   "a": [
+    "$e^{-3}$",
+    "$e^{9}$",
+    "$e^{\\dfrac{1}{2}}$",
+    "$e^{3}$"
+   ],
+   "why": "On soustrait : $e^{3-6}=e^{-3}$.",
+   "hint": "Division → on soustrait les exposants.",
+   "id": "exp-r005"
+  },
+  {
+   "chap": "exp",
+   "q": "$(e^{3})^{2}$ ?",
+   "a": [
+    "$e^{6}$",
+    "$e^{5}$",
+    "$e^{9}$",
+    "$2e^{3}$"
+   ],
+   "why": "On multiplie les exposants : $3\\times2=6$.",
+   "hint": "Puissance de puissance.",
+   "id": "exp-r006"
+  },
+  {
+   "chap": "exp",
+   "q": "$\\ln(e^{4})$ ?",
+   "a": [
+    "$4$",
+    "$e^{4}$",
+    "$1$",
+    "$\\ln 4$"
+   ],
+   "why": "ln et exp se « défont » mutuellement.",
+   "hint": "ln « annule » e.",
+   "id": "exp-r007"
+  },
+  {
+   "chap": "exp",
+   "q": "$\\ln(e^{10})$ ?",
+   "a": [
+    "$10$",
+    "$e^{10}$",
+    "$1$",
+    "$\\ln 10$"
+   ],
+   "why": "ln et exp se « défont » mutuellement.",
+   "hint": "ln « annule » e.",
+   "id": "exp-r008"
+  },
+  {
+   "chap": "exp",
+   "q": "$e^{\\ln 5}$ ?",
+   "a": [
+    "$5$",
+    "$\\ln 5$",
+    "$e^{5}$",
+    "$1$"
+   ],
+   "why": "$e$ et $\\ln$ s'annulent : il reste $5$.",
+   "hint": "e « annule » ln.",
+   "id": "exp-r009"
+  },
+  {
+   "chap": "exp",
+   "q": "$e^{\\ln 12}$ ?",
+   "a": [
+    "$12$",
+    "$\\ln 12$",
+    "$e^{12}$",
+    "$1$"
+   ],
+   "why": "$e$ et $\\ln$ s'annulent : il reste $12$.",
+   "hint": "e « annule » ln.",
+   "id": "exp-r010"
+  },
+  {
+   "chap": "exp",
+   "q": "$\\ln 3+\\ln 4$ ?",
+   "a": [
+    "$\\ln 12$",
+    "$\\ln 7$",
+    "$\\ln 3\\times\\ln 4$",
+    "$12$"
+   ],
+   "why": "$\\ln a+\\ln b=\\ln(ab)=\\ln 12$.",
+   "hint": "ln transforme les produits en sommes.",
+   "id": "exp-r011"
+  },
+  {
+   "chap": "exp",
+   "q": "$\\ln 2+\\ln 9$ ?",
+   "a": [
+    "$\\ln 18$",
+    "$\\ln 11$",
+    "$\\ln 2\\times\\ln 9$",
+    "$18$"
+   ],
+   "why": "$\\ln a+\\ln b=\\ln(ab)=\\ln 18$.",
+   "hint": "ln transforme les produits en sommes.",
+   "id": "exp-r012"
+  },
+  {
+   "chap": "exp",
+   "q": "$\\ln(2^{5})$ ?",
+   "a": [
+    "$5\\ln 2$",
+    "$\\ln 10$",
+    "$2\\ln 5$",
+    "$(\\ln 2)^{5}$"
+   ],
+   "why": "$\\ln(a^n)=n\\ln a$.",
+   "hint": "L'exposant descend devant le ln.",
+   "id": "exp-r013"
+  },
+  {
+   "chap": "exp",
+   "q": "$\\ln(10^{3})$ ?",
+   "a": [
+    "$3\\ln 10$",
+    "$\\ln 30$",
+    "$10\\ln 3$",
+    "$(\\ln 10)^{3}$"
+   ],
+   "why": "$\\ln(a^n)=n\\ln a$.",
+   "hint": "L'exposant descend devant le ln.",
+   "id": "exp-r014"
+  },
+  {
+   "chap": "exp",
+   "q": "$\\ln(7^{2})$ ?",
+   "a": [
+    "$2\\ln 7$",
+    "$\\ln 14$",
+    "$7\\ln 2$",
+    "$(\\ln 7)^{2}$"
+   ],
+   "why": "$\\ln(a^n)=n\\ln a$.",
+   "hint": "L'exposant descend devant le ln.",
+   "id": "exp-r015"
+  },
+  {
+   "chap": "exp",
+   "q": "$\\ln 12-\\ln 3$ ?",
+   "a": [
+    "$\\ln 4$",
+    "$\\ln 9$",
+    "$4$",
+    "$\\ln 36$"
+   ],
+   "why": "$\\ln a-\\ln b=\\ln\\dfrac ab=\\ln 4$.",
+   "hint": "Une différence de ln donne un quotient.",
+   "id": "exp-r016"
+  },
+  {
+   "chap": "exp",
+   "q": "Résous $e^x=e^{3}$",
+   "a": [
+    "$x=3$",
+    "$x=e^{3}$",
+    "$x=\\ln 3$",
+    "pas de solution"
+   ],
+   "why": "L'exponentielle est strictement croissante : les exposants sont égaux.",
+   "hint": "Compare les exposants.",
+   "id": "exp-r017"
+  },
+  {
+   "chap": "exp",
+   "q": "Résous $e^x=e^{-1}$",
+   "a": [
+    "$x=-1$",
+    "$x=e^{-1}$",
+    "$x=1$",
+    "pas de solution"
+   ],
+   "why": "L'exponentielle est strictement croissante : les exposants sont égaux.",
+   "hint": "Compare les exposants.",
+   "id": "exp-r018"
+  },
+  {
+   "chap": "exp",
+   "q": "Résous $\\ln x=2$",
+   "a": [
+    "$x=e^2$",
+    "$x=2$",
+    "$x=\\ln 2$",
+    "$x=2e$"
+   ],
+   "why": "On applique l'exponentielle : $x=e^2\\approx7{,}39$.",
+   "hint": "Applique e des deux côtés.",
+   "id": "exp-r019"
+  },
+  {
+   "chap": "exp",
+   "q": "Dérivée de $5e^x$ ?",
+   "a": [
+    "$5e^x$",
+    "$5$",
+    "$5xe^{x-1}$",
+    "$e^x$"
+   ],
+   "why": "Un nombre devant se garde, et $(e^x)'=e^x$.",
+   "hint": "(e^x)' = e^x.",
+   "id": "exp-r020"
+  },
+  {
+   "chap": "exp",
+   "q": "Limite de $e^x$ quand $x\\to-\\infty$ ?",
+   "a": [
+    "$0$",
+    "$-\\infty$",
+    "$1$",
+    "$+\\infty$"
+   ],
+   "why": "La courbe de $e^x$ se rapproche de l'axe horizontal vers la gauche, sans le toucher.",
+   "hint": "Pense à la courbe : elle « s'écrase » vers 0 à gauche.",
+   "id": "exp-r021"
+  },
+  {
+   "chap": "pct",
+   "q": "$20\\,\\%$ de $150$ ?",
+   "a": [
+    "$30$",
+    "$300$",
+    "$120$",
+    "$\\dfrac{15}{2}$"
+   ],
+   "why": "$150\\times0{,}2=30$.",
+   "hint": "20 % = 20/100.",
+   "id": "pct-r001"
+  },
+  {
+   "chap": "pct",
+   "q": "$5\\,\\%$ de $80$ ?",
+   "a": [
+    "$4$",
+    "$40$",
+    "$76$",
+    "$16$"
+   ],
+   "why": "$80\\times0{,}05=4$.",
+   "hint": "5 % = 5/100.",
+   "id": "pct-r002"
+  },
+  {
+   "chap": "pct",
+   "q": "$12\\,\\%$ de $250$ ?",
+   "a": [
+    "$30$",
+    "$300$",
+    "$220$",
+    "$\\dfrac{125}{6}$"
+   ],
+   "why": "$250\\times0{,}12=30$.",
+   "hint": "12 % = 12/100.",
+   "id": "pct-r003"
+  },
+  {
+   "chap": "pct",
+   "q": "$75\\,\\%$ de $60$ ?",
+   "a": [
+    "$45$",
+    "$450$",
+    "$15$",
+    "$\\dfrac{4}{5}$"
+   ],
+   "why": "$60\\times0{,}75=45$.",
+   "hint": "75 % = 75/100.",
+   "id": "pct-r004"
+  },
+  {
+   "chap": "pct",
+   "q": "$3\\,\\%$ de $900$ ?",
+   "a": [
+    "$27$",
+    "$270$",
+    "$873$",
+    "$300$"
+   ],
+   "why": "$900\\times0{,}03=27$.",
+   "hint": "3 % = 3/100.",
+   "id": "pct-r005"
+  },
+  {
+   "chap": "pct",
+   "q": "Coefficient multiplicateur d'une hausse de $8\\,\\%$ ?",
+   "a": [
+    "$1{,}08$",
+    "$0{,}92$",
+    "$1{,}8$",
+    "$8$"
+   ],
+   "why": "Hausse de $t\\,\\%$ : $\\times\\left(1+\\dfrac{8}{100}\\right)=1{,}08$.",
+   "hint": "1 + t/100 ou 1 − t/100.",
+   "id": "pct-r006"
+  },
+  {
+   "chap": "pct",
+   "q": "Coefficient multiplicateur d'une baisse de $15\\,\\%$ ?",
+   "a": [
+    "$0{,}85$",
+    "$1{,}15$",
+    "$0{,}15$",
+    "$-15$"
+   ],
+   "why": "Baisse de $t\\,\\%$ : $\\times\\left(1-\\dfrac{15}{100}\\right)=0{,}85$.",
+   "hint": "1 + t/100 ou 1 − t/100.",
+   "id": "pct-r007"
+  },
+  {
+   "chap": "pct",
+   "q": "Coefficient multiplicateur d'une hausse de $120\\,\\%$ ?",
+   "a": [
+    "$2{,}2$",
+    "$1{,}2$",
+    "$120$",
+    "$0{,}2$"
+   ],
+   "why": "Hausse de $t\\,\\%$ : $\\times\\left(1+\\dfrac{120}{100}\\right)=2{,}2$.",
+   "hint": "1 + t/100 ou 1 − t/100.",
+   "id": "pct-r008"
+  },
+  {
+   "chap": "pct",
+   "q": "Coefficient multiplicateur d'une baisse de $5\\,\\%$ ?",
+   "a": [
+    "$0{,}95$",
+    "$1{,}05$",
+    "$0{,}5$",
+    "$0{,}05$"
+   ],
+   "why": "Baisse de $t\\,\\%$ : $\\times\\left(1-\\dfrac{5}{100}\\right)=0{,}95$.",
+   "hint": "1 + t/100 ou 1 − t/100.",
+   "id": "pct-r009"
+  },
+  {
+   "chap": "pct",
+   "q": "Un prix de $40$ € augmente de $25\\,\\%$. Nouveau prix ?",
+   "a": [
+    "$50\\text{ €}$",
+    "$30\\text{ €}$",
+    "$65\\text{ €}$",
+    "$10\\text{ €}$"
+   ],
+   "why": "$40\\times1{,}25=50$.",
+   "hint": "Multiplie par le coefficient.",
+   "img": "<svg viewBox=\"0 0 300 195\" class=\"fig\"><rect x=\"60\" y=\"64.0\" width=\"60\" height=\"96.0\" rx=\"6\" fill=\"#94a3b8\"/><rect x=\"180\" y=\"40.0\" width=\"60\" height=\"120.0\" rx=\"6\" fill=\"#16a34a\"/><text x=\"90\" y=\"56.0\" class=\"ax big\">40</text><text x=\"210\" y=\"32.0\" class=\"ax big\" fill=\"#16a34a\">?</text><text x=\"90\" y=\"182\" class=\"ax\">Avant</text><text x=\"210\" y=\"182\" class=\"ax\">+25 %</text><line x1=\"40\" y1=\"160\" x2=\"260\" y2=\"160\" stroke=\"#1f1b3a\" stroke-width=\"3\"/></svg>",
+   "id": "pct-r010"
+  },
+  {
+   "chap": "pct",
+   "q": "Un prix de $250$ € baisse de $20\\,\\%$. Nouveau prix ?",
+   "a": [
+    "$200\\text{ €}$",
+    "$300\\text{ €}$",
+    "$230\\text{ €}$",
+    "$50\\text{ €}$"
+   ],
+   "why": "$250\\times0{,}8=200$.",
+   "hint": "Multiplie par le coefficient.",
+   "img": "<svg viewBox=\"0 0 300 195\" class=\"fig\"><rect x=\"60\" y=\"40.0\" width=\"60\" height=\"120.0\" rx=\"6\" fill=\"#94a3b8\"/><rect x=\"180\" y=\"64.0\" width=\"60\" height=\"96.0\" rx=\"6\" fill=\"#e11d48\"/><text x=\"90\" y=\"32.0\" class=\"ax big\">250</text><text x=\"210\" y=\"56.0\" class=\"ax big\" fill=\"#e11d48\">?</text><text x=\"90\" y=\"182\" class=\"ax\">Avant</text><text x=\"210\" y=\"182\" class=\"ax\">−20 %</text><line x1=\"40\" y1=\"160\" x2=\"260\" y2=\"160\" stroke=\"#1f1b3a\" stroke-width=\"3\"/></svg>",
+   "id": "pct-r011"
+  },
+  {
+   "chap": "pct",
+   "q": "Un prix de $80$ € augmente de $15\\,\\%$. Nouveau prix ?",
+   "a": [
+    "$92\\text{ €}$",
+    "$68\\text{ €}$",
+    "$95\\text{ €}$",
+    "$12\\text{ €}$"
+   ],
+   "why": "$80\\times1{,}15=92$.",
+   "hint": "Multiplie par le coefficient.",
+   "img": "<svg viewBox=\"0 0 300 195\" class=\"fig\"><rect x=\"60\" y=\"55.652173913043484\" width=\"60\" height=\"104.34782608695652\" rx=\"6\" fill=\"#94a3b8\"/><rect x=\"180\" y=\"40.0\" width=\"60\" height=\"120.0\" rx=\"6\" fill=\"#16a34a\"/><text x=\"90\" y=\"47.652173913043484\" class=\"ax big\">80</text><text x=\"210\" y=\"32.0\" class=\"ax big\" fill=\"#16a34a\">?</text><text x=\"90\" y=\"182\" class=\"ax\">Avant</text><text x=\"210\" y=\"182\" class=\"ax\">+15 %</text><line x1=\"40\" y1=\"160\" x2=\"260\" y2=\"160\" stroke=\"#1f1b3a\" stroke-width=\"3\"/></svg>",
+   "id": "pct-r012"
+  },
+  {
+   "chap": "pct",
+   "q": "Un prix de $1200$ € baisse de $10\\,\\%$. Nouveau prix ?",
+   "a": [
+    "$1080\\text{ €}$",
+    "$1320\\text{ €}$",
+    "$1190\\text{ €}$",
+    "$120\\text{ €}$"
+   ],
+   "why": "$1200\\times0{,}9=1080$.",
+   "hint": "Multiplie par le coefficient.",
+   "img": "<svg viewBox=\"0 0 300 195\" class=\"fig\"><rect x=\"60\" y=\"40.0\" width=\"60\" height=\"120.0\" rx=\"6\" fill=\"#94a3b8\"/><rect x=\"180\" y=\"52.0\" width=\"60\" height=\"108.0\" rx=\"6\" fill=\"#e11d48\"/><text x=\"90\" y=\"32.0\" class=\"ax big\">1200</text><text x=\"210\" y=\"44.0\" class=\"ax big\" fill=\"#e11d48\">?</text><text x=\"90\" y=\"182\" class=\"ax\">Avant</text><text x=\"210\" y=\"182\" class=\"ax\">−10 %</text><line x1=\"40\" y1=\"160\" x2=\"260\" y2=\"160\" stroke=\"#1f1b3a\" stroke-width=\"3\"/></svg>",
+   "id": "pct-r013"
+  },
+  {
+   "chap": "pct",
+   "q": "$+20\\,\\%$ puis $-20\\,\\%$ : évolution totale ?",
+   "a": [
+    "$-4\\,\\%$",
+    "$0\\,\\%$",
+    "$+10\\,\\%$"
+   ],
+   "why": "On multiplie les coefficients : $1{,}2\\times0{,}8=0{,}96$, soit $-4\\,\\%$.",
+   "hint": "On multiplie, on n'additionne pas !",
+   "id": "pct-r014"
+  },
+  {
+   "chap": "pct",
+   "q": "$+50\\,\\%$ puis $-50\\,\\%$ : évolution totale ?",
+   "a": [
+    "$-25\\,\\%$",
+    "$0\\,\\%$",
+    "$+10\\,\\%$"
+   ],
+   "why": "On multiplie les coefficients : $1{,}5\\times0{,}5=0{,}75$, soit $-25\\,\\%$.",
+   "hint": "On multiplie, on n'additionne pas !",
+   "id": "pct-r015"
+  },
+  {
+   "chap": "pct",
+   "q": "$+10\\,\\%$ puis $+20\\,\\%$ : évolution totale ?",
+   "a": [
+    "$+32\\,\\%$",
+    "$+30\\,\\%$",
+    "$+2\\,\\%$",
+    "$+10\\,\\%$"
+   ],
+   "why": "On multiplie les coefficients : $1{,}1\\times1{,}2=1{,}32$, soit $+32\\,\\%$.",
+   "hint": "On multiplie, on n'additionne pas !",
+   "id": "pct-r016"
+  },
+  {
+   "chap": "pct",
+   "q": "Une valeur passe de $50$ à $65$. Taux d'évolution ?",
+   "a": [
+    "$+30\\,\\%$",
+    "$+15\\,\\%$",
+    "$-30\\,\\%$",
+    "$\\dfrac{300}{13}\\,\\%$"
+   ],
+   "why": "$\\dfrac{65-50}{50}=0{,}3$, soit $+30\\,\\%$.",
+   "hint": "(arrivée − départ) ÷ départ.",
+   "img": "<svg viewBox=\"0 0 300 195\" class=\"fig\"><rect x=\"60\" y=\"67.6923076923077\" width=\"60\" height=\"92.3076923076923\" rx=\"6\" fill=\"#94a3b8\"/><rect x=\"180\" y=\"40.0\" width=\"60\" height=\"120.0\" rx=\"6\" fill=\"#16a34a\"/><text x=\"90\" y=\"59.69230769230769\" class=\"ax big\">50</text><text x=\"210\" y=\"32.0\" class=\"ax big\" fill=\"#16a34a\">65</text><text x=\"90\" y=\"182\" class=\"ax\">Avant</text><text x=\"210\" y=\"182\" class=\"ax\">Après</text><line x1=\"40\" y1=\"160\" x2=\"260\" y2=\"160\" stroke=\"#1f1b3a\" stroke-width=\"3\"/></svg>",
+   "id": "pct-r017"
+  },
+  {
+   "chap": "pct",
+   "q": "Une valeur passe de $200$ à $150$. Taux d'évolution ?",
+   "a": [
+    "$-25\\,\\%$",
+    "$-50\\,\\%$",
+    "$+25\\,\\%$",
+    "$-\\dfrac{100}{3}\\,\\%$"
+   ],
+   "why": "$\\dfrac{150-200}{200}=-0{,}25$, soit $-25\\,\\%$.",
+   "hint": "(arrivée − départ) ÷ départ.",
+   "img": "<svg viewBox=\"0 0 300 195\" class=\"fig\"><rect x=\"60\" y=\"40.0\" width=\"60\" height=\"120.0\" rx=\"6\" fill=\"#94a3b8\"/><rect x=\"180\" y=\"70.0\" width=\"60\" height=\"90.0\" rx=\"6\" fill=\"#e11d48\"/><text x=\"90\" y=\"32.0\" class=\"ax big\">200</text><text x=\"210\" y=\"62.0\" class=\"ax big\" fill=\"#e11d48\">150</text><text x=\"90\" y=\"182\" class=\"ax\">Avant</text><text x=\"210\" y=\"182\" class=\"ax\">Après</text><line x1=\"40\" y1=\"160\" x2=\"260\" y2=\"160\" stroke=\"#1f1b3a\" stroke-width=\"3\"/></svg>",
+   "id": "pct-r018"
+  },
+  {
+   "chap": "pct",
+   "q": "Une valeur passe de $80$ à $100$. Taux d'évolution ?",
+   "a": [
+    "$+25\\,\\%$",
+    "$+20\\,\\%$",
+    "$-25\\,\\%$",
+    "$20\\,\\%$"
+   ],
+   "why": "$\\dfrac{100-80}{80}=0{,}25$, soit $+25\\,\\%$.",
+   "hint": "(arrivée − départ) ÷ départ.",
+   "img": "<svg viewBox=\"0 0 300 195\" class=\"fig\"><rect x=\"60\" y=\"64.0\" width=\"60\" height=\"96.0\" rx=\"6\" fill=\"#94a3b8\"/><rect x=\"180\" y=\"40.0\" width=\"60\" height=\"120.0\" rx=\"6\" fill=\"#16a34a\"/><text x=\"90\" y=\"56.0\" class=\"ax big\">80</text><text x=\"210\" y=\"32.0\" class=\"ax big\" fill=\"#16a34a\">100</text><text x=\"90\" y=\"182\" class=\"ax\">Avant</text><text x=\"210\" y=\"182\" class=\"ax\">Après</text><line x1=\"40\" y1=\"160\" x2=\"260\" y2=\"160\" stroke=\"#1f1b3a\" stroke-width=\"3\"/></svg>",
+   "id": "pct-r019"
+  },
+  {
+   "chap": "pct",
+   "q": "Une valeur passe de $40$ à $30$. Taux d'évolution ?",
+   "a": [
+    "$-25\\,\\%$",
+    "$-10\\,\\%$",
+    "$+25\\,\\%$",
+    "$-\\dfrac{100}{3}\\,\\%$"
+   ],
+   "why": "$\\dfrac{30-40}{40}=-0{,}25$, soit $-25\\,\\%$.",
+   "hint": "(arrivée − départ) ÷ départ.",
+   "img": "<svg viewBox=\"0 0 300 195\" class=\"fig\"><rect x=\"60\" y=\"40.0\" width=\"60\" height=\"120.0\" rx=\"6\" fill=\"#94a3b8\"/><rect x=\"180\" y=\"70.0\" width=\"60\" height=\"90.0\" rx=\"6\" fill=\"#e11d48\"/><text x=\"90\" y=\"32.0\" class=\"ax big\">40</text><text x=\"210\" y=\"62.0\" class=\"ax big\" fill=\"#e11d48\">30</text><text x=\"90\" y=\"182\" class=\"ax\">Avant</text><text x=\"210\" y=\"182\" class=\"ax\">Après</text><line x1=\"40\" y1=\"160\" x2=\"260\" y2=\"160\" stroke=\"#1f1b3a\" stroke-width=\"3\"/></svg>",
+   "id": "pct-r020"
   }
  ]
 }
