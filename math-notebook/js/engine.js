@@ -84,17 +84,22 @@ function hintsOf(s){const h=[];if(s.hints)h.push(...s.hints);else if(s.hint)h.pu
 function renderItem(s,box,onAnswer){
   const H=hintsOf(s);let used=0;
   const head=`${s.img?`<div class="qimg">${s.img}</div>`:''}<div class="q">${s.q||''}</div>`;
-  box.innerHTML=head+`<div class="hints"></div><div class="zone"></div>`+
-    `<div class="hrow"><button class="hintbtn" id="hb">💡 Coup de pouce</button><button class="solbtn" id="sb">🔍 Solution</button>${s.idk?'<button class="idk" id="idkb">🤷 Je ne sais pas</button>':''}</div>`;
+  const GL=typeof glossFor==='function'?glossFor((s.q||'')+' '+(s.prop||'')):[];
+  box.innerHTML=head+(GL.length?`<div class="gl">${GL.map(g=>`<button class="glc keep" data-g="${GLOSS.indexOf(g)}">❓ ${g[1]}</button>`).join('')}</div>`:'')+`<div class="hints"></div><div class="zone"></div>`+
+    `<div class="hrow"><button class="coursbtn keep" id="cb">📖 Cours</button><button class="hintbtn" id="hb">💡 Coup de pouce</button><button class="solbtn" id="sb">🔍 Solution</button>${s.idk?'<button class="idk" id="idkb">🤷 Je ne sais pas</button>':''}</div>`;
   const zone=box.querySelector('.zone'),hz=box.querySelector('.hints'),hb=box.querySelector('#hb'),sb=box.querySelector('#sb');
   if(!H.length) hb.style.display='none';
+  box.querySelectorAll('.glc').forEach(b=>b.onclick=()=>{const g=GLOSS[+b.dataset.g];sheet(`<div class="defcard"><div class="rc-top">📚 Définition</div><div class="rc-t">${g[1]}</div><p>${g[2]}</p>${g[3]?`<p class="defex">Exemple : ${g[3]}</p>`:''}</div>`);});
+  box.querySelector('#cb').onclick=()=>{const x=s.nid&&NOT(s.nid);
+    if(x)sheet(`<div class="rcard" style="--k:${x.c.c[1]}"><div class="rc-top">📖 Cours · ${x.c.label}</div><div class="rc-t">${x.n.title}</div>${x.n.ruleFig?`<div class="lfig">${x.n.ruleFig}</div>`:''}<div class="rc-b">${x.n.rule}</div></div><p class="muted" style="text-align:center">Ferme cette fiche pour revenir à l'exercice.</p>`);
+    else if(S&&S.chap)openAlbum(S.chap);};
   hb.onclick=()=>{if(used<H.length){hz.insertAdjacentHTML('beforeend',`<div class="hintbox on">${used===0?'💡':'🧭'} ${H[used]}</div>`);math(hz);used++;s.penalty=used;}
     if(used>=H.length){hb.style.display='none';} else hb.textContent='🧭 Méthode';};
   sb.onclick=()=>{s.penalty=9;finish(false,true);};
   if(s.idk) box.querySelector('#idkb').onclick=()=>finish(false,true);
   if(s.autoHint&&H.length){hz.insertAdjacentHTML('beforeend',`<div class="hintbox on">🎁 Indice offert : ${H[0]}</div>`);used=1;if(used>=H.length)hb.style.display='none';else hb.textContent='🧭 Méthode';}
   let done=false;
-  function finish(ok,gaveUp){if(done)return;done=true;box.querySelectorAll('button').forEach(b=>{if(!b.classList.contains('keep'))b.disabled=true;});box.querySelector('.hrow').remove();onAnswer(ok,gaveUp);}
+  function finish(ok,gaveUp){if(done)return;done=true;box.querySelectorAll('button').forEach(b=>{if(!b.classList.contains('keep'))b.disabled=true;});box.querySelectorAll('.hrow > :not(.coursbtn)').forEach(b=>b.remove());onAnswer(ok,gaveUp);}
   const T=s.type||'qcm';
   if(T==='qcm'){
     const opts=shuffle(s.a.map((t,i)=>({t,ok:i===0})));
