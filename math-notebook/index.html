@@ -133,6 +133,24 @@ h2.sec{font-weight:900;font-size:22px;margin:26px 2px 12px}
 .grab{cursor:grab}
 .bigbtn{display:block;margin:14px auto 0;padding:14px 26px;border:0;border-radius:999px;background:var(--c);color:#fff;font-weight:900;font-size:20px;box-shadow:0 5px 0 rgba(0,0,0,.2);cursor:pointer}
 .bigbtn:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(0,0,0,.2)}
+.ax{font:800 12px Nunito,system-ui,sans-serif;text-anchor:middle;fill:#8b86a3}
+.ax.big{font-size:17px;font-weight:900}
+.lfig{margin:-4px 0 10px}
+.learn .katex-display,.exs .katex-display{overflow-x:auto;overflow-y:hidden;padding:2px 0}
+.legend{display:grid;gap:6px;margin:10px 0}
+.legend div{background:#fff;border-radius:12px;padding:8px 12px;font-size:18px}
+.chain{display:flex;flex-direction:column;align-items:center;gap:4px;margin:4px 0 14px}
+.cbox{border:3px solid var(--k);color:var(--k);background:#fff;border-radius:16px;padding:8px 18px;font-weight:900;font-size:22px}
+.carrow{display:flex;gap:18px;font-weight:900;font-size:15px}
+.carrow span:first-child{color:#7c3aed}.carrow span:last-child{color:#0891b2}
+.exl{display:grid;gap:10px;margin-top:8px}
+.exs{opacity:0;transform:translateY(8px);transition:opacity .35s,transform .35s;background:color-mix(in srgb,var(--c) 8%,#fff);border-left:5px solid var(--c);border-radius:12px;padding:10px 14px;font-size:19px}
+.exs.on{opacity:1;transform:none}
+.hintbtn{display:block;margin:-6px 0 14px;border:2px dashed #f59e0b;background:#fffbeb;color:#b45309;border-radius:999px;padding:7px 16px;font-weight:900;font-size:16px;cursor:pointer}
+.hintbox{display:none;margin:-6px 0 14px;background:#fffbeb;border-radius:14px;padding:10px 14px;font-size:18px;color:#92400e;font-weight:700}
+.hintbox.on{display:block}
+.unlock{margin:10px auto 0;max-width:420px;background:#f0fdf4;border:2px solid #86efac;border-radius:16px;padding:12px;font-size:18px}
+.lvdots{letter-spacing:2px;font-size:11px}
 .mbtn{position:absolute;left:6px;top:6px;z-index:2;width:26px;height:26px;padding:0;border:0;border-radius:50%;background:rgba(255,255,255,.92);font-size:13px;line-height:26px;box-shadow:0 2px 4px rgba(0,0,0,.18);cursor:pointer}
 .mbtn:active{transform:scale(.9)}
 .lmemo{border:0;background:color-mix(in srgb,var(--c) 14%,#fff);border-radius:12px;font-size:20px;padding:6px 9px;cursor:pointer}
@@ -184,7 +202,8 @@ const r=String.raw;
 
 /* ================= THÈMES ================= */
 const CARDS=[
-  {key:'ana',label:'Analyse',     c:['#8b5cf6','#6d28d9','#4c1d95'],tex:'\\displaystyle\\int dx',alt:'∫ dx'},
+  {key:'ana',label:'Dérivées',    c:['#8b5cf6','#6d28d9','#4c1d95'],tex:"f'(x)",alt:'f′(x)'},
+  {key:'int',label:'Intégrales',  c:['#22d3ee','#0891b2','#164e63'],tex:'\\displaystyle\\int dx',alt:'∫ dx'},
   {key:'alg',label:'Algèbre',     c:['#fb923c','#ea580c','#9a3412'],tex:'(a+b)^2',alt:'(a+b)²'},
   {key:'geo',label:'Géométrie',   c:['#2dd4bf','#0d9488','#115e59'],draw:'geometry'},
   {key:'tri',label:'Trigo',       c:['#f472b6','#db2777','#9d174d'],draw:'trig'},
@@ -203,12 +222,12 @@ const CARDS=[
 const LESSONS={
 ana:{learn:[
  r`<p>La <b>dérivée</b> d'une fonction mesure sa <b>pente</b> : à quelle vitesse elle monte ou descend.</p><p>Règle d'or : $$(x^n)'=n\,x^{n-1}$$ Exemple : $(x^3)'=3x^2$.</p>`,
- r`<p>Une constante ne bouge pas : sa dérivée vaut $0$.</p><p>Un nombre devant se garde : $(5x^2)'=5\times 2x=10x$.</p><p>L'<b>intégrale</b> fait le chemin inverse : elle mesure une aire sous la courbe.</p>`],
+ r`<p>Une constante ne bouge pas : sa dérivée vaut $0$.</p><p>Un nombre devant se garde : $(5x^2)'=5\times 2x=10x$.</p><p>Pour une somme, on dérive chaque morceau : $(x^2+3x)'=2x+3$.</p>`],
  quiz:[
  {q:r`Dérivée de $x^2$ ?`,a:[r`$2x$`,r`$x$`,r`$\dfrac{x^3}{3}$`,r`$2$`],why:r`On descend l'exposant devant et on retire 1 : $2x^{1}=2x$.`},
  {q:r`Dérivée de $5x^3$ ?`,a:[r`$15x^2$`,r`$5x^2$`,r`$15x^3$`,r`$3x^2$`],why:r`$5\times 3x^2=15x^2$.`},
  {q:r`Dérivée de la constante $7$ ?`,a:[r`$0$`,r`$7$`,r`$1$`,r`$7x$`],why:r`Une constante ne varie pas : sa pente est nulle.`},
- {q:r`Combien vaut $\displaystyle\int_0^1 2x\,dx$ ?`,a:[r`$1$`,r`$2$`,r`$\dfrac12$`,r`$0$`],why:r`Une primitive de $2x$ est $x^2$ : $1^2-0^2=1$.`},
+ {q:r`Dérivée de $x^2+3x$ ?`,a:[r`$2x+3$`,r`$2x+3x$`,r`$x+3$`,r`$2x$`],why:r`On dérive chaque morceau : $(x^2)'=2x$ et $(3x)'=3$.`},
 ]},
 alg:{learn:[
  r`<p>Les <b>identités remarquables</b> font gagner un temps fou :</p><p>$$(a+b)^2=a^2+2ab+b^2$$ $$(a-b)(a+b)=a^2-b^2$$</p>`,
@@ -631,7 +650,8 @@ LESSONS.pro={steps:[
 
 /* ================= RAPPELS DE COURS ================= */
 const MEMOS={
- ana:r`<p><b>Dérivées</b></p><p>$(x^n)'=nx^{n-1}$ · $(k)'=0$ · $(kx^n)'=knx^{n-1}$</p><p>Dérivée $>0$ : la fonction monte ; $<0$ : elle descend.</p><p><b>Intégrale</b> : aire sous la courbe. $\displaystyle\int_a^b f(x)\,dx=F(b)-F(a)$ avec $F$ une primitive.</p>`,
+ ana:r`<p><b>Dérivées</b></p><p>$(x^n)'=nx^{n-1}$ · $(k)'=0$ · $(kx^n)'=knx^{n-1}$</p><p>Dérivée $>0$ : la fonction monte ; $<0$ : elle descend.</p>`,
+ int:r`<p><b>Intégrale</b> = aire sous la courbe entre $x=a$ et $x=b$ (comptée en négatif sous l'axe).</p><p><b>Primitive</b> : $F$ telle que $F'=f$. Règle : $x^n\to\dfrac{x^{n+1}}{n+1}$ · $k\to kx$ · $e^x\to e^x$ · $\dfrac1x\to\ln x$</p><p><b>Calcul</b> : $\displaystyle\int_a^b f(x)\,dx=F(b)-F(a)$</p>`,
  alg:r`<p><b>Identités remarquables</b></p><p>$(a+b)^2=a^2+2ab+b^2$</p><p>$(a-b)^2=a^2-2ab+b^2$</p><p>$(a-b)(a+b)=a^2-b^2$</p><p><b>Équations</b> : même opération des deux côtés. $x^2=k$ ($k>0$) : $x=\pm\sqrt k$.</p>`,
  geo:r`<p><b>Pythagore</b> (triangle rectangle) : $a^2+b^2=c^2$, $c$ = hypoténuse, en face de l'angle droit.</p><p><b>Aire du triangle</b> : $\dfrac{\text{base}\times\text{hauteur}}{2}$</p><p><b>Angles d'un triangle</b> : somme $=180^\circ$.</p><p><b>Disque</b> : aire $\pi r^2$, périmètre $2\pi r$.</p>`,
  tri:r`<p>Sur le cercle de rayon 1 : point $(\cos x\,;\sin x)$.</p><p>$\cos^2x+\sin^2x=1$</p><p>$\pi$ rad $=180^\circ$</p><p>$\cos0=1$, $\sin0=0$, $\cos\frac\pi2=0$, $\sin\frac\pi2=1$</p><p>Triangle rectangle : $\cos=\dfrac{\text{adj}}{\text{hyp}}$, $\sin=\dfrac{\text{opp}}{\text{hyp}}$, $\tan=\dfrac{\text{opp}}{\text{adj}}$.</p>`,
@@ -662,6 +682,238 @@ function openMemo(key){
   requestAnimationFrame(()=>sh.classList.add('open'));
 }
 
+/* ================= OUTILS POUR EXERCICES GÉNÉRÉS ================= */
+const ri=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+function gcd(a,b){a=Math.abs(a);b=Math.abs(b);while(b){[a,b]=[b,a%b];}return a||1;}
+/* fraction en LaTeX, simplifiée */
+function fr(p,q=1){
+  if(q<0){p=-p;q=-q;}
+  const g=gcd(p,q);p/=g;q/=g;
+  if(q===1) return String(p);
+  return (p<0?'-':'')+`\\dfrac{${Math.abs(p)}}{${q}}`;
+}
+/* monôme a·x^n en LaTeX */
+function mono(a,n){
+  if(a===0) return '0';
+  const c=a===1&&n>0?'':a===-1&&n>0?'-':String(a);
+  return n===0?String(a):n===1?c+'x':c+`x^{${n}}`;
+}
+/* fabrique une question : bonne réponse en premier, distracteurs dédoublonnés */
+function Q(q,good,bad,why,hint,img,extra){
+  const a=[good];
+  for(const b of bad){if(a.length>=4)break;if(!a.includes(b))a.push(b);}
+  const n=Number(good);
+  if(!isNaN(n)) for(const d of [1,-1,2,-2,3,5]){if(a.length>=4)break;const c=String(n+d);if(!a.includes(c))a.push(c);}
+  return Object.assign({q,a:a.map(x=>x.startsWith('$')||x.includes('<')?x:'$'+x+'$'),why,hint,img,bubbles:true},extra||{});
+}
+
+/* ================= TRACEUR DE COURBES ================= */
+function plot(o){
+  const W=320,H=o.h||210,p=24,{f,x0,x1,y0,y1}=o,col=o.col||'#0891b2';
+  const X=x=>p+(x-x0)/(x1-x0)*(W-2*p), Y=y=>H-p-(y-y0)/(y1-y0)*(H-2*p);
+  const cy=v=>Math.max(y0,Math.min(y1,v));
+  let s='';
+  for(let x=Math.ceil(x0);x<=x1;x++) s+=`<line x1="${X(x)}" y1="${Y(y0)}" x2="${X(x)}" y2="${Y(y1)}" stroke="#eeecf5" stroke-width="1"/>`;
+  const ys=o.ystep||1;
+  for(let y=Math.ceil(y0/ys)*ys;y<=y1;y+=ys) s+=`<line x1="${X(x0)}" y1="${Y(y)}" x2="${X(x1)}" y2="${Y(y)}" stroke="#eeecf5" stroke-width="1"/>`;
+  if(o.rects){
+    const n=o.rects,w=(o.b-o.a)/n;
+    for(let i=0;i<n;i++){const xa=o.a+i*w,h=f(xa);
+      s+=`<rect x="${X(xa)}" y="${Math.min(Y(h),Y(0))}" width="${X(xa+w)-X(xa)}" height="${Math.abs(Y(h)-Y(0))}" fill="${col}" fill-opacity=".35" stroke="${col}" stroke-width="${n>25?.6:1.4}"/>`;}
+  }else if(o.a!=null){
+    let d=`M${X(o.a)} ${Y(0)}`;
+    for(let i=0;i<=80;i++){const x=o.a+(o.b-o.a)*i/80;d+=` L${X(x)} ${Y(cy(f(x)))}`;}
+    d+=` L${X(o.b)} ${Y(0)} Z`;
+    s+=`<path d="${d}" fill="${o.neg?'#e11d48':col}" fill-opacity=".38"/>`;
+  }
+  // axes
+  if(y0<=0&&y1>=0) s+=`<line x1="${X(x0)}" y1="${Y(0)}" x2="${X(x1)}" y2="${Y(0)}" stroke="#1f1b3a" stroke-width="2.4"/><path d="M${X(x1)-7} ${Y(0)-5} L${X(x1)} ${Y(0)} L${X(x1)-7} ${Y(0)+5}" fill="none" stroke="#1f1b3a" stroke-width="2.4"/>`;
+  if(x0<=0&&x1>=0) s+=`<line x1="${X(0)}" y1="${Y(y0)}" x2="${X(0)}" y2="${Y(y1)}" stroke="#1f1b3a" stroke-width="2.4"/><path d="M${X(0)-5} ${Y(y1)+7} L${X(0)} ${Y(y1)} L${X(0)+5} ${Y(y1)+7}" fill="none" stroke="#1f1b3a" stroke-width="2.4"/>`;
+  if(o.ticks!==false){
+    for(let x=Math.ceil(x0);x<=x1;x+=(o.xstep||1)) if(x!==0&&!(o.a!=null&&o.bounds!==false&&(x===o.a||x===o.b))) s+=`<text x="${X(x)}" y="${Y(0)+16}" class="ax">${x}</text>`;
+    for(let y=Math.ceil(y0/ys)*ys;y<=y1;y+=ys) if(y!==0) s+=`<text x="${X(0)-9}" y="${Y(y)+4}" class="ax" text-anchor="end">${y}</text>`;
+  }
+  // courbe
+  let d='',pen=false;
+  for(let i=0;i<=160;i++){const x=x0+(x1-x0)*i/160,v=f(x);if(v<y0-.5||v>y1+.5){pen=false;continue;}d+=(pen?' L':' M')+`${X(x).toFixed(1)} ${Y(v).toFixed(1)}`;pen=true;}
+  s+=`<path d="${d.trim()}" fill="none" stroke="#1f1b3a" stroke-width="3.4" stroke-linecap="round"/>`;
+  if(o.a!=null&&o.bounds!==false){
+    [[o.a,o.la??'a'],[o.b,o.lb??'b']].forEach(([x,l])=>{
+      s+=`<line x1="${X(x)}" y1="${Y(0)}" x2="${X(x)}" y2="${Y(cy(f(x)))}" stroke="${o.neg?'#e11d48':col}" stroke-width="2.4" stroke-dasharray="5 4"/>`;
+      if(l!=='') s+=`<text x="${X(x)}" y="${Y(0)+(o.neg?-8:34)}" class="ax big" fill="${o.neg?'#e11d48':col}">${l}</text>`;
+    });
+  }
+  if(o.fl) s+=`<text x="${X(o.fl[0])}" y="${Y(o.fl[1])}" class="ax big" fill="#1f1b3a">${o.fl[2]}</text>`;
+  if(o.inside) s+=`<text x="${X((o.a+o.b)/2)}" y="${Y(o.inside[1])}" class="ax big" fill="${o.neg?'#9f1239':'#0e4f63'}">${o.inside[0]}</text>`;
+  return `<svg viewBox="0 0 ${W} ${H+(o.a!=null&&!o.neg?14:0)}" class="fig">${s}</svg>`;
+}
+
+/* ================= INTÉGRALES — ANIMATIONS ================= */
+const IC='#0891b2';
+function mountRiemann(box,done){
+  const f=x=>x*x/4+1,exact=28/3;
+  box.innerHTML=`<div id="rf"></div>
+    <div class="eq" id="req"></div>
+    <label class="sld" style="--k:${IC}"><span>▮</span><input type="range" min="1" max="60" value="2" id="rn"><b id="rv">2</b></label>
+    <div class="hint" id="rh">👉 Augmente le nombre de rectangles</div>`;
+  const inp=box.querySelector('#rn');let won=false;
+  function draw(){
+    const n=+inp.value,w=4/n;let sum=0;for(let i=0;i<n;i++)sum+=f(i*w)*w;
+    box.querySelector('#rf').innerHTML=plot({f,x0:-.4,x1:4.6,y0:-.6,y1:5.4,a:0,b:4,rects:n,la:'0',lb:'4',col:IC});
+    box.querySelector('#rv').textContent=n;
+    const gap=Math.abs(exact-sum);
+    box.querySelector('#req').innerHTML=`${n} rectangle${n>1?'s':''} : aire ≈ <b style="color:${IC}">${sum.toFixed(2).replace('.',',')}</b><br><span style="font-size:17px;color:#6b6785">aire exacte : 9,33 · écart ${gap.toFixed(2).replace('.',',')}</span>`;
+    if(n>=30&&!won){won=true;
+      box.querySelector('#rh').innerHTML='🎯 Avec des rectangles très fins, on tombe presque pile sur l\'aire exacte !';
+      done(`Une intégrale, c'est <b>la somme d'une infinité de rectangles infiniment fins</b> sous la courbe. D'où son symbole $\\int$ : un <b>S</b> allongé, pour « <b>S</b>omme ».`);}
+  }
+  inp.addEventListener('input',draw);draw();
+}
+function mountBounds(box,done){
+  const f=x=>x*x;
+  box.innerHTML=`<div id="bf"></div><div class="eq" id="beq"></div>
+    <label class="sld" style="--k:#f97316"><span>a</span><input type="range" min="0" max="4" value="1" id="ba"><b id="bav">1</b></label>
+    <label class="sld" style="--k:${IC}"><span>b</span><input type="range" min="0" max="4" value="2" id="bb"><b id="bbv">2</b></label>
+    <div class="hint" id="bh">🎯 Défi : règle <b>a</b> et <b>b</b> pour que l'aire vaille exactement <b>9</b></div>`;
+  const A=box.querySelector('#ba'),B=box.querySelector('#bb');let won=false,moves=0;
+  function draw(){
+    let a=+A.value,b=+B.value;
+    box.querySelector('#bav').textContent=a;box.querySelector('#bbv').textContent=b;
+    const lo=Math.min(a,b),hi=Math.max(a,b);
+    box.querySelector('#bf').innerHTML=plot({f,x0:-.5,x1:4.5,y0:-1.5,y1:17,ystep:4,a:lo,b:hi,la:'',lb:'',col:IC,fl:[3.9,15.4,'x²']});
+    const v=fr(hi**3-lo**3,3);
+    box.querySelector('#beq').innerHTML=a>=b?`<span style="color:#6b6785">Mets <b>a</b> plus petit que <b>b</b></span>`:
+      `$\\displaystyle\\int_{${a}}^{${b}}x^2dx=\\left[\\frac{x^3}{3}\\right]_{${a}}^{${b}}=\\frac{${b**3}}{3}-\\frac{${a**3}}{3}=${v}$`;
+    math(box.querySelector('#beq'));
+    if(a<b&&b**3-a**3===27&&!won){won=true;
+      box.querySelector('#bh').innerHTML='🏆 Trouvé : de 0 à 3, l\'aire vaut 9 !';
+      done(`On a calculé l'aire <b>sans compter les carreaux</b> : une primitive de $x^2$ est $\\frac{x^3}{3}$, et $\\frac{27}{3}-\\frac{0}{3}=9$.`);}
+    else if(!won&&moves>=10) box.querySelector('#bh').innerHTML='💡 Coup de pouce : essaie <b>a = 0</b> et <b>b = 3</b>';
+  }
+  [A,B].forEach(x=>x.addEventListener('input',()=>{moves++;draw();}));draw();
+}
+
+/* ================= INTÉGRALES — EXERCICES GÉNÉRÉS ================= */
+const GI={
+  rect(){ // fonction constante → rectangle
+    const k=ri(2,5),a=ri(0,2),b=a+ri(2,4),v=k*(b-a);
+    return Q(r`Combien vaut $\displaystyle\int_{${a}}^{${b}}${k}\,dx$ ?`,String(v),[String(k+b-a),String(k*b),String(v+k),String(b-a)],
+      r`La courbe est la droite horizontale $y=${k}$ : la zone est un <b>rectangle</b>.<br>Hauteur $${k}$ × largeur $${b}-${a}=${b-a}$ → $${v}$.`,
+      'Dessine la zone : c\'est un rectangle. Aire = hauteur × largeur.',
+      plot({f:()=>k,x0:-.5,x1:b+1,y0:-.8,y1:k+1.5,a,b,la:String(a),lb:String(b),col:IC,inside:[String(k)+' de haut',k/2]}));
+  },
+  tri(){ // f(x)=m·x de 0 à b → triangle
+    const m=pick([1,2]),b=pick([2,3,4,5,6]),v=m*b*b/2;
+    return Q(r`Combien vaut $\displaystyle\int_{0}^{${b}}${mono(m,1)}\,dx$ ?`,fr(m*b*b,2),[String(m*b*b),String(m*b),fr(m*b*b,4),String(b*b)],
+      r`La zone est un <b>triangle</b> : base $${b}$, hauteur $${m}\times${b}=${m*b}$.<br>Aire $=\dfrac{${b}\times${m*b}}{2}=${fr(m*b*b,2)}$.`,
+      'C\'est un triangle : base × hauteur ÷ 2. La hauteur, c\'est la valeur de la fonction au bout.',
+      plot({f:x=>m*x,x0:-.5,x1:b+1,y0:-1,y1:m*b+1.5,ystep:m*b>8?2:1,a:0,b,la:'0',lb:String(b),col:IC}));
+  },
+  bornes(){ // lire les bornes sur un dessin
+    const a=ri(0,2),b=a+ri(2,3);
+    return Q(`Quelle intégrale correspond à la zone colorée ?`,r`$\displaystyle\int_{${a}}^{${b}}f(x)\,dx$`,
+      [r`$\displaystyle\int_{${b}}^{${a}}f(x)\,dx$`,r`$\displaystyle\int_{0}^{${b+1}}f(x)\,dx$`,r`$\displaystyle\int_{${a+1}}^{${b}}f(x)\,dx$`],
+      r`La zone commence à $x=${a}$ (borne du bas) et s'arrête à $x=${b}$ (borne du haut).`,
+      'La borne du bas est l\'endroit où la zone commence, celle du haut où elle s\'arrête.',
+      plot({f:x=>2+Math.sin(x*1.3)*.8+x*.2,x0:-.5,x1:b+1.5,y0:-.6,y1:4.5,a,b,la:String(a),lb:String(b),col:IC}),{bubbles:false});
+  },
+  prim(){ // primitive de a·x^n
+    const n=pick([1,2,3]),k=ri(1,4),a=k*(n+1);
+    return Q(r`Une primitive de $f(x)=${mono(a,n)}$ ?`,mono(k,n+1),[mono(a,n+1),mono(a*n,n-1),mono(k,n),mono(a*(n+1),n+1)],
+      r`① On ajoute 1 à l'exposant : $x^{${n}}\to x^{${n+1}}$.<br>② On divise par ce nouvel exposant : $${a}\div${n+1}=${k}$.<br>→ $F(x)=${mono(k,n+1)}$. Vérif : $F'(x)=${k}\times${n+1}x^{${n}}=${mono(a,n)}$ ✓`,
+      'Fais l\'inverse de la dérivée : ajoute 1 à l\'exposant, puis divise par ce nouvel exposant.');
+  },
+  primsum(){ // primitive de a·x + c
+    const k=ri(1,4),a=2*k,c=ri(1,6);
+    return Q(r`Une primitive de $f(x)=${a}x+${c}$ ?`,`${mono(k,2)}+${mono(c,1)}`,[`${mono(a,2)}+${mono(c,1)}`,`${mono(k,2)}+${c}`,String(a),`${mono(a,2)}+${c}`],
+      r`On traite chaque morceau :<br>• $${a}x$ → $${a}\times\dfrac{x^2}{2}=${mono(k,2)}$<br>• $${c}$ → $${mono(c,1)}$<br>→ $F(x)=${mono(k,2)}+${mono(c,1)}$.`,
+      'Morceau par morceau. Un nombre seul k devient k·x.');
+  },
+  primref(){ // primitives de référence
+    const t=pick([
+      [r`e^x`,r`e^x`,[r`xe^x`,r`e^{x+1}`,r`\dfrac{e^{x+1}}{x+1}`],r`$e^x$ est sa propre dérivée, donc c'est aussi sa propre primitive.`],
+      [r`\dfrac1x`,r`\ln x`,[r`-\dfrac{1}{x^2}`,r`\dfrac{x^0}{0}`,r`x`],r`La dérivée de $\ln x$ est $\dfrac1x$ (pour $x>0$), donc $\ln x$ est une primitive de $\dfrac1x$.`],
+      [r`\cos x`,r`\sin x`,[r`-\sin x`,r`\cos x`,r`-\cos x`],r`La dérivée de $\sin x$ est $\cos x$.`],
+      [r`5`,r`5x`,[r`0`,r`5`,r`\dfrac{5}{x}`],r`La dérivée de $5x$ est $5$.`],
+    ]);
+    return Q(r`Une primitive de $f(x)=${t[0]}$ ?`,t[1],t[2],t[3],'Cherche la fonction dont la dérivée donne f.');
+  },
+  calc(){ // ∫ (n+1)x^n = b^(n+1) - a^(n+1)
+    const n=pick([1,2]),a=pick([0,1]),b=pick([2,3]),v=b**(n+1)-a**(n+1);
+    return Q(r`Calcule $\displaystyle\int_{${a}}^{${b}}${mono(n+1,n)}\,dx$`,String(v),[String(b**(n+1)+a**(n+1)),String((n+1)*(b**n-a**n)),String(b**(n+1)),String(v+n+1)],
+      r`① Primitive : $F(x)=x^{${n+1}}$.<br>② $F(${b})=${b**(n+1)}$ et $F(${a})=${a**(n+1)}$.<br>③ $${b**(n+1)}-${a**(n+1)}=${v}$.`,
+      'Trouve une primitive F, puis calcule F(borne du haut) − F(borne du bas).');
+  },
+  calcaff(){ // ∫ (2x + c)
+    const c=ri(1,4),a=ri(0,2),b=a+ri(1,3),F=x=>x*x+c*x,v=F(b)-F(a);
+    return Q(r`Calcule $\displaystyle\int_{${a}}^{${b}}(2x+${c})\,dx$`,String(v),[String(F(b)+F(a)),String(F(b)),String(2*b+c-(2*a+c)),String(v+c)],
+      r`① Primitive : $F(x)=x^2+${mono(c,1)}$.<br>② $F(${b})=${F(b)}$ et $F(${a})=${F(a)}$.<br>③ $${F(b)}-${F(a)}=${v}$.`,
+      'Primitive de 2x : x². Primitive d\'un nombre c : c·x. Puis F(haut) − F(bas).');
+  },
+  neg(){ // courbe sous l'axe
+    const k=ri(1,3),a=ri(0,2),b=a+ri(2,3),v=-k*(b-a);
+    return Q(r`Combien vaut $\displaystyle\int_{${a}}^{${b}}(-${k})\,dx$ ?`,String(v),[String(-v),'0',String(-k)],
+      r`La zone est sous l'axe : son aire ($${k}\times${b-a}=${-v}$) compte <b>en négatif</b>. L'intégrale vaut $${v}$.`,
+      'Quand la courbe passe sous l\'axe horizontal, l\'aire compte en négatif.',
+      plot({f:()=>-k,x0:-.5,x1:b+1,y0:-k-1.2,y1:1.2,a,b,la:String(a),lb:String(b),neg:true}));
+  },
+};
+
+const ANAT=r`$$\color{#7c3aed}{\int}_{\color{#f97316}{a}}^{\color{#f97316}{b}}\ \color{#0891b2}{f(x)}\ \color{#16a34a}{dx}$$
+<div class="legend">
+<div><b style="color:#7c3aed">∫</b> un S allongé : « somme »</div>
+<div><b style="color:#f97316">a, b</b> les bornes : où la zone commence et s'arrête</div>
+<div><b style="color:#0891b2">f(x)</b> la hauteur de la courbe</div>
+<div><b style="color:#16a34a">dx</b> une largeur minuscule</div></div>`;
+
+LESSONS.int={levels:[
+ {title:'Une intégrale, c\'est une aire',steps:[
+  {type:'learn',fig:plot({f:x=>x*x/4+1,x0:-.4,x1:4.6,y0:-.6,y1:5.4,a:1,b:3.5,col:IC,fl:[3.9,5,'f']}),
+   html:r`<p>$\displaystyle\int_a^b f(x)\,dx$ se lit « intégrale de $a$ à $b$ de $f$ ».</p><p>C'est tout simplement <b>l'aire de la zone colorée</b> : sous la courbe, au-dessus de l'axe, entre $x=a$ et $x=b$.</p>`},
+  {type:'learn',html:ANAT+r`<p>Exemple : $\displaystyle\int_1^3 f(x)\,dx$ = l'aire sous $f$ entre $x=1$ et $x=3$.</p>`},
+  {type:'play',title:'Expérimente',text:'Pour mesurer l\'aire sous une courbe, on la remplit de rectangles.',mount:mountRiemann},
+  {type:'gen',make:GI.rect},
+  {type:'gen',make:GI.tri},
+  {type:'gen',make:GI.bornes},
+ ]},
+ {title:'Les primitives',steps:[
+  {type:'learn',html:r`<div class="chain"><div class="cbox" style="--k:#7c3aed">$F(x)=x^3$</div>
+     <div class="carrow"><span>dériver ⬇</span><span>⬆ primitiver</span></div>
+     <div class="cbox" style="--k:#0891b2">$f(x)=3x^2$</div></div>
+     <p><b>Dériver</b>, c'est descendre : de $x^3$ on obtient $3x^2$.</p><p><b>Primitiver</b>, c'est remonter : on cherche $F$ dont la dérivée est $f$. On dit que $F$ est <b>une primitive</b> de $f$.</p>`},
+  {type:'learn',html:r`<p><b>La règle d'or</b> : ajoute 1 à l'exposant, puis divise par ce nouvel exposant. $$x^n\ \longrightarrow\ \frac{x^{n+1}}{n+1}$$</p>
+     <div class="legend"><div>$x$ → $\dfrac{x^2}{2}$</div><div>$x^2$ → $\dfrac{x^3}{3}$</div><div>$k$ (un nombre) → $kx$</div><div>$e^x$ → $e^x$ · $\dfrac1x$ → $\ln x$</div></div>
+     <p style="font-size:17px">On peut toujours ajouter une constante : $x^3+5$ est aussi une primitive de $3x^2$.</p>`},
+  {type:'ex',title:r`Trouver une primitive de $f(x)=6x^2+4$`,lines:[
+     r`On traite <b>chaque morceau</b> séparément.`,
+     r`$6x^2$ : l'exposant passe de 2 à 3, on divise par 3 → $6\times\dfrac{x^3}{3}=2x^3$`,
+     r`$4$ : un nombre seul devient $4x$`,
+     r`Résultat : $F(x)=2x^3+4x$`,
+     r`✅ Vérification : $F'(x)=6x^2+4=f(x)$`]},
+  {type:'gen',make:GI.prim},
+  {type:'gen',make:GI.primsum},
+  {type:'gen',make:GI.primref},
+  {type:'gen',make:GI.prim},
+ ]},
+ {title:'Calculer une intégrale',steps:[
+  {type:'learn',html:r`<p>Pour calculer l'aire <b>sans compter de carreaux</b> :</p>
+     <div class="legend"><div>① Trouve une primitive $F$ de $f$</div><div>② Calcule $F(b)$ et $F(a)$</div><div>③ Soustrais</div></div>
+     $$\int_a^b f(x)\,dx=F(b)-F(a)$$<p style="font-size:17px">On l'écrit aussi $\big[F(x)\big]_a^b$, « $F$ pris entre $a$ et $b$ ».</p>`},
+  {type:'ex',title:r`Calculer $\displaystyle\int_1^3 2x\,dx$`,fig:plot({f:x=>2*x,x0:-.5,x1:4,y0:-1,y1:7.5,a:1,b:3,la:'1',lb:'3',col:IC}),lines:[
+     r`① Une primitive de $2x$ est $F(x)=x^2$`,
+     r`② $F(3)=9$ et $F(1)=1$`,
+     r`③ $\displaystyle\int_1^3 2x\,dx=9-1=8$`,
+     r`✅ Vérif sur le dessin : la zone est un trapèze, $\dfrac{(2+6)\times2}{2}=8$`]},
+  {type:'play',title:'Expérimente',text:'Voici la courbe de $x^2$. Choisis les bornes et regarde le calcul se faire.',mount:mountBounds},
+  {type:'gen',make:GI.calc},
+  {type:'gen',make:GI.calcaff},
+  {type:'learn',fig:plot({f:x=>-1.5,x0:-.5,x1:4.5,y0:-2.8,y1:1.2,a:1,b:3.5,neg:true,la:'a',lb:'b'}),
+   html:r`<p>⚠️ Quand la courbe passe <b>sous l'axe</b>, l'aire compte <b>en négatif</b> : l'intégrale est alors négative.</p>`},
+  {type:'gen',make:GI.neg},
+ ]},
+],practice:Object.values(GI)};
+
 /* ================= PROGRESSION ================= */
 const KEY='mathnb-v1', GOAL=50;
 function dayStr(d){return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();}
@@ -675,7 +927,9 @@ function checkDay(){
   const y=new Date();y.setDate(y.getDate()-1);
   if(st.last&&st.last!==t&&st.last!==dayStr(y)) st.streak=0;
 }
-function nextCard(){return CARDS.find(c=>(st.best[c.key]||0)<3)||CARDS[Math.floor(Math.random()*CARDS.length)];}
+st.lv=st.lv||{};
+function chapterDone(c){const l=LESSONS[c.key];return l.levels?(st.lv[c.key]||0)>=l.levels.length:(st.best[c.key]||0)>=3;}
+function nextCard(){return CARDS.find(c=>!chapterDone(c))||CARDS[Math.floor(Math.random()*CARDS.length)];}
 function refreshStats(){
   checkDay();
   const h=new Date().getHours();
@@ -688,12 +942,14 @@ function refreshStats(){
   const n=nextCard();
   const go=document.getElementById('go');
   const goal=st.todayXp>=GOAL;
-  go.innerHTML=`<span class="go-k">${goal?'🎁 Bonus : encore une ?':'🎯 Ta leçon du jour'}</span><span class="go-t">${n.label} <span class="go-a">→</span></span><span class="go-s">≈ 5 min · gagne des XP et des étoiles</span>`;
+  go.innerHTML=`<span class="go-k">${goal?'🎁 Bonus : encore une ?':'🎯 Ta leçon du jour'}</span><span class="go-t">${n.label}${LESSONS[n.key].levels&&(st.lv[n.key]||0)<LESSONS[n.key].levels.length?' · leçon '+((st.lv[n.key]||0)+1):''} <span class="go-a">→</span></span><span class="go-s">≈ 5 min · gagne des XP et des étoiles</span>`;
   go.onclick=()=>startLesson(n);
   grid.querySelectorAll('.tile').forEach(t=>{
-    const s=st.best[t.dataset.key]||0;
-    t.querySelector('.st').textContent=s?'★'.repeat(s)+'☆'.repeat(3-s):'';
-    t.classList.toggle('done',s===3);
+    const k=t.dataset.key,les=LESSONS[k],s=st.best[k]||0;
+    if(les.levels){const n=les.levels.length,v=Math.min(st.lv[k]||0,n);
+      t.querySelector('.st').innerHTML=`<span class="lvdots">${'●'.repeat(v)}${'○'.repeat(n-v)}</span>`;}
+    else t.querySelector('.st').textContent=s?'★'.repeat(s)+'☆'.repeat(3-s):'';
+    t.classList.toggle('done',chapterDone(CARDS.find(c=>c.key===k)));
   });
 }
 
@@ -767,13 +1023,22 @@ function math(el){if(window.renderMathInElement){try{renderMathInElement(el,{del
 
 function startLesson(card){
   const les=LESSONS[card.key];
-  let queue;
-  if(les.steps){ queue=les.steps.map((s,i)=>({...s,type:s.type||'q',id:i})); }
+  let queue,level=null,practice=false,sub='';
+  const expand=a=>a.map((s,i)=>s.type==='gen'?{...s.make(),type:'q',id:i}:{...s,type:s.type||'q',id:i});
+  if(les.levels){
+    level=st.lv[card.key]||0;
+    if(level>=les.levels.length){
+      practice=true;sub='Entraînement';
+      const pool=shuffle(les.practice);
+      queue=expand([{type:'learn',html:'<p>🏋️ <b>Entraînement libre</b></p><p>Des exercices tirés au hasard sur tout le chapitre. Les nombres changent à chaque fois !</p>'},
+        ...Array.from({length:6},(_,i)=>({type:'gen',make:pool[i%pool.length]}))]);
+    }else{sub=`Leçon ${level+1}/${les.levels.length}`;queue=expand(les.levels[level].steps);}
+  }else if(les.steps){ queue=les.steps.map((s,i)=>({...s,type:s.type||'q',id:i})); }
   else{
     const qs=shuffle(les.quiz).map((q,i)=>({...q,type:'q',id:i}));
     queue=[...les.learn.map((h,i)=>({type:'learn',html:h,n:i+1,of:les.learn.length})),...qs];
   }
-  L={key:card.key,label:card.label,queue,done:0,combo:0,gained:0,nq:queue.filter(s=>s.type==='q').length,missed:new Set()};
+  L={key:card.key,label:card.label,sub,level,practice,levels:les.levels,queue,done:0,combo:0,gained:0,nq:queue.filter(s=>s.type==='q').length,missed:new Set()};
   document.documentElement.style.setProperty('--c',card.c[1]);
   $lesson.classList.add('open');document.body.style.overflow='hidden';
   render();
@@ -788,15 +1053,27 @@ function render(){
   const s=L.queue[0];
   if(!s) return finish();
   if(s.type==='learn'){
-    $body.innerHTML=`<div class="kicker">${L.label} · À retenir${s.n?` ${s.n}/${s.of}`:''}</div><div class="learn">${s.html}</div>`;
+    $body.innerHTML=`<div class="kicker">${L.label}${L.sub?' · '+L.sub:''} · À retenir${s.n?` ${s.n}/${s.of}`:''}</div><div class="learn">${s.fig?`<div class="lfig">${s.fig}</div>`:''}${s.html}</div>`;
     math($body);
     $fb.className='fb neutral show';
     $fb.innerHTML=`<button class="cta">Compris !</button>`;
     $fb.querySelector('.cta').onclick=()=>{L.queue.shift();L.done++;render();};
+  }else if(s.type==='ex'){
+    $body.innerHTML=`<div class="kicker">${L.label}${L.sub?' · '+L.sub:''} · Exemple guidé</div><div class="q">${s.title}</div>${s.fig?`<div class="qimg">${s.fig}</div>`:''}<div class="exl">${s.lines.map(l=>`<div class="exs">${l}</div>`).join('')}</div>`;
+    math($body);
+    const rows=[...$body.querySelectorAll('.exs')];let shown=0;
+    const next=()=>{
+      if(shown<rows.length){rows[shown].classList.add('on');shown++;rows[shown-1].scrollIntoView({behavior:'smooth',block:'nearest'});}
+      $fb.className='fb neutral show';
+      $fb.innerHTML=shown<rows.length?`<button class="cta">Étape suivante ▶</button>`:`<button class="cta">Compris !</button>`;
+      $fb.querySelector('.cta').onclick=shown<rows.length?next:()=>{L.queue.shift();L.done++;render();};
+    };
+    next();
   }else if(s.type==='play'){
-    $body.innerHTML=`<div class="kicker">${L.label} · ${s.title||'À toi de jouer'}</div><div class="q">${s.text}</div><div class="play"></div>`;
+    $body.innerHTML=`<div class="kicker">${L.label}${L.sub?' · '+L.sub:''} · ${s.title||'À toi de jouer'}</div><div class="q">${s.text}</div><div class="play"></div>`;
     $fb.className='fb neutral show';
     $fb.innerHTML=`<button class="cta" disabled>Continuer</button>`;
+    math($body.querySelector('.q'));
     let finished=false;
     s.mount($body.querySelector('.play'),msg=>{
       if(finished) return; finished=true;
@@ -808,10 +1085,11 @@ function render(){
     });
   }else{
     const opts=s.keep?s.a.map((t,i)=>({t,ok:i===0})):shuffle(s.a.map((t,i)=>({t,ok:i===0})));
-    $body.innerHTML=`<div class="kicker">${L.label} · Question</div>${s.img?`<div class="qimg">${s.img}</div>`:''}<div class="q">${s.q}</div><div id="opts" class="${s.bubbles?'bubbles':''}"></div>`;
+    $body.innerHTML=`<div class="kicker">${L.label}${L.sub?' · '+L.sub:''} · Question</div>${s.img?`<div class="qimg">${s.img}</div>`:''}<div class="q">${s.q}</div>${s.hint?`<button class="hintbtn">💡 Indice</button><div class="hintbox"></div>`:''}<div id="opts" class="${s.bubbles&&s.a.every(x=>x.length<60)?'bubbles':''}"></div>`;
+    if(s.hint){const hb=$body.querySelector('.hintbtn');hb.onclick=()=>{s.hinted=true;hb.remove();const x=$body.querySelector('.hintbox');x.innerHTML='💡 '+s.hint;x.classList.add('on');math(x);};}
     const box=$body.querySelector('#opts');
     opts.forEach(o=>{
-      const b=document.createElement('button');b.className='opt';b.innerHTML=o.t;
+      const b=document.createElement('button');b.className='opt';b.innerHTML=o.t;b.dataset.ok=o.ok?1:0;
       b.onclick=()=>answer(b,o.ok,s);
       box.appendChild(b);
     });
@@ -824,7 +1102,7 @@ function answer(btn,ok,s){
   if(ok){
     btn.classList.add('ok');sound(true);
     L.combo++;
-    const gain=10+(L.combo>=3?5:0);
+    const gain=(s.hinted?5:10)+(L.combo>=3?5:0);
     L.gained+=gain;
     floatPlus(btn,'+'+gain);
     $fb.className='fb good show';
@@ -855,6 +1133,12 @@ function finish(){
   const before=st.todayXp;
   st.xp+=total;st.todayXp+=total;
   st.best[L.key]=Math.max(st.best[L.key]||0,stars);
+  let unlock='';
+  if(L.levels&&!L.practice){
+    st.lv[L.key]=Math.max(st.lv[L.key]||0,L.level+1);
+    unlock=L.level+1<L.levels.length?`<div class="unlock">🔓 Leçon ${L.level+2} débloquée : <b>${L.levels[L.level+1].title}</b></div>`
+      :`<div class="unlock">🏁 Chapitre terminé ! L'<b>entraînement</b> est débloqué : des exercices toujours nouveaux.</div>`;
+  }
   save();
   $bar.style.width='100%';$combo.textContent='';
   const goalHit=before<GOAL&&st.todayXp>=GOAL;
@@ -867,6 +1151,7 @@ function finish(){
       <div class="box"><b>${first}/${L.nq}</b>du 1er coup</div>
       <div class="box"><b>🔥 ${st.streak}</b>jour${st.streak>1?'s':''}</div>
     </div>
+    ${unlock}
     ${goalHit?'<p><b>Objectif du jour atteint !</b> Reviens demain pour garder ta série.</p>':''}
   </div>`;
   $fb.className='fb neutral show';
