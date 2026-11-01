@@ -1,5 +1,5 @@
 {
- "v": 1,
+ "v": 2,
  "note": "Banque de questions complémentaires, chargée à chaque ouverture de l'appli. Ajouter des questions et augmenter v.",
  "q": [
   {
@@ -25,7 +25,7 @@
     "$1$",
     "$\\ln x$"
    ],
-   "why": "L\\'exponentielle est sa propre dérivée.",
+   "why": "L'exponentielle est sa propre dérivée.",
    "hint": "C'est la fonction « magique » qui ne change pas quand on la dérive."
   },
   {
@@ -38,13 +38,13 @@
     "$x$",
     "$e^x$"
    ],
-   "why": "$(\\ln x)\\'=\\dfrac1x$ pour $x>0$.",
+   "why": "$(\\ln x)'=\\dfrac1x$ pour $x>0$.",
    "hint": "À connaître par cœur, comme $(e^x)'=e^x$."
   },
   {
    "id": "ana004",
    "chap": "ana",
-   "q": "Si $f\\'(x)>0$ sur un intervalle, alors $f$ y est…",
+   "q": "Si $f'(x)>0$ sur un intervalle, alors $f$ y est…",
    "a": [
     "croissante",
     "décroissante",
@@ -64,7 +64,7 @@
     "$3$",
     "$2$"
    ],
-   "why": "La pente de la tangente est $f\\'(3)$ ; $f\\'(x)=2x$ donc $f\\'(3)=6$.",
+   "why": "La pente de la tangente est $f'(3)$ ; $f'(x)=2x$ donc $f'(3)=6$.",
    "hint": "Calcule la dérivée, puis remplace x par 3."
   },
   {
@@ -122,7 +122,7 @@
   {
    "id": "geo010",
    "chap": "geo",
-   "q": "Périmètre d\\'un cercle de rayon $3$ ?",
+   "q": "Périmètre d'un cercle de rayon $3$ ?",
    "a": [
     "$6\\pi$",
     "$9\\pi$",
@@ -135,7 +135,7 @@
   {
    "id": "geo011",
    "chap": "geo",
-   "q": "Aire d\\'un rectangle de $7$ sur $4$ ?",
+   "q": "Aire d'un rectangle de $7$ sur $4$ ?",
    "a": [
     "$28$",
     "$22$",
@@ -148,7 +148,7 @@
   {
    "id": "geo012",
    "chap": "geo",
-   "q": "Triangle rectangle : hypoténuse $13$, un côté $5$. L\\'autre côté ?",
+   "q": "Triangle rectangle : hypoténuse $13$, un côté $5$. L'autre côté ?",
    "a": [
     "$12$",
     "$8$",
@@ -161,7 +161,7 @@
   {
    "id": "geo013",
    "chap": "geo",
-   "q": "Volume d\\'un cube d\\'arête $3$ ?",
+   "q": "Volume d'un cube d'arête $3$ ?",
    "a": [
     "$27$",
     "$9$",
@@ -213,7 +213,7 @@
   {
    "id": "tri017",
    "chap": "tri",
-   "q": "Dans un triangle rectangle, le sinus d\\'un angle vaut…",
+   "q": "Dans un triangle rectangle, le sinus d'un angle vaut…",
    "a": [
     "$\\dfrac{\\text{opposé}}{\\text{hypoténuse}}$",
     "$\\dfrac{\\text{adjacent}}{\\text{hypoténuse}}$",
@@ -277,7 +277,7 @@
   {
    "id": "pro022",
    "chap": "pro",
-   "q": "$P(A)=0{,}25$. Probabilité de l\\'événement contraire ?",
+   "q": "$P(A)=0{,}25$. Probabilité de l'événement contraire ?",
    "a": [
     "$0{,}75$",
     "$0{,}25$",
@@ -290,7 +290,7 @@
   {
    "id": "pro023",
    "chap": "pro",
-   "q": "On tire une carte d\\'un jeu de $32$. Probabilité d\\'un as ?",
+   "q": "On tire une carte d'un jeu de $32$. Probabilité d'un as ?",
    "a": [
     "$\\dfrac18$",
     "$\\dfrac{1}{32}$",
@@ -316,7 +316,7 @@
   {
    "id": "pro025",
    "chap": "pro",
-   "q": "On lance 3 pièces. Probabilité d\\'obtenir 3 Piles ?",
+   "q": "On lance 3 pièces. Probabilité d'obtenir 3 Piles ?",
    "a": [
     "$\\dfrac18$",
     "$\\dfrac12$",
@@ -440,7 +440,7 @@
     "$25$",
     "$12$"
    ],
-   "why": "D\\'abord la somme : $\\sqrt{25}=5$. Piège : ce n\\'est pas $3+4$ !",
+   "why": "D'abord la somme : $\\sqrt{25}=5$. Piège : ce n'est pas $3+4$ !",
    "hint": "Calcule d'abord ce qu'il y a sous la racine."
   },
   {
@@ -511,7 +511,7 @@
   {
    "id": "ens040",
    "chap": "ens",
-   "q": "$A=\\{1,2,3,4\\}$, $B=\\{3,4,5\\}$. Combien d\\'éléments dans $A\\cup B$ ?",
+   "q": "$A=\\{1,2,3,4\\}$, $B=\\{3,4,5\\}$. Combien d'éléments dans $A\\cup B$ ?",
    "a": [
     "$5$",
     "$7$",
@@ -548,14 +548,14 @@
   {
    "id": "fon043",
    "chap": "fon",
-   "q": "Ordonnée à l\\'origine de $y=5x-2$ ?",
+   "q": "Ordonnée à l'origine de $y=5x-2$ ?",
    "a": [
     "$-2$",
     "$5$",
     "$2$",
     "$0$"
    ],
-   "why": "C\\'est la valeur pour $x=0$ : $-2$.",
+   "why": "C'est la valeur pour $x=0$ : $-2$.",
    "hint": "Remplace x par 0."
   },
   {
@@ -659,7 +659,7 @@
     "$1$",
     "$0$"
    ],
-   "why": "$\\ln$ et $e$ s\\'annulent.",
+   "why": "$\\ln$ et $e$ s'annulent.",
    "hint": "ln « défait » l'exponentielle."
   },
   {
@@ -678,7 +678,7 @@
   {
    "id": "exp053",
    "chap": "exp",
-   "q": "$\\ln 8$ s\\'écrit aussi…",
+   "q": "$\\ln 8$ s'écrit aussi…",
    "a": [
     "$3\\ln2$",
     "$4\\ln2$",
@@ -704,7 +704,7 @@
   {
    "id": "pct055",
    "chap": "pct",
-   "q": "Coefficient multiplicateur d\\'une baisse de $30\\,\\%$ ?",
+   "q": "Coefficient multiplicateur d'une baisse de $30\\,\\%$ ?",
    "a": [
     "$0{,}7$",
     "$1{,}3$",
@@ -750,7 +750,7 @@
     "toujours égale à 1",
     "impossible à savoir"
    ],
-   "why": "Courbe au-dessus de l\\'axe : l\\'aire compte en positif.",
+   "why": "Courbe au-dessus de l'axe : l'aire compte en positif.",
    "hint": "Où est la courbe par rapport à l'axe ?"
   },
   {

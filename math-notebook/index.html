@@ -177,6 +177,9 @@ h2.sec{font-weight:900;font-size:22px;margin:26px 2px 12px}
 .tile.todo::before{content:"à revoir";position:absolute;left:50%;transform:translateX(-50%);top:6px;z-index:2;background:#fff;color:#e11d48;border-radius:999px;padding:1px 8px;font-size:10px;font-weight:900;letter-spacing:.3px}
 .toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 14px);z-index:50;transform:translate(-50%,-140%);background:#1f1b3a;color:#fff;border-radius:999px;padding:10px 18px;font-weight:800;font-size:16px;transition:transform .35s ease;white-space:nowrap}
 .toast.on{transform:translate(-50%,0)}
+.go2{position:relative;display:none;width:100%;margin-top:10px;padding:10px;border:2px solid rgba(255,255,255,.7);border-radius:16px;background:rgba(255,255,255,.18);color:#fff;font-weight:800;font-size:16px;cursor:pointer}
+.nxt{position:relative;margin-top:10px;text-align:center;font-weight:700;font-size:14px;opacity:.95}
+.unlock.lvup{background:#fef3c7;border-color:#fcd34d}
 .mbtn{position:absolute;left:6px;top:6px;z-index:2;width:26px;height:26px;padding:0;border:0;border-radius:50%;background:rgba(255,255,255,.92);font-size:13px;line-height:26px;box-shadow:0 2px 4px rgba(0,0,0,.18);cursor:pointer}
 .mbtn:active{transform:scale(.9)}
 .lmemo{border:0;background:color-mix(in srgb,var(--c) 14%,#fff);border-radius:12px;font-size:20px;padding:6px 9px;cursor:pointer}
@@ -207,6 +210,8 @@ h2.sec{font-weight:900;font-size:22px;margin:26px 2px 12px}
       <div class="gbar"><i id="gBar"></i></div>
     </div>
     <button class="go" id="go">▶ Commencer</button>
+    <button class="go2" id="go2"></button>
+    <div class="nxt" id="nxt"></div>
   </section>
 
   <h2 class="sec">Choisis un thème</h2>
@@ -909,8 +914,8 @@ const GI={
     const t=pick(['pos','neg','nul']),A=.3+Math.random()*.6,w=.6+Math.random();
     const F={pos:x=>1.1+Math.sin(x*w)*A,neg:x=>-1.1-Math.sin(x*w)*A,nul:x=>x*A*1.4}[t];
     const a=t==='nul'?-2:ri(0,1),b=t==='nul'?2:a+2;
-    return Q(r`Quel est le signe de $\displaystyle\int_{${a}}^{${b}}f(x)\,dx$ ?`,{pos:'➕ Positive',neg:'➖ Négative',nul:'0️⃣ Nulle'}[t],
-      ['➕ Positive','➖ Négative','0️⃣ Nulle'].filter(x=>!x.includes({pos:'Pos',neg:'Nég',nul:'Nul'}[t])),
+    return Q(r`Quel est le signe de $\displaystyle\int_{${a}}^{${b}}f(x)\,dx$ ?`,{pos:'<span>➕ Positive</span>',neg:'<span>➖ Négative</span>',nul:'<span>0️⃣ Nulle</span>'}[t],
+      ['<span>➕ Positive</span>','<span>➖ Négative</span>','<span>0️⃣ Nulle</span>'].filter(x=>!x.includes({pos:'Pos',neg:'Nég',nul:'Nul'}[t])),
       {pos:'Toute la zone est <b>au-dessus</b> de l\'axe : l\'intégrale est positive.',
        neg:'Toute la zone est <b>sous</b> l\'axe : elle compte en négatif.',
        nul:'La partie sous l\'axe (négative) compense exactement celle au-dessus : total <b>0</b>.'}[t],
@@ -1142,9 +1147,19 @@ const KEY=P?profKey(P.current):'mathnb-v1', GOAL=50;
 let BANK={v:0,q:[]};try{BANK=JSON.parse(localStorage.getItem('mathnb-bank'))||BANK}catch(e){}
 const applied=new Set();
 function bankFn(les){const f=()=>({...pick(les.extra),bubbles:true});Object.defineProperty(f,'name',{value:'banque'});return f;}
+const PER_LEVEL=10;
+function lvlOf(xp){return Math.floor(xp/100)+1;}
+function bankOrder(){ // alterne les chapitres pour que chaque déblocage touche plusieurs thèmes
+  const g={};(BANK.q||[]).forEach(x=>(g[x.chap]=g[x.chap]||[]).push(x));
+  const lists=Object.values(g),out=[];
+  for(let i=0;out.length<(BANK.q||[]).length;i++) lists.forEach(l=>{if(l[i])out.push(l[i]);});
+  return out;
+}
+function reserveLeft(){return Math.max(0,(BANK.q||[]).length-(st.bankN||0));}
 function applyBank(){
   let n=0;
-  (BANK.q||[]).forEach(x=>{
+  if(st.bankN==null){st.bankN=PER_LEVEL*lvlOf(st.xp||0);save();}
+  bankOrder().slice(0,st.bankN).forEach(x=>{
     if(applied.has(x.id)||!LESSONS[x.chap]) return;
     applied.add(x.id);n++;
     const l=LESSONS[x.chap],q={q:x.q,a:x.a,why:x.why,hint:x.hint||'',img:x.img||'',bubbles:x.a.every(t=>t.length<40)};
@@ -1156,8 +1171,7 @@ function syncBank(){
   fetch('bank.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():null).then(b=>{
     if(!b||!(b.v>(BANK.v||0))) return;
     BANK=b;try{localStorage.setItem('mathnb-bank',JSON.stringify(b))}catch(e){}
-    const n=applyBank();
-    if(n) toast(`✨ ${n} nouvelle${n>1?'s':''} question${n>1?'s':''} ajoutée${n>1?'s':''}`);
+    applyBank();refreshStats();
   }).catch(()=>{});
 }
 function toast(t){
@@ -1316,6 +1330,16 @@ function refreshStats(){
   const goal=st.todayXp>=GOAL;
   go.innerHTML=`<span class="go-k">${goal?'🎁 Bonus : encore une ?':'🎯 Ta leçon du jour'}</span><span class="go-t">${n.label}${LESSONS[n.key].levels&&(st.lv[n.key]||0)<LESSONS[n.key].levels.length?' · leçon '+((st.lv[n.key]||0)+1):''} <span class="go-a">→</span></span><span class="go-s">≈ 5 min · gagne des XP et des étoiles</span>`;
   go.onclick=()=>startLesson(n);
+  const nErr=(st.err||[]).length,go2=document.getElementById('go2');
+  if(nErr>=5){
+    go.innerHTML=`<span class="go-k">🔁 Pour progresser</span><span class="go-t">Corrige tes erreurs <span class="go-a">→</span></span><span class="go-s">${nErr} question${nErr>1?'s':''} ratée${nErr>1?'s':''} à retravailler</span>`;
+    go.onclick=startReview;
+    go2.style.display='block';go2.innerHTML=`🎯 Ou ta leçon du jour : <b>${n.label}</b>`;go2.onclick=()=>startLesson(n);
+  }else if(nErr>0){
+    go2.style.display='block';go2.innerHTML=`🔁 Revoir mes erreurs (<b>${nErr}</b>)`;go2.onclick=startReview;
+  }else go2.style.display='none';
+  const xpNext=lvlOf(st.xp)*100-st.xp,left=reserveLeft();
+  document.getElementById('nxt').innerHTML=`🏅 Niveau ${lvlOf(st.xp)+1} dans <b>${xpNext} XP</b>${left?` · 🔓 +${Math.min(PER_LEVEL,left)} questions`:''}`;
   grid.querySelectorAll('.tile').forEach(t=>{
     const k=t.dataset.key,les=LESSONS[k],s=st.best[k]||0;
     if(les.levels){const n=les.levels.length,v=Math.min(st.lv[k]||0,n);
@@ -1426,7 +1450,7 @@ function startLesson(card){
 }
 function closeLesson(){document.getElementById('lmemo').style.visibility='';$lesson.classList.remove('open');$fb.className='fb';document.body.style.overflow='';L=null;refreshStats();}
 document.getElementById('close').onclick=closeLesson;
-document.getElementById('lmemo').onclick=()=>{if(L&&LESSONS[L.key])openMemo(L.key);};
+document.getElementById('lmemo').onclick=()=>{if(!L)return;const k=(L.queue[0]&&L.queue[0].chap)||L.key;if(LESSONS[k])openMemo(k);};
 function progress(){$bar.style.width=(L.done/(L.done+L.queue.length)*100)+'%';$combo.textContent=L.combo>=2?'🔥×'+L.combo:'';}
 
 function render(){
@@ -1466,7 +1490,7 @@ function render(){
     });
   }else{
     const opts=s.keep?s.a.map((t,i)=>({t,ok:i===0})):shuffle(s.a.map((t,i)=>({t,ok:i===0})));
-    $body.innerHTML=`<div class="kicker">${L.label}${L.sub?' · '+L.sub:''} · Question</div>${s.img?`<div class="qimg">${s.img}</div>`:''}<div class="q">${s.q}</div>${s.hint?`<button class="hintbtn">💡 Indice</button><div class="hintbox"></div>`:''}<div id="opts" class="${s.bubbles&&s.a.every(x=>x.length<60)?'bubbles':''}"></div>`;
+    $body.innerHTML=`<div class="kicker">${L.review?'🔁 Révision · '+(s.clabel||''):L.label+(L.sub?' · '+L.sub:'')+' · Question'}</div>${s.img?`<div class="qimg">${s.img}</div>`:''}<div class="q">${s.q}</div>${s.hint?`<button class="hintbtn">💡 Indice</button><div class="hintbox"></div>`:''}<div id="opts" class="${s.bubbles&&s.a.every(x=>x.length<60)?'bubbles':''}"></div>`;
     if(s.idk){const b=document.createElement('button');b.className='idk';b.textContent='🤷 Je ne sais pas';b.onclick=()=>answer(null,false,s);$body.appendChild(b);}
     if(s.hint){const hb=$body.querySelector('.hintbtn');hb.onclick=()=>{s.hinted=true;hb.remove();const x=$body.querySelector('.hintbox');x.innerHTML='💡 '+s.hint;x.classList.add('on');math(x);};}
     const box=$body.querySelector('#opts');
@@ -1479,10 +1503,29 @@ function render(){
   }
   $body.scrollTop=0;
 }
+function addErr(s){
+  if(L.review) return;
+  st.err=st.err||[];
+  if(st.err.some(e=>e.q===s.q&&e.a[0]===s.a[0])) return;
+  const chap=s.chap||L.key,c=CARDS.find(x=>x.key===chap);
+  st.err.push({eid:Date.now()+''+Math.random(),chap,clabel:c?c.label:'',q:s.q,a:s.a,why:s.why,hint:s.hint||'',img:s.img||'',bubbles:s.bubbles});
+  if(st.err.length>40) st.err.shift();
+  save();
+}
+function startReview(){
+  const items=shuffle(st.err||[]).slice(0,8);
+  if(!items.length) return;
+  L={key:'review',label:'Mes erreurs',sub:'',review:true,queue:items.map((e,i)=>({...e,type:'q',id:i})),done:0,combo:0,gained:0,nq:items.length,missed:new Set(),fixed:0};
+  document.documentElement.style.setProperty('--c','#e11d48');
+  $lesson.classList.add('open');document.body.style.overflow='hidden';
+  render();
+}
 function answer(btn,ok,s){
   $body.querySelectorAll('.opt').forEach(b=>b.disabled=true);
   const idk=$body.querySelector('.idk');if(idk)idk.remove();
   if(L.test) L.res[s.chap]=ok;
+  if(!ok) addErr(s);
+  if(ok&&L.review&&!L.missed.has(s.id)){st.err=(st.err||[]).filter(e=>e.eid!==s.eid);L.fixed++;save();}
   if(ok){
     btn.classList.add('ok');sound(true);
     L.combo++;
@@ -1498,7 +1541,7 @@ function answer(btn,ok,s){
     L.combo=0;L.missed.add(s.id);
     $fb.className='fb bad show';
     $fb.innerHTML=`<h3>Pas tout à fait…</h3><p>Bonne réponse : ${s.a[0]}<br>${s.why}</p>${L.test?'':'<p><a href="#" class="relink">📖 Revoir le cours</a></p>'}<button class="cta">Je la reverrai</button>`;
-    if(!L.test) $fb.querySelector('.relink').onclick=e=>{e.preventDefault();openMemo(L.key);};
+    if(!L.test) $fb.querySelector('.relink').onclick=e=>{e.preventDefault();openMemo(s.chap||L.key);};
     if(L.test){$fb.querySelector('.cta').textContent='Continuer';$fb.querySelector('.cta').onclick=()=>{L.queue.shift();L.done++;render();};}
     else $fb.querySelector('.cta').onclick=()=>{L.queue.push(L.queue.shift());render();};
   }
@@ -1516,9 +1559,16 @@ function finish(){
   checkDay();
   const t=dayStr(new Date());
   if(st.last!==t){st.streak=(st.streak||0)+1;st.last=t;}
-  const before=st.todayXp;
+  const before=st.todayXp,lvBefore=lvlOf(st.xp);
   st.xp+=total;st.todayXp+=total;
-  st.best[L.key]=Math.max(st.best[L.key]||0,stars);
+  if(!L.review) st.best[L.key]=Math.max(st.best[L.key]||0,stars);
+  let lvUp='';
+  const lvAfter=lvlOf(st.xp);
+  if(lvAfter>lvBefore){
+    const add=Math.min(PER_LEVEL*(lvAfter-lvBefore),reserveLeft());
+    st.bankN=(st.bankN||0)+PER_LEVEL*(lvAfter-lvBefore);applyBank();
+    lvUp=`<div class="unlock lvup">🏅 <b>Niveau ${lvAfter} atteint !</b>${add?`<br>🔓 ${add} nouvelles questions débloquées dans la réserve`:''}</div>`;
+  }
   let unlock='';
   if(L.levels&&!L.practice){
     st.lv[L.key]=Math.max(st.lv[L.key]||0,L.level+1);
@@ -1530,14 +1580,15 @@ function finish(){
   const goalHit=before<GOAL&&st.todayXp>=GOAL;
   $body.innerHTML=`<div class="end">
     <div class="big">${stars===3?'🏆':'🎉'}</div>
-    <h2>${stars===3?'Sans faute !':'Leçon terminée !'}</h2>
+    <h2>${L.review?(L.fixed?`${L.fixed} erreur${L.fixed>1?'s':''} corrigée${L.fixed>1?'s':''} !`:'Révision terminée'):stars===3?'Sans faute !':'Leçon terminée !'}</h2>
     <div class="endstars">${'★'.repeat(stars)}${'☆'.repeat(3-stars)}</div>
     <div class="row">
       <div class="box"><b>+${total}</b>XP</div>
       <div class="box"><b>${first}/${L.nq}</b>du 1er coup</div>
       <div class="box"><b>🔥 ${st.streak}</b>jour${st.streak>1?'s':''}</div>
     </div>
-    ${unlock}
+    ${lvUp}${unlock}
+    ${L.review&&(st.err||[]).length?`<p>Il reste <b>${st.err.length}</b> question${st.err.length>1?'s':''} à revoir.</p>`:''}
     ${goalHit?'<p><b>Objectif du jour atteint !</b> Reviens demain pour garder ta série.</p>':''}
   </div>`;
   $fb.className='fb neutral show';
