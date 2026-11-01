@@ -182,6 +182,14 @@ h2.sec{font-weight:900;font-size:22px;margin:26px 2px 12px}
 .go2{position:relative;display:none;width:100%;margin-top:10px;padding:10px;border:2px solid rgba(255,255,255,.7);border-radius:16px;background:rgba(255,255,255,.18);color:#fff;font-weight:800;font-size:16px;cursor:pointer}
 .nxt{position:relative;margin-top:10px;text-align:center;font-weight:700;font-size:14px;opacity:.95}
 .unlock.lvup{background:#fef3c7;border-color:#fcd34d}
+.tier{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;font-size:11px;letter-spacing:.3px;vertical-align:1px}
+.tier.t1{background:#dcfce7;color:#166534}.tier.t2{background:#fef3c7;color:#92400e}.tier.t3{background:#ffe4e6;color:#9f1239}
+.lvlmsg{font-weight:800;font-size:16px;opacity:.85}
+.mg{display:block;height:6px;border-radius:9px;background:#e5e7eb;margin-top:4px;overflow:hidden;max-width:150px}.nrow.rev .mg{margin-left:auto}.mg i{display:block;height:100%}
+.mgt{display:block;font-size:11px;color:#8b86a3}
+.mlist{display:grid;gap:10px}.mrow{display:flex;align-items:center;gap:10px;background:#faf9fd;border-radius:14px;padding:8px 12px}
+.mrow>span{font-size:24px}.mrow>div{flex:1;min-width:0}.mrow b{display:block;font-size:15px}.mrow small{color:#8b86a3;font-size:12px}.mrow em{font-style:normal;font-weight:900}
+.mgauge{height:8px;border-radius:9px;background:#e5e7eb;margin-top:4px;overflow:hidden}.mgauge i{display:block;height:100%}
 .mbtn{position:absolute;left:6px;top:6px;z-index:2;width:26px;height:26px;padding:0;border:0;border-radius:50%;background:rgba(255,255,255,.92);font-size:13px;line-height:26px;box-shadow:0 2px 4px rgba(0,0,0,.18);cursor:pointer}
 .mbtn:active{transform:scale(.9)}
 .lmemo{border:0;background:color-mix(in srgb,var(--c) 14%,#fff);border-radius:12px;font-size:20px;padding:6px 9px;cursor:pointer}
@@ -291,7 +299,7 @@ h2.grp{font-weight:900;font-size:22px;margin:26px 4px 10px}
     <button class="daily" id="daily"></button>
     <div class="nxt" id="nxt"></div>
   </section>
-  <div class="toolbar"><button id="albumBtn">🃏 Mon album</button></div>
+  <div class="toolbar"><button id="albumBtn">🃏 Mon album</button><button id="weakBtn">🎯 Ma maîtrise</button></div>
   <div id="map"></div>
 </div>
 
@@ -315,6 +323,7 @@ h2.grp{font-weight:900;font-size:22px;margin:26px 4px 10px}
 <script src="js/c-premiere.js"></script>
 <script src="js/c-terminale.js"></script>
 <script src="js/tiles.js"></script>
+<script src="js/adapt.js"></script>
 <script>boot();</script>
 </body>
 </html>

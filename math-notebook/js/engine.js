@@ -92,6 +92,7 @@ function renderItem(s,box,onAnswer){
     if(used>=H.length){hb.style.display='none';} else hb.textContent='🧭 Méthode';};
   sb.onclick=()=>{s.penalty=9;finish(false,true);};
   if(s.idk) box.querySelector('#idkb').onclick=()=>finish(false,true);
+  if(s.autoHint&&H.length){hz.insertAdjacentHTML('beforeend',`<div class="hintbox on">🎁 Indice offert : ${H[0]}</div>`);used=1;if(used>=H.length)hb.style.display='none';else hb.textContent='🧭 Méthode';}
   let done=false;
   function finish(ok,gaveUp){if(done)return;done=true;box.querySelectorAll('button').forEach(b=>{if(!b.classList.contains('keep'))b.disabled=true;});box.querySelector('.hrow').remove();onAnswer(ok,gaveUp);}
   const T=s.type||'qcm';
@@ -186,6 +187,7 @@ function step(){
       math($F());$F().querySelector('.cta').onclick=next;});
   }else if(s.kind==='rule'){
     const has=st.cards[s.id];
+    if(s.recap){B.innerHTML=kicker('🩹 Petit rappel')+`<p class="muted">${s.why||'Revoyons la règle, puis on reprend.'}</p><div class="rcard" style="--k:${S.color}"><div class="rc-top">${S.icon||'⭐'} Carte n°${s.num}</div><div class="rc-t">${s.title}</div>${s.fig?`<div class="lfig">${s.fig}</div>`:''}<div class="rc-b">${s.html}</div></div>`;math(B);cta('Compris, je reprends 💪',next);return;}
     B.innerHTML=kicker('💡 La règle')+`<div class="rcard" style="--k:${S.color}"><div class="rc-top">${S.icon||'⭐'} Carte n°${s.num}</div><div class="rc-t">${s.title}</div>${s.fig?`<div class="lfig">${s.fig}</div>`:''}<div class="rc-b">${s.html}</div></div>`;
     math(B);
     cta(has?'Continuer':'✨ Ajouter à mon album',()=>{if(!st.cards[s.id]){st.cards[s.id]=1;save();sparkle();}next();});
@@ -196,20 +198,41 @@ function step(){
       if(k<rows.length) cta('Étape suivante ▶',go); else cta('Compris !',next);};
     go();
   }else if(s.kind==='item'){
+    if(!s.it&&s.gen) s.it=genFor(s.nid,s.gen.fmts,s.gen.boost,s.gen.tier);
+    if(S.autoHint&&s.it&&!['match','order','line'].includes(s.it.type)){s.it.autoHint=true;S.autoHint=false;}
     const it=s.it;
-    B.innerHTML=kicker(s.label||(it.type==='tf'?'⚡ Vrai ou faux ?':it.type==='match'?'🔗 Relie les paires':it.type==='order'?'🧩 Remets dans l\'ordre':it.type==='line'?'📏 Place sur la droite':it.type==='input'?'⌨️ Calcule':'🎮 À toi'))+'<div class="ibox"></div>';
+    const tl=it.tier&&S.mode!=='speed'&&S.mode!=='test'?`<span class="tier t${it.tier}">${TLAB[it.tier]}</span>`:'';
+    B.innerHTML=kicker((s.label||'')+(s.label?'':'')+(s.label?'':(it.type==='tf'?'⚡ Vrai ou faux ?':it.type==='match'?'🔗 Relie les paires':it.type==='order'?'🧩 Remets dans l\'ordre':it.type==='line'?'📏 Place sur la droite':it.type==='input'?'⌨️ Calcule':'🎮 À toi')))+tl+'<div class="ibox"></div>';
     renderItem(it,B.querySelector('.ibox'),(ok,gaveUp)=>answered(s,ok,gaveUp));
   }
+}
+function adaptAfter(s,ok){
+  const it=s.it;let id=s.nid||it.nid;
+  if(S.mode==='speed'||S.mode==='test')return;
+  if(id){updM(id,ok?(it.penalty?(it.penalty>=9?.2:.6):1):0);S.lastNid=id;} else id=S.lastNid;
+  if(!id)return;
+  S.adj=S.adj||0;
+  if(ok){S.okRun=(S.okRun||0)+1;S.missRun=0;if(S.okRun>=2){if(S.adj<1){S.adj++;S.lvlMsg='📈 Ça roule : on corse un peu !';}S.okRun=0;}}
+  else{S.missRun=(S.missRun||0)+1;S.okRun=0;if(S.adj>-1){S.adj--;S.lvlMsg='📉 On simplifie un peu.';}
+    if(S.missRun>=2&&S.mode!=='boss'&&S.mode!=='test'&&S.mode!=='review'){
+      S.remedied=S.remedied||{};const pre=PRE[id];
+      const tgt=pre&&!S.remedied[pre]?pre:!S.remedied[id]?id:null;
+      if(tgt){S.remedied[tgt]=1;const x=NOT(tgt);
+        S.queue.splice(1,0,{kind:'rule',recap:true,id:x.n.id,num:notionNum(x.c,x.n),title:x.n.title,html:x.n.rule,fig:x.n.ruleFig,why:tgt===id?'Deux erreurs de suite : revoyons la règle.':`Deux erreurs de suite : petit détour par une notion de base, <b>${x.n.title}</b>.`},
+          {kind:'item',nid:tgt,gen:{fmts:['qcm'],tier:1},label:'🩹 Petit rappel'});
+        S.lvlMsg='🩹 Petit détour pour consolider la base.';}
+      S.autoHint=true;S.missRun=0;}}
 }
 function answered(s,ok,gaveUp){
   const it=s.it,F=$F();
   if(S.onItem) S.onItem(s,ok);
+  S.lvlMsg='';adaptAfter(s,ok);
   if(ok){
     sound(true);S.combo++;
     const g=Math.max(0,(it.penalty?10-3*it.penalty:10))+(S.combo>=3?5:0);S.gained+=g;
     if(S.mode==='review') srsHit(s.srs,true);
     F.className='fb good show';
-    F.innerHTML=`<h3>${pick(['Bravo !','Exact !','Parfait !','Bien vu !','Yes !'])}${S.combo>=3?' 🔥 '+S.combo+' d\'affilée':''}${g?` <small>+${g} XP</small>`:''}</h3>${it.why?`<p>${it.why}</p>`:''}<button class="cta">Continuer</button>`;
+    F.innerHTML=`<h3>${pick(['Bravo !','Exact !','Parfait !','Bien vu !','Yes !'])}${S.combo>=3?' 🔥 '+S.combo+' d\'affilée':''}${g?` <small>+${g} XP</small>`:''}</h3>${it.why?`<p>${it.why}</p>`:''}${S.lvlMsg?`<p class="lvlmsg">${S.lvlMsg}</p>`:''}<button class="cta">Continuer</button>`;
     F.querySelector('.cta').onclick=next;
   }else{
     if(!gaveUp) sound(false);S.combo=0;S.missed.add(s);
@@ -217,8 +240,8 @@ function answered(s,ok,gaveUp){
     if(S.lives!=null){S.lives--;}
     const good=it.type==='tf'?(it.truth?'Vrai':'Faux'):it.type==='input'?String(it.a[0]):it.type==='match'||it.type==='order'?'':it.type==='line'?String(it.ans).replace('.',','):it.a[0];
     F.className='fb bad show';
-    F.innerHTML=`<h3>${gaveUp?'Voici la solution 🔍':'Pas tout à fait…'}</h3><p>${good?'Bonne réponse : '+good+'<br>':''}${it.why||''}</p><button class="cta">${S.lives===0?'Voir le résultat':S.retry?'Je la reverrai':'Continuer'}</button>`;
-    F.querySelector('.cta').onclick=()=>{if(S.lives===0){S.queue=[];step();return;}if(S.retry){const x=S.queue.shift();x.it={...x.it,penalty:0};S.queue.push({...x,it:vary(stripType(x.it))});step();}else next();};
+    F.innerHTML=`<h3>${gaveUp?'Voici la solution 🔍':'Pas tout à fait…'}</h3><p>${good?'Bonne réponse : '+good+'<br>':''}${it.why||''}</p>${S.lvlMsg?`<p class="lvlmsg">${S.lvlMsg}</p>`:''}<button class="cta">${S.lives===0?'Voir le résultat':S.retry?'Je la reverrai':'Continuer'}</button>`;
+    F.querySelector('.cta').onclick=()=>{if(S.lives===0){S.queue=[];step();return;}if(S.retry){const x=S.queue.shift();x.it={...x.it,penalty:0,autoHint:false};S.queue.push({...x,it:vary(stripType(x.it))});step();}else next();};
   }
   math(F);bar();
 }
@@ -262,12 +285,12 @@ function startNotion(c,i){
   const D=n.drill;const nb=replay?6:5;
   for(let k=0;k<nb;k++){
     const fmts=k<2?['qcm']:k<4?['qcm','tf','input']:['input','qcm','tf'];
-    q.push({kind:'item',it:vary(mk(D),fmts)});
+    q.push({kind:'item',nid:n.id,gen:{fmts}});
   }
   if(n.games) n.games.forEach(g=>{if(Math.random()<.85)q.splice(q.length-1,0,{kind:'item',it:g()});});
   openSession({mode:'notion',title:c.label,icon:c.icon,color:c.c[1],chap:c.key,queue:q,retry:true,
     onEnd:()=>{const stars=endScreen({bonus:20,perfect:true,
-      after:s=>{const was=st.nodes[n.id]||0;st.nodes[n.id]=Math.max(was,s);if(!was)srsAdd(vary(mk(D),['qcm']),today()+1);},
+      after:s=>{const was=st.nodes[n.id]||0;st.nodes[n.id]=Math.max(was,s);if(!was)srsAdd(genFor(n.id,['qcm']),today()+1);},
       extra:replay?'':(i+1<c.notions.length?`<div class="unlock">🔓 Prochaine étape : <b>${c.notions[i+1].title}</b></div>`:`<div class="unlock">👑 Le <b>boss de l'île</b> t'attend !</div>`),
       btn:i+1<c.notions.length&&!replay?'▶ Notion suivante':'Retour à la carte',
       btnFn:i+1<c.notions.length&&!replay?()=>{closeSession();startNotion(c,i+1);}:closeSession});}});
@@ -276,7 +299,7 @@ function startNotion(c,i){
 /* ---------- Boss ---------- */
 function startBoss(c){
   const q=[];const ns=shuffle(c.notions);
-  for(let k=0;k<7;k++){const n=ns[k%ns.length];q.push({kind:'item',label:'👑 Boss',it:vary(fresh(n.id,lru(n.id,n.drill)),['qcm','tf','input'])});}
+  for(let k=0;k<7;k++){const n=ns[k%ns.length];q.push({kind:'item',label:'👑 Boss',nid:n.id,gen:{fmts:['qcm','tf','input'],boost:1}});}
   openSession({mode:'boss',title:c.label+' · Boss',icon:c.icon,color:c.c[2],chap:c.key,queue:q,lives:3,
     onEnd:()=>{
       if(S.lives<=0){endScreen({title:'Le boss a gagné… cette fois !',emoji:'💥',noStars:true,noCount:true,confetti:false,extra:'<p>Revois les notions de l\'île puis retente ta chance : tu y es presque.</p>'});return;}
@@ -291,7 +314,8 @@ function startPractice(c){
   for(let k=0;k<8;k++){
     let it;
     if(bank.length&&Math.random()<.35){const seen=st.seen[c.key]=st.seen[c.key]||[];const b=shuffle(bank).sort((x,y)=>seen.includes(x.q)-seen.includes(y.q))[0];seen.push(b.q);it=b;}
-    else{const n=pick(c.notions);it=fresh(n.id,lru(n.id,n.drill));}
+    else{const ns=c.notions,w=ns.map(n=>1.3-(mastery(n.id)??.5));let r0=Math.random()*w.reduce((a,b)=>a+b,0),n=ns[0];for(let j=0;j<ns.length;j++){r0-=w[j];if(r0<=0){n=ns[j];break;}}
+      q.push({kind:'item',nid:n.id,gen:{}});continue;}
     q.push({kind:'item',it:vary(it)});
   }
   openSession({mode:'practice',title:c.label+' · Entraînement',icon:c.icon,color:c.c[1],chap:c.key,queue:q,retry:true,onEnd:()=>endScreen({bonus:15})});
@@ -301,14 +325,14 @@ const BOX=[0,1,3,7,16,35];
 function srsAdd(it,due){
   it=stripType(it);if(it.type==='match'||it.type==='order'||it.type==='line')return;
   if(st.srs.some(x=>x.it.q===it.q&&x.it.a&&it.a&&x.it.a[0]===it.a[0]))return;
-  st.srs.push({it:{q:it.q,a:it.a,why:it.why,hint:it.hint,hints:it.hints,img:it.img,chap:S&&S.chap,bubbles:it.bubbles},box:0,due:due!=null?due:today()});
+  st.srs.push({it:{q:it.q,a:it.a,why:it.why,hint:it.hint,hints:it.hints,img:it.img,chap:S&&S.chap,nid:it.nid,bubbles:it.bubbles},box:0,due:due!=null?due:today()});
   if(st.srs.length>160)st.srs.splice(0,st.srs.length-160);save();
 }
 function srsDue(){const t=today();return st.srs.filter(x=>x.due<=t);}
 function srsHit(e,ok){if(!e)return;if(ok){e.box=Math.min(BOX.length-1,e.box+1);e.due=today()+BOX[e.box];S.fixed++;}else{e.box=0;e.due=today()+1;}save();}
 function startReview(){
   const due=shuffle(srsDue()).slice(0,8);if(!due.length)return;
-  openSession({mode:'review',title:'🧠 Révisions',color:'#e11d48',queue:due.map(e=>({kind:'item',srs:e,label:'🧠 '+((chapOf(e.it.chap)||{}).label||'Révision'),it:vary({...e.it})})),
+  openSession({mode:'review',title:'🧠 Révisions',color:'#e11d48',queue:due.map(e=>({kind:'item',srs:e,nid:e.it.nid,label:'🧠 '+((chapOf(e.it.chap)||{}).label||'Révision'),it:vary({...e.it})})),
     onEnd:()=>endScreen({title:S.fixed?`${S.fixed} notion${S.fixed>1?'s':''} consolidée${S.fixed>1?'s':''} !`:'Révision terminée',emoji:'🧠',bonus:10,
       extra:`<p class="muted">Ce que tu as réussi reviendra plus tard (dans 1, 3, 7, 16 puis 35 jours) : c'est ce qui ancre dans la mémoire.</p>`})});
 }
@@ -332,10 +356,10 @@ function startSpeed(c,daily){
 
 /* ---------- Test de niveau ---------- */
 function startTest(){
-  const q=CH.map(c=>{const n=pick(c.notions);return {kind:'item',label:'📝 '+c.label,chap:c.key,it:{...vary(fresh(n.id,lru(n.id,n.drill)),['qcm']),idk:true}};});
+  const q=CH.map(c=>{const n=pick(c.notions);return {kind:'item',label:'📝 '+c.label,chap:c.key,nid:n.id,it:{...genFor(n.id,['qcm'],0,2),idk:true}};});
   const res={};
   openSession({mode:'test',title:'📝 Test de niveau',color:'#7c3aed',queue:q,
-    onItem:(s,ok)=>{res[s.chap]=ok;},
+    onItem:(s,ok)=>{res[s.chap]=ok;const m=st.m[s.nid];st.m[s.nid]=ok?Math.max(m??0,.6):Math.min(m??1,.2);},
     onEnd:()=>{const score=Object.values(res).filter(Boolean).length;st.test={date:dayStr(new Date()),res,score};S.gained=score*5;
       endScreen({title:score<=CH.length*.35?'Bases à consolider':score<=CH.length*.7?'Niveau Première':'Niveau Terminale',emoji:score>=CH.length*.7?'🏆':score>=CH.length*.35?'💪':'🌱',noStars:true,
         extra:`<p><b>${score}/${CH.length}</b> bonnes réponses</p><div class="chips2">${CH.map(c=>`<span class="chip2 ${res[c.key]?'ok':'ko'}">${res[c.key]?'✓':'↺'} ${c.label}</span>`).join('')}</div><p class="muted">Les îles marquées ↺ passent en tête de ton aventure.</p>`});}});
@@ -361,7 +385,10 @@ function home(){
     go2.style.display='block';go2.innerHTML=`▶ Ou continue l'aventure : <b>${advTxt}</b>`;go2.onclick=adv;
   }else{
     go.innerHTML=`<span class="go-k">▶ Continuer l'aventure</span><span class="go-t">${advTxt} <span class="go-a">→</span></span><span class="go-s">≈ 4 min · ${nx&&!nx.boss?nx.c.label:'à toi de jouer'}</span>`;go.onclick=adv;
-    if(due){go2.style.display='block';go2.innerHTML=`🧠 Révisions du jour (<b>${due}</b>)`;go2.onclick=startReview;}else go2.style.display='none';
+    const wk=weakList().filter(([,m])=>m<.45);
+    if(due){go2.style.display='block';go2.innerHTML=`🧠 Révisions du jour (<b>${due}</b>)`;go2.onclick=startReview;}
+    else if(wk.length){go2.style.display='block';go2.innerHTML=`🎯 Renforcer : <b>${NOT(wk[0][0]).n.title}</b> (${Math.round(wk[0][1]*100)} %)`;go2.onclick=startFocus;}
+    else go2.style.display='none';
   }
   const dailyDone=st.daily===dayStr(new Date());
   const started=CH.filter(c=>chapProgress(c)>0);const dc=(started.length?started:CH)[new Date().getDate()%((started.length?started:CH).length)];
@@ -393,7 +420,7 @@ function pathHTML(c){
   nodes.forEach((x,k)=>{
     const f=[.5,.78,.95,.78,.5,.22,.05,.22][k%8];
     let cls='node',lab='',ic='';
-    if(x.t==='n'){const d=nodeDone(x.n.id),u=notionUnlocked(c,x.i);cls+=d?' done':u?' cur':' lock';ic=d?'★'.repeat(st.nodes[x.n.id]):String(x.i+1);lab=x.n.title;}
+    if(x.t==='n'){const d=nodeDone(x.n.id),u=notionUnlocked(c,x.i);cls+=d?' done':u?' cur':' lock';ic=d?'★'.repeat(st.nodes[x.n.id]):String(x.i+1);const mm=mastery(x.n.id);lab=x.n.title+(mm!=null?`<span class="mg"><i style="width:${Math.round(mm*100)}%;background:${mm<.35?'#e11d48':mm<.7?'#f59e0b':'#16a34a'}"></i></span><small class="mgt">maîtrise ${Math.round(mm*100)} %</small>`:'');}
     else if(x.t==='boss'){const u=bossUnlocked(c);cls+=' boss'+(st.boss[c.key]?' done':u?' cur':' lock');ic='👑';lab='Boss';}
     else{const u=!!st.boss[c.key];cls+=' prac'+(u?'':' lock');ic='♾️';lab='Entraînement';}
     html+=`<div class="nrow${f>.5?' rev':''}" style="${f>.5?`padding-right:calc((100% - 68px)*${(1-f).toFixed(2)})`:`padding-left:calc((100% - 68px)*${f})`}"><button class="${cls}" data-c="${ci}" data-t="${x.t}" data-i="${x.i??''}"><span>${ic}</span></button><span class="nlab">${lab}</span></div>`;
@@ -478,6 +505,7 @@ function boot(){
   $('lmemo').onclick=()=>{if(S&&S.chap)openAlbum(S.chap);};
   $('pbtn').onclick=()=>P?profileSheet():onboarding('first');
   $('albumBtn').onclick=()=>openAlbum();
+  $('weakBtn').onclick=weakSheet;
   home();startKatex();syncBank();
   if(!P)onboarding('first');
   else{let a=null;try{a=sessionStorage.getItem('mathnb-asktest');sessionStorage.removeItem('mathnb-asktest');}catch(e){}if(a)askTest(true);}
