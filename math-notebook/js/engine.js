@@ -11,7 +11,7 @@ function math(el){if(el&&window.renderMathInElement){try{renderMathInElement(el,
 function loadScript(srcs,cb){const s=document.createElement('script');s.src=srcs[0];s.onload=cb;s.onerror=()=>{if(srcs.length>1)loadScript(srcs.slice(1),cb);};document.head.appendChild(s);}
 function startKatex(){
   const J='https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/',U='https://unpkg.com/katex@0.16.11/dist/';
-  loadScript([J+'katex.min.js',U+'katex.min.js'],()=>loadScript([J+'contrib/auto-render.min.js',U+'contrib/auto-render.min.js'],()=>{math(document.body);}));
+  loadScript([J+'katex.min.js',U+'katex.min.js'],()=>loadScript([J+'contrib/auto-render.min.js',U+'contrib/auto-render.min.js'],()=>{math(document.body);renderTiles();if(document.fonts)document.fonts.ready.then(renderTiles);}));
 }
 function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 
@@ -372,33 +372,48 @@ function home(){
   drawMap();
 }
 function drawMap(){
-  const M=$('map');let html='';let grp='';
+  const M=$('map');let html='',grp='';
   CH.forEach((c,ci)=>{
-    if(c.group!==grp){grp=c.group;html+=`<h2 class="grp">${grp}</h2>`;}
-    const done=chapProgress(c),tot=c.notions.length,todo=st.test&&st.test.res[c.key]===false&&!st.boss[c.key];
-    html+=`<section class="island" style="--t1:${c.c[0]};--t2:${c.c[1]};--t3:${c.c[2]}">
-      <div class="ihead"><span class="iicon">${c.icon}</span><div class="itxt"><b>${c.label}</b><small>${done}/${tot} notions${st.boss[c.key]?' · 👑':''}${todo?' · <span class="todo">à revoir</span>':''}</small></div>
-      <button class="album1" data-k="${c.key}" aria-label="Cartes">🃏</button><button class="spd" data-k="${c.key}" aria-label="Défi éclair">⚡</button></div>
-      <div class="path">`;
-    const nodes=[...c.notions.map((n,i)=>({t:'n',n,i})),{t:'boss'},{t:'prac'}];
-    nodes.forEach((x,k)=>{
-      const f=[.5,.78,.95,.78,.5,.22,.05,.22][k%8];
-      let cls='node',lab='',ic='';
-      if(x.t==='n'){const d=nodeDone(x.n.id),u=notionUnlocked(c,x.i);cls+=d?' done':u?' cur':' lock';ic=d?'★'.repeat(st.nodes[x.n.id]):String(x.i+1);lab=x.n.title;}
-      else if(x.t==='boss'){const u=bossUnlocked(c);cls+=' boss'+(st.boss[c.key]?' done':u?' cur':' lock');ic='👑';lab='Boss';}
-      else{const u=!!st.boss[c.key];cls+=' prac'+(u?'':' lock');ic='♾️';lab='Entraînement';}
-      html+=`<div class="nrow${f>.5?' rev':''}" style="${f>.5?`padding-right:calc((100% - 68px)*${(1-f).toFixed(2)})`:`padding-left:calc((100% - 68px)*${f})`}"><button class="${cls}" data-c="${ci}" data-t="${x.t}" data-i="${x.i??''}"><span>${ic}</span></button><span class="nlab">${lab}</span></div>`;
-    });
-    html+=`</div></section>`;
+    if(c.group!==grp){if(grp)html+='</div>';grp=c.group;html+=`<h2 class="grp">${grp}</h2><div class="grid">`;}
+    const done=chapProgress(c),tot=c.notions.length,T0=TILE[c.key]||{},todo=st.test&&st.test.res[c.key]===false&&!st.boss[c.key];
+    html+=`<div class="tile${st.boss[c.key]?' done':''}${todo?' todo':''}" data-ci="${ci}" data-key="${c.key}" role="button" style="--t1:${c.c[0]};--t2:${c.c[1]};--t3:${c.c[2]}">
+      <button class="mbtn" data-k="${c.key}" aria-label="Cartes">🃏</button>
+      <div class="st"><span class="lvdots">${'●'.repeat(done)}${'○'.repeat(tot-done)}${st.boss[c.key]?' 👑':''}</span></div>
+      <div class="art">${T0.draw?`<svg viewBox="0 0 100 84">${DRAW[T0.draw]}</svg>`:`<div class="tex">${T0.alt||c.icon}</div>`}</div>
+      <div class="lbl">${c.label}</div></div>`;
   });
-  M.innerHTML=html;
-  M.querySelectorAll('.node').forEach(b=>b.onclick=()=>{
-    const c=CH[+b.dataset.c],t=b.dataset.t;
+  M.innerHTML=html+'</div>';
+  M.querySelectorAll('.tile').forEach(t=>t.addEventListener('click',()=>openIsland(CH[+t.dataset.ci])));
+  M.querySelectorAll('.mbtn').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();openAlbum(b.dataset.k);}));
+  renderTiles();
+}
+function pathHTML(c){
+  const ci=CH.indexOf(c);let html='<div class="path">';
+  const nodes=[...c.notions.map((n,i)=>({t:'n',n,i})),{t:'boss'},{t:'prac'}];
+  nodes.forEach((x,k)=>{
+    const f=[.5,.78,.95,.78,.5,.22,.05,.22][k%8];
+    let cls='node',lab='',ic='';
+    if(x.t==='n'){const d=nodeDone(x.n.id),u=notionUnlocked(c,x.i);cls+=d?' done':u?' cur':' lock';ic=d?'★'.repeat(st.nodes[x.n.id]):String(x.i+1);lab=x.n.title;}
+    else if(x.t==='boss'){const u=bossUnlocked(c);cls+=' boss'+(st.boss[c.key]?' done':u?' cur':' lock');ic='👑';lab='Boss';}
+    else{const u=!!st.boss[c.key];cls+=' prac'+(u?'':' lock');ic='♾️';lab='Entraînement';}
+    html+=`<div class="nrow${f>.5?' rev':''}" style="${f>.5?`padding-right:calc((100% - 68px)*${(1-f).toFixed(2)})`:`padding-left:calc((100% - 68px)*${f})`}"><button class="${cls}" data-c="${ci}" data-t="${x.t}" data-i="${x.i??''}"><span>${ic}</span></button><span class="nlab">${lab}</span></div>`;
+  });
+  return html+'</div>';
+}
+function openIsland(c){
+  const done=chapProgress(c);
+  sheet(`<div class="island" style="--t1:${c.c[0]};--t2:${c.c[1]};--t3:${c.c[2]};margin:0">
+    <div class="ihead"><span class="iicon">${c.icon}</span><div class="itxt"><b>${c.label}</b><small>${done}/${c.notions.length} notions${st.boss[c.key]?' · 👑 boss vaincu':''}</small></div>
+    <button class="album1" id="isa" aria-label="Cartes">🃏</button><button class="spd" id="iss" aria-label="Défi éclair">⚡</button></div>${pathHTML(c)}</div>`);
+  const W=$('sheetw');
+  $('isa').onclick=()=>openAlbum(c.key);
+  $('iss').onclick=()=>{W.classList.remove('open');startSpeed(c,false);};
+  W.querySelectorAll('.node').forEach(b=>b.onclick=()=>{
+    const t=b.dataset.t;
     if(b.classList.contains('lock')){toast(t==='n'?'🔒 Termine d\'abord la notion précédente':t==='boss'?'🔒 Termine toutes les notions de l\'île':'🔒 Bats d\'abord le boss');return;}
+    W.classList.remove('open');
     if(t==='n')startNotion(c,+b.dataset.i);else if(t==='boss')startBoss(c);else startPractice(c);
   });
-  M.querySelectorAll('.album1').forEach(b=>b.onclick=()=>openAlbum(b.dataset.k));
-  M.querySelectorAll('.spd').forEach(b=>b.onclick=()=>startSpeed(chapOf(b.dataset.k),false));
 }
 
 /* ---------- Album de cartes ---------- */
@@ -467,4 +482,5 @@ function boot(){
   if(!P)onboarding('first');
   else{let a=null;try{a=sessionStorage.getItem('mathnb-asktest');sessionStorage.removeItem('mathnb-asktest');}catch(e){}if(a)askTest(true);}
   document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!S)home();});
+  window.addEventListener('resize',()=>{clearTimeout(window._rt);window._rt=setTimeout(renderTiles,120);});
 }

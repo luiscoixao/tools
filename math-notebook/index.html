@@ -174,7 +174,9 @@ h2.sec{font-weight:900;font-size:22px;margin:26px 2px 12px}
 .chips2{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:8px 0 14px}
 .chip2{border-radius:999px;padding:6px 12px;font-weight:800;font-size:15px}
 .chip2.ok{background:#dcfce7;color:#14532d}.chip2.ko{background:#ffe4e6;color:#881337}
-.tile.todo::before{content:"à revoir";position:absolute;left:50%;transform:translateX(-50%);top:6px;z-index:2;background:#fff;color:#e11d48;border-radius:999px;padding:1px 8px;font-size:10px;font-weight:900;letter-spacing:.3px}
+.tile .lvdots{font-size:12px;letter-spacing:1px;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.35)}
+.tile.done .lbl::after{content:""}
+.tile.todo::before{content:"à revoir";position:absolute;left:50%;transform:translateX(-50%);top:6px;z-index:2;background:#fff;color:#e11d48;border-radius:999px;padding:1px 8px;font-size:10px;font-weight:900;letter-spacing:.3px;white-space:nowrap}
 .toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 14px);z-index:50;transform:translate(-50%,-140%);background:#1f1b3a;color:#fff;border-radius:999px;padding:10px 18px;font-weight:800;font-size:16px;transition:transform .35s ease;white-space:nowrap}
 .toast.on{transform:translate(-50%,0)}
 .go2{position:relative;display:none;width:100%;margin-top:10px;padding:10px;border:2px solid rgba(255,255,255,.7);border-radius:16px;background:rgba(255,255,255,.18);color:#fff;font-weight:800;font-size:16px;cursor:pointer}
@@ -312,6 +314,7 @@ h2.grp{font-weight:900;font-size:22px;margin:26px 4px 10px}
 <script src="js/c-bases.js"></script>
 <script src="js/c-premiere.js"></script>
 <script src="js/c-terminale.js"></script>
+<script src="js/tiles.js"></script>
 <script>boot();</script>
 </body>
 </html>
