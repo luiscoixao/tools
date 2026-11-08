@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Calcul mental">
+<meta name="theme-color" content="#f97316">
+<title>Calcul mental</title>
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icon-512.png">
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1f1b3a;--muted:#6b6785;--bg:#fff7ee;--good:#16a34a;--bad:#e11d48;--c:#f97316;--c2:#c2410c}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0}
+body{min-height:100vh;background:var(--bg);font-family:'Nunito',system-ui,-apple-system,sans-serif;color:var(--ink);touch-action:manipulation}
+button{font:inherit;color:inherit;touch-action:manipulation}
+.page{max-width:560px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 16px) 16px 40px}
+
+/* héros */
+.hero{position:relative;overflow:hidden;border-radius:28px;padding:20px 18px 18px;color:#fff;
+  background:linear-gradient(135deg,#f97316 0%,#ec4899 52%,#6366f1 100%);box-shadow:0 12px 30px -10px rgba(236,72,153,.6)}
+.hero::before,.hero::after{content:"";position:absolute;border-radius:50%;background:rgba(255,255,255,.14)}
+.hero::before{width:180px;height:180px;right:-50px;top:-60px}
+.hero::after{width:110px;height:110px;left:-30px;bottom:-50px}
+.hero .float{position:absolute;right:16px;top:14px;font-weight:900;font-size:30px;opacity:.35;letter-spacing:4px}
+.hello{position:relative;font-weight:800;font-size:16px;opacity:.9}
+.hero h1{position:relative;margin:2px 0 14px;font-weight:900;font-size:clamp(30px,9vw,42px);line-height:1.05}
+.chips{position:relative;display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.chip{background:rgba(255,255,255,.22);border-radius:999px;padding:5px 12px;font-weight:800;font-size:15px;white-space:nowrap}
+.goal{position:relative}
+.goal .lbl{display:flex;justify-content:space-between;font-weight:800;font-size:14px;margin-bottom:6px}
+.gbar{height:12px;border-radius:999px;background:rgba(255,255,255,.3);overflow:hidden}
+.gbar i{display:block;height:100%;width:0;border-radius:999px;background:#fff;transition:width .6s ease}
+.go{position:relative;display:block;width:100%;margin-top:16px;padding:14px;border:0;border-radius:18px;background:#fff;color:#ec4899;
+  font-weight:900;cursor:pointer;box-shadow:0 5px 0 rgba(0,0,0,.18);text-align:center}
+.go:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(0,0,0,.18)}
+.go-k{display:block;font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#f9a8d4}
+.go-t{display:block;font-size:24px;line-height:1.15;margin:2px 0}
+.go-a{display:inline-block;animation:nudge 1.2s ease-in-out infinite}
+@keyframes nudge{50%{transform:translateX(6px)}}
+.go-s{display:block;font-size:13px;font-weight:700;color:#8b86a3}
+
+h2.sec{font-weight:900;font-size:22px;margin:26px 2px 12px;display:flex;justify-content:space-between;align-items:baseline}
+h2.sec small{font-size:14px;color:var(--muted);font-weight:800}
+
+/* tuiles */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.tile{position:relative;height:0;padding-bottom:118%;border-radius:22px;cursor:pointer;color:#fff;overflow:hidden;border:0;
+  background:linear-gradient(160deg,var(--t2),var(--t1));box-shadow:0 6px 0 var(--t3);transition:transform .1s,box-shadow .1s;user-select:none;-webkit-user-select:none}
+.tile:active{transform:translateY(4px);box-shadow:0 2px 0 var(--t3)}
+.tile::after{content:"";position:absolute;width:70%;height:55%;right:-25%;top:-18%;border-radius:50%;background:rgba(255,255,255,.15)}
+.tile .art{position:absolute;left:6%;right:6%;top:20%;height:40%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:clamp(22px,7vw,34px);white-space:nowrap;text-shadow:0 3px 0 rgba(0,0,0,.12)}
+.tile .lbl{position:absolute;left:4px;right:4px;bottom:19%;text-align:center;font-weight:900;font-size:clamp(11px,3.4vw,16px);white-space:nowrap}
+.tile .st{position:absolute;left:0;right:0;bottom:7%;text-align:center;font-size:12px;letter-spacing:1px;z-index:1}
+.tile .lv{position:absolute;left:9px;top:8px;font-size:11px;font-weight:900;background:rgba(255,255,255,.25);border-radius:999px;padding:2px 7px;z-index:1}
+.tile .pb{position:absolute;left:14%;right:14%;bottom:4%;height:4px;border-radius:9px;background:rgba(255,255,255,.3);overflow:hidden}
+.tile .pb i{display:block;height:100%;background:#fff}
+.tile.lock{filter:grayscale(.85);opacity:.55}
+.tile.lock .art{font-size:30px}
+.tile.front{outline:3px solid #fff;outline-offset:-3px}
+.tile.front .lv{background:#fff;color:var(--t3)}
+
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.card{border:0;border-radius:22px;padding:16px 14px;color:#fff;text-align:left;cursor:pointer;box-shadow:0 6px 0 var(--t3);background:linear-gradient(160deg,var(--t2),var(--t1))}
+.card:active{transform:translateY(4px);box-shadow:0 2px 0 var(--t3)}
+.card b{display:block;font-size:20px;font-weight:900}
+.card span{display:block;font-size:13px;font-weight:800;opacity:.92;margin-top:2px}
+.card .big{font-size:30px;line-height:1;margin-bottom:6px}
+.foot{display:flex;justify-content:center;gap:10px;margin-top:28px}
+.foot button{border:0;background:#fff;border-radius:999px;padding:8px 14px;font-weight:800;font-size:14px;color:var(--muted);box-shadow:0 2px 0 #eadfd3;cursor:pointer}
+
+/* écran plein (intro, quiz, bilan) */
+.scr{position:fixed;inset:0;z-index:10;display:none;flex-direction:column;background:#fff;padding:calc(env(safe-area-inset-top) + 12px) 18px calc(env(safe-area-inset-bottom) + 12px)}
+.scr.open{display:flex}
+.top{display:flex;align-items:center;gap:12px;max-width:560px;width:100%;margin:0 auto}
+.x{border:0;background:none;font-size:26px;line-height:1;padding:4px;cursor:pointer;color:#9a97b0}
+.lbar{flex:1;height:14px;border-radius:999px;background:#eceaf3;overflow:hidden}
+.lbar i{display:block;height:100%;width:0;border-radius:999px;background:var(--c);transition:width .4s ease}
+.combo{font-weight:900;color:#f97316;min-width:44px;text-align:right}
+.body{flex:1;display:flex;flex-direction:column;max-width:560px;width:100%;margin:0 auto;min-height:0}
+
+/* quiz */
+.qwrap{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:14px;min-height:0}
+.tag{font-weight:900;font-size:14px;color:#fff;background:var(--c);border-radius:999px;padding:4px 12px}
+.tag em{font-style:normal;opacity:.85}
+.q{font-weight:900;font-size:clamp(34px,11vw,56px);text-align:center;line-height:1.1;padding:0 6px}
+.ans{min-width:150px;height:72px;border-radius:20px;border:3px solid #eceaf3;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:42px;padding:0 18px;transition:border-color .15s,background .15s}
+.ans.ok{border-color:var(--good);background:#dcfce7;color:var(--good)}
+.ans.ko{border-color:var(--bad);background:#ffe4e6;color:var(--bad);animation:shake .35s}
+.ans .cur{display:inline-block;width:3px;height:40px;background:var(--c);margin-left:2px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+@keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.tbar{width:70%;height:6px;border-radius:9px;background:#f1eff6;overflow:hidden}
+.tbar i{display:block;height:100%;width:100%;background:var(--c);border-radius:9px}
+.tbar.late i{background:#f59e0b}
+.qrow{display:flex;align-items:center;gap:10px;color:var(--muted);font-weight:800;font-size:14px}
+.hint{border:0;background:#fef3c7;color:#92400e;border-radius:999px;padding:6px 12px;font-weight:900;font-size:14px;cursor:pointer}
+.pop{position:absolute;font-weight:900;font-size:22px;color:var(--good);pointer-events:none;animation:up .8s ease forwards}
+@keyframes up{to{transform:translateY(-50px);opacity:0}}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding-top:10px}
+.pad button{height:clamp(52px,8.5vh,66px);border:0;border-radius:18px;background:#f4f2f9;font-weight:900;font-size:28px;box-shadow:0 4px 0 #dcd8e8;cursor:pointer;user-select:none;-webkit-user-select:none}
+.pad button:active,.pad button.on{transform:translateY(3px);box-shadow:0 1px 0 #dcd8e8}
+.pad .ok{background:var(--c);color:#fff;box-shadow:0 4px 0 var(--c2)}
+.pad .ok:active{box-shadow:0 1px 0 var(--c2)}
+.pad .del{font-size:24px;color:var(--muted)}
+
+/* feuille d'explication */
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:20;transform:translateY(105%);transition:transform .28s ease;background:#fff;border-radius:26px 26px 0 0;
+  box-shadow:0 -10px 40px rgba(0,0,0,.18);padding:20px 20px calc(env(safe-area-inset-bottom) + 18px);max-width:600px;margin:0 auto}
+.sheet:not(.open){visibility:hidden;transition:transform .28s ease,visibility 0s .28s}
+.sheet.open{transform:none}
+.sheet.ko{border-top:6px solid var(--bad)}
+.sheet.tip{border-top:6px solid #f59e0b}
+.sheet h3{margin:0 0 4px;font-weight:900;font-size:20px}
+.sheet .sol{font-weight:900;font-size:28px;margin:4px 0 10px}
+.sheet .sol b{color:var(--good)}
+.steps{list-style:none;margin:0 0 14px;padding:0}
+.steps li{background:#f7f5fc;border-radius:14px;padding:9px 12px;margin-bottom:6px;font-weight:800;font-size:17px}
+.steps li.r{background:#fff7ed;color:#9a3412}
+.btn{display:block;width:100%;border:0;border-radius:18px;padding:15px;font-weight:900;font-size:19px;color:#fff;background:var(--c);box-shadow:0 5px 0 var(--c2);cursor:pointer}
+.btn:active{transform:translateY(3px);box-shadow:0 2px 0 var(--c2)}
+.btn.alt{background:#f4f2f9;color:var(--ink);box-shadow:0 5px 0 #dcd8e8;margin-top:12px}
+
+/* intro compétence */
+.intro{flex:1;overflow:auto;padding:10px 2px 16px}
+.ihead{border-radius:24px;padding:20px 18px;color:#fff;background:linear-gradient(160deg,var(--t2),var(--t1));box-shadow:0 6px 0 var(--t3);margin-bottom:18px}
+.ihead .art{font-weight:900;font-size:40px;line-height:1}
+.ihead h2{margin:8px 0 2px;font-weight:900;font-size:28px}
+.ihead p{margin:0;font-weight:800;opacity:.92}
+.box{background:#f7f5fc;border-radius:20px;padding:16px;margin-bottom:14px}
+.box h4{margin:0 0 6px;font-size:13px;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}
+.box p{margin:0;font-weight:800;font-size:18px;line-height:1.35}
+.lvls{display:flex;gap:6px;margin-top:8px}
+.lvls i{flex:1;height:10px;border-radius:9px;background:#e4e0ee}
+.lvls i.on{background:var(--c)}
+
+/* bilan */
+.res{flex:1;overflow:auto;display:flex;flex-direction:column;align-items:center;text-align:center;padding:20px 4px}
+.res .em{font-size:72px;line-height:1;margin-top:10px}
+.res h2{font-weight:900;font-size:32px;margin:10px 0 4px}
+.res .sub{color:var(--muted);font-weight:800;margin-bottom:18px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;margin-bottom:16px}
+.stat{background:#f7f5fc;border-radius:18px;padding:12px 6px}
+.stat b{display:block;font-size:24px;font-weight:900}
+.stat span{font-size:12px;font-weight:800;color:var(--muted)}
+.ups{width:100%;text-align:left}
+.ups div{display:flex;justify-content:space-between;align-items:center;background:#f0fdf4;border-radius:14px;padding:10px 14px;margin-bottom:6px;font-weight:800}
+.ups div.dn{background:#fff7ed}
+.rbtns{width:100%;max-width:560px;margin:0 auto}
+.conf{position:fixed;top:-20px;width:10px;height:14px;border-radius:3px;z-index:30;pointer-events:none;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+.chrono{font-weight:900;font-size:22px;color:var(--c);min-width:56px;text-align:right}
+.flash{position:fixed;left:50%;top:40%;transform:translate(-50%,-50%);font-weight:900;font-size:26px;background:var(--bad);color:#fff;padding:10px 18px;border-radius:16px;z-index:25;pointer-events:none}
+</style>
+</head>
+<body>
+<div class="page">
+  <section class="hero">
+    <div class="float">+−×÷</div>
+    <div class="hello" id="hello">Bonjour ! 👋</div>
+    <h1>Calcul mental</h1>
+    <div class="chips">
+      <span class="chip" id="cStreak">🔥 0 jour</span>
+      <span class="chip" id="cXp">⭐ 0 XP</span>
+      <span class="chip" id="cRank">🏅 Débutant</span>
+    </div>
+    <div class="goal">
+      <div class="lbl"><span>Objectif du jour</span><span id="gTxt">0 / 150 XP</span></div>
+      <div class="gbar"><i id="gBar"></i></div>
+    </div>
+    <button class="go" id="go">
+      <span class="go-k">Séance du jour</span>
+      <span class="go-t" id="goT">C'est parti <span class="go-a">→</span></span>
+      <span class="go-s" id="goS">10 calculs adaptés à ton niveau</span>
+    </button>
+  </section>
+
+  <h2 class="sec">Parcours <small id="prog"></small></h2>
+  <div class="grid" id="grid"></div>
+
+  <h2 class="sec">Défis</h2>
+  <div class="duo">
+    <button class="card" id="chronoBtn" style="--t1:#6366f1;--t2:#818cf8;--t3:#4338ca">
+      <div class="big">⏱️</div><b>Chrono 60 s</b><span id="best">Record : 0</span>
+    </button>
+    <button class="card" id="weakBtn" style="--t1:#ef4444;--t2:#fb7185;--t3:#b91c1c">
+      <div class="big">🎯</div><b>Points faibles</b><span>Tes calculs les plus ratés</span>
+    </button>
+  </div>
+  <div class="foot">
+    <button id="sndBtn">🔊 Son</button>
+    <button id="resetBtn">↺ Réinitialiser</button>
+  </div>
+</div>
+
+<div class="scr" id="scr">
+  <div class="top" id="top">
+    <button class="x" id="close" aria-label="Fermer">✕</button>
+    <div class="lbar"><i id="lBar"></i></div>
+    <span class="combo" id="combo"></span>
+  </div>
+  <div class="body" id="body"></div>
+</div>
+<div class="sheet" id="sheet"></div>
+
+<script>
+/* ============ outils ============ */
+const R=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const P=a=>a[Math.floor(Math.random()*a.length)];
+const F=n=>Number(n).toLocaleString('fr-FR');
+const $=id=>document.getElementById(id);
+
+/* sauts « compter en avançant » : de 37 à 100 → 37→40→100 */
+function jumps(from,to){
+  const J=[];let c=from;
+  const go=t=>{if(t>c&&t<=to){J.push([c,t]);c=t}};
+  if(c%10)go(Math.ceil(c/10)*10);
+  if(c%100)go(Math.ceil(c/100)*100);
+  if(c%1000)go(Math.ceil(c/1000)*1000);
+  go(Math.floor(to/1000)*1000);go(Math.floor(to/100)*100);go(Math.floor(to/10)*10);go(to);
+  return J;
+}
+function jsteps(from,to){
+  const J=jumps(from,to),L=J.map(([a,b])=>`${F(a)} → ${F(b)} : + ${F(b-a)}`);
+  if(J.length>1)L.push(`Total : ${J.map(([a,b])=>F(b-a)).join(' + ')} = ${F(to-from)}`);
+  return L;
+}
+/* découpe un nombre selon ses rangs : 347 → [300,40,7] */
+const parts=n=>{const p=[];let m=1;while(n>0){const d=n%10;if(d)p.unshift(d*m);n=Math.floor(n/10);m*=10}return p};
+
+function tableTip(a,b){
+  const order=[9,5,4,8,6,7,11,12,3,2,10];
+  const rk=n=>{const i=order.indexOf(n);return i<0?99:i};
+  let x=a,y=b;if(rk(a)<rk(b)){x=b;y=a}
+  /* y = facteur « astuce », x = l'autre */
+  const r=x*y;
+  const t={
+    9:`${x} × 9 = ${x} × 10 − ${x} = ${10*x} − ${x}`,
+    5:`${x} × 5 = moitié de ${x} × 10 = moitié de ${10*x}`,
+    4:`× 4 = double du double : ${x} → ${2*x} → ${4*x}`,
+    8:`× 8 = trois doubles : ${x} → ${2*x} → ${4*x} → ${8*x}`,
+    6:`${x} × 6 = ${x} × 5 + ${x} = ${5*x} + ${x}`,
+    7:`${x} × 7 = ${x} × 5 + ${x} × 2 = ${5*x} + ${2*x}`,
+    11:`${x} × 11 = ${x} × 10 + ${x} = ${10*x} + ${x}`,
+    12:`${x} × 12 = ${x} × 10 + ${x} × 2 = ${10*x} + ${2*x}`,
+    3:`${x} × 3 = ${x} × 2 + ${x} = ${2*x} + ${x}`,
+    2:`× 2 = le double de ${x}`,
+    10:`× 10 : on écrit un 0 à droite de ${x}`
+  }[y]||`${x} × ${y}`;
+  return [t,`= ${r}`];
+}
+
+/* ============ compétences ============ */
+const SK=[
+{id:'comp',name:'Compléments',art:'+?=10',c:['#f97316','#fdba74','#c2410c'],t:[4,1],
+ rule:'Pour aller jusqu’à 10, 100 ou 1 000, on fait des sauts : d’abord jusqu’à la dizaine ronde, puis jusqu’à la centaine.',
+ ex:'37 + ? = 100',exs:['37 → 40 : + 3','40 → 100 : + 60','Réponse : 63'],
+ gen(l){let n,T;
+  if(l==1){T=10;n=R(1,9)}else if(l==2){T=100;n=R(1,9)*10}else if(l==3){T=100;n=R(11,89);if(n%10==0)n++}
+  else if(l==4){T=1000;n=R(11,99)*10}else{T=1000;n=R(101,989);if(n%10==0)n+=3}
+  return{q:`${F(n)} + ? = ${F(T)}`,a:T-n,steps:jsteps(n,T)}}},
+
+{id:'add',name:'Additions',art:'a+b',c:['#22c55e','#86efac','#15803d'],t:[5,1.5],
+ rule:'On ajoute le second nombre en morceaux : les centaines, puis les dizaines, puis les unités. Si ça finit par 8 ou 9, on arrondit et on corrige.',
+ ex:'47 + 38',exs:['47 + 30 = 77','77 + 8 = 85','Ou : 47 + 40 − 2 = 85'],
+ gen(l){let a,b;
+  if(l==1){a=R(12,89);b=R(2,9)}
+  else if(l==2){const at=R(1,7),au=R(0,8);a=at*10+au;b=R(1,8-at)*10+R(0,9-au)}
+  else if(l==3){const at=R(1,7),au=R(2,9);a=at*10+au;b=R(1,8-at)*10+R(10-au,9)}
+  else if(l==4){a=R(120,899);b=R(13,89)}else{a=R(120,799);b=R(110,899)}
+  const S=[];let c=a;parts(b).forEach(p=>{S.push(`${F(c)} + ${F(p)} = ${F(c+p)}`);c+=p});
+  const u=b%10;if(u>=8&&b>9){const k=10-u;S.push(`Ou : ${F(a)} + ${F(b+k)} − ${k} = ${F(a+b)}`)}
+  return{q:`${F(a)} + ${F(b)}`,a:a+b,steps:S}}},
+
+{id:'sub',name:'Soustractions',art:'a−b',c:['#06b6d4','#67e8f9','#0e7490'],t:[6,1.5],
+ rule:'Plutôt que d’enlever, on compte en avançant du petit nombre jusqu’au grand, par sauts ronds. L’écart, c’est la réponse.',
+ ex:'83 − 47',exs:['47 → 50 : + 3','50 → 80 : + 30','80 → 83 : + 3','Total : 36'],
+ gen(l){let a,b;
+  if(l==1){a=R(12,99);b=R(2,9)}
+  else if(l==2){const at=R(2,9),au=R(1,9);a=at*10+au;b=R(1,at-1)*10+R(0,au)}
+  else if(l==3){const au=R(0,8),at=R(3,9);a=at*10+au;b=R(1,at-2)*10+R(au+1,9)}
+  else if(l==4){a=R(150,999);b=R(12,99)}else{a=R(400,999);b=R(101,a-50)}
+  return{q:`${F(a)} − ${F(b)}`,a:a-b,steps:[`On compte de ${F(b)} jusqu’à ${F(a)} :`,...jsteps(b,a)]}}},
+
+{id:'dbl',name:'Doubles',art:'×2 ÷2',c:['#ec4899','#f9a8d4','#be185d'],t:[4,1.5],
+ rule:'Pour doubler ou partager en deux, on coupe le nombre en morceaux faciles, on traite chaque morceau, puis on recolle.',
+ ex:'Double de 68',exs:['Double de 60 = 120','Double de 8 = 16','120 + 16 = 136'],
+ gen(l){
+  const dbl=n=>{const p=parts(n);return{q:`Double de ${F(n)}`,a:2*n,steps:[...p.map(x=>`Double de ${F(x)} = ${F(2*x)}`),p.length>1?`${p.map(x=>F(2*x)).join(' + ')} = ${F(2*n)}`:''].filter(Boolean)}};
+  const half=n=>{const big=Math.floor(n/20)*20,r=n-big;return{q:`Moitié de ${F(n)}`,a:n/2,steps:r&&big?[`${F(n)} = ${F(big)} + ${r}`,`Moitiés : ${F(big/2)} + ${r/2} = ${F(n/2)}`]:[`Moitié de ${F(n)} = ${F(n/2)}`]}};
+  if(l==1)return dbl(R(11,49));if(l==2)return half(2*R(11,49));
+  if(l==3)return dbl(R(101,499));if(l==4)return half(2*R(51,499));
+  if(Math.random()<.5){const n=R(12,60);return{q:`${n} × 4`,a:4*n,steps:[`× 4 = double du double`,`${n} → ${2*n} → ${4*n}`]}}
+  const n=4*R(11,60);return{q:`${n} ÷ 4`,a:n/4,steps:[`÷ 4 = moitié de la moitié`,`${n} → ${n/2} → ${n/4}`]}}},
+
+{id:'tab',name:'Tables',art:'7×8',c:['#8b5cf6','#c4b5fd','#6d28d9'],t:[3,.7],
+ rule:'Chaque table a son raccourci : × 9 = × 10 moins une fois ; × 5 = moitié de × 10 ; × 4 = double du double ; × 6 = × 5 plus une fois.',
+ ex:'7 × 9',exs:['7 × 10 − 7','70 − 7 = 63'],
+ gen(l){let a,b=R(2,9);
+  if(l==1)a=P([2,3,5,10]);else if(l==2)a=P([4,6]);else if(l==3)a=P([7,8,9]);else if(l==4){a=R(3,9);b=R(3,9)}else{a=P([11,12]);b=R(2,12)}
+  if(Math.random()<.5)[a,b]=[b,a];
+  return{q:`${a} × ${b}`,a:a*b,steps:tableTip(a,b)}}},
+
+{id:'x10',name:'× 10, × 100',art:'×10',c:['#3b82f6','#93c5fd','#1d4ed8'],t:[3,1],
+ rule:'× 10 : chaque chiffre avance d’un rang (on écrit un 0). ÷ 10 : il recule d’un rang. × 30 = × 3 puis × 10.',
+ ex:'34 × 20',exs:['34 × 2 = 68','68 × 10 = 680'],
+ gen(l){
+  if(l==1){const n=R(2,99);return{q:`${n} × 10`,a:n*10,steps:['Chaque chiffre avance d’un rang : on écrit un 0',`${n} → ${F(n*10)}`]}}
+  if(l==2){const n=R(2,99);return{q:`${n} × 100`,a:n*100,steps:['Deux rangs : on écrit deux 0',`${n} → ${F(n*100)}`]}}
+  if(l==3){const n=R(2,99);return{q:`${F(n*10)} ÷ 10`,a:n,steps:['Chaque chiffre recule d’un rang : on enlève un 0',`${F(n*10)} → ${n}`]}}
+  if(l==4){const n=R(2,99);return Math.random()<.5?{q:`${n} × 1 000`,a:n*1000,steps:['Trois rangs : trois 0',`${n} → ${F(n*1000)}`]}:{q:`${F(n*100)} ÷ 100`,a:n,steps:['On enlève deux 0',`${F(n*100)} → ${n}`]}}
+  const n=R(11,49),m=P([20,30,40,200,300]),d=m>=100?m/100:m/10,z=m/d;
+  return{q:`${n} × ${m}`,a:n*m,steps:[`${n} × ${m} = ${n} × ${d} × ${z}`,`${n} × ${d} = ${n*d}`,`${n*d} × ${z} = ${F(n*m)}`]}}},
+
+{id:'x5',name:'× 5, × 25, × 50',art:'×5',c:['#f59e0b','#fde68a','#b45309'],t:[4,1.5],
+ rule:'× 5 = × 10 puis moitié. × 50 = × 100 puis moitié. × 25 = × 100 puis deux fois moitié. ÷ 5 = × 2 puis ÷ 10.',
+ ex:'46 × 5',exs:['46 × 10 = 460','Moitié : 230'],
+ gen(l){
+  if(l<=2){const n=l==1?R(2,30):R(31,199);return{q:`${n} × 5`,a:5*n,steps:[`${n} × 10 = ${F(10*n)}`,`Moitié : ${F(5*n)}`]}}
+  if(l==3){const n=R(2,99);return{q:`${n} × 50`,a:50*n,steps:[`${n} × 100 = ${F(100*n)}`,`Moitié : ${F(50*n)}`]}}
+  if(l==4){const n=R(4,40);return{q:`${n} × 25`,a:25*n,steps:[`${n} × 100 = ${F(100*n)}`,`Moitié : ${F(50*n)}`,`Encore moitié : ${F(25*n)}`]}}
+  const n=5*R(10,99);return{q:`${n} ÷ 5`,a:n/5,steps:[`${n} × 2 = ${2*n}`,`÷ 10 : ${n/5}`]}}},
+
+{id:'div',name:'Divisions',art:'÷',c:['#14b8a6','#5eead4','#0f766e'],t:[4,2],
+ rule:'Diviser, c’est chercher le nombre qui manque dans une table. Pour un grand nombre, on le coupe en morceaux qui se divisent bien.',
+ ex:'252 ÷ 6',exs:['252 = 240 + 12','240 ÷ 6 = 40','12 ÷ 6 = 2','Réponse : 42'],
+ gen(l){let d,q;
+  if(l<=2){d=l==1?R(2,5):R(2,9);q=R(2,10);return{q:`${d*q} ÷ ${d}`,a:q,steps:[`Quel nombre × ${d} donne ${d*q} ?`,`${d} × ${q} = ${d*q}`]}}
+  if(l==5){d=P([25,50]);q=d==25?R(3,40):R(3,30);const n=d*q,k=100/d;
+   return{q:`${F(n)} ÷ ${d}`,a:q,steps:[`÷ ${d} = × ${k} puis ÷ 100`,`${F(n)} × ${k} = ${F(n*k)}`,`÷ 100 : ${q}`]}}
+  d=l==3?R(2,9):R(3,9);q=l==3?R(11,30):R(21,99);if(q%10==0)q++;
+  const q1=Math.floor(q/10)*10,q2=q%10,n=d*q;
+  return{q:`${F(n)} ÷ ${d}`,a:q,steps:[`${F(n)} = ${d*q1} + ${d*q2}`,`${d*q1} ÷ ${d} = ${q1}`,`${d*q2} ÷ ${d} = ${q2}`,`Réponse : ${q1} + ${q2} = ${q}`]}}},
+
+{id:'dist',name:'Produits',art:'47×6',c:['#ef4444','#fca5a5','#b91c1c'],t:[6,2.5],
+ rule:'On découpe le grand nombre : 47 × 6 = 40 × 6 + 7 × 6. Proche d’un nombre rond ? On arrondit puis on retire.',
+ ex:'49 × 6',exs:['50 × 6 = 300','On retire 1 × 6 = 6','300 − 6 = 294'],
+ gen(l){let n,m;
+  if(l==4){const N=R(2,9)*10,k=R(1,2);n=N-k;m=R(3,9);
+   return{q:`${n} × ${m}`,a:n*m,steps:[`${n} = ${N} − ${k}`,`${N} × ${m} = ${N*m}`,`On retire ${k} × ${m} = ${k*m}`,`${N*m} − ${k*m} = ${n*m}`]}}
+  if(l==1){n=R(11,29);m=R(2,5)}else if(l==2){n=R(21,99);m=R(3,9)}else if(l==3){n=R(101,199);m=R(2,9)}else{n=R(201,999);m=R(3,9)}
+  if(n%10==0)n++;const p=parts(n);
+  return{q:`${n} × ${m}`,a:n*m,steps:[`${p.map(x=>x+' × '+m).join(' + ')}`,`= ${p.map(x=>F(x*m)).join(' + ')}`,`= ${F(n*m)}`]}}},
+
+{id:'x9x11',name:'× 9, × 11',art:'×11',c:['#6366f1','#a5b4fc','#4338ca'],t:[6,2],
+ rule:'× 11 : on écarte les deux chiffres et on glisse leur somme au milieu. × 9 = × 10 moins une fois ; × 99 = × 100 moins une fois.',
+ ex:'53 × 11',exs:['5 + 3 = 8','On glisse 8 entre 5 et 3','583'],
+ gen(l){
+  if(l<=2){let a,b;if(l==1){a=R(1,8);b=R(0,9-a)}else{a=R(2,9);b=R(10-a,9)}const n=10*a+b,s=a+b;
+   return{q:`${n} × 11`,a:n*11,steps:s<10?[`${a} + ${b} = ${s}`,`On glisse ${s} au milieu : ${n*11}`]:[`${a} + ${b} = ${s}`,`On glisse ${s%10} au milieu et on ajoute 1 à ${a}`,`→ ${n*11}`]}}
+  const n=R(12,99);
+  if(l==3)return{q:`${n} × 9`,a:9*n,steps:[`${n} × 10 − ${n}`,`${F(10*n)} − ${n} = ${F(9*n)}`]};
+  if(l==4)return{q:`${n} × 99`,a:99*n,steps:[`${n} × 100 − ${n}`,`${F(100*n)} − ${n} = ${F(99*n)}`]};
+  const m=P([19,21,29,31]),N=R(12,49),r=m%10==9?m+1:m-1,sg=m%10==9?'−':'+';
+  return{q:`${N} × ${m}`,a:N*m,steps:[`${N} × ${r} ${sg} ${N}`,`${F(N*r)} ${sg} ${N} = ${F(N*m)}`]}}},
+
+{id:'pct',name:'Pourcentages',art:'%',c:['#84cc16','#d9f99d','#4d7c0f'],t:[6,2],
+ rule:'10 % = on divise par 10. 50 % = moitié, 25 % = moitié de la moitié, 5 % = moitié de 10 %. Et 8 % de 25 = 25 % de 8 !',
+ ex:'15 % de 80',exs:['10 % de 80 = 8','5 % = moitié = 4','8 + 4 = 12'],
+ gen(l){
+  const q=(x,y,a,steps)=>({q:`${x} % de ${F(y)}`,a,steps});
+  if(l==1){if(Math.random()<.5){const y=2*R(5,100);return q(50,y,y/2,[`50 % = la moitié`,`Moitié de ${y} = ${y/2}`])}const y=10*R(1,99);return q(10,y,y/10,[`10 % = ÷ 10`,`${F(y)} ÷ 10 = ${y/10}`])}
+  if(l==2){if(Math.random()<.5){const y=4*R(3,50);return q(25,y,y/4,[`25 % = moitié de la moitié`,`${y} → ${y/2} → ${y/4}`])}const y=10*R(2,50);return q(20,y,y/5,[`10 % de ${y} = ${y/10}`,`20 % = double : ${y/5}`])}
+  if(l==3){if(Math.random()<.5){const y=20*R(1,30);return q(5,y,y/20,[`10 % de ${y} = ${y/10}`,`5 % = moitié : ${y/20}`])}const y=100*R(2,50);return q(1,y,y/100,[`1 % = ÷ 100`,`${F(y)} ÷ 100 = ${y/100}`])}
+  if(l==4){if(Math.random()<.5){const y=20*R(1,25);return q(15,y,3*y/20,[`10 % de ${y} = ${y/10}`,`5 % = ${y/20}`,`${y/10} + ${y/20} = ${3*y/20}`])}const y=4*R(3,40);return q(75,y,3*y/4,[`50 % = ${y/2}`,`25 % = ${y/4}`,`${y/2} + ${y/4} = ${3*y/4}`])}
+  if(Math.random()<.4){const y=P([25,50]),x=y==25?4*R(1,24):2*R(1,49);return q(x,y,x*y/100,[`${x} % de ${y} = ${y} % de ${x}`,y==25?`Quart de ${x} = ${x/4}`:`Moitié de ${x} = ${x/2}`])}
+  const x=P([30,40,60,70,80,90]),y=10*R(2,50);return q(x,y,x*y/100,[`10 % de ${y} = ${y/10}`,`${x} % = ${x/10} × ${y/10} = ${x*y/100}`])}},
+
+{id:'carres',name:'Carrés',art:'x²',c:['#d946ef','#f0abfc','#a21caf'],t:[6,3],
+ rule:'Finit par 5 : on multiplie les dizaines par le suivant et on colle 25 (35² → 3 × 4 = 12 → 1 225). Proche d’un nombre rond : on s’en sert.',
+ ex:'65²',exs:['6 × 7 = 42','On colle 25','4 225'],
+ gen(l){let n;
+  if(l==1){n=R(2,12);return{q:`${n}²`,a:n*n,steps:[`${n} × ${n} = ${n*n}`]}}
+  if(l==2){n=R(13,20);if(n==20)n=19;const u=n%10,k=u<=5?u:10-u;
+   return{q:`${n}²`,a:n*n,steps:[`${n}² = ${n-k} × ${n+k} + ${k}²`,`= ${(n-k)*(n+k)} + ${k*k} = ${n*n}`]}}
+  if(l==3){const d=R(1,9);n=10*d+5;return{q:`${n}²`,a:n*n,steps:[`${d} × ${d+1} = ${d*(d+1)}`,`On colle 25 : ${F(n*n)}`]}}
+  let k=R(-9,9);if(!k)k=4;
+  if(l==4){n=50+k;return{q:`${n}²`,a:n*n,steps:[`${n} = 50 ${k>0?'+':'−'} ${Math.abs(k)}`,`25 ${k>0?'+':'−'} ${Math.abs(k)} = ${25+k} centaines → ${F((25+k)*100)}`,`+ ${Math.abs(k)}² = ${k*k} → ${F(n*n)}`]}}
+  n=100+k;return{q:`${n}²`,a:n*n,steps:[`${n} ${k>0?'+':'−'} ${Math.abs(k)} = ${n+k} → ${F((n+k)*100)}`,`+ ${Math.abs(k)}² = ${k*k} → ${F(n*n)}`]}}}
+];
+const SKM={};SK.forEach((k,i)=>{k.i=i;SKM[k.id]=k});
+
+/* ============ état ============ */
+const KEY='calcmental.v1',GOAL=150;
+let S;
+function load(){
+  try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
+  if(!S||typeof S!=='object')S={};
+  S.sk=S.sk||{};SK.forEach(k=>{S.sk[k.id]=S.sk[k.id]||{s:0,h:[],n:0,ok:0}});
+  S.xp=S.xp||0;S.streak=S.streak||0;S.last=S.last||'';S.day=S.day||'';S.dayXp=S.dayXp||0;S.best=S.best||0;S.unl=S.unl||{};
+  if(S.snd==null)S.snd=true;
+}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+const dstr=d=>d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
+const today=()=>dstr(new Date());
+const yesterday=()=>{const d=new Date();d.setDate(d.getDate()-1);return dstr(d)};
+function checkDay(){if(S.day!==today()){S.day=today();S.dayXp=0}}
+
+const lvl=id=>Math.min(5,Math.floor(S.sk[id].s/100)+1);
+const stars=id=>{const s=S.sk[id].s;return s>=480?3:s>=300?2:s>=100?1:0};
+const unlocked=id=>{const k=SKM[id];return k.i===0||S.unl[id]||S.sk[SK[k.i-1].id].s>=100};
+const unlockedList=()=>SK.filter(k=>unlocked(k.id)).map(k=>k.id);
+const front=()=>{const u=unlockedList();return u.find(id=>stars(id)<3)||P(u)};
+const errRate=id=>{const h=S.sk[id].h;return h.length?1-h.reduce((a,b)=>a+b,0)/h.length:0};
+const RANKS=[[0,'Débutant'],[200,'Apprenti'],[600,'Calculateur'],[1500,'Rapide'],[3000,'Virtuose'],[6000,'Prodige'],[12000,'Légende']];
+const rank=()=>RANKS.filter(r=>S.xp>=r[0]).pop()[1];
+
+/* ============ son ============ */
+let AC;
+function beep(ok){
+  if(!S.snd)return;
+  try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();const t=AC.currentTime;
+   (ok?[660,880]:[220,180]).forEach((f,i)=>{const o=AC.createOscillator(),g=AC.createGain();o.type=ok?'sine':'triangle';o.frequency.value=f;
+    g.gain.setValueAtTime(.0001,t+i*.08);g.gain.exponentialRampToValueAtTime(.15,t+i*.08+.01);g.gain.exponentialRampToValueAtTime(.0001,t+i*.08+.15);
+    o.connect(g).connect(AC.destination);o.start(t+i*.08);o.stop(t+i*.08+.16)})}catch(e){}
+}
+
+/* ============ accueil ============ */
+function home(){
+  checkDay();
+  const h=new Date().getHours();
+  $('hello').textContent=(h<5||h>=18?'Bonsoir':'Bonjour')+' ! 👋';
+  $('cStreak').textContent=`🔥 ${S.streak} jour${S.streak>1?'s':''}`;
+  $('cXp').textContent=`⭐ ${F(S.xp)} XP`;
+  $('cRank').textContent=`🏅 ${rank()}`;
+  $('gTxt').textContent=`${Math.min(S.dayXp,GOAL)} / ${GOAL} XP`+(S.dayXp>=GOAL?' ✓':'');
+  $('gBar').style.width=Math.min(100,S.dayXp/GOAL*100)+'%';
+  const f=SKM[front()];
+  $('goS').textContent=`10 calculs · ${f.name} niveau ${lvl(f.id)} + révisions`;
+  $('goT').innerHTML=S.dayXp>=GOAL?'Encore une ? <span class="go-a">→</span>':'C\'est parti <span class="go-a">→</span>';
+  $('best').textContent=`Record : ${S.best} bonne${S.best>1?'s':''} réponse${S.best>1?'s':''}`;
+  $('sndBtn').textContent=S.snd?'🔊 Son':'🔇 Son coupé';
+  const fid=f.id;let tot=0;
+  $('grid').innerHTML=SK.map(k=>{
+    const u=unlocked(k.id),st=stars(k.id),s=S.sk[k.id].s;tot+=st;
+    return `<button class="tile${u?'':' lock'}${u&&k.id===fid?' front':''}" data-id="${k.id}" style="--t1:${k.c[0]};--t2:${k.c[1]};--t3:${k.c[2]}">
+      ${u?`<span class="lv">Niv. ${lvl(k.id)}</span>`:''}
+      <span class="art">${u?k.art:'🔒'}</span><span class="lbl">${k.name}</span>
+      <span class="st">${'★'.repeat(st)}${'☆'.repeat(3-st)}</span>
+      <span class="pb"><i style="width:${s/5}%"></i></span></button>`}).join('');
+  $('prog').textContent=`${tot} / ${SK.length*3} ★`;
+}
+$('grid').addEventListener('click',e=>{
+  const t=e.target.closest('.tile');if(!t)return;const id=t.dataset.id,k=SKM[id];
+  if(!unlocked(id)){
+    if(confirm(`« ${k.name} » se débloque avec 1 ★ en « ${SK[k.i-1].name} ».\nLa débloquer quand même ?`)){S.unl[id]=true;save();home()}
+    return}
+  intro(id);
+});
+
+/* ============ écran plein ============ */
+const scr=$('scr'),body=$('body'),sheet=$('sheet');
+function setColor(k){scr.style.setProperty('--c',k.c[0]);scr.style.setProperty('--c2',k.c[2]);sheet.style.setProperty('--c',k.c[0]);sheet.style.setProperty('--c2',k.c[2])}
+function openScr(){scr.classList.add('open');document.body.style.overflow='hidden'}
+function closeScr(){scr.classList.remove('open');closeSheet();document.body.style.overflow='';stopTimers();Q=null;home()}
+$('close').onclick=()=>{if(Q&&Q.i>0&&Q.mode!=='chrono'&&Q.done<Q.items.length){finish();return}closeScr()};
+
+function intro(id){
+  const k=SKM[id],l=lvl(id);setColor(k);openScr();
+  $('top').style.visibility='visible';$('lBar').style.width='0';$('combo').textContent='';
+  body.innerHTML=`<div class="intro">
+    <div class="ihead" style="--t1:${k.c[0]};--t2:${k.c[1]};--t3:${k.c[2]}"><div class="art">${k.art}</div><h2>${k.name}</h2><p>Niveau ${l} sur 5 · ${'★'.repeat(stars(id))}${'☆'.repeat(3-stars(id))}</p></div>
+    <div class="box"><h4>💡 L'astuce</h4><p>${k.rule}</p></div>
+    <div class="box"><h4>Exemple : ${k.ex}</h4><ul class="steps">${k.exs.map((s,i)=>`<li${i==k.exs.length-1?' class="r"':''}>${s}</li>`).join('')}</ul></div>
+    <div class="box"><h4>Ta progression</h4><div class="lvls">${[1,2,3,4,5].map(i=>`<i class="${i<=l?'on':''}"></i>`).join('')}</div></div>
+  </div><button class="btn" id="startSk">C'est parti !</button>`;
+  $('startSk').onclick=()=>start('skill',Array(10).fill(id));
+}
+
+/* ============ séances ============ */
+let Q=null,tmr=null,raf=null;
+function stopTimers(){clearInterval(tmr);cancelAnimationFrame(raf);tmr=null}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=R(0,i);[a[i],a[j]]=[a[j],a[i]]}return a}
+
+function dailyItems(){
+  const u=unlockedList(),f=front();
+  const weak=u.filter(id=>id!==f&&S.sk[id].h.length>=3).sort((a,b)=>errRate(b)-errRate(a));
+  const it=Array(6).fill(f);
+  for(let i=0;i<4;i++){const w=weak[i%Math.max(1,Math.min(2,weak.length))];it.push(i<2&&w&&errRate(w)>0?w:P(u))}
+  return shuffle(it);
+}
+function weakItems(){
+  const u=unlockedList().filter(id=>S.sk[id].h.length);
+  const w=u.sort((a,b)=>errRate(b)-errRate(a)).slice(0,3);
+  if(!w.length)return null;
+  const it=[];for(let i=0;i<10;i++)it.push(w[i%w.length]);return shuffle(it);
+}
+$('go').onclick=()=>start('daily',dailyItems());
+$('weakBtn').onclick=()=>{const it=weakItems();if(!it){alert('Fais d’abord quelques séances : les points faibles apparaîtront ici.');return}start('weak',it)};
+$('chronoBtn').onclick=()=>start('chrono',[]);
+
+function start(mode,items){
+  checkDay();
+  Q={mode,items,i:0,done:0,ok:0,combo:0,best:0,xp:0,times:[],snap:{},t60:60,errors:0};
+  SK.forEach(k=>Q.snap[k.id]=lvl(k.id));
+  openScr();$('top').style.visibility='visible';$('combo').textContent='';
+  if(mode==='chrono'){
+    scr.style.setProperty('--c','#6366f1');scr.style.setProperty('--c2','#4338ca');
+    $('combo').className='chrono';$('combo').textContent='60';$('lBar').style.width='100%';
+    const t0=Date.now();
+    tmr=setInterval(()=>{Q.t60=Math.max(0,60-(Date.now()-t0)/1000);$('combo').textContent=Math.ceil(Q.t60);$('lBar').style.width=(Q.t60/60*100)+'%';if(Q.t60<=0)finish()},200);
+  }else $('combo').className='combo';
+  next();
+}
+
+function pickLevel(id){let l=lvl(id);const r=Math.random();if(r<.18)l--;else if(r>.88)l++;return Math.max(1,Math.min(5,l))}
+
+function next(){
+  if(!Q)return;
+  closeSheet();
+  if(Q.mode!=='chrono'&&Q.i>=Q.items.length){finish();return}
+  let item=Q.items[Q.i];
+  if(Q.mode==='chrono')item=P(unlockedList());
+  let cur;
+  if(typeof item==='object'){cur=item}
+  else{const l=pickLevel(item);const g=SKM[item].gen(l);cur={sk:item,l,...g}}
+  Q.cur=cur;Q.val='';Q.hint=false;Q.lock=false;
+  const k=SKM[cur.sk];
+  if(Q.mode!=='chrono'){setColor(k);$('lBar').style.width=(Q.i/Q.items.length*100)+'%'}
+  body.innerHTML=`<div class="qwrap">
+    <span class="tag" style="background:${k.c[0]}">${k.name} <em>· niv. ${cur.l}</em>${cur.retry?' · 🔁':''}</span>
+    <div class="q">${cur.q}</div>
+    <div class="ans" id="ans"><span class="cur"></span></div>
+    <div class="tbar" id="tbar"><i id="tfill"></i></div>
+    <div class="qrow">${Q.mode==='chrono'?`<span>✓ ${Q.ok}</span>`:`<button class="hint" id="hintB">💡 Astuce</button>`}</div>
+  </div>
+  <div class="pad" id="pad">${[1,2,3,4,5,6,7,8,9].map(n=>`<button data-k="${n}">${n}</button>`).join('')}
+    <button class="del" data-k="del">⌫</button><button data-k="0">0</button><button class="ok" data-k="ok">✓</button></div>`;
+  const hb=$('hintB');if(hb)hb.onclick=showHint;
+  Q.t0=performance.now();Q.tgt=k.t[0]+k.t[1]*(cur.l-1);
+  cancelAnimationFrame(raf);
+  const tick=()=>{if(!Q||!$('tfill'))return;const dt=(performance.now()-Q.t0)/1000;$('tfill').style.width=Math.max(0,100-dt/Q.tgt*100)+'%';
+    if(dt>Q.tgt)$('tbar').classList.add('late');if(!Q.lock)raf=requestAnimationFrame(tick)};
+  raf=requestAnimationFrame(tick);
+}
+
+function render(){const a=$('ans');if(a)a.innerHTML=(Q.val?F(Q.val):'')+'<span class="cur"></span>'}
+function press(k){
+  if(!Q||Q.lock||!Q.cur)return;
+  if(k==='del'){Q.val=Q.val.slice(0,-1);render();return}
+  if(k==='ok'){if(Q.val)answer(Number(Q.val)===Q.cur.a);return}
+  if(Q.val.length>=6)return;
+  Q.val=(Q.val==='0'?'':Q.val)+k;render();
+  if(Number(Q.val)===Q.cur.a)answer(true);
+}
+body.addEventListener('pointerdown',e=>{const b=e.target.closest('.pad button');if(!b)return;e.preventDefault();b.classList.add('on');setTimeout(()=>b.classList.remove('on'),90);press(b.dataset.k)});
+document.addEventListener('keydown',e=>{
+  if(sheet.classList.contains('open')&&(e.key==='Enter'||e.key===' ')){const b=sheet.querySelector('.btn');if(b){e.preventDefault();b.click()}return}
+  if(!scr.classList.contains('open')||!Q)return;
+  if(/^[0-9]$/.test(e.key))press(e.key);else if(e.key==='Backspace')press('del');else if(e.key==='Enter')press('ok');
+});
+
+function answer(ok){
+  Q.lock=true;cancelAnimationFrame(raf);
+  const cur=Q.cur,st=S.sk[cur.sk],dt=(performance.now()-Q.t0)/1000,base=lvl(cur.sk),fast=dt<=Q.tgt;
+  Q.done++;Q.times.push(dt);
+  if(ok){
+    let f=fast?1:dt<=Q.tgt*1.8?.6:.3;if(Q.hint)f*=.4;if(cur.retry)f=.3;if(Q.mode==='chrono')f*=.6;
+    st.s=Math.min(500,st.s+Math.round(14*f*(cur.l>=base?1:.5)));
+    Q.ok++;Q.combo++;Q.best=Math.max(Q.best,Q.combo);
+    const g=Math.round((10+2*cur.l+(fast?5:0))*(Q.hint?.5:1))+Math.min(10,Q.combo-1);
+    Q.xp+=g;S.xp+=g;S.dayXp+=g;
+  }else{st.s=Math.max(0,st.s-(cur.retry?5:12));Q.combo=0;Q.errors++}
+  st.h.push(ok?1:0);if(st.h.length>12)st.h.shift();st.n++;if(ok)st.ok++;
+  save();beep(ok);
+  if(Q.mode!=='chrono')$('combo').textContent=Q.combo>=3?`🔥 ×${Q.combo}`:'';
+  const a=$('ans');a.classList.add(ok?'ok':'ko');
+  if(ok){
+    const p=document.createElement('div');p.className='pop';p.textContent=fast&&!Q.hint?'⚡ Éclair !':'+ XP';
+    const r=a.getBoundingClientRect();p.style.left=(r.left+r.width/2-40)+'px';p.style.top=(r.top-10)+'px';document.body.appendChild(p);setTimeout(()=>p.remove(),800);
+    Q.i++;setTimeout(next,fast?380:520);
+  }else if(Q.mode==='chrono'){
+    a.innerHTML=F(cur.a);setTimeout(next,900);
+  }else{
+    a.innerHTML=Q.val?F(Q.val):'?';
+    if(!cur.retry){const again={...cur,retry:true};Q.items.splice(Math.min(Q.items.length,Q.i+1+R(2,3)),0,again)}
+    Q.i++;
+    setTimeout(()=>openSheet('ko',`<h3>Pas tout à fait…</h3><div class="sol">${cur.q.includes('?')?cur.q.replace('?','<b>'+F(cur.a)+'</b>'):cur.q+' = <b>'+F(cur.a)+'</b>'}</div>
+      <ul class="steps">${cur.steps.map((s,i)=>`<li${i==cur.steps.length-1?' class="r"':''}>${s}</li>`).join('')}</ul>
+      <p style="margin:0 0 12px;color:var(--muted);font-weight:800;font-size:14px">🔁 Ce calcul reviendra un peu plus tard.</p>
+      <button class="btn">Compris →</button>`,next),450);
+  }
+}
+
+function showHint(){
+  if(!Q||Q.lock)return;Q.hint=true;const k=SKM[Q.cur.sk];
+  openSheet('tip',`<h3>💡 ${k.name}</h3><p style="font-weight:800;font-size:17px;line-height:1.4;margin:6px 0 10px">${k.rule}</p>
+    <div class="box" style="margin-bottom:14px"><h4>Exemple : ${k.ex}</h4><ul class="steps" style="margin:0">${k.exs.map(s=>`<li>${s}</li>`).join('')}</ul></div>
+    <button class="btn">À moi !</button>`,null);
+}
+let sheetCb=null;
+function openSheet(cls,html,cb){sheet.className='sheet '+cls;sheet.innerHTML=html;sheetCb=cb;requestAnimationFrame(()=>sheet.classList.add('open'));
+  sheet.querySelector('.btn').onclick=()=>{const c=sheetCb;closeSheet();if(c)c()}}
+function closeSheet(){sheet.classList.remove('open');sheetCb=null}
+
+function finish(){
+  if(!Q)return;stopTimers();closeSheet();
+  const q=Q;Q=null;
+  if(q.done>=5&&S.last!==today()){S.streak=S.last===yesterday()?S.streak+1:1;S.last=today()}
+  if(q.mode==='chrono'&&q.ok>S.best){S.best=q.ok;q.record=true}
+  save();
+  const acc=q.done?Math.round(q.ok/q.done*100):0,avg=q.times.length?(q.times.reduce((a,b)=>a+b,0)/q.times.length):0;
+  const ups=SK.filter(k=>lvl(k.id)!==q.snap[k.id]).map(k=>{const a=q.snap[k.id],b=lvl(k.id);return`<div class="${b<a?'dn':''}"><span>${k.name}</span><span>niv. ${a} → ${b} ${b>a?'⬆️':'↘️'}</span></div>`}).join('');
+  const em=q.mode==='chrono'?(q.record?'🏆':'⏱️'):acc>=90?'🤩':acc>=70?'😃':acc>=50?'🙂':'💪';
+  const title=q.mode==='chrono'?`${q.ok} en 60 s`:`${q.ok} / ${q.done}`;
+  const sub=q.mode==='chrono'?(q.record?'Nouveau record !':`Record : ${S.best}`):acc>=90?'Superbe séance !':acc>=70?'Très bien, ça progresse !':'Chaque erreur est une astuce apprise.';
+  scr.style.setProperty('--c','#ec4899');scr.style.setProperty('--c2','#be185d');
+  $('top').style.visibility='hidden';
+  body.innerHTML=`<div class="res"><div class="em">${em}</div><h2>${title}</h2><div class="sub">${sub}</div>
+    <div class="stats"><div class="stat"><b>${acc} %</b><span>réussite</span></div><div class="stat"><b>${avg.toFixed(1).replace('.',',')} s</b><span>par calcul</span></div><div class="stat"><b>+${q.xp}</b><span>XP</span></div></div>
+    <div class="ups">${ups}${q.best>=3?`<div><span>Meilleure série</span><span>🔥 ${q.best}</span></div>`:''}</div></div>
+    <div class="rbtns"><button class="btn" id="again">${q.mode==='chrono'?'Rejouer':'Encore une séance'}</button><button class="btn alt" id="home">Accueil</button></div>`;
+  $('again').onclick=()=>{if(q.mode==='chrono')start('chrono',[]);else if(q.mode==='skill')start('skill',Array(10).fill(q.items.find(x=>typeof x==='string')));else if(q.mode==='weak'){const it=weakItems();it?start('weak',it):closeScr()}else start('daily',dailyItems())};
+  $('home').onclick=closeScr;
+  if(acc>=80||q.record)confetti();
+}
+function confetti(){const cs=['#f97316','#ec4899','#6366f1','#22c55e','#f59e0b','#06b6d4'];
+  for(let i=0;i<50;i++){const d=document.createElement('div');d.className='conf';d.style.left=Math.random()*100+'vw';d.style.background=P(cs);
+   d.style.animationDuration=(1.6+Math.random()*1.6)+'s';d.style.animationDelay=Math.random()*.4+'s';document.body.appendChild(d);setTimeout(()=>d.remove(),3800)}}
+
+$('sndBtn').onclick=()=>{S.snd=!S.snd;save();home()};
+$('resetBtn').onclick=()=>{if(confirm('Effacer toute ta progression (niveaux, XP, série) ?')){try{localStorage.removeItem(KEY)}catch(e){}S=null;load();home()}};
+
+load();home();
+</script>
+</body>
+</html>
