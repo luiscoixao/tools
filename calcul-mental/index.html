@@ -235,155 +235,189 @@ function jsteps(from,to){
 /* découpe un nombre selon ses rangs : 347 → [300,40,7] */
 const parts=n=>{const p=[];let m=1;while(n>0){const d=n%10;if(d)p.unshift(d*m);n=Math.floor(n/10);m*=10}return p};
 
-function tableTip(a,b){
-  const order=[9,5,4,8,6,7,11,12,3,2,10];
-  const rk=n=>{const i=order.indexOf(n);return i<0?99:i};
-  let x=a,y=b;if(rk(a)<rk(b)){x=b;y=a}
-  /* y = facteur « astuce », x = l'autre */
-  const r=x*y;
-  const t={
-    9:`${x} × 9 = ${x} × 10 − ${x} = ${10*x} − ${x}`,
-    5:`${x} × 5 = moitié de ${x} × 10 = moitié de ${10*x}`,
-    4:`× 4 = double du double : ${x} → ${2*x} → ${4*x}`,
-    8:`× 8 = trois doubles : ${x} → ${2*x} → ${4*x} → ${8*x}`,
-    6:`${x} × 6 = ${x} × 5 + ${x} = ${5*x} + ${x}`,
-    7:`${x} × 7 = ${x} × 5 + ${x} × 2 = ${5*x} + ${2*x}`,
-    11:`${x} × 11 = ${x} × 10 + ${x} = ${10*x} + ${x}`,
-    12:`${x} × 12 = ${x} × 10 + ${x} × 2 = ${10*x} + ${2*x}`,
-    3:`${x} × 3 = ${x} × 2 + ${x} = ${2*x} + ${x}`,
-    2:`× 2 = le double de ${x}`,
-    10:`× 10 : on écrit un 0 à droite de ${x}`
-  }[y]||`${x} × ${y}`;
-  return [t,`= ${r}`];
-}
-
 /* ============ compétences ============ */
+/* Chaque exercice renvoie : q (énoncé), a (réponse), tech (nom de la technique),
+   steps (la technique appliquée aux nombres de l'exercice, la dernière ligne finit par la réponse) */
+const T=(tech,steps)=>({tech,steps});
+function addH(a,b){
+  const S=a+b;
+  if(b<10){const au=a%10;
+    if(au+b<10)return T('Ajouter aux unités',[`Unités : ${au} + ${b} = ${au+b}`,`${F(a)} + ${b} = ${F(S)}`]);
+    const k=10-au,c=a+k;return T('Passer par la dizaine',[`${F(a)} + ${k} = ${F(c)} : dizaine ronde`,`Il reste ${b} − ${k} = ${b-k} à ajouter`,`${F(c)} + ${b-k} = ${F(S)}`])}
+  const u=b%10;
+  if(u>=7){const k=10-u,rb=b+k;return T('Arrondir puis corriger',[`${F(b)} est presque ${F(rb)} : ${F(b)} = ${F(rb)} − ${k}`,`${F(a)} + ${F(rb)} = ${F(a+rb)}`,`On retire ${k==1?'le 1':'les '+k} en trop : ${F(a+rb)} − ${k} = ${F(S)}`])}
+  const p=parts(b),L=[];let c=a;p.forEach(x=>{L.push(`${F(c)} + ${F(x)} = ${F(c+x)}`);c+=x});
+  return T('De gauche à droite, rang par rang',[`On ajoute ${F(b)} en morceaux : ${p.map(F).join(', puis ')}`,...L]);
+}
+function subH(a,b){
+  const D=a-b;
+  if(b<10){const au=a%10;
+    if(au==0)return T('Casser une dizaine',[`${F(a)} = ${F(a-10)} + 10`,`10 − ${b} = ${10-b}`,`${F(a-10)} + ${10-b} = ${F(D)}`]);
+    if(au>=b)return T('Soustraire aux unités',[`Unités : ${au} − ${b} = ${au-b}`,`${F(a)} − ${b} = ${F(D)}`]);
+    const c=a-au;return T('Passer par la dizaine',[`${F(a)} − ${au} = ${F(c)} : dizaine ronde`,`Il reste ${b} − ${au} = ${b-au} à enlever`,`${F(c)} − ${b-au} = ${F(D)}`])}
+  const u=b%10;
+  if(u>=7){const k=10-u,rb=b+k;return T('Arrondir puis corriger',[`${F(b)} est presque ${F(rb)} : ${F(b)} = ${F(rb)} − ${k}`,`${F(a)} − ${F(rb)} = ${F(a-rb)}`,`On a enlevé ${k} de trop, on les rajoute : ${F(a-rb)} + ${k} = ${F(D)}`])}
+  const da=String(a).split('').reverse(),db=String(b).split('').reverse();
+  if(db.every((d,i)=>+da[i]>=+d)){const L=[];let c=a;parts(b).forEach(x=>{L.push(`${F(c)} − ${F(x)} = ${F(c-x)}`);c-=x});
+    return T('Rang par rang (aucune retenue)',[`Chaque chiffre de ${F(a)} est assez grand : on enlève ${parts(b).map(F).join(', puis ')}`,...L])}
+  if(b<100){const bt=b-u,c=a-bt,cu=c%10;
+    if(cu>=u)return T('Dizaines, puis unités',[`${F(a)} − ${bt} = ${F(c)}`,`${F(c)} − ${u} = ${F(D)}`]);
+    const c0=c-cu;return T('Dizaines, puis passer par la dizaine',[`${F(a)} − ${bt} = ${F(c)}`,`${F(c)} − ${cu} = ${F(c0)} : dizaine ronde`,`Il reste ${u-cu} à enlever : ${F(c0)} − ${u-cu} = ${F(D)}`])}
+  return T('Compter en avançant',[`Au lieu d’enlever, on va de ${F(b)} à ${F(a)} par sauts ronds :`,...jsteps(b,a)]);
+}
+function tabH(a,b){
+  const order=[10,2,5,9,11,4,3,6,8,12,7],rk=n=>{const i=order.indexOf(n);return i<0?99:i};
+  let x=a,y=b;if(rk(a)<rk(b)){x=b;y=a}
+  const r=x*y;
+  const M={
+    10:['× 10 : on ajoute un zéro',[`${x} suivi d’un zéro : ${r}`]],
+    2:['× 2 : le double',[`Double de ${x} = ${r}`]],
+    5:x%2==0?['× 5 = moitié, puis × 10',[`Moitié de ${x} = ${x/2}`,`${x/2} × 10 = ${r}`]]:['× 5 = × 10, puis moitié',[`${x} × 10 = ${10*x}`,`Moitié de ${10*x} = ${r}`]],
+    9:['× 9 = × 10, moins une fois',[`${x} × 10 = ${10*x}`,`${10*x} − ${x} = ${r}`]],
+    11:['× 11 = × 10, plus une fois',[`${x} × 10 = ${10*x}`,`${10*x} + ${x} = ${r}`]],
+    4:['× 4 = double du double',[`Double de ${x} = ${2*x}`,`Double de ${2*x} = ${r}`]],
+    3:['× 3 = double, plus une fois',[`Double de ${x} = ${2*x}`,`${2*x} + ${x} = ${r}`]],
+    6:['× 6 = × 5, plus une fois',[`${x} × 5 = ${5*x}`,`${5*x} + ${x} = ${r}`]],
+    8:['× 8 = trois doubles',[`Double : ${x} → ${2*x}`,`Double : ${2*x} → ${4*x}`,`Double : ${4*x} → ${r}`]],
+    12:['× 12 = × 10, plus × 2',[`${x} × 10 = ${10*x}`,`${x} × 2 = ${2*x}`,`${10*x} + ${2*x} = ${r}`]],
+    7:['× 7 = × 5, plus × 2',[`${x} × 5 = ${5*x}`,`${x} × 2 = ${2*x}`,`${5*x} + ${2*x} = ${r}`]]
+  }[y];
+  return T(M[0],M[1]);
+}
+function evenParts(n){const h=Math.floor(n/100)*100,r=n-h,t=Math.floor(r/20)*20;return[h,t,r-t].filter(Boolean)}
+
 const SK=[
 {id:'comp',name:'Compléments',art:'+?=10',c:['#f97316','#fdba74','#c2410c'],t:[4,1],
- rule:'Pour aller jusqu’à 10, 100 ou 1 000, on fait des sauts : d’abord jusqu’à la dizaine ronde, puis jusqu’à la centaine.',
- ex:'37 + ? = 100',exs:['37 → 40 : + 3','40 → 100 : + 60','Réponse : 63'],
- gen(l){let n,T;
-  if(l==1){T=10;n=R(1,9)}else if(l==2){T=100;n=R(1,9)*10}else if(l==3){T=100;n=R(11,89);if(n%10==0)n++}
-  else if(l==4){T=1000;n=R(11,99)*10}else{T=1000;n=R(101,989);if(n%10==0)n+=3}
-  return{q:`${F(n)} + ? = ${F(T)}`,a:T-n,steps:jsteps(n,T)}}},
+ rule:'Vers 10 : les « amis de 10 » (1-9, 2-8, 3-7, 4-6, 5-5). Vers 100 ou 1 000 : chaque chiffre complète à 9, sauf le dernier qui complète à 10.',
+ ex:'457 + ? = 1 000',exs:['Centaines : 4 → 5 (pour faire 9)','Dizaines : 5 → 4 (pour faire 9)','Unités : 7 → 3 (pour faire 10)','Réponse : 543'],
+ gen(l){
+  if(l==1){const n=R(1,9);return{q:`${n} + ? = 10`,a:10-n,...T('Les amis de 10',['Couples qui font 10 : 1-9, 2-8, 3-7, 4-6, 5-5',`${n} va avec ${10-n}`])}}
+  if(l==2){const k=R(1,9),n=10*k;return{q:`${n} + ? = 100`,a:100-n,...T('Les amis de 10, en dizaines',[`${n}, c’est ${k} dizaines : il en faut 10`,`${k} + ${10-k} = 10 dizaines`,`Réponse : ${100-n}`])}}
+  if(l==3){let n=R(11,89);if(n%10==0)n++;const d=Math.floor(n/10),u=n%10;
+   return{q:`${n} + ? = 100`,a:100-n,...T('Règle du 9 et du 10',['Les dizaines complètent à 9, les unités à 10',`Dizaines : ${d} + ${9-d} = 9`,`Unités : ${u} + ${10-u} = 10`,`Réponse : ${100-n}`])}}
+  if(l==4){const k=R(11,99),n=10*k;
+   if(k%10==0){const c=k/10;return{q:`${n} + ? = 1 000`,a:1000-n,...T('Les amis de 10, en centaines',[`${n}, c’est ${c} centaines : il en faut 10`,`${c} + ${10-c} = 10 centaines`,`Réponse : ${1000-n}`])}}
+   const d=Math.floor(k/10),u=k%10;
+   return{q:`${n} + ? = 1 000`,a:1000-n,...T('On enlève le zéro, puis 9 et 10',[`Sans le zéro : ${k} + ? = 100`,`Règle du 9 et du 10 : ${d} → ${9-d}, ${u} → ${10-u}, donc ${100-k}`,`On remet le zéro : ${1000-n}`])}}
+  let n=R(101,989);if(n%10==0)n+=3;const c=Math.floor(n/100),d=Math.floor(n/10)%10,u=n%10;
+  return{q:`${n} + ? = ${F(1000)}`,a:1000-n,...T('Règle du 9-9-10',['Centaines et dizaines complètent à 9, les unités à 10',`Centaines : ${c} → ${9-c}`,`Dizaines : ${d} → ${9-d}`,`Unités : ${u} → ${10-u}`,`Réponse : ${1000-n}`])}}},
 
 {id:'add',name:'Additions',art:'a+b',c:['#22c55e','#86efac','#15803d'],t:[5,1.5],
- rule:'On ajoute le second nombre en morceaux : les centaines, puis les dizaines, puis les unités. Si ça finit par 8 ou 9, on arrondit et on corrige.',
- ex:'47 + 38',exs:['47 + 30 = 77','77 + 8 = 85','Ou : 47 + 40 − 2 = 85'],
+ rule:'On ajoute le second nombre en morceaux, de gauche à droite. On passe par la dizaine ronde. S’il finit par 7, 8 ou 9 : on arrondit, puis on corrige.',
+ ex:'47 + 38',exs:['38 est presque 40 : 38 = 40 − 2','47 + 40 = 87','87 − 2 = 85'],
  gen(l){let a,b;
   if(l==1){a=R(12,89);b=R(2,9)}
   else if(l==2){const at=R(1,7),au=R(0,8);a=at*10+au;b=R(1,8-at)*10+R(0,9-au)}
   else if(l==3){const at=R(1,7),au=R(2,9);a=at*10+au;b=R(1,8-at)*10+R(10-au,9)}
   else if(l==4){a=R(120,899);b=R(13,89)}else{a=R(120,799);b=R(110,899)}
-  const S=[];let c=a;parts(b).forEach(p=>{S.push(`${F(c)} + ${F(p)} = ${F(c+p)}`);c+=p});
-  const u=b%10;if(u>=8&&b>9){const k=10-u;S.push(`Ou : ${F(a)} + ${F(b+k)} − ${k} = ${F(a+b)}`)}
-  return{q:`${F(a)} + ${F(b)}`,a:a+b,steps:S}}},
+  return{q:`${F(a)} + ${F(b)}`,a:a+b,...addH(a,b)}}},
 
 {id:'sub',name:'Soustractions',art:'a−b',c:['#06b6d4','#67e8f9','#0e7490'],t:[6,1.5],
- rule:'Plutôt que d’enlever, on compte en avançant du petit nombre jusqu’au grand, par sauts ronds. L’écart, c’est la réponse.',
- ex:'83 − 47',exs:['47 → 50 : + 3','50 → 80 : + 30','80 → 83 : + 3','Total : 36'],
+ rule:'Finit par 7, 8 ou 9 ? On enlève le nombre rond, puis on rajoute. Pas de retenue ? Rang par rang. Sinon, on compte en avançant du petit au grand.',
+ ex:'83 − 49',exs:['49 = 50 − 1','83 − 50 = 33','On rajoute 1 : 34'],
  gen(l){let a,b;
   if(l==1){a=R(12,99);b=R(2,9)}
   else if(l==2){const at=R(2,9),au=R(1,9);a=at*10+au;b=R(1,at-1)*10+R(0,au)}
   else if(l==3){const au=R(0,8),at=R(3,9);a=at*10+au;b=R(1,at-2)*10+R(au+1,9)}
   else if(l==4){a=R(150,999);b=R(12,99)}else{a=R(400,999);b=R(101,a-50)}
-  return{q:`${F(a)} − ${F(b)}`,a:a-b,steps:[`On compte de ${F(b)} jusqu’à ${F(a)} :`,...jsteps(b,a)]}}},
+  return{q:`${F(a)} − ${F(b)}`,a:a-b,...subH(a,b)}}},
 
 {id:'dbl',name:'Doubles',art:'×2 ÷2',c:['#ec4899','#f9a8d4','#be185d'],t:[4,1.5],
- rule:'Pour doubler ou partager en deux, on coupe le nombre en morceaux faciles, on traite chaque morceau, puis on recolle.',
- ex:'Double de 68',exs:['Double de 60 = 120','Double de 8 = 16','120 + 16 = 136'],
+ rule:'Doubler : on coupe en morceaux (centaines, dizaines, unités), on double chacun, on recolle. Moitié : on coupe en morceaux pairs.',
+ ex:'Double de 68',exs:['68 = 60 + 8','Doubles : 120 et 16','120 + 16 = 136'],
  gen(l){
-  const dbl=n=>{const p=parts(n);return{q:`Double de ${F(n)}`,a:2*n,steps:[...p.map(x=>`Double de ${F(x)} = ${F(2*x)}`),p.length>1?`${p.map(x=>F(2*x)).join(' + ')} = ${F(2*n)}`:''].filter(Boolean)}};
-  const half=n=>{const big=Math.floor(n/20)*20,r=n-big;return{q:`Moitié de ${F(n)}`,a:n/2,steps:r&&big?[`${F(n)} = ${F(big)} + ${r}`,`Moitiés : ${F(big/2)} + ${r/2} = ${F(n/2)}`]:[`Moitié de ${F(n)} = ${F(n/2)}`]}};
+  const dbl=n=>{const p=parts(n);return{q:`Double de ${F(n)}`,a:2*n,...(p.length>1?T('Découper, doubler, recoller',[`${F(n)} = ${p.map(F).join(' + ')}`,`Doubles : ${p.map(x=>F(2*x)).join(' ; ')}`,`${p.map(x=>F(2*x)).join(' + ')} = ${F(2*n)}`]):T('Doubler',[`Double de ${F(n)} = ${F(2*n)}`]))}};
+  const half=n=>{const p=evenParts(n);return{q:`Moitié de ${F(n)}`,a:n/2,...(p.length>1?T('Découper en morceaux pairs',[`${F(n)} = ${p.map(F).join(' + ')} : tous pairs`,`Moitiés : ${p.map(x=>F(x/2)).join(' ; ')}`,`${p.map(x=>F(x/2)).join(' + ')} = ${F(n/2)}`]):T('Moitié',[`Moitié de ${F(n)} = ${F(n/2)}`]))}};
   if(l==1)return dbl(R(11,49));if(l==2)return half(2*R(11,49));
   if(l==3)return dbl(R(101,499));if(l==4)return half(2*R(51,499));
-  if(Math.random()<.5){const n=R(12,60);return{q:`${n} × 4`,a:4*n,steps:[`× 4 = double du double`,`${n} → ${2*n} → ${4*n}`]}}
-  const n=4*R(11,60);return{q:`${n} ÷ 4`,a:n/4,steps:[`÷ 4 = moitié de la moitié`,`${n} → ${n/2} → ${n/4}`]}}},
+  if(Math.random()<.5){const n=R(12,60);return{q:`${n} × 4`,a:4*n,...T('× 4 = double du double',[`Double de ${n} = ${2*n}`,`Double de ${2*n} = ${4*n}`])}}
+  const n=4*R(11,60);return{q:`${n} ÷ 4`,a:n/4,...T('÷ 4 = moitié de la moitié',[`Moitié de ${n} = ${n/2}`,`Moitié de ${n/2} = ${n/4}`])}}},
 
 {id:'tab',name:'Tables',art:'7×8',c:['#8b5cf6','#c4b5fd','#6d28d9'],t:[3,.7],
- rule:'Chaque table a son raccourci : × 9 = × 10 moins une fois ; × 5 = moitié de × 10 ; × 4 = double du double ; × 6 = × 5 plus une fois.',
- ex:'7 × 9',exs:['7 × 10 − 7','70 − 7 = 63'],
+ rule:'Chaque table a son raccourci : × 9 = × 10 moins une fois ; × 5 = moitié de × 10 ; × 4 = double du double ; × 8 = trois doubles ; × 6 = × 5 plus une fois ; × 7 = × 5 plus × 2.',
+ ex:'7 × 9',exs:['7 × 10 = 70','70 − 7 = 63'],
  gen(l){let a,b=R(2,9);
   if(l==1)a=P([2,3,5,10]);else if(l==2)a=P([4,6]);else if(l==3)a=P([7,8,9]);else if(l==4){a=R(3,9);b=R(3,9)}else{a=P([11,12]);b=R(2,12)}
   if(Math.random()<.5)[a,b]=[b,a];
-  return{q:`${a} × ${b}`,a:a*b,steps:tableTip(a,b)}}},
+  return{q:`${a} × ${b}`,a:a*b,...tabH(a,b)}}},
 
 {id:'x10',name:'× 10, × 100',art:'×10',c:['#3b82f6','#93c5fd','#1d4ed8'],t:[3,1],
- rule:'× 10 : chaque chiffre avance d’un rang (on écrit un 0). ÷ 10 : il recule d’un rang. × 30 = × 3 puis × 10.',
+ rule:'× 10 : chaque chiffre avance d’un rang (on écrit un 0). ÷ 10 : il recule d’un rang. × 30 = × 3, puis × 10.',
  ex:'34 × 20',exs:['34 × 2 = 68','68 × 10 = 680'],
  gen(l){
-  if(l==1){const n=R(2,99);return{q:`${n} × 10`,a:n*10,steps:['Chaque chiffre avance d’un rang : on écrit un 0',`${n} → ${F(n*10)}`]}}
-  if(l==2){const n=R(2,99);return{q:`${n} × 100`,a:n*100,steps:['Deux rangs : on écrit deux 0',`${n} → ${F(n*100)}`]}}
-  if(l==3){const n=R(2,99);return{q:`${F(n*10)} ÷ 10`,a:n,steps:['Chaque chiffre recule d’un rang : on enlève un 0',`${F(n*10)} → ${n}`]}}
-  if(l==4){const n=R(2,99);return Math.random()<.5?{q:`${n} × 1 000`,a:n*1000,steps:['Trois rangs : trois 0',`${n} → ${F(n*1000)}`]}:{q:`${F(n*100)} ÷ 100`,a:n,steps:['On enlève deux 0',`${F(n*100)} → ${n}`]}}
+  if(l==1){const n=R(2,99);return{q:`${n} × 10`,a:n*10,...T('Glisser d’un rang',['Chaque chiffre avance d’un rang : on écrit un 0',`${n} → ${F(n*10)}`])}}
+  if(l==2){const n=R(2,99);return{q:`${n} × 100`,a:n*100,...T('Glisser de deux rangs',['Deux rangs : on écrit deux 0',`${n} → ${F(n*100)}`])}}
+  if(l==3){const n=R(2,99);return{q:`${F(n*10)} ÷ 10`,a:n,...T('Reculer d’un rang',['Chaque chiffre recule d’un rang : on enlève un 0',`${F(n*10)} → ${n}`])}}
+  if(l==4){const n=R(2,99);return Math.random()<.5?{q:`${n} × ${F(1000)}`,a:n*1000,...T('Glisser de trois rangs',['Trois rangs : on écrit trois 0',`${n} → ${F(n*1000)}`])}:{q:`${F(n*100)} ÷ 100`,a:n,...T('Reculer de deux rangs',['On enlève deux 0',`${F(n*100)} → ${n}`])}}
   const n=R(11,49),m=P([20,30,40,200,300]),d=m>=100?m/100:m/10,z=m/d;
-  return{q:`${n} × ${m}`,a:n*m,steps:[`${n} × ${m} = ${n} × ${d} × ${z}`,`${n} × ${d} = ${n*d}`,`${n*d} × ${z} = ${F(n*m)}`]}}},
+  return{q:`${n} × ${m}`,a:n*m,...T(`× ${m} = × ${d}, puis × ${z}`,[`${n} × ${d} = ${n*d}`,`${n*d} × ${z} : on écrit ${z==10?'un 0':'deux 0'}`,`→ ${F(n*m)}`])}}},
 
 {id:'x5',name:'× 5, × 25, × 50',art:'×5',c:['#f59e0b','#fde68a','#b45309'],t:[4,1.5],
- rule:'× 5 = × 10 puis moitié. × 50 = × 100 puis moitié. × 25 = × 100 puis deux fois moitié. ÷ 5 = × 2 puis ÷ 10.',
- ex:'46 × 5',exs:['46 × 10 = 460','Moitié : 230'],
+ rule:'× 5 = moitié puis × 10 (ou × 10 puis moitié). × 50 = moitié puis × 100. × 25 = quart puis × 100. ÷ 5 = double puis ÷ 10.',
+ ex:'46 × 5',exs:['Moitié de 46 = 23','23 × 10 = 230'],
  gen(l){
-  if(l<=2){const n=l==1?R(2,30):R(31,199);return{q:`${n} × 5`,a:5*n,steps:[`${n} × 10 = ${F(10*n)}`,`Moitié : ${F(5*n)}`]}}
-  if(l==3){const n=R(2,99);return{q:`${n} × 50`,a:50*n,steps:[`${n} × 100 = ${F(100*n)}`,`Moitié : ${F(50*n)}`]}}
-  if(l==4){const n=R(4,40);return{q:`${n} × 25`,a:25*n,steps:[`${n} × 100 = ${F(100*n)}`,`Moitié : ${F(50*n)}`,`Encore moitié : ${F(25*n)}`]}}
-  const n=5*R(10,99);return{q:`${n} ÷ 5`,a:n/5,steps:[`${n} × 2 = ${2*n}`,`÷ 10 : ${n/5}`]}}},
+  if(l<=2){const n=l==1?R(2,30):R(31,199);return{q:`${n} × 5`,a:5*n,...(n%2==0?T('× 5 = moitié, puis × 10',[`Moitié de ${n} = ${n/2}`,`${n/2} × 10 = ${F(5*n)}`]):T('× 5 = × 10, puis moitié',[`${n} × 10 = ${F(10*n)}`,`Moitié de ${F(10*n)} = ${F(5*n)}`]))}}
+  if(l==3){const n=R(2,99);return{q:`${n} × 50`,a:50*n,...(n%2==0?T('× 50 = moitié, puis × 100',[`Moitié de ${n} = ${n/2}`,`${n/2} × 100 = ${F(50*n)}`]):T('× 50 = × 100, puis moitié',[`${n} × 100 = ${F(100*n)}`,`Moitié de ${F(100*n)} = ${F(50*n)}`]))}}
+  if(l==4){const n=R(4,40);return{q:`${n} × 25`,a:25*n,...(n%4==0?T('× 25 = quart, puis × 100',[`Quart de ${n} : ${n} → ${n/2} → ${n/4}`,`${n/4} × 100 = ${F(25*n)}`]):T('× 25 = × 100, puis deux moitiés',[`${n} × 100 = ${F(100*n)}`,`Moitié : ${F(50*n)}`,`Encore moitié : ${F(25*n)}`]))}}
+  const n=5*R(10,99);return{q:`${n} ÷ 5`,a:n/5,...T('÷ 5 = double, puis ÷ 10',[`Double de ${n} = ${2*n}`,`${2*n} ÷ 10 = ${n/5}`])}}},
 
 {id:'div',name:'Divisions',art:'÷',c:['#14b8a6','#5eead4','#0f766e'],t:[4,2],
  rule:'Diviser, c’est chercher le nombre qui manque dans une table. Pour un grand nombre, on le coupe en morceaux qui se divisent bien.',
- ex:'252 ÷ 6',exs:['252 = 240 + 12','240 ÷ 6 = 40','12 ÷ 6 = 2','Réponse : 42'],
+ ex:'252 ÷ 6',exs:['252 = 240 + 12','240 ÷ 6 = 40 ; 12 ÷ 6 = 2','40 + 2 = 42'],
  gen(l){let d,q;
-  if(l<=2){d=l==1?R(2,5):R(2,9);q=R(2,10);return{q:`${d*q} ÷ ${d}`,a:q,steps:[`Quel nombre × ${d} donne ${d*q} ?`,`${d} × ${q} = ${d*q}`]}}
+  if(l<=2){d=l==1?R(2,5):R(2,9);q=R(2,10);return{q:`${d*q} ÷ ${d}`,a:q,...T('La table à l’envers',[`Dans la table de ${d} : ${d} × ? = ${d*q}`,`Réponse : ${q}`])}}
   if(l==5){d=P([25,50]);q=d==25?R(3,40):R(3,30);const n=d*q,k=100/d;
-   return{q:`${F(n)} ÷ ${d}`,a:q,steps:[`÷ ${d} = × ${k} puis ÷ 100`,`${F(n)} × ${k} = ${F(n*k)}`,`÷ 100 : ${q}`]}}
+   return{q:`${F(n)} ÷ ${d}`,a:q,...T(`÷ ${d} = × ${k}, puis ÷ 100`,[`${F(n)} × ${k} = ${F(n*k)}`,`${F(n*k)} ÷ 100 = ${q}`])}}
   d=l==3?R(2,9):R(3,9);q=l==3?R(11,30):R(21,99);if(q%10==0)q++;
   const q1=Math.floor(q/10)*10,q2=q%10,n=d*q;
-  return{q:`${F(n)} ÷ ${d}`,a:q,steps:[`${F(n)} = ${d*q1} + ${d*q2}`,`${d*q1} ÷ ${d} = ${q1}`,`${d*q2} ÷ ${d} = ${q2}`,`Réponse : ${q1} + ${q2} = ${q}`]}}},
+  return{q:`${F(n)} ÷ ${d}`,a:q,...T('Découper en multiples faciles',[`${F(n)} = ${d*q1} + ${d*q2} (deux multiples de ${d})`,`${d*q1} ÷ ${d} = ${q1} ; ${d*q2} ÷ ${d} = ${q2}`,`${q1} + ${q2} = ${q}`])}}},
 
 {id:'dist',name:'Produits',art:'47×6',c:['#ef4444','#fca5a5','#b91c1c'],t:[6,2.5],
- rule:'On découpe le grand nombre : 47 × 6 = 40 × 6 + 7 × 6. Proche d’un nombre rond ? On arrondit puis on retire.',
- ex:'49 × 6',exs:['50 × 6 = 300','On retire 1 × 6 = 6','300 − 6 = 294'],
+ rule:'On découpe le grand nombre : 47 × 6 = 40 × 6 + 7 × 6. S’il est proche d’un nombre rond, on arrondit puis on retire.',
+ ex:'49 × 6',exs:['49 = 50 − 1','50 × 6 = 300','300 − 6 = 294'],
  gen(l){let n,m;
-  if(l==4){const N=R(2,9)*10,k=R(1,2);n=N-k;m=R(3,9);
-   return{q:`${n} × ${m}`,a:n*m,steps:[`${n} = ${N} − ${k}`,`${N} × ${m} = ${N*m}`,`On retire ${k} × ${m} = ${k*m}`,`${N*m} − ${k*m} = ${n*m}`]}}
-  if(l==1){n=R(11,29);m=R(2,5)}else if(l==2){n=R(21,99);m=R(3,9)}else if(l==3){n=R(101,199);m=R(2,9)}else{n=R(201,999);m=R(3,9)}
-  if(n%10==0)n++;const p=parts(n);
-  return{q:`${n} × ${m}`,a:n*m,steps:[`${p.map(x=>x+' × '+m).join(' + ')}`,`= ${p.map(x=>F(x*m)).join(' + ')}`,`= ${F(n*m)}`]}}},
+  if(l==1){n=R(11,29);m=R(2,5)}else if(l==2){n=R(21,99);m=R(3,9)}else if(l==3){n=R(101,199);m=R(2,9)}else if(l==4){n=R(2,9)*10-R(1,2);m=R(3,9)}else{n=R(201,999);m=R(3,9)}
+  if(n%10==0)n++;
+  const u=n%10;
+  if(u>=8){const k=10-u,N=n+k;return{q:`${n} × ${m}`,a:n*m,...T('Arrondir puis retirer',[`${n} = ${N} − ${k}`,`${N} × ${m} = ${F(N*m)}`,`On retire ${k} × ${m} = ${k*m}`,`${F(N*m)} − ${k*m} = ${F(n*m)}`])}}
+  const p=parts(n);
+  return{q:`${n} × ${m}`,a:n*m,...T('Découper (distributivité)',[`${n} = ${p.join(' + ')}`,p.map(x=>`${x} × ${m} = ${F(x*m)}`).join(' ; '),`${p.map(x=>F(x*m)).join(' + ')} = ${F(n*m)}`])}}},
 
 {id:'x9x11',name:'× 9, × 11',art:'×11',c:['#6366f1','#a5b4fc','#4338ca'],t:[6,2],
  rule:'× 11 : on écarte les deux chiffres et on glisse leur somme au milieu. × 9 = × 10 moins une fois ; × 99 = × 100 moins une fois.',
  ex:'53 × 11',exs:['5 + 3 = 8','On glisse 8 entre 5 et 3','583'],
  gen(l){
   if(l<=2){let a,b;if(l==1){a=R(1,8);b=R(0,9-a)}else{a=R(2,9);b=R(10-a,9)}const n=10*a+b,s=a+b;
-   return{q:`${n} × 11`,a:n*11,steps:s<10?[`${a} + ${b} = ${s}`,`On glisse ${s} au milieu : ${n*11}`]:[`${a} + ${b} = ${s}`,`On glisse ${s%10} au milieu et on ajoute 1 à ${a}`,`→ ${n*11}`]}}
+   return{q:`${n} × 11`,a:n*11,...T('× 11 : écarter et glisser la somme',s<10?[`On écarte : ${a} _ ${b}`,`Somme : ${a} + ${b} = ${s}`,`On glisse ${s} au milieu : ${F(n*11)}`]:[`On écarte : ${a} _ ${b}`,`Somme : ${a} + ${b} = ${s} (plus de 9 !)`,`On glisse ${s%10} et on ajoute la retenue à ${a} : ${F(n*11)}`])}}
   const n=R(12,99);
-  if(l==3)return{q:`${n} × 9`,a:9*n,steps:[`${n} × 10 − ${n}`,`${F(10*n)} − ${n} = ${F(9*n)}`]};
-  if(l==4)return{q:`${n} × 99`,a:99*n,steps:[`${n} × 100 − ${n}`,`${F(100*n)} − ${n} = ${F(99*n)}`]};
+  if(l==3)return{q:`${n} × 9`,a:9*n,...T('× 9 = × 10, moins une fois',[`${n} × 10 = ${F(10*n)}`,`${F(10*n)} − ${n} = ${F(9*n)}`])};
+  if(l==4)return{q:`${n} × 99`,a:99*n,...T('× 99 = × 100, moins une fois',[`${n} × 100 = ${F(100*n)}`,`${F(100*n)} − ${n} = ${F(99*n)}`])};
   const m=P([19,21,29,31]),N=R(12,49),r=m%10==9?m+1:m-1,sg=m%10==9?'−':'+';
-  return{q:`${N} × ${m}`,a:N*m,steps:[`${N} × ${r} ${sg} ${N}`,`${F(N*r)} ${sg} ${N} = ${F(N*m)}`]}}},
+  return{q:`${N} × ${m}`,a:N*m,...T(`× ${m} = × ${r} ${sg} une fois`,[`${N} × ${r} = ${N} × ${r/10} × 10 = ${F(N*r)}`,`${F(N*r)} ${sg} ${N} = ${F(N*m)}`])}}},
 
 {id:'pct',name:'Pourcentages',art:'%',c:['#84cc16','#d9f99d','#4d7c0f'],t:[6,2],
- rule:'10 % = on divise par 10. 50 % = moitié, 25 % = moitié de la moitié, 5 % = moitié de 10 %. Et 8 % de 25 = 25 % de 8 !',
+ rule:'10 % = ÷ 10. 50 % = moitié, 25 % = moitié de la moitié, 5 % = moitié de 10 %. Et on peut inverser : 8 % de 25 = 25 % de 8 !',
  ex:'15 % de 80',exs:['10 % de 80 = 8','5 % = moitié = 4','8 + 4 = 12'],
  gen(l){
-  const q=(x,y,a,steps)=>({q:`${x} % de ${F(y)}`,a,steps});
-  if(l==1){if(Math.random()<.5){const y=2*R(5,100);return q(50,y,y/2,[`50 % = la moitié`,`Moitié de ${y} = ${y/2}`])}const y=10*R(1,99);return q(10,y,y/10,[`10 % = ÷ 10`,`${F(y)} ÷ 10 = ${y/10}`])}
-  if(l==2){if(Math.random()<.5){const y=4*R(3,50);return q(25,y,y/4,[`25 % = moitié de la moitié`,`${y} → ${y/2} → ${y/4}`])}const y=10*R(2,50);return q(20,y,y/5,[`10 % de ${y} = ${y/10}`,`20 % = double : ${y/5}`])}
-  if(l==3){if(Math.random()<.5){const y=20*R(1,30);return q(5,y,y/20,[`10 % de ${y} = ${y/10}`,`5 % = moitié : ${y/20}`])}const y=100*R(2,50);return q(1,y,y/100,[`1 % = ÷ 100`,`${F(y)} ÷ 100 = ${y/100}`])}
-  if(l==4){if(Math.random()<.5){const y=20*R(1,25);return q(15,y,3*y/20,[`10 % de ${y} = ${y/10}`,`5 % = ${y/20}`,`${y/10} + ${y/20} = ${3*y/20}`])}const y=4*R(3,40);return q(75,y,3*y/4,[`50 % = ${y/2}`,`25 % = ${y/4}`,`${y/2} + ${y/4} = ${3*y/4}`])}
-  if(Math.random()<.4){const y=P([25,50]),x=y==25?4*R(1,24):2*R(1,49);return q(x,y,x*y/100,[`${x} % de ${y} = ${y} % de ${x}`,y==25?`Quart de ${x} = ${x/4}`:`Moitié de ${x} = ${x/2}`])}
-  const x=P([30,40,60,70,80,90]),y=10*R(2,50);return q(x,y,x*y/100,[`10 % de ${y} = ${y/10}`,`${x} % = ${x/10} × ${y/10} = ${x*y/100}`])}},
+  const q=(x,y,a,t,s)=>({q:`${x} % de ${F(y)}`,a,...T(t,s)});
+  if(l==1){if(Math.random()<.5){const y=2*R(5,100);return q(50,y,y/2,'50 % = la moitié',[`Moitié de ${y} = ${y/2}`])}const y=10*R(1,99);return q(10,y,y/10,'10 % = ÷ 10',[`On enlève un 0 : ${F(y)} ÷ 10 = ${y/10}`])}
+  if(l==2){if(Math.random()<.5){const y=4*R(3,50);return q(25,y,y/4,'25 % = moitié de la moitié',[`Moitié de ${y} = ${y/2}`,`Moitié de ${y/2} = ${y/4}`])}const y=10*R(2,50);return q(20,y,y/5,'20 % = double de 10 %',[`10 % de ${y} = ${y/10}`,`Double : ${y/5}`])}
+  if(l==3){if(Math.random()<.5){const y=20*R(1,30);return q(5,y,y/20,'5 % = moitié de 10 %',[`10 % de ${y} = ${y/10}`,`Moitié : ${y/20}`])}const y=100*R(2,50);return q(1,y,y/100,'1 % = ÷ 100',[`On enlève deux 0 : ${F(y)} ÷ 100 = ${y/100}`])}
+  if(l==4){if(Math.random()<.5){const y=20*R(1,25);return q(15,y,3*y/20,'15 % = 10 % + 5 %',[`10 % de ${y} = ${y/10}`,`5 % = moitié : ${y/20}`,`${y/10} + ${y/20} = ${3*y/20}`])}const y=4*R(3,40);return q(75,y,3*y/4,'75 % = 50 % + 25 %',[`50 % de ${y} = ${y/2}`,`25 % = moitié : ${y/4}`,`${y/2} + ${y/4} = ${3*y/4}`])}
+  if(Math.random()<.4){const y=P([25,50]),x=y==25?4*R(1,24):2*R(1,49);return q(x,y,x*y/100,'Inverser les deux nombres',[`${x} % de ${y} = ${y} % de ${x}`,y==25?`25 % de ${x} = quart de ${x} = ${x/4}`:`50 % de ${x} = moitié de ${x} = ${x/2}`])}
+  const x=P([30,40,60,70,80,90]),y=10*R(2,50);return q(x,y,x*y/100,`${x} % = ${x/10} fois 10 %`,[`10 % de ${y} = ${y/10}`,`${x/10} × ${y/10} = ${x*y/100}`])}},
 
 {id:'carres',name:'Carrés',art:'x²',c:['#d946ef','#f0abfc','#a21caf'],t:[6,3],
  rule:'Finit par 5 : on multiplie les dizaines par le suivant et on colle 25 (35² → 3 × 4 = 12 → 1 225). Proche d’un nombre rond : on s’en sert.',
  ex:'65²',exs:['6 × 7 = 42','On colle 25','4 225'],
  gen(l){let n;
-  if(l==1){n=R(2,12);return{q:`${n}²`,a:n*n,steps:[`${n} × ${n} = ${n*n}`]}}
-  if(l==2){n=R(13,20);if(n==20)n=19;const u=n%10,k=u<=5?u:10-u;
-   return{q:`${n}²`,a:n*n,steps:[`${n}² = ${n-k} × ${n+k} + ${k}²`,`= ${(n-k)*(n+k)} + ${k*k} = ${n*n}`]}}
-  if(l==3){const d=R(1,9);n=10*d+5;return{q:`${n}²`,a:n*n,steps:[`${d} × ${d+1} = ${d*(d+1)}`,`On colle 25 : ${F(n*n)}`]}}
-  let k=R(-9,9);if(!k)k=4;
-  if(l==4){n=50+k;return{q:`${n}²`,a:n*n,steps:[`${n} = 50 ${k>0?'+':'−'} ${Math.abs(k)}`,`25 ${k>0?'+':'−'} ${Math.abs(k)} = ${25+k} centaines → ${F((25+k)*100)}`,`+ ${Math.abs(k)}² = ${k*k} → ${F(n*n)}`]}}
-  n=100+k;return{q:`${n}²`,a:n*n,steps:[`${n} ${k>0?'+':'−'} ${Math.abs(k)} = ${n+k} → ${F((n+k)*100)}`,`+ ${Math.abs(k)}² = ${k*k} → ${F(n*n)}`]}}}
+  if(l==1){n=R(2,12);return{q:`${n}²`,a:n*n,...T('Carré = le nombre fois lui-même',[`${n}² = ${n} × ${n} = ${n*n}`])}}
+  if(l==2){n=R(13,19);const u=n%10,k=u<=5?u:10-u;
+   return{q:`${n}²`,a:n*n,...T('Écart au nombre rond : (n − k)(n + k) + k²',[`On s’écarte de ${k} de chaque côté : ${n-k} × ${n+k} = ${(n-k)*(n+k)}`,`On ajoute ${k}² = ${k*k}`,`${(n-k)*(n+k)} + ${k*k} = ${n*n}`])}}
+  if(l==3){const d=R(1,9);n=10*d+5;return{q:`${n}²`,a:n*n,...T('Finit par 5 : d × (d + 1), puis 25',[`Dizaines : ${d} × ${d+1} = ${d*(d+1)}`,`On colle 25 : ${F(n*n)}`])}}
+  let k=R(-9,9);if(!k)k=4;const sg=k>0?'+':'−',K=Math.abs(k);
+  if(l==4){n=50+k;return{q:`${n}²`,a:n*n,...T('Autour de 50',[`${n} = 50 ${sg} ${K}`,`Centaines : 25 ${sg} ${K} = ${25+k} → ${F((25+k)*100)}`,`On ajoute ${K}² = ${k*k} : ${F(n*n)}`])}}
+  n=100+k;return{q:`${n}²`,a:n*n,...T('Autour de 100',[`${n} = 100 ${sg} ${K}`,`Centaines : ${n} ${sg} ${K} = ${n+k} → ${F((n+k)*100)}`,`On ajoute ${K}² = ${k*k} : ${F(n*n)}`])}}}
 ];
 const SKM={};SK.forEach((k,i)=>{k.i=i;SKM[k.id]=k});
 
@@ -583,17 +617,22 @@ function answer(ok){
     if(!cur.retry){const again={...cur,retry:true};Q.items.splice(Math.min(Q.items.length,Q.i+1+R(2,3)),0,again)}
     Q.i++;
     setTimeout(()=>openSheet('ko',`<h3>Pas tout à fait…</h3><div class="sol">${cur.q.includes('?')?cur.q.replace('?','<b>'+F(cur.a)+'</b>'):cur.q+' = <b>'+F(cur.a)+'</b>'}</div>
-      <ul class="steps">${cur.steps.map((s,i)=>`<li${i==cur.steps.length-1?' class="r"':''}>${s}</li>`).join('')}</ul>
+      <p style="margin:0 0 8px;font-weight:900;color:var(--muted);font-size:15px">💡 Technique : ${cur.tech}</p><ul class="steps">${cur.steps.map((s,i)=>`<li${i==cur.steps.length-1?' class="r"':''}>${s}</li>`).join('')}</ul>
       <p style="margin:0 0 12px;color:var(--muted);font-weight:800;font-size:14px">🔁 Ce calcul reviendra un peu plus tard.</p>
       <button class="btn">Compris →</button>`,next),450);
   }
 }
 
+function maskLast(c){const L=c.steps.slice(),f=F(c.a),last=L[L.length-1];
+  L[L.length-1]=last.endsWith(f)?last.slice(0,-f.length)+'?':last;return L}
 function showHint(){
-  if(!Q||Q.lock)return;Q.hint=true;const k=SKM[Q.cur.sk];
-  openSheet('tip',`<h3>💡 ${k.name}</h3><p style="font-weight:800;font-size:17px;line-height:1.4;margin:6px 0 10px">${k.rule}</p>
-    <div class="box" style="margin-bottom:14px"><h4>Exemple : ${k.ex}</h4><ul class="steps" style="margin:0">${k.exs.map(s=>`<li>${s}</li>`).join('')}</ul></div>
-    <button class="btn">À moi !</button>`,null);
+  if(!Q||Q.lock)return;Q.hint=true;const c=Q.cur,L=maskLast(c);let shown=1;
+  const draw=()=>{sheet.innerHTML=`<h3>💡 ${c.tech}</h3><p style="margin:2px 0 12px;color:var(--muted);font-weight:800;font-size:15px">Appliqué à ${c.q}</p>
+    <ul class="steps">${L.slice(0,shown).map((s,i)=>`<li${i==L.length-1?' class="r"':''}>${s}</li>`).join('')}</ul>
+    ${shown<L.length?'<button class="btn alt" id="hMore" style="margin:0 0 12px">Étape suivante ↓</button>':''}
+    <button class="btn" id="hGo">À moi !</button>`;
+    const m=$('hMore');if(m)m.onclick=()=>{shown++;draw()};$('hGo').onclick=closeSheet};
+  sheet.className='sheet tip';draw();requestAnimationFrame(()=>sheet.classList.add('open'));
 }
 let sheetCb=null;
 function openSheet(cls,html,cb){sheet.className='sheet '+cls;sheet.innerHTML=html;sheetCb=cb;requestAnimationFrame(()=>sheet.classList.add('open'));
