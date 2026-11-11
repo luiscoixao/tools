@@ -106,7 +106,7 @@ const ALT={
  sui3:r`<p>🧒 Écris $1+2+\dots+10$ puis, en dessous, $10+9+\dots+1$. Chaque colonne fait <b>11</b>, et il y a 10 colonnes : $110$. Mais on a compté deux fois → $55$.</p>`,
  geo1:r`<p>🪜 Sur chaque côté d'un triangle rectangle, pose un carré. Les deux petits carrés, ensemble, ont <b>exactement la même aire</b> que le grand.</p><p>Côtés 3 et 4 : $9+16=25$ → le grand carré a pour côté 5.</p>`,
  geo2:r`<p>✂️ Coupe un rectangle en diagonale : tu obtiens <b>deux triangles identiques</b>. Chaque triangle vaut donc la moitié du rectangle : $\dfrac{\text{base}\times\text{hauteur}}2$.</p>`,
- geo3:r`<p>✂️ Découpe les 3 coins d'un triangle en papier et colle-les côte à côte : ils forment toujours un <b>demi-tour</b> (une ligne droite), soit 180°.</p>`,
+ geo3:r`<p>✂️ Découpe les 3 coins d'un triangle en papier et colle-les côte à côte : ils forment toujours un <b>demi-tour</b> (une ligne droite), soit 180°.</p><p>📐 L'<b>angle extérieur</b> : prolonge un côté au-delà d'un sommet. L'angle entre ce prolongement et l'autre côté complète l'angle intérieur pour faire 180°. Il vaut donc la <b>somme des deux autres angles</b>.</p>`,
  mat1:r`<p>🤖 Un vecteur, c'est une <b>consigne de déplacement</b> : $(3\,;2)$ = « 3 pas à droite, 2 pas vers le haut ».</p><p>De A à B : on compte les pas, arrivée − départ.</p>`,
  mat2:r`<p>🗺️ Additionner deux vecteurs, c'est faire <b>deux trajets à la suite</b> : 3 pas à droite puis 2 de plus = 5 pas à droite. On ajoute les $x$ ensemble et les $y$ ensemble.</p>`,
  mat3:r`<p>🔦 Le produit scalaire mesure si deux flèches « vont dans le même sens ». Positif : plutôt le même sens. Négatif : plutôt opposés. <b>Zéro</b> : elles se croisent à angle droit.</p>`,
