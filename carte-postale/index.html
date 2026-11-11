@@ -85,6 +85,7 @@ section h2{font-size:12px;letter-spacing:.8px;text-transform:uppercase;color:var
 <body>
 <header>
   <div class="logo">CARTE <b>POSTALE</b></div>
+  <button id="newcard" hidden style="padding:7px 10px;font-size:13px">Nouvelle</button>
   <div class="seg" id="fmt"><button data-v="l" class="on">Paysage</button><button data-v="p">Portrait</button></div>
 </header>
 
@@ -163,25 +164,44 @@ const fontsReady=Promise.all(['700 20px "CP Poppins"','400 20px "CP Poppins"','8
 const KEYS=['fmt','comp','gap','bg','font','ink','tsize','title','sub','link','cap','showQR'];
 try{const s=JSON.parse(localStorage.getItem('carte-postale')||'{}');KEYS.forEach(k=>{if(k in s)S[k]=s[k];});}catch(e){}
 if(!FONT[S.font])S.font='moderne';
-function persist(){try{const o={};KEYS.forEach(k=>o[k]=S[k]);localStorage.setItem('carte-postale',JSON.stringify(o));}catch(e){}}
+function persist(){try{const o={};KEYS.forEach(k=>o[k]=S[k]);localStorage.setItem('carte-postale',JSON.stringify(o));}catch(e){}saveCard();}
+
+/* ---------- carte en cours gardée sur le téléphone (IndexedDB) ---------- */
+let dbP=null;
+function db(){if(!dbP)dbP=new Promise((res,rej)=>{try{const r=indexedDB.open('carte-postale',1);r.onupgradeneeded=()=>r.result.createObjectStore('kv');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);}catch(e){rej(e);}});return dbP;}
+async function idbSet(k,v){try{const d=await db();await new Promise((res,rej)=>{const t=d.transaction('kv','readwrite');t.objectStore('kv').put(v,k);t.oncomplete=res;t.onerror=()=>rej(t.error);});}catch(e){}}
+async function idbGet(k){try{const d=await db();return await new Promise((res,rej)=>{const r=d.transaction('kv').objectStore('kv').get(k);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);});}catch(e){return undefined;}}
+let saveT=0;function saveCard(){clearTimeout(saveT);saveT=setTimeout(()=>idbSet('state',{cells:S.cells,layout:S.layout,nextId}),300);}
+function savePhotos(){return idbSet('photos',S.photos.filter(p=>p.blob).map(p=>({id:p.id,blob:p.blob})));}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'){clearTimeout(saveT);idbSet('state',{cells:S.cells,layout:S.layout,nextId});}});
 
 /* ---------- photos ---------- */
-function loadFile(file){return new Promise(res=>{
+function loadFile(file,keepId){return new Promise(res=>{
   const url=URL.createObjectURL(file), img=new Image();
   img.onload=()=>{const k=Math.min(1,SRC_MAX/Math.max(img.naturalWidth,img.naturalHeight));
     const c=document.createElement('canvas');c.width=Math.round(img.naturalWidth*k);c.height=Math.round(img.naturalHeight*k);
     c.getContext('2d').drawImage(img,0,0,c.width,c.height);
     const t=document.createElement('canvas'),tk=160/Math.min(c.width,c.height);t.width=Math.round(c.width*tk);t.height=Math.round(c.height*tk);
-    t.getContext('2d').drawImage(c,0,0,t.width,t.height);
-    URL.revokeObjectURL(url);res({id:nextId++,src:c,thumb:t.toDataURL('image/jpeg',.8)});};
+    t.getContext('2d').drawImage(c,0,0,t.width,t.height);URL.revokeObjectURL(url);
+    const p={id:keepId||nextId++,src:c,thumb:t.toDataURL('image/jpeg',.8)};
+    if(keepId){p.blob=file;res(p);}else c.toBlob(b=>{p.blob=b;res(p);},'image/jpeg',.9);};
   img.onerror=()=>{URL.revokeObjectURL(url);res(null);};img.src=url;});}
+function showMain(){$('#empty').hidden=true;$('#main').hidden=false;$('#bottom').hidden=false;$('#newcard').hidden=false;}
 async function addFiles(files){
   toast('Chargement des photos…');
   for(const f of files){const p=await loadFile(f);if(!p)continue;S.photos.push(p);
     if(S.cells.length<MAXP)S.cells.push({pid:p.id,fx:.5,fy:.5,zoom:1});}
   hideToast();if(!S.photos.length)return;
-  $('#empty').hidden=true;$('#main').hidden=false;$('#bottom').hidden=false;
-  S.layout=null;refresh();}
+  showMain();S.layout=null;refresh();savePhotos();}
+async function restoreCard(){const ph=await idbGet('photos'),st=await idbGet('state');if(!ph||!ph.length)return;
+  toast('Reprise de ta carte…');
+  for(const r of ph){const p=await loadFile(r.blob,r.id);if(p)S.photos.push(p);}
+  if(st){nextId=Math.max(st.nextId||1,...S.photos.map(p=>p.id+1));S.cells=(st.cells||[]).filter(c=>S.photos.some(p=>p.id===c.pid));S.layout=st.layout||null;}
+  else{nextId=Math.max(1,...S.photos.map(p=>p.id+1));S.cells=S.photos.slice(0,MAXP).map(p=>({pid:p.id,fx:.5,fy:.5,zoom:1}));}
+  hideToast();if(!S.photos.length)return;showMain();await fontsReady;refresh();}
+async function newCard(){if(!confirm('Commencer une nouvelle carte ? Les photos de la carte actuelle seront retirées (tes réglages sont gardés).'))return;
+  S.photos=[];S.cells=[];S.sel=-1;S.swap=false;S.layout=null;await idbSet('photos',[]);await idbSet('state',null);
+  $('#main').hidden=true;$('#bottom').hidden=true;$('#newcard').hidden=true;$('#empty').hidden=false;window.scrollTo(0,0);}
 const photo=id=>S.photos.find(p=>p.id===id);
 
 /* ---------- dispositions (coordonnées 0..1 de la zone photos) ---------- */
@@ -304,7 +324,7 @@ function inkUI(){const box=$('#inks'),known=INKS.some(([v])=>v===S.ink);
   box.querySelector('.pick').classList.toggle('on',!known);if(!known&&/^#/.test(S.ink)){$('#inkpick').value=S.ink;box.querySelector('.pick').style.background=S.ink;}
   const n=INKS.find(([v])=>v===S.ink);$('#inkname').textContent=n?n[1]:'Personnalisée';}
 function segOn(sel,v){document.querySelectorAll(sel+' button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));}
-let raf=0;function soon(){if(!raf)raf=requestAnimationFrame(()=>{raf=0;render();});}
+let raf=0;function soon(){if(!raf)raf=requestAnimationFrame(()=>{raf=0;render();saveCard();});}
 
 /* ---------- gestes sur la carte ---------- */
 const ptrs=new Map();let drag=null,pinch=null;
@@ -373,6 +393,9 @@ let tt=0;function toast(m){const t=$('#toast');t.textContent=m;t.hidden=false;cl
 function hideToast(){$('#toast').hidden=true;}
 segOn('#fmt',S.fmt);segOn('#comp',S.comp);segOn('#gap',String(S.gap));segOn('#bg',S.bg);segOn('#font',S.font);
 fontsReady.then(()=>{if(S.photos.length)render();});
+$('#newcard').onclick=newCard;
+restoreCard();
+try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist();}catch(e){}
 if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
 </body>
