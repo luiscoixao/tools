@@ -341,7 +341,8 @@ const SK=[
  rule:'Tables jusqu’à 20. Chaque table a son raccourci : × 9 = × 10 moins une fois ; de 11 à 19, × 1u = × 10 plus × u (× 14 = × 10 + × 4) ; × 20 = × 2 puis × 10 ; × 5 = moitié de × 10 ; × 4 = double du double ; × 8 = trois doubles ; × 6 = × 5 plus une fois ; × 7 = × 5 plus × 2.',
  ex:'7 × 9',exs:['7 × 10 = 70','70 − 7 = 63'],
  gen(l){let a,b;
-  if(l==1){a=R(6,9);b=R(6,9)}else if(l==2){a=R(11,15);b=R(3,9)}else if(l==3){a=R(16,20);b=R(3,9)}else if(l==4){a=R(11,20);b=R(11,15)}else{a=R(13,20);b=R(13,20)}
+  if(l==1){a=R(13,19);b=R(6,9)}else if(l==2){a=R(13,19);b=R(11,14)}else if(l==3){a=R(13,19);b=R(13,16)}else if(l==4){a=R(14,20);b=R(14,19)}else{a=R(16,19);b=R(16,19)}
+  if(a===b&&l<5)b=a-1;
   if(Math.random()<.5)[a,b]=[b,a];
   return{q:`${a} × ${b}`,a:a*b,...tabH(a,b)}}},
 
