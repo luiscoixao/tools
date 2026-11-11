@@ -103,7 +103,7 @@ function renderItem(s,box,onAnswer){
   function finish(ok,gaveUp,info){if(done)return;done=true;box.querySelectorAll('button').forEach(b=>{if(!b.classList.contains('keep'))b.disabled=true;});box.querySelectorAll('.hrow > :not(.coursbtn)').forEach(b=>b.remove());onAnswer(ok,gaveUp,info);}
   const T=s.type||'qcm';
   if(T==='qcm'){
-    const opts=shuffle(s.a.map((t,i)=>({t,ok:i===0,src:(s.src||[])[i]})));
+    const base=s.a.map((t,i)=>({t,ok:i===0,src:(s.src||[])[i]})),opts=s.order?s.order.map(i=>base[i]):shuffle(base);
     zone.innerHTML=`<div class="opts ${s.bubbles!==false&&s.a.every(x=>x.length<46)?'bubbles':''}"></div>`;
     const o=zone.firstChild;
     opts.forEach(x=>{const b=document.createElement('button');b.className='opt';b.innerHTML=x.t;b.dataset.ok=x.ok?1:0;
@@ -252,7 +252,7 @@ function answered(s,ok,gaveUp,info){
     if(S.lives!=null){S.lives--;}
     const good=it.type==='tf'?(it.truth?'Vrai':'Faux'):it.type==='input'?String(it.a[0]):it.type==='match'||it.type==='order'?'':it.type==='line'?String(it.ans).replace('.',','):it.a[0];
     F.className='fb bad show';
-    F.innerHTML=`<h3>${gaveUp?'Voici la solution 🔍':'Pas tout à fait…'}</h3>${diag?`<div class="diag"><b>🧐 Ton erreur</b><br>${diag.msg}</div>`:''}${solFig(it)}${good?`<p class="goodans">✅ Bonne réponse : ${good}</p>`:''}${stepsHTML(it)}${tipHTML(it)}${S.lvlMsg?`<p class="lvlmsg">${S.lvlMsg}</p>`:''}<button class="cta">${S.lives===0?'Voir le résultat':S.retry?'Je la reverrai':'Continuer'}</button>`;
+    F.innerHTML=`<h3>${gaveUp?'Voici la solution 🔍':'Pas tout à fait…'}</h3>${diag?`<div class="diag"><b>🧐 Ton erreur</b><br>${diag.msg}</div>`:''}${solFig(it)}${good?`<p class="goodans">${it.errline?'🔍 L\'erreur est ici : ':'✅ Bonne réponse : '}${good}</p>`:''}${stepsHTML(it)}${tipHTML(it)}${S.lvlMsg?`<p class="lvlmsg">${S.lvlMsg}</p>`:''}<button class="cta">${S.lives===0?'Voir le résultat':S.retry?'Je la reverrai':'Continuer'}</button>`;
     F.querySelector('.cta').onclick=()=>{if(S.lives===0){S.queue=[];step();return;}if(S.retry){const x=S.queue.shift();x.it={...x.it,penalty:0,autoHint:false};S.queue.push({...x,it:vary(stripType(x.it))});step();}else next();};
   }
   math(F);bar();

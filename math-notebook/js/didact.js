@@ -45,6 +45,7 @@ const TIP={
 function tipOf(it){return it.tip||TIP[it.nid]||'';}
 function stepsHTML(it){
   if(!it.steps||!it.steps.length)return it.why?`<p>${it.why}</p>`:'';
-  return `<ol class="steps">${it.steps.map(([l,t])=>`<li><b>${l}</b><span>${t}</span></li>`).join('')}</ol>`;
+  const pre=it.errline&&it.why?`<p>${it.why}</p>`:'';
+  return pre+`<ol class="steps">${it.steps.map(([l,t])=>`<li><b>${l}</b><span>${t}</span></li>`).join('')}</ol>`;
 }
 function tipHTML(it){const t=tipOf(it);return t?`<div class="tipbox"><b>💡 À retenir</b>${t}</div>`:'';}
