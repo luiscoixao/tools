@@ -121,7 +121,10 @@ h2.sec small{font-size:14px;color:var(--muted);font-weight:800}
 .sheet h3{margin:0 0 4px;font-weight:900;font-size:20px}
 .sheet .sol{font-weight:900;font-size:28px;margin:4px 0 10px}
 .sheet .sol b{color:var(--good)}
-.nudge{margin:8px 0 0;font-size:15px;font-weight:800;color:#9a3412;background:#fff7ed;border-radius:12px;padding:8px 10px;text-align:center;animation:nin .4s}
+.nudge{margin:8px 0 0;font-size:14px;font-weight:800;color:#9a3412;background:#fff7ed;border-radius:12px;padding:8px 10px;text-align:center;animation:nin .4s}
+.nudge b{display:block;margin-bottom:4px;font-size:14px}
+.nudge span{display:inline-block;margin:2px 4px;padding:2px 8px;border-radius:8px;background:#fff;font-size:15px}
+.nudge span+span::before{content:'→ ';color:#c2410c}
 @keyframes nin{from{opacity:0;transform:translateY(-4px)}}
 .hint.pulse{animation:hp 1s ease-in-out infinite}
 @keyframes hp{50%{transform:scale(1.08);box-shadow:0 0 0 6px rgba(251,191,36,.35)}}
@@ -273,7 +276,7 @@ function tabH(a,b){
   if(Math.max(a,b)>12){const g=Math.max(a,b),m=Math.min(a,b),r=g*m;
     if(m===9)return T('× 9 = × 10, moins une fois',[`${g} × 10 = ${10*g}`,`${10*g} − ${g} = ${r}`]);
     if(g===20)return T('× 20 = × 2, puis × 10',[`Double de ${m} = ${2*m}`,`${2*m} × 10 = ${r}`]);
-    if(m>10&&g<20&&m<20){const ug=g-10,um=m-10;return T('De 11 à 19 : on ajoute, × 10, puis + unités × unités',[`${g} + ${um} = ${g+um}`,`${g+um} × 10 = ${(g+um)*10}`,`${ug} × ${um} = ${ug*um}`,`${(g+um)*10} + ${ug*um} = ${r}`]);}
+    if(m>10&&g<20&&m<20){const ug=g-10,um=m-10;return T('Entre 11 et 19 : (grand nombre + unités du petit) × 10, plus unités × unités',[`${g} + ${um} = ${g+um}`,`${g+um} × 10 = ${(g+um)*10}`,`${ug} × ${um} = ${ug*um}`,`${(g+um)*10} + ${ug*um} = ${r}`]);}
     if(g===19)return T('× 19 = × 20, moins une fois',[`${m} × 20 = ${20*m}`,`${20*m} − ${m} = ${r}`]);
     const u=g-10;return T(`× ${g} = × 10, plus × ${u}`,[`${m} × 10 = ${10*m}`,`${m} × ${u} = ${m*u}`,`${10*m} + ${m*u} = ${r}`]);}
   const order=[10,2,5,9,11,4,3,6,8,12,7],rk=n=>{const i=order.indexOf(n);return i<0?99:i};
@@ -583,7 +586,7 @@ function next(){
   cancelAnimationFrame(raf);
   const tick=()=>{if(!Q||!$('tfill'))return;const dt=(performance.now()-Q.t0)/1000;$('tfill').style.width=Math.max(0,100-dt/Q.tgt*100)+'%';
     if(dt>Q.tgt)$('tbar').classList.add('late');
-    if(dt>Q.tgt*.8&&!Q.nudged&&Q.mode!=='chrono'&&Q.cur.tech){Q.nudged=true;const h=$('hintB');if(h){h.classList.add('pulse');h.closest('.qrow').insertAdjacentHTML('afterend',`<p class="nudge">Bloqué ? Astuce : <b>${Q.cur.tech}</b></p>`);}}if(!Q.lock)raf=requestAnimationFrame(tick)};
+    if(dt>Q.tgt*.8&&!Q.nudged&&Q.mode!=='chrono'&&Q.cur.tech){Q.nudged=true;const h=$('hintB');if(h){h.classList.add('pulse');h.closest('.qrow').insertAdjacentHTML('afterend',`<div class="nudge"><b>💡 ${Q.cur.tech}</b>${maskLast(Q.cur).map(x=>`<span>${x}</span>`).join('')}</div>`);}}if(!Q.lock)raf=requestAnimationFrame(tick)};
   raf=requestAnimationFrame(tick);
 }
 
