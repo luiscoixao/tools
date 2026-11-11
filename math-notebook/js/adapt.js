@@ -48,6 +48,7 @@ function genFor(id,fmts,boost,forced){
   let t=forced||Math.max(1,Math.min(3,baseTier(id)+(boost||0)+(S&&S.adj||0)));
   let pool=[];for(let d=0;d<=2&&!pool.length;d++)pool=D.filter(f=>Math.abs((T[f.name]||2)-t)<=d);
   const fn=lru(id+'#'+t,pool);
+  if(mastery(id)>=.6&&(!fmts||fmts.includes('input')))fmts=['input','input','qcm','tf'];
   const it=vary(fresh(id,fn),fmts);
   it.nid=id;it.gen=fn.name;it.tier=T[fn.name]||2;return it;
 }

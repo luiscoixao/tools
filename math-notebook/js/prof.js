@@ -179,11 +179,12 @@ function profSheet(){
   if(weak.length)plan.push(`🎯 Renforcer <b>${NOT(weak[0][0]).n.title}</b>`);
   if(nx)plan.push(nx.boss?`👑 Affronter le boss <b>${nx.c.label}</b>`:`▶ Découvrir <b>${nx.n.title}</b>`);
   sheet(`<div class="sh-h">🧑‍🏫 Mon prof<small>Ce que j'ai observé de ton travail</small></div>
-   <div class="prof"><div class="prof-h">📅 Ton programme du jour</div>${plan.length?plan.map(p=>`<div class="prof-t">${p}</div>`).join(''):'<p>Commence une notion : j\'apprendrai à te connaître.</p>'}</div>
+   ${progressHTML()}<div class="prof"><div class="prof-h">📅 Ton programme du jour</div>${plan.length?plan.map(p=>`<div class="prof-t">${p}</div>`).join(''):'<p>Commence une notion : j\'apprendrai à te connaître.</p>'}</div>
    ${allMis.length?`<div class="prof"><div class="prof-h">🔍 Tes erreurs récurrentes</div>${allMis.slice(0,4).map(x=>`<div class="prof-t"><small>${NOT(x.nid).c.icon} ${NOT(x.nid).n.title} · ${x.n} fois</small><br>${x.msg}<br><button class="lnk mini-go" data-n="${x.nid}">Travailler ça avec moi →</button></div>`).join('')}</div>`:''}
    ${strong.length?`<div class="prof"><div class="prof-h">💪 Tes points forts</div>${strong.map(([id,m])=>`<div class="prof-t">${NOT(id).c.icon} ${NOT(id).n.title} · ${Math.round(m*100)} %</div>`).join('')}</div>`:''}
    ${L.length?`<div class="prof"><div class="prof-h">📊 Maîtrise des notions travaillées</div><div class="mlist">${L.map(([id,m])=>{const x=NOT(id);return `<div class="mrow"><span>${x.c.icon}</span><div><b>${x.n.title}</b><div class="mgauge"><i style="width:${Math.round(m*100)}%;background:${m<.35?'#e11d48':m<.7?'#f59e0b':'#16a34a'}"></i></div></div><em>${Math.round(m*100)} %</em></div>`;}).join('')}</div>
    <button class="cta" id="focusgo" style="margin-top:12px">🎯 Séance ciblée sur mes points faibles</button></div>`:''}`);
+  $('testgo').onclick=()=>{$('sheetw').classList.remove('open');startTest();};
   if($('focusgo'))$('focusgo').onclick=()=>{$('sheetw').classList.remove('open');startFocus();};
   document.querySelectorAll('#sheet .mini-go').forEach(b=>b.onclick=()=>{$('sheetw').classList.remove('open');startTutor(b.dataset.n);});
 }

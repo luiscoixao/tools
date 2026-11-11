@@ -239,6 +239,8 @@ h2.sec{font-weight:900;font-size:22px;margin:26px 2px 12px}
 .gym2{display:flex;gap:10px;margin-top:10px}
 .gymL{flex:1;display:block;padding:13px 8px;border-radius:18px;background:linear-gradient(120deg,var(--g1),var(--g2));color:#fff;font-weight:900;font-size:17px;text-align:center;text-decoration:none;box-shadow:0 4px 0 rgba(0,0,0,.18)}
 .gymL:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.18)}
+.gym.prob{margin-top:10px;background:linear-gradient(120deg,#f97316,#e11d48 60%,#be185d);box-shadow:0 5px 0 #9f1239}
+.pctx{background:#f4f2fb;border-radius:14px;padding:10px 12px;margin:0 0 12px;font-size:16px;font-weight:600;line-height:1.4}
 .gym span{font-size:21px;font-weight:900}
 .gym small{font-size:14px;font-weight:700;opacity:.92}
 .gym:active{transform:translateY(3px);box-shadow:0 2px 0 #1e40af}
@@ -337,8 +339,10 @@ h2.grp{font-weight:900;font-size:22px;margin:26px 4px 10px}
     <div class="nxt" id="nxt"></div>
   </section>
   <button class="gym" id="gymBtn"><span>🏋️ Gym maths</span><small>2 min pour échauffer ton cerveau</small></button>
+  <button class="gym prob" id="probBtn" onclick="startProblems()"><span>🧩 Problèmes</span><small>De vrais exercices en plusieurs étapes, guidés puis en autonomie</small></button>
   <div class="gym2"><a href="../calcul-mental/" class="gymL" style="--g1:#f59e0b;--g2:#ef4444">🧮 Calcul mental</a><a href="../calcul-mental/#tab" class="gymL" style="--g1:#8b5cf6;--g2:#ec4899">✖️ Tables</a></div>
   <div class="toolbar"><button id="albumBtn">🃏 Album</button><button id="weakBtn">🧑‍🏫 Mon prof</button><button id="saveBtn">💾</button></div>
+  <button class="savenag" id="testNag" style="display:none" onclick="startTest()">📈 Mesure ta progression : test de niveau (5 min)</button>
   <button class="savenag" id="saveNag" onclick="saveSheet()">💾 Pense à sauvegarder ta progression dans Fichiers</button>
   <div id="map"></div>
 </div>
@@ -370,6 +374,8 @@ h2.grp{font-weight:900;font-size:22px;margin:26px 4px 10px}
 <script src="js/prof.js"></script>
 <script src="js/didact.js"></script>
 <script src="js/gym.js"></script>
+<script src="js/progres.js"></script>
+<script src="js/problemes.js"></script>
 <script>boot();</script>
 </body>
 </html>

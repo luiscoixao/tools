@@ -66,7 +66,7 @@ function nextNotion(){
 /* =====================================================================
    FORMATS DE JEU
    ===================================================================== */
-function numVal(s){s=String(s).replace(/\$/g,'').replace('{,}','.').replace(/\\,/g,'').trim();return /^-?\d+(\.\d+)?$/.test(s)?parseFloat(s):null;}
+function numVal(s){s=String(s).replace(/\$/g,'').replace('{,}','.').replace(/\\,/g,'').replace(/−/g,'-').replace(/^(-?\d+),(\d+)$/,'$1.$2').replace(/^[a-zA-Z]\s*=\s*/,'').replace(/\^\{?\\circ\}?/,'').replace(/\\text\{[^}]*\}/g,'').trim();return /^-?\d+(\.\d+)?$/.test(s)?parseFloat(s):null;}
 /* transforme un exercice « QCM » en un format varié */
 function vary(it,allow){
   if(it.type) return it;
@@ -370,11 +370,11 @@ function startSpeed(c,daily){
 
 /* ---------- Test de niveau ---------- */
 function startTest(){
-  const q=CH.map(c=>{const n=pick(c.notions);return {kind:'item',label:'📝 '+c.label,chap:c.key,nid:n.id,it:{...genFor(n.id,['qcm'],0,2),idk:true}};});
+  const q=CH.map(c=>{const n=pick(c.notions);return {kind:'item',label:'📝 '+c.label,chap:c.key,nid:n.id,it:{...genFor(n.id,['input','qcm'],0,2),idk:true}};});
   const res={};
   openSession({mode:'test',title:'📝 Test de niveau',color:'#7c3aed',queue:q,
     onItem:(s,ok)=>{res[s.chap]=ok;const m=st.m[s.nid];st.m[s.nid]=ok?Math.max(m??0,.6):Math.min(m??1,.2);},
-    onEnd:()=>{const score=Object.values(res).filter(Boolean).length;st.test={date:dayStr(new Date()),res,score};S.gained=score*5;
+    onEnd:()=>{const score=Object.values(res).filter(Boolean).length;st.test={date:dayStr(new Date()),res,score};testList();st.tests.push({d:dayStr(new Date()),score,n:CH.length});snapProgress();S.gained=score*5;
       endScreen({title:score<=CH.length*.35?'Bases à consolider':score<=CH.length*.7?'Niveau Première':'Niveau Terminale',emoji:score>=CH.length*.7?'🏆':score>=CH.length*.35?'💪':'🌱',noStars:true,
         extra:`<p><b>${score}/${CH.length}</b> bonnes réponses</p><div class="chips2">${CH.map(c=>`<span class="chip2 ${res[c.key]?'ok':'ko'}">${res[c.key]?'✓':'↺'} ${c.label}</span>`).join('')}</div><p class="muted">Les îles marquées ↺ passent en tête de ton aventure.</p>`});}});
 }
@@ -407,6 +407,7 @@ function home(){if(typeof gymBtn==='function')gymBtn();
   const xpN=lvlOf(st.xp)*100-st.xp,left=(BANK.q||[]).length?reserveLeft():0;
   $('nxt').innerHTML=`🏅 Niveau ${lvlOf(st.xp)+1} dans <b>${xpN} XP</b>${left?` · 🔓 +${Math.min(PER_LEVEL,left)} questions`:''}`;
   drawMap();
+  if(typeof snapProgress==='function'){snapProgress();testNag();}
   const nag=$('saveNag');if(nag){const l=st.lastExport;nag.style.display=st.xp>=200&&(l==null||today()-l>=7)?'block':'none';}
 }
 function drawMap(){
