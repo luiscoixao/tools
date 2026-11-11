@@ -59,7 +59,7 @@ const GLOSS=[
  [/taux d'évolution|évolution/i,'taux d\'évolution',r`(arrivée − départ) ÷ départ, en %.`,r`De 50 à 60 : +20 %.`],
  [/scientifique/i,'écriture scientifique',r`$a\times10^n$ avec $1\leq a<10$.`,r`$3\,200=3{,}2\times10^3$.`],
  [/\\sqrt|racine/i,'racine carrée',r`$\sqrt a$ : le nombre <b>positif</b> dont le carré vaut $a$ (le côté d'un carré d'aire $a$).`,r`$\sqrt{49}=7$.`],
- [/aire/i,'aire',r`La surface d'une figure, en carrés d'unité.`,r`Rectangle 3 × 4 : 12.`],
+ [/\baires?\b/i,'aire',r`La surface d'une figure, en carrés d'unité.`,r`Rectangle 3 × 4 : 12.`],
  [/périmètre/i,'périmètre',r`La longueur du <b>tour</b> d'une figure.`,r`Cercle : $2\pi r$.`],
  [/croissante|décroissante|variation/i,'sens de variation',r`Croissante : la courbe monte quand $x$ augmente. Décroissante : elle descend. Le signe de $f'$ le dit.`,r``],
  [/minimum|maximum|extremum/i,'extremum',r`La plus petite (minimum) ou la plus grande (maximum) valeur. Là, la tangente est horizontale : $f'=0$.`,r``],

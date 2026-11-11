@@ -92,6 +92,7 @@ function renderItem(s,box,onAnswer){
   box.querySelectorAll('.glc').forEach(b=>b.onclick=()=>{const g=GLOSS[+b.dataset.g];sheet(`<div class="defcard"><div class="rc-top">📚 Définition</div><div class="rc-t">${g[1]}</div><p>${g[2]}</p>${g[3]?`<p class="defex">Exemple : ${g[3]}</p>`:''}</div>`);});
   box.querySelector('#cb').onclick=()=>{const x=s.nid&&NOT(s.nid);
     if(x)sheet(`<div class="rcard" style="--k:${x.c.c[1]}"><div class="rc-top">📖 Cours · ${x.c.label}</div><div class="rc-t">${x.n.title}</div>${x.n.ruleFig?`<div class="lfig">${x.n.ruleFig}</div>`:''}<div class="rc-b">${x.n.rule}</div></div><p class="muted" style="text-align:center">Ferme cette fiche pour revenir à l'exercice.</p>`);
+    else if(s.tip){sheet(`<div class="tipbox"><b>💡 L'astuce</b>${s.tip}</div><p class="muted" style="text-align:center">Ferme cette fiche pour revenir à l'exercice.</p>`);math($('sheetw'));}
     else if(S&&S.chap)openAlbum(S.chap);};
   hb.onclick=()=>{if(used<H.length){hz.insertAdjacentHTML('beforeend',`<div class="hintbox on">${used===0?'💡':'🧭'} ${H[used]}</div>`);math(hz);used++;s.penalty=used;}
     if(used>=H.length){hb.style.display='none';} else hb.textContent='🧭 Méthode';};
@@ -243,15 +244,15 @@ function answered(s,ok,gaveUp,info){
     const g=Math.max(0,(it.penalty?10-3*it.penalty:10))+(S.combo>=3?5:0);S.gained+=g;
     if(S.mode==='review') srsHit(s.srs,true);
     F.className='fb good show';
-    F.innerHTML=`<h3>${pick(['Bravo !','Exact !','Parfait !','Bien vu !','Yes !'])}${S.combo>=3?' 🔥 '+S.combo+' d\'affilée':''}${g?` <small>+${g} XP</small>`:''}</h3>${solFig(it)}${it.why?`<p>${it.why}</p>`:''}${S.lvlMsg?`<p class="lvlmsg">${S.lvlMsg}</p>`:''}<button class="cta">Continuer</button>`;
+    F.innerHTML=`<h3>${pick(['Bravo !','Exact !','Parfait !','Bien vu !','Yes !'])}${S.combo>=3?' 🔥 '+S.combo+' d\'affilée':''}${g?` <small>+${g} XP</small>`:''}</h3>${tipOf(it)?`<p>💡 ${tipOf(it)}</p>`:it.why?`<p>${it.why}</p>`:''}${S.lvlMsg?`<p class="lvlmsg">${S.lvlMsg}</p>`:''}<button class="cta">Continuer</button>`;
     F.querySelector('.cta').onclick=next;
   }else{
     if(!gaveUp) sound(false);S.combo=0;S.missed.add(s);
-    if(S.mode==='review') srsHit(s.srs,false); else if(S.mode!=='speed') srsAdd(it);
+    if(S.mode==='review') srsHit(s.srs,false); else if(S.mode!=='speed'&&S.mode!=='gym') srsAdd(it);
     if(S.lives!=null){S.lives--;}
     const good=it.type==='tf'?(it.truth?'Vrai':'Faux'):it.type==='input'?String(it.a[0]):it.type==='match'||it.type==='order'?'':it.type==='line'?String(it.ans).replace('.',','):it.a[0];
     F.className='fb bad show';
-    F.innerHTML=`<h3>${gaveUp?'Voici la solution 🔍':'Pas tout à fait…'}</h3>${diag?`<div class="diag">🧑‍🏫 ${diag.msg}</div>`:''}${solFig(it)}<p>${good?'Bonne réponse : '+good+'<br>':''}${it.why||''}</p>${S.lvlMsg?`<p class="lvlmsg">${S.lvlMsg}</p>`:''}<button class="cta">${S.lives===0?'Voir le résultat':S.retry?'Je la reverrai':'Continuer'}</button>`;
+    F.innerHTML=`<h3>${gaveUp?'Voici la solution 🔍':'Pas tout à fait…'}</h3>${diag?`<div class="diag"><b>🧐 Ton erreur</b><br>${diag.msg}</div>`:''}${solFig(it)}${good?`<p class="goodans">✅ Bonne réponse : ${good}</p>`:''}${stepsHTML(it)}${tipHTML(it)}${S.lvlMsg?`<p class="lvlmsg">${S.lvlMsg}</p>`:''}<button class="cta">${S.lives===0?'Voir le résultat':S.retry?'Je la reverrai':'Continuer'}</button>`;
     F.querySelector('.cta').onclick=()=>{if(S.lives===0){S.queue=[];step();return;}if(S.retry){const x=S.queue.shift();x.it={...x.it,penalty:0,autoHint:false};S.queue.push({...x,it:vary(stripType(x.it))});step();}else next();};
   }
   math(F);bar();
@@ -338,7 +339,7 @@ const BOX=[0,1,3,7,16,35];
 function srsAdd(it,due){
   it=stripType(it);if(it.type==='match'||it.type==='order'||it.type==='line')return;
   if(st.srs.some(x=>x.it.q===it.q&&x.it.a&&it.a&&x.it.a[0]===it.a[0]))return;
-  st.srs.push({it:{q:it.q,a:it.a,why:it.why,hint:it.hint,hints:it.hints,img:it.img,sol:it.sol,chap:S&&S.chap,nid:it.nid,bubbles:it.bubbles},box:0,due:due!=null?due:today()});
+  st.srs.push({it:{q:it.q,a:it.a,why:it.why,hint:it.hint,hints:it.hints,img:it.img,sol:it.sol,steps:it.steps,tip:it.tip,errs:it.errs,src:it.src,gen:it.gen,chap:S&&S.chap,nid:it.nid,bubbles:it.bubbles},box:0,due:due!=null?due:today()});
   if(st.srs.length>160)st.srs.splice(0,st.srs.length-160);save();
 }
 function srsDue(){const t=today();return st.srs.filter(x=>x.due<=t);}
@@ -381,7 +382,7 @@ function startTest(){
 /* =====================================================================
    ACCUEIL : bandeau + carte d'aventure
    ===================================================================== */
-function home(){
+function home(){if(typeof gymBtn==='function')gymBtn();
   checkDay();
   const h=new Date().getHours(),nm=me();
   $('hello').textContent=(h<18?'Bonjour':'Bonsoir')+(nm?' '+nm.name:'')+' ! 👋';

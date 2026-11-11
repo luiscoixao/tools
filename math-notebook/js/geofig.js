@@ -88,3 +88,7 @@ function arcFig(R,d,lab,solved){
   g+=`<text x="${lx}" y="${ly}" text-anchor="middle" font-size="${solved?18:26}" font-weight="900" fill="#db2777" paint-order="stroke" stroke="#fff" stroke-width="4">${solved?lab:'?'}</text>`;
   return `<svg viewBox="0 0 ${W} ${H}" class="fig">${g}${solved?_cap('longueur = rayon × angle (en radians)',W,H-10):''}</svg>`;
 }
+
+/* outils pour les corrections détaillées */
+function DX(o,x){return Object.assign(o,x);}
+const PN=n=>n<0?'('+n+')':String(n);

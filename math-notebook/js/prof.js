@@ -52,15 +52,18 @@ const ERRS={
  'int3:calc':['C\'est $F(b)-F(a)$ : une <b>différence</b>, pas une somme.','Tu as dérivé au lieu de prendre une primitive.','Tu as oublié de soustraire $F(a)$.'],
 };
 /* diagnostic automatique quand aucune erreur typique n'est connue */
+function dNum(s){return numVal(String(s).replace(/\^\{?\\circ\}?|°|\s*€|\\%|%/g,''));}
 function autoDiag(good,bad){
-  const g=numVal(good),b=numVal(bad);if(g===null||b===null||g===b)return null;
+  const g=dNum(good),b=dNum(bad);if(g===null||b===null||g===b)return null;
+  const F=v=>String(v).replace('.',',');
+  if([10,100,1000].includes(Math.abs(b-g))&&Math.abs(g)>=10)return `Tu as trouvé ${F(b)} au lieu de ${F(g)} : un écart de ${Math.abs(b-g)} pile, c'est une <b>petite erreur d'addition</b> (une retenue ?). Refais le calcul posé.`;
   if(Math.abs(b+g)<1e-9)return 'Erreur de <b>signe</b> : relis chaque signe − de ton calcul.';
   if(g!==0&&Math.abs(b/g-10)<1e-9||Math.abs(b/g-.1)<1e-9)return 'Erreur de <b>virgule</b> : tu as un facteur 10 de trop ou de moins.';
   if(Math.abs(b-g*g)<1e-9&&g>1)return 'Tu as oublié la <b>racine carrée</b> (ou mis au carré en trop).';
   if(g>=0&&Math.abs(b*b-g)<1e-9)return 'Tu as pris la racine en trop (ou oublié de mettre au carré).';
   if(Math.abs(b-2*g)<1e-9)return 'Tu as le <b>double</b> du bon résultat : un « ÷ 2 » oublié ?';
   if(Math.abs(2*b-g)<1e-9)return 'Tu as la <b>moitié</b> du bon résultat : un facteur 2 oublié ?';
-  if(Math.abs(b-g)<=2)return 'Tu étais tout près : c\'est une petite <b>erreur de calcul</b>, refais-le pas à pas.';
+  if(Math.abs(b-g)<=2)return `Tu as trouvé ${F(b)} au lieu de ${F(g)} : tu étais tout près, c'est une petite <b>erreur de calcul</b>. Refais-le pas à pas.`;
   return null;
 }
 function diagnose(s,info){
@@ -69,6 +72,7 @@ function diagnose(s,info){
   if(it.type==='qcm'){src=info.src;bad=info.pick;}
   else if(it.type==='tf'&&it.truth===false&&info.said===1){src=(it.src||[])[it.a.indexOf(it.prop)];bad=it.prop;}
   else if(it.type==='input'){bad=String(info.val);}
+  if(it.errs&&src>0&&it.errs[src-1])return {msg:it.errs[src-1],key:(it.nid||s.nid)+':'+it.gen+':'+src};
   const E=ERRS[(it.nid||s.nid)+':'+it.gen];
   if(E&&src>0&&E[src-1])return {msg:E[src-1],key:(it.nid||s.nid)+':'+it.gen+':'+src};
   const d=bad!=null?autoDiag(it.a?it.a[0]:it.ans,bad):null;

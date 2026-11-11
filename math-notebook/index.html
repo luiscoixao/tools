@@ -89,6 +89,14 @@ h2.sec{font-weight:900;font-size:22px;margin:26px 2px 12px}
 .fb{position:fixed;left:0;right:0;bottom:0;z-index:11;padding:16px 20px calc(env(safe-area-inset-bottom) + 16px);transform:translateY(110%);transition:transform .25s ease}
 .fb.show{transform:none}
 .fb{max-height:90vh;overflow-y:auto}
+.steps{list-style:none;counter-reset:st;margin:0 0 10px;padding:0}
+.steps li{counter-increment:st;position:relative;padding:0 0 8px 36px;font-size:16px;line-height:1.35}
+.steps li::before{content:counter(st);position:absolute;left:0;top:0;width:26px;height:26px;border-radius:50%;background:currentColor;color:#fff;font-weight:900;text-align:center;line-height:26px;font-size:15px}
+.fb.bad .steps li::before{background:#be123c}
+.steps li b{display:block;font-size:14px;text-transform:uppercase;letter-spacing:.04em;opacity:.85}
+.goodans{font-weight:800}
+.tipbox{background:#fff7d6;color:#713f12;border-radius:14px;padding:10px 12px;margin:0 0 12px;font-size:16px;line-height:1.35}
+.tipbox b{display:block;font-size:13px;text-transform:uppercase;letter-spacing:.05em}
 .solfig .fig{max-height:28vh;max-width:280px;margin:0 auto 8px}
 .fb.good{background:#dcfce7;color:#14532d}
 .fb.bad{background:#ffe4e6;color:#881337}
@@ -221,7 +229,11 @@ h2.sec{font-weight:900;font-size:22px;margin:26px 2px 12px}
 @keyframes shake{25%{transform:translateX(-6px)}50%{transform:translateX(6px)}75%{transform:translateX(-3px)}}
 /* ===== refonte : carte d'aventure ===== */
 .daily{display:block;width:100%;margin-top:10px;padding:10px;border:0;border-radius:16px;background:#fff7ed;color:#9a3412;font-weight:800;font-size:16px;cursor:pointer;box-shadow:0 3px 0 rgba(0,0,0,.12);position:relative}
-.toolbar{display:flex;gap:10px;margin:18px 0 0}
+.toolbar{display:flex;gap:10px;margin:12px 0 0}
+.gym{display:flex;flex-direction:column;align-items:flex-start;width:100%;margin:18px 0 0;padding:14px 18px;border:0;border-radius:20px;background:linear-gradient(120deg,#06b6d4,#3b82f6 55%,#8b5cf6);color:#fff;text-align:left;box-shadow:0 5px 0 #1e40af;cursor:pointer}
+.gym span{font-size:21px;font-weight:900}
+.gym small{font-size:14px;font-weight:700;opacity:.92}
+.gym:active{transform:translateY(3px);box-shadow:0 2px 0 #1e40af}
 .toolbar button{flex:1;padding:12px;border:0;border-radius:16px;background:#fff;font-weight:900;font-size:16px;box-shadow:0 4px 0 #e4e2ee;cursor:pointer}
 h2.grp{font-weight:900;font-size:22px;margin:26px 4px 10px}
 .island{border-radius:26px;margin:0 0 16px;padding:14px 14px 18px;background:linear-gradient(170deg,color-mix(in srgb,var(--t1) 22%,#fff),#fff 70%);box-shadow:0 6px 0 color-mix(in srgb,var(--t2) 30%,#fff);border:2px solid color-mix(in srgb,var(--t1) 45%,#fff)}
@@ -316,6 +328,7 @@ h2.grp{font-weight:900;font-size:22px;margin:26px 4px 10px}
     <button class="daily" id="daily"></button>
     <div class="nxt" id="nxt"></div>
   </section>
+  <button class="gym" id="gymBtn"><span>🏋️ Gym maths</span><small>2 min pour échauffer ton cerveau</small></button>
   <div class="toolbar"><button id="albumBtn">🃏 Album</button><button id="weakBtn">🧑‍🏫 Mon prof</button><button id="saveBtn">💾</button></div>
   <button class="savenag" id="saveNag" onclick="saveSheet()">💾 Pense à sauvegarder ta progression dans Fichiers</button>
   <div id="map"></div>
@@ -346,6 +359,8 @@ h2.grp{font-weight:900;font-size:22px;margin:26px 4px 10px}
 <script src="js/adapt.js"></script>
 <script src="js/glossaire.js"></script>
 <script src="js/prof.js"></script>
+<script src="js/didact.js"></script>
+<script src="js/gym.js"></script>
 <script>boot();</script>
 </body>
 </html>
