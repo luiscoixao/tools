@@ -236,6 +236,9 @@ h2.sec{font-weight:900;font-size:22px;margin:26px 2px 12px}
 .musc b{display:block;font-size:15px;color:var(--k)}
 .musc i{display:block;height:6px;border-radius:3px;background:#eee;margin-top:6px;overflow:hidden}
 .musc em{display:block;height:100%;background:var(--k)}
+.gym2{display:flex;gap:10px;margin-top:10px}
+.gymL{flex:1;display:block;padding:13px 8px;border-radius:18px;background:linear-gradient(120deg,var(--g1),var(--g2));color:#fff;font-weight:900;font-size:17px;text-align:center;text-decoration:none;box-shadow:0 4px 0 rgba(0,0,0,.18)}
+.gymL:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.18)}
 .gym span{font-size:21px;font-weight:900}
 .gym small{font-size:14px;font-weight:700;opacity:.92}
 .gym:active{transform:translateY(3px);box-shadow:0 2px 0 #1e40af}
@@ -334,6 +337,7 @@ h2.grp{font-weight:900;font-size:22px;margin:26px 4px 10px}
     <div class="nxt" id="nxt"></div>
   </section>
   <button class="gym" id="gymBtn"><span>🏋️ Gym maths</span><small>2 min pour échauffer ton cerveau</small></button>
+  <div class="gym2"><a href="../calcul-mental/" class="gymL" style="--g1:#f59e0b;--g2:#ef4444">🧮 Calcul mental</a><a href="../calcul-mental/#tab" class="gymL" style="--g1:#8b5cf6;--g2:#ec4899">✖️ Tables</a></div>
   <div class="toolbar"><button id="albumBtn">🃏 Album</button><button id="weakBtn">🧑‍🏫 Mon prof</button><button id="saveBtn">💾</button></div>
   <button class="savenag" id="saveNag" onclick="saveSheet()">💾 Pense à sauvegarder ta progression dans Fichiers</button>
   <div id="map"></div>

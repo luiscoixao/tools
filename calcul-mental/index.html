@@ -668,6 +668,8 @@ $('sndBtn').onclick=()=>{S.snd=!S.snd;save();home()};
 $('resetBtn').onclick=()=>{if(confirm('Effacer toute ta progression (niveaux, XP, série) ?')){try{localStorage.removeItem(KEY)}catch(e){}S=null;load();home()}};
 
 load();home();
+/* lien direct depuis l'appli Mathématiques : #tab ouvre la séance Tables */
+(function(){const d=decodeURIComponent(location.hash.slice(1));if(d&&SK.some(k=>k.id===d))setTimeout(()=>start('skill',Array(10).fill(d)),300);})();
 </script>
 </body>
 </html>
