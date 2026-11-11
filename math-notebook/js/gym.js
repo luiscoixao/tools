@@ -1,22 +1,13 @@
 /* =====================================================================
    GYM MATHS : revoir les fondamentaux en petits exercices ludiques
-   8 « muscles » · formats : 🔍 trouve l'erreur, vrai/faux, relier, QCM
+   8 « muscles » · formats : vrai/faux, relier, QCM
    la séance du jour cible le muscle le plus faible
    ===================================================================== */
-const NUM=['①','②','③','④','⑤'];
 /* « Trouve l'erreur » : on touche la ligne fausse d'un calcul */
-function ERRQ(q,lines,bad,why,tip,steps){
-  const L0=lines[0],st=lines.slice(1),b=bad-1,verb=/x/.test(L0)&&/=/.test(L0)?'a résolu':/x/.test(L0)?'a développé':'a calculé';
-  const lab=i=>`<span><b>Étape ${i+1}</b>&nbsp; $${st[i]}$</span>`;
-  const a=[lab(b),...st.map((_,i)=>i).filter(i=>i!==b).map(lab)];
-  const order=st.map((_,i)=>i===b?0:1+st.map((_,k)=>k).filter(k=>k!==b).indexOf(i));
-  return {q:`🔍 Un élève ${verb} $${L0}$ en ${st.length} étapes.<br><b>Une étape est fausse : touche-la.</b>`,a,order,type:'qcm',why,tip,steps,bubbles:false,hints:['Refais chaque étape toi-même et compare avec la sienne.'],hint:null,errline:true};
-}
 const GYMM=[
  {k:'pri',l:'➗ Priorités',c:'#f97316',g:[
   function p1(){const a=ri(2,9),b=ri(2,9),c=ri(2,9);return DX(QQ(`$${a}+${b}\\times${c}$ ?`,N(a+b*c),[N((a+b)*c),N(a+b+c),N(a*b+c)],'',['Quelle opération passe en premier ?']),
     {steps:[['D\'abord ×',`$${b}\\times${c}=${b*c}$`],['Puis +',`$${a}+${b*c}=${a+b*c}$`]],tip:'× et ÷ passent avant + et −.',errs:['Tu as calculé de gauche à droite : la <b>multiplication passe avant</b> l\'addition.','Tu as additionné au lieu de multiplier.','Tu as multiplié le mauvais nombre.']});},
-  function p2(){const a=ri(15,30),b=ri(3,9),c=ri(2,9);return ERRQ('Trouve l\'erreur',[`${a}-${b}+${c}`,`=${a}-${b+c}`,`=${a-b-c}`],1,`On fait $${a}-${b}=${a-b}$ d'abord, puis $+${c}$ : $${a-b+c}$.`,'Entre + et −, on calcule de gauche à droite.',[['Gauche à droite',`$${a}-${b}=${a-b}$`],['Puis',`$${a-b}+${c}=${a-b+c}$`]]);},
   function p3(){const b=pick([2,3,4]),c=pick([2,3,5]),a=b*c*ri(1,4);return DX(QQ(`$${a}\\div${b}\\times${c}$ ?`,N(a/b*c),[fmt(a/(b*c)),N(a/b+c)],'',['× et ÷ ont la même priorité.']),
     {steps:[['Gauche à droite',`$${a}\\div${b}=${a/b}$`],['Puis ×',`$${a/b}\\times${c}=${a/b*c}$`]],tip:'Entre × et ÷, on calcule de gauche à droite.',errs:[`Tu as fait $${b}\\times${c}$ d'abord : entre × et ÷, on va <b>de gauche à droite</b>.`,'Tu as additionné au lieu de multiplier.']});},
  ]},
@@ -35,19 +26,16 @@ const GYMM=[
     return DX(QQ(`$${C[0]}$ ?`,N(C[1]),[N(-C[1]),N(t<2?a+b:a-b),N(t<2?-(a+b):b-a)],'',['Attention au signe.']),{tip:C[2]});},
   function s2(){const a=ri(2,9);return DX(QQ(`$-${a}^2$ ?`,N(-a*a),[N(a*a),N(-2*a)],'',['Sur quoi porte le carré ?']),
     {steps:[['Le carré porte sur le nombre',`$${a}^2=${a*a}$`],['On garde le −',`$-${a}^2=-${a*a}$`]],tip:`Sans parenthèses, le carré ne touche pas le signe : $-${a}^2=-${a*a}$, mais $(-${a})^2=${a*a}$.`,errs:['Ça, c\'est $(-'+a+')^2$ : sans parenthèses, le carré ne porte que sur '+a+'.','Le carré, c\'est × lui-même, pas × 2.']});},
-  function s3(){const a=ri(2,9),b=ri(2,9),c=ri(2,9);return ERRQ('Trouve l\'erreur',[`-${a}-(${b}-${c})`,`=-${a}-${b}-${c}`,`=${-a-b-c}`],1,`Le « − » devant la parenthèse change <b>tous</b> les signes : $-${a}-${b}+${c}=${-a-b+c}$.`,'Un − devant une parenthèse change tous les signes à l\'intérieur.',[['Enlève la parenthèse',`$-${a}-${b}+${c}$`],['Calcule',`$${-a-b+c}$`]]);},
  ]},
  {k:'dev',l:'🧮 Développer',c:'#0ea5e9',g:[
   function d1(){const k=ri(2,7),a=ri(1,9);return DX(QQ(`Développe $${k}(x+${a})$`,`${k}x+${k*a}`,[`${k}x+${a}`,`x+${k*a}`,`${k+1}x+${a}`],'',['Le nombre devant multiplie chaque terme.']),
     {steps:[['× le 1ᵉʳ terme',`$${k}\\times x=${k}x$`],['× le 2ᵉ terme',`$${k}\\times${a}=${k*a}$`]],tip:'k(a + b) = ka + kb : on distribue à TOUS les termes.',errs:[`Tu n'as multiplié que le $x$ : $${k}$ multiplie aussi le $${a}$.`,`Tu n'as multiplié que le $${a}$.`,'Tu as additionné au lieu de multiplier.']});},
   function d2(){const a=ri(1,6),b=ri(1,6);return DX(QQ(`Développe $(x+${a})(x+${b})$`,`x^2+${a+b}x+${a*b}`,[`x^2+${a*b}`,`x^2+${a*b}x+${a+b}`,`2x+${a+b}`],'',['Chaque terme de la 1ʳᵉ parenthèse multiplie chaque terme de la 2ᵉ.']),
     {steps:[['4 produits',`$x\\cdot x+x\\cdot${b}+${a}\\cdot x+${a}\\cdot${b}$`],['Regroupe',`$x^2+${a+b}x+${a*b}$`]],tip:'Double distributivité : 4 produits (2 × 2), puis on regroupe.',errs:['Tu as oublié les termes croisés ($'+b+'x$ et $'+a+'x$).','Tu as inversé : la somme va devant $x$, le produit à la fin.','Tu as additionné au lieu de multiplier.']});},
-  function d3(){const a=ri(2,7);return ERRQ('Trouve l\'erreur',[`(x+${a})^2`,`=(x+${a})(x+${a})`,`=x^2+${a*a}`],2,`Il manque le double produit : $(x+${a})^2=x^2+${2*a}x+${a*a}$.`,'(a + b)² = a² + 2ab + b² : jamais sans le double produit.',[['Double produit',`$2\\times x\\times${a}=${2*a}x$`],['Résultat',`$x^2+${2*a}x+${a*a}$`]]);},
  ]},
  {k:'equ',l:'⚖️ Équations',c:'#16a34a',g:[
   function e1(){const a=ri(2,7),x=ri(-5,9),b=ri(1,12),c=a*x+b;return DX(QQ(`Résous $${a}x+${b}=${c}$`,`x=${x}`,[`x=${fr(c+b,a)}`,`x=${(c-b)}`,`x=${-x}`].filter(v=>v!==`x=${x}`),'',['Isole x étape par étape.']),
     {steps:[['Enlève le +'+b,`$${a}x=${c}-${b}=${c-b}$`],['Divise par '+a,`$x=${c-b}\\div${a}=${x}$`]],tip:'Ce qu\'on fait d\'un côté, on le fait de l\'autre : −'+b+' des deux côtés, puis ÷'+a+'.',errs:[`Tu as ajouté $${b}$ : pour l'enlever, il faut le <b>soustraire</b>.`,`Tu as oublié de diviser par $${a}$.`,'Erreur de signe.']});},
-  function e2(){const a=ri(2,6),x=ri(2,9),b=ri(2,9),c=a*x+b;return ERRQ('Trouve l\'erreur',[`${a}x+${b}=${c}`,`${a}x=${c}+${b}`,`${a}x=${c+b}`,`x=${fr(c+b,a)}`],1,`Le $+${b}$ passe de l'autre côté en $-${b}$ : $${a}x=${c-b}$, donc $x=${x}$.`,'Un terme qui change de côté change de signe.',[['Soustrais '+b,`$${a}x=${c-b}$`],['Divise',`$x=${x}$`]]);},
   function e3(){const a=ri(2,9),b=ri(2,9);return DX(QQ(`Résous $\\dfrac{x}{${a}}=${b}$`,`x=${a*b}`,[`x=${fr(b,a)}`,`x=${a+b}`,`x=${b-a}`],'',['Comment défaire une division ?']),
     {steps:[['Multiplie par '+a,`$x=${b}\\times${a}=${a*b}$`]],tip:'Pour défaire « ÷ a », on multiplie par a.',errs:['Tu as divisé : pour défaire une division, on <b>multiplie</b>.','Tu as additionné au lieu de multiplier.']});},
  ]},
