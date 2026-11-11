@@ -243,7 +243,7 @@ function answered(s,ok,gaveUp,info){
     const g=Math.max(0,(it.penalty?10-3*it.penalty:10))+(S.combo>=3?5:0);S.gained+=g;
     if(S.mode==='review') srsHit(s.srs,true);
     F.className='fb good show';
-    F.innerHTML=`<h3>${pick(['Bravo !','Exact !','Parfait !','Bien vu !','Yes !'])}${S.combo>=3?' 🔥 '+S.combo+' d\'affilée':''}${g?` <small>+${g} XP</small>`:''}</h3>${it.why?`<p>${it.why}</p>`:''}${S.lvlMsg?`<p class="lvlmsg">${S.lvlMsg}</p>`:''}<button class="cta">Continuer</button>`;
+    F.innerHTML=`<h3>${pick(['Bravo !','Exact !','Parfait !','Bien vu !','Yes !'])}${S.combo>=3?' 🔥 '+S.combo+' d\'affilée':''}${g?` <small>+${g} XP</small>`:''}</h3>${solFig(it)}${it.why?`<p>${it.why}</p>`:''}${S.lvlMsg?`<p class="lvlmsg">${S.lvlMsg}</p>`:''}<button class="cta">Continuer</button>`;
     F.querySelector('.cta').onclick=next;
   }else{
     if(!gaveUp) sound(false);S.combo=0;S.missed.add(s);
@@ -251,11 +251,12 @@ function answered(s,ok,gaveUp,info){
     if(S.lives!=null){S.lives--;}
     const good=it.type==='tf'?(it.truth?'Vrai':'Faux'):it.type==='input'?String(it.a[0]):it.type==='match'||it.type==='order'?'':it.type==='line'?String(it.ans).replace('.',','):it.a[0];
     F.className='fb bad show';
-    F.innerHTML=`<h3>${gaveUp?'Voici la solution 🔍':'Pas tout à fait…'}</h3>${diag?`<div class="diag">🧑‍🏫 ${diag.msg}</div>`:''}<p>${good?'Bonne réponse : '+good+'<br>':''}${it.why||''}</p>${S.lvlMsg?`<p class="lvlmsg">${S.lvlMsg}</p>`:''}<button class="cta">${S.lives===0?'Voir le résultat':S.retry?'Je la reverrai':'Continuer'}</button>`;
+    F.innerHTML=`<h3>${gaveUp?'Voici la solution 🔍':'Pas tout à fait…'}</h3>${diag?`<div class="diag">🧑‍🏫 ${diag.msg}</div>`:''}${solFig(it)}<p>${good?'Bonne réponse : '+good+'<br>':''}${it.why||''}</p>${S.lvlMsg?`<p class="lvlmsg">${S.lvlMsg}</p>`:''}<button class="cta">${S.lives===0?'Voir le résultat':S.retry?'Je la reverrai':'Continuer'}</button>`;
     F.querySelector('.cta').onclick=()=>{if(S.lives===0){S.queue=[];step();return;}if(S.retry){const x=S.queue.shift();x.it={...x.it,penalty:0,autoHint:false};S.queue.push({...x,it:vary(stripType(x.it))});step();}else next();};
   }
   math(F);bar();
 }
+function solFig(it){const f=it.sol||(/^(geo|mat|tri)\d/.test(it.nid||'')?it.img:'');return f?`<div class="solfig">${f}</div>`:'';}
 function stripType(it){if(it.type==='tf'||it.type==='input'){const c={...it};delete c.type;delete c.prop;delete c.truth;delete c.ans;return c;}return it;}
 
 /* ---------- fin de session commune ---------- */
@@ -337,7 +338,7 @@ const BOX=[0,1,3,7,16,35];
 function srsAdd(it,due){
   it=stripType(it);if(it.type==='match'||it.type==='order'||it.type==='line')return;
   if(st.srs.some(x=>x.it.q===it.q&&x.it.a&&it.a&&x.it.a[0]===it.a[0]))return;
-  st.srs.push({it:{q:it.q,a:it.a,why:it.why,hint:it.hint,hints:it.hints,img:it.img,chap:S&&S.chap,nid:it.nid,bubbles:it.bubbles},box:0,due:due!=null?due:today()});
+  st.srs.push({it:{q:it.q,a:it.a,why:it.why,hint:it.hint,hints:it.hints,img:it.img,sol:it.sol,chap:S&&S.chap,nid:it.nid,bubbles:it.bubbles},box:0,due:due!=null?due:today()});
   if(st.srs.length>160)st.srs.splice(0,st.srs.length-160);save();
 }
 function srsDue(){const t=today();return st.srs.filter(x=>x.due<=t);}
