@@ -394,15 +394,11 @@ function home(){if(typeof gymBtn==='function')gymBtn();
   const due=srsDue().length,nx=nextNotion(),go=$('go'),go2=$('go2');
   const adv=()=>nx?(nx.boss?startBoss(nx.c):startNotion(nx.c,nx.i)):startPractice(pick(CH));
   const advTxt=nx?(nx.boss?`👑 Boss : ${nx.c.label}`:`${nx.c.icon} ${nx.n.title}`):'♾️ Entraînement libre';
+  go2.style.display='none';
   if(due>=3){
     go.innerHTML=`<span class="go-k">🧠 Révisions du jour</span><span class="go-t">${due} question${due>1?'s':''} à revoir <span class="go-a">→</span></span><span class="go-s">2 min · c'est ce qui fait retenir</span>`;go.onclick=startReview;
-    go2.style.display='block';go2.innerHTML=`▶ Ou continue l'aventure : <b>${advTxt}</b>`;go2.onclick=adv;
   }else{
     go.innerHTML=`<span class="go-k">▶ Continuer l'aventure</span><span class="go-t">${advTxt} <span class="go-a">→</span></span><span class="go-s">≈ 4 min · ${nx&&!nx.boss?nx.c.label:'à toi de jouer'}</span>`;go.onclick=adv;
-    const wk=weakList().filter(([,m])=>m<.45);
-    if(due){go2.style.display='block';go2.innerHTML=`🧠 Révisions du jour (<b>${due}</b>)`;go2.onclick=startReview;}
-    else if(wk.length){go2.style.display='block';go2.innerHTML=`🎯 Renforcer : <b>${NOT(wk[0][0]).n.title}</b> (${Math.round(wk[0][1]*100)} %)`;go2.onclick=startFocus;}
-    else go2.style.display='none';
   }
   const dailyDone=st.daily===dayStr(new Date());
   const started=CH.filter(c=>chapProgress(c)>0);const dc=(started.length?started:CH)[new Date().getDate()%((started.length?started:CH).length)];
