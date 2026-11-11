@@ -266,6 +266,10 @@ function subH(a,b){
   return T('Compter en avançant',[`Au lieu d’enlever, on va de ${F(b)} à ${F(a)} par sauts ronds :`,...jsteps(b,a)]);
 }
 function tabH(a,b){
+  if(Math.max(a,b)>12){const g=Math.max(a,b),m=Math.min(a,b),r=g*m;
+    if(g===20)return T('× 20 = × 2, puis × 10',[`Double de ${m} = ${2*m}`,`${2*m} × 10 = ${r}`]);
+    if(g===19)return T('× 19 = × 20, moins une fois',[`${m} × 20 = ${20*m}`,`${20*m} − ${m} = ${r}`]);
+    const u=g-10;return T(`× ${g} = × 10, plus × ${u}`,[`${m} × 10 = ${10*m}`,`${m} × ${u} = ${m*u}`,`${10*m} + ${m*u} = ${r}`]);}
   const order=[10,2,5,9,11,4,3,6,8,12,7],rk=n=>{const i=order.indexOf(n);return i<0?99:i};
   let x=a,y=b;if(rk(a)<rk(b)){x=b;y=a}
   const r=x*y;
@@ -334,10 +338,10 @@ const SK=[
   const n=4*R(11,60);return{q:`${n} ÷ 4`,a:n/4,...T('÷ 4 = moitié de la moitié',[`Moitié de ${n} = ${n/2}`,`Moitié de ${n/2} = ${n/4}`])}}},
 
 {id:'tab',name:'Tables',art:'7×8',c:['#8b5cf6','#c4b5fd','#6d28d9'],t:[3,.7],
- rule:'Chaque table a son raccourci : × 9 = × 10 moins une fois ; × 5 = moitié de × 10 ; × 4 = double du double ; × 8 = trois doubles ; × 6 = × 5 plus une fois ; × 7 = × 5 plus × 2.',
+ rule:'Tables jusqu’à 20. Chaque table a son raccourci : × 9 = × 10 moins une fois ; de 11 à 19, × 1u = × 10 plus × u (× 14 = × 10 + × 4) ; × 20 = × 2 puis × 10 ; × 5 = moitié de × 10 ; × 4 = double du double ; × 8 = trois doubles ; × 6 = × 5 plus une fois ; × 7 = × 5 plus × 2.',
  ex:'7 × 9',exs:['7 × 10 = 70','70 − 7 = 63'],
- gen(l){let a,b=R(2,9);
-  if(l==1)a=P([2,3,5,10]);else if(l==2)a=P([4,6]);else if(l==3)a=P([7,8,9]);else if(l==4){a=R(3,9);b=R(3,9)}else{a=P([11,12]);b=R(2,12)}
+ gen(l){let a,b;
+  if(l==1){a=R(6,9);b=R(6,9)}else if(l==2){a=R(11,15);b=R(3,9)}else if(l==3){a=R(16,20);b=R(3,9)}else if(l==4){a=R(11,20);b=R(11,15)}else{a=R(13,20);b=R(13,20)}
   if(Math.random()<.5)[a,b]=[b,a];
   return{q:`${a} × ${b}`,a:a*b,...tabH(a,b)}}},
 
