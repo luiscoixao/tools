@@ -1,0 +1,5 @@
+Polices intégrées à CARTE POSTALE (allégées aux caractères latins) :
+- Poppins — Indian Type Foundry — SIL Open Font License 1.1
+- Inter Display — Rasmus Andersson — SIL Open Font License 1.1
+- Lora — Cyreal — SIL Open Font License 1.1
+Texte de la licence : https://openfontlicense.org
