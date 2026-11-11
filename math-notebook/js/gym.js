@@ -6,9 +6,11 @@
 const NUM=['①','②','③','④','⑤'];
 /* « Trouve l'erreur » : on touche la ligne fausse d'un calcul */
 function ERRQ(q,lines,bad,why,tip,steps){
-  const a=[lines[bad],...lines.filter((_,i)=>i!==bad)].map(l=>`<span>${NUM[lines.indexOf(l)]} $${l}$</span>`);
-  const order=lines.map((l,i)=>i===bad?0:1+lines.filter((_,j)=>j!==bad).indexOf(l));
-  return {q:'🔍 '+q,a,order,type:'qcm',why,tip,steps,bubbles:false,hints:['Vérifie chaque ligne à partir de la précédente.'],hint:null,errline:true};
+  const L0=lines[0],st=lines.slice(1),b=bad-1,verb=/x/.test(L0)&&/=/.test(L0)?'a résolu':/x/.test(L0)?'a développé':'a calculé';
+  const lab=i=>`<span><b>Étape ${i+1}</b>&nbsp; $${st[i]}$</span>`;
+  const a=[lab(b),...st.map((_,i)=>i).filter(i=>i!==b).map(lab)];
+  const order=st.map((_,i)=>i===b?0:1+st.map((_,k)=>k).filter(k=>k!==b).indexOf(i));
+  return {q:`🔍 Un élève ${verb} $${L0}$ en ${st.length} étapes.<br><b>Une étape est fausse : touche-la.</b>`,a,order,type:'qcm',why,tip,steps,bubbles:false,hints:['Refais chaque étape toi-même et compare avec la sienne.'],hint:null,errline:true};
 }
 const GYMM=[
  {k:'pri',l:'➗ Priorités',c:'#f97316',g:[
