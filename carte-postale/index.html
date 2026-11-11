@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>CARTE POSTALE</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="CARTE POSTALE">
+<meta name="theme-color" content="#131518">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="manifest" href="manifest.json">
+<style>
+:root{--bg:#131518;--panel:#1c1f24;--panel2:#262a31;--line:#353b45;--text:#eaedf0;--muted:#98a1ac;--accent:#f0b429;--accent-ink:#1d1600;
+  --st:env(safe-area-inset-top,0px);--sb:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+html,body{margin:0;background:var(--bg);color:var(--text);font:15px/1.4 -apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;overscroll-behavior:none}
+button,select,input{font:inherit;color:inherit}
+button{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:9px 14px;cursor:pointer;-webkit-user-select:none;user-select:none}
+button:active{transform:scale(.97)}
+button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:700}
+button:disabled{opacity:.4}
+input[type=text],input[type=url]{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:10px 11px}
+input[type=range]{accent-color:var(--accent);flex:1;min-width:0}
+input[type=checkbox]{accent-color:var(--accent);width:20px;height:20px;vertical-align:-4px;margin:0 8px 0 0}
+.hint{font-size:13px;color:var(--muted)}
+header{position:sticky;top:0;z-index:10;background:rgba(19,21,24,.96);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding:calc(var(--st) + 8px) 12px 8px;display:flex;align-items:center;gap:8px}
+.logo{font:800 19px/1 -apple-system,"Helvetica Neue",sans-serif;letter-spacing:.5px;flex:1;white-space:nowrap}.logo b{color:var(--accent)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;flex-wrap:wrap}
+.seg button{border:0;border-radius:0;padding:8px 11px;background:var(--panel2);font-size:13px}
+.seg button.on{background:var(--accent);color:var(--accent-ink);font-weight:700}
+#empty{padding:44px 24px;text-align:center}
+#empty img{width:110px;height:110px;border-radius:24px;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+#empty h1{font-size:26px;margin:18px 0 8px}#empty p{color:var(--muted);margin:0 auto 24px;max-width:420px}#empty button{font-size:17px;padding:14px 22px}
+#main{padding:12px 12px calc(84px + var(--sb));max-width:900px;margin:0 auto}
+#stage{display:flex;justify-content:center}
+#cv{display:block;max-width:100%;border-radius:4px;box-shadow:0 8px 28px rgba(0,0,0,.45);touch-action:none}
+#celltools{display:flex;align-items:center;gap:8px;margin:10px 0 0;padding:8px 10px;background:var(--panel);border:1px solid var(--line);border-radius:12px}
+#celltools button{padding:7px 10px;font-size:13px;white-space:nowrap}
+#celltools button.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:700}
+#tip{text-align:center;margin:8px 0 0}
+section{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:12px 0}
+section h2{font-size:12px;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+.row{display:flex;align-items:center;gap:10px;margin:10px 0;flex-wrap:wrap}
+.row>.lbl{width:92px;color:var(--muted);font-size:14px}
+.field{margin:10px 0}.field label{display:block;color:var(--muted);font-size:13px;margin:0 0 4px}
+#strip{display:flex;gap:8px;overflow-x:auto;padding:2px 0 4px;-webkit-overflow-scrolling:touch}
+.th{position:relative;flex:0 0 64px;height:64px;border-radius:9px;overflow:hidden;border:2px solid transparent;padding:0;background:#0a0b0c}
+.th img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
+.th.off img{opacity:.35}
+.th.cur{border-color:var(--accent)}
+.th .n{position:absolute;right:3px;bottom:3px;background:rgba(0,0,0,.75);border-radius:5px;padding:0 5px;font-size:11px;color:var(--accent)}
+.th.add{display:flex;align-items:center;justify-content:center;font-size:28px;color:var(--muted);border:1px dashed var(--line)}
+#bottom{position:fixed;left:0;right:0;bottom:0;z-index:10;background:rgba(28,31,36,.97);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:10px 12px calc(10px + var(--sb));display:flex;gap:8px;justify-content:flex-end}
+#bottom button{flex:0 1 auto}#bottom .primary{flex:1;max-width:260px}
+#toast{position:fixed;left:50%;bottom:calc(80px + var(--sb));transform:translateX(-50%);background:#000c;color:#fff;padding:9px 14px;border-radius:10px;font-size:14px;z-index:40;pointer-events:none}
+#printzone{display:none}
+@media print{
+  body *{visibility:hidden}
+  header,#main,#bottom,#empty{display:none!important}
+  #printzone,#printzone *{visibility:visible}
+  #printzone{display:block;position:fixed;inset:0}
+  #printzone img{width:100%;height:100%;object-fit:contain;display:block}
+}
+</style>
+<style id="pagesize">@page{size:150mm 100mm;margin:0}</style>
+</head>
+<body>
+<header>
+  <div class="logo">CARTE <b>POSTALE</b></div>
+  <div class="seg" id="fmt"><button data-v="l" class="on">Paysage</button><button data-v="p">Portrait</button></div>
+</header>
+
+<div id="empty">
+  <img src="icon-512.png" alt="">
+  <h1>Carte postale</h1>
+  <p>Choisis tes photos : l'appli les met en mosaïque, tu ajoutes un titre et le QR code de ton album, puis tu envoies la carte.</p>
+  <button class="primary" id="pick0">Choisir des photos</button>
+</div>
+
+<div id="main" hidden>
+  <div id="stage"><canvas id="cv"></canvas></div>
+  <div id="celltools" hidden>
+    <span class="hint">Zoom</span><input type="range" id="zoom" min="1" max="3" step="0.01" value="1">
+    <button id="swap">⇄ Échanger</button><button id="remove">Retirer</button><button id="desel" aria-label="Fermer">✕</button>
+  </div>
+  <p id="tip" class="hint">Touche une photo pour la recadrer (glisse avec le doigt), la zoomer ou l'échanger.</p>
+
+  <section>
+    <h2>Photos</h2>
+    <div id="strip"></div>
+    <p class="hint" style="margin:6px 0 0">Photo grisée : pas sur la carte, touche-la pour l'ajouter. Avec une case sélectionnée, touche une photo pour la mettre à sa place.</p>
+  </section>
+
+  <section>
+    <h2>Mosaïque</h2>
+    <div class="row"><span class="lbl">Disposition</span><div class="seg" id="lay"></div></div>
+    <div class="row"><span class="lbl">Espacement</span><div class="seg" id="gap"><button data-v="0">Aucun</button><button data-v="1" class="on">Fin</button><button data-v="2">Large</button></div></div>
+    <div class="row"><span class="lbl">Fond</span><div class="seg" id="bg"><button data-v="blanc" class="on">Blanc</button><button data-v="sable">Sable</button><button data-v="noir">Noir</button></div></div>
+  </section>
+
+  <section>
+    <h2>Texte</h2>
+    <div class="field"><label for="title">Titre</label><input type="text" id="title" placeholder="Album photo - La Défense" autocomplete="off"></div>
+    <div class="field"><label for="sub">Sous-titre (facultatif)</label><input type="text" id="sub" placeholder="Novembre 2026" autocomplete="off"></div>
+    <div class="row"><span class="lbl">Police</span><div class="seg" id="font"><button data-v="moderne" class="on">Moderne</button><button data-v="classique">Classique</button><button data-v="fine">Fine</button></div></div>
+  </section>
+
+  <section>
+    <h2>Album</h2>
+    <div class="field"><label for="link">Lien de l'album (Google Photos, iCloud…)</label><input type="url" id="link" placeholder="https://photos.app.goo.gl/…" autocomplete="off" autocapitalize="off" spellcheck="false"></div>
+    <div class="field"><label for="cap">Texte à côté du QR code</label><input type="text" id="cap" placeholder="Scannez pour voir l'album" autocomplete="off"></div>
+    <label><input type="checkbox" id="showqr" checked>Afficher le QR code sur la carte</label>
+  </section>
+</div>
+
+<div id="bottom" hidden>
+  <button id="print">Imprimer</button>
+  <button id="save">Télécharger</button>
+  <button class="primary" id="share">Partager</button>
+</div>
+
+<input type="file" id="file" accept="image/*" multiple hidden>
+<div id="printzone"><img id="printimg" alt=""></div>
+<div id="toast" hidden></div>
+
+<script src="qr.js"></script>
+<script>
+'use strict';
+const $=s=>document.querySelector(s);
+const MAXP=12, SRC_MAX=2400;
+const BG={blanc:{bg:'#fafaf7',ink:'#2d2d2d',sub:'#6b6b66'},sable:{bg:'#efe8dc',ink:'#2b2620',sub:'#776d5f'},noir:{bg:'#141414',ink:'#f2f2ef',sub:'#a5a5a0'}};
+const FONT={moderne:{w:'800',f:'-apple-system,"Helvetica Neue",Arial,sans-serif'},classique:{w:'700',f:'Georgia,"Times New Roman",serif'},fine:{w:'300',f:'"Avenir Next","Helvetica Neue",Arial,sans-serif'}};
+const S={photos:[],cells:[],fmt:'l',layout:null,gap:1,bg:'blanc',font:'moderne',title:'',sub:'',link:'',cap:'',showQR:true,sel:-1,swap:false};
+let geo=[], qrM=null, qrFor=null, nextId=1;
+
+/* ---------- réglages mémorisés (pas les photos) ---------- */
+const KEYS=['fmt','gap','bg','font','title','sub','link','cap','showQR'];
+try{const s=JSON.parse(localStorage.getItem('carte-postale')||'{}');KEYS.forEach(k=>{if(k in s)S[k]=s[k];});}catch(e){}
+function persist(){try{const o={};KEYS.forEach(k=>o[k]=S[k]);localStorage.setItem('carte-postale',JSON.stringify(o));}catch(e){}}
+
+/* ---------- photos ---------- */
+function loadFile(file){return new Promise(res=>{
+  const url=URL.createObjectURL(file), img=new Image();
+  img.onload=()=>{const k=Math.min(1,SRC_MAX/Math.max(img.naturalWidth,img.naturalHeight));
+    const c=document.createElement('canvas');c.width=Math.round(img.naturalWidth*k);c.height=Math.round(img.naturalHeight*k);
+    c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+    const t=document.createElement('canvas'),tk=160/Math.min(c.width,c.height);t.width=Math.round(c.width*tk);t.height=Math.round(c.height*tk);
+    t.getContext('2d').drawImage(c,0,0,t.width,t.height);
+    URL.revokeObjectURL(url);res({id:nextId++,src:c,thumb:t.toDataURL('image/jpeg',.8)});};
+  img.onerror=()=>{URL.revokeObjectURL(url);res(null);};img.src=url;});}
+async function addFiles(files){
+  toast('Chargement des photos…');
+  for(const f of files){const p=await loadFile(f);if(!p)continue;S.photos.push(p);
+    if(S.cells.length<MAXP)S.cells.push({pid:p.id,fx:.5,fy:.5,zoom:1});}
+  hideToast();if(!S.photos.length)return;
+  $('#empty').hidden=true;$('#main').hidden=false;$('#bottom').hidden=false;
+  S.layout=null;refresh();}
+const photo=id=>S.photos.find(p=>p.id===id);
+
+/* ---------- dispositions (coordonnées 0..1 de la zone photos) ---------- */
+function rowsLay(counts,x,y,w,h){const r=[],rh=h/counts.length;counts.forEach((c,i)=>{for(let j=0;j<c;j++)r.push([x+j*w/c,y+i*rh,w/c,rh]);});return r;}
+function split(n,r){const b=Math.floor(n/r),e=n%r,a=[];for(let i=0;i<r;i++)a.push(b+(i>=r-e?1:0));return a;}
+function bestRows(n,x,y,w,h,A,target,maxR){let best=null,bs=1e9;
+  for(let r=1;r<=Math.min(n,maxR||4);r++){const c=split(n,r);let s=0;c.forEach(k=>{s+=Math.abs(Math.log(((w/k)/(h/r))*A/target));});
+    if(s<bs){bs=s;best=c;}}return rowsLay(best,x,y,w,h);}
+function layouts(n,A){const L=[];if(!n)return L;
+  if(n===1)return[{k:'pleine',t:'Pleine page',r:[[0,0,1,1]]}];
+  if(n>=3){const hw=Math.min(.5,Math.max(.26,.62/A));L.push({k:'gauche',t:'Grande à gauche',r:[[0,0,hw,1],...bestRows(n-1,hw,0,1-hw,1,A,.72,2)]});}
+  L.push({k:'grille',t:'Grille',r:bestRows(n,0,0,1,1,A,.85)});
+  if(n<=6)L.push({k:'bandes',t:'Bandes',r:rowsLay([n],0,0,1,1)});
+  if(n>=3){const hh=A<1?.5:.56;L.push({k:'haut',t:'Grande en haut',r:[[0,0,1,hh],...bestRows(n-1,0,hh,1,1-hh,A,.8,2)]});}
+  const seen=new Set();return L.filter(l=>{const s=JSON.stringify(l.r.map(q=>q.map(v=>v.toFixed(3))));if(seen.has(s))return false;seen.add(s);return true;});}
+
+/* ---------- dessin ---------- */
+const dims=()=>S.fmt==='l'?[1800,1200]:[1200,1800];
+function qrMatrix(){const t=S.link.trim();if(!t)return null;if(qrFor===t)return qrM;
+  try{const q=new QRCodeLib(-1,QRCodeLib.ECL.M);q.addData(unescape(encodeURIComponent(t)));q.make();
+    const n=q.getModuleCount(),m=[];for(let r=0;r<n;r++){m.push([]);for(let c=0;c<n;c++)m[r].push(q.isDark(r,c));}qrM=m;}catch(e){qrM=null;}
+  qrFor=t;return qrM;}
+function fitText(ctx,txt,font,size,maxW,weight){let s=size;do{ctx.font=`${weight} ${s}px ${font}`;if(ctx.measureText(txt).width<=maxW)break;s-=1;}while(s>8);return s;}
+function wrap(ctx,txt,maxW){const w=txt.split(/\s+/),lines=[];let cur='';w.forEach(x=>{const t=cur?cur+' '+x:x;if(ctx.measureText(t).width>maxW&&cur){lines.push(cur);cur=x;}else cur=t;});if(cur)lines.push(cur);return lines.slice(0,3);}
+function geometry(W,H){
+  const u=Math.min(W,H),m=Math.round(u*.035),qr=S.showQR?qrMatrix():null,hasHead=!!(S.title.trim()||S.sub.trim()||qr);
+  const hh=hasHead?Math.round(u*(S.sub.trim()?.135:.11)):0;
+  const g=[0,Math.round(u*.009),Math.round(u*.022)][S.gap];
+  const area={x:m,y:m+hh,w:W-2*m,h:H-2*m-hh};
+  const A=area.w/area.h,L=layouts(S.cells.length,A);
+  let lay=L.find(l=>l.k===S.layout);if(!lay){lay=L.find(l=>l.k===(S.fmt==='p'?'haut':(S.cells.length>=4?'gauche':'grille')))||L[0];S.layout=lay&&lay.k;}
+  const ex={x:area.x-g/2,y:area.y-g/2,w:area.w+g,h:area.h+g};
+  const cells=(lay?lay.r:[]).map(q=>{const x=ex.x+q[0]*ex.w,y=ex.y+q[1]*ex.h;return{x:Math.round(x+g/2),y:Math.round(y+g/2),w:Math.round(q[2]*ex.w-g),h:Math.round(q[3]*ex.h-g)};});
+  return{m,hh,qr,cells,L};}
+function cover(p,c,cell){const iw=p.src.width,ih=p.src.height,s=Math.max(cell.w/iw,cell.h/ih)*c.zoom,dw=iw*s,dh=ih*s;
+  return{dw,dh,ox:dw-cell.w,oy:dh-cell.h,x:cell.x-(dw-cell.w)*c.fx,y:cell.y-(dh-cell.h)*c.fy};}
+function draw(ctx,W,H,preview){
+  const G=geometry(W,H),col=BG[S.bg],F=FONT[S.font];geo=G.cells;
+  ctx.fillStyle=col.bg;ctx.fillRect(0,0,W,H);
+  S.cells.forEach((c,i)=>{const cell=G.cells[i],p=photo(c.pid);if(!cell||!p)return;
+    const d=cover(p,c,cell);ctx.save();ctx.beginPath();ctx.rect(cell.x,cell.y,cell.w,cell.h);ctx.clip();
+    ctx.drawImage(p.src,d.x,d.y,d.dw,d.dh);ctx.restore();});
+  if(G.hh){const m=G.m,hh=G.hh,u=Math.min(W,H);let right=W-m;
+    if(G.qr){const n=G.qr.length+4,qs=Math.round(hh*.86/n)*n||n,mod=qs/n,qx=W-m-qs,qy=m+Math.round((hh-u*.012-qs)/2);
+      ctx.fillStyle='#fff';ctx.fillRect(qx,qy,qs,qs);ctx.fillStyle='#000';
+      G.qr.forEach((row,r)=>row.forEach((v,c2)=>{if(v)ctx.fillRect(qx+(c2+2)*mod,qy+(r+2)*mod,Math.ceil(mod),Math.ceil(mod));}));
+      right=qx-u*.015;const cap=S.cap.trim()||"Scannez pour voir l'album";
+      if(cap!=='-'){const fs=Math.round(u*.016);ctx.font=`400 ${fs}px -apple-system,"Helvetica Neue",Arial,sans-serif`;
+        const lines=wrap(ctx,cap,u*.15),lh=fs*1.25;ctx.fillStyle=col.sub;ctx.textAlign='right';ctx.textBaseline='middle';
+        const cy=qy+qs/2-(lines.length-1)*lh/2;lines.forEach((l,i)=>ctx.fillText(l,right,cy+i*lh));
+        let mw=0;lines.forEach(l=>mw=Math.max(mw,ctx.measureText(l).width));right-=mw+u*.025;}}
+    const tx=m,maxW=right-tx,t=S.title.trim(),sb=S.sub.trim(),mid=m+(hh-u*.012)/2;
+    ctx.textAlign='left';ctx.textBaseline='alphabetic';
+    if(t){const fs=fitText(ctx,t,F.f,Math.round(u*.045),maxW,F.w);ctx.fillStyle=col.ink;
+      if(sb){ctx.fillText(t,tx,mid+fs*.12);const ss=fitText(ctx,sb,F.f,Math.round(u*.022),maxW,'400');ctx.fillStyle=col.sub;ctx.fillText(sb,tx,mid+fs*.12+ss*1.45);}
+      else ctx.fillText(t,tx,mid+fs*.36);}
+    else if(sb){const ss=fitText(ctx,sb,F.f,Math.round(u*.026),maxW,'400');ctx.fillStyle=col.sub;ctx.fillText(sb,tx,mid+ss*.36);}}
+  if(preview&&S.sel>=0&&G.cells[S.sel]){const c=G.cells[S.sel],lw=Math.min(W,H)*.006;ctx.lineWidth=lw;ctx.strokeStyle=S.swap?'#4fc3f7':'#f0b429';ctx.strokeRect(c.x+lw/2,c.y+lw/2,c.w-lw,c.h-lw);}
+  return G;}
+
+/* ---------- aperçu ---------- */
+const cv=$('#cv');
+function render(){if(!S.cells.length&&!S.photos.length)return;const [W,H]=dims();
+  const maxW=Math.min($('#stage').clientWidth||window.innerWidth-24,860),maxH=Math.max(260,window.innerHeight*.55);
+  let cw=maxW,ch=cw*H/W;if(ch>maxH){ch=maxH;cw=ch*W/H;}
+  const dpr=Math.min(window.devicePixelRatio||1,2.5);cv.style.width=cw+'px';cv.style.height=ch+'px';
+  const pw=Math.round(cw*dpr),ph=Math.round(ch*dpr);if(cv.width!==pw||cv.height!==ph){cv.width=pw;cv.height=ph;}
+  const ctx=cv.getContext('2d');ctx.setTransform(pw/W,0,0,ph/H,0,0);ctx.imageSmoothingQuality='high';return draw(ctx,W,H,true);}
+function refresh(){const G=render();
+  /* dispositions */const lay=$('#lay');lay.innerHTML='';(G?G.L:[]).forEach(l=>{const b=document.createElement('button');b.textContent=l.t;b.dataset.v=l.k;if(l.k===S.layout)b.className='on';lay.appendChild(b);});
+  /* bande photos */const st=$('#strip');st.innerHTML='';const cur=S.sel>=0&&S.cells[S.sel]?S.cells[S.sel].pid:-1;
+  S.photos.forEach(p=>{const i=S.cells.findIndex(c=>c.pid===p.id),b=document.createElement('button');b.className='th'+(i<0?' off':'')+(p.id===cur?' cur':'');b.dataset.id=p.id;
+    b.innerHTML=`<img src="${p.thumb}" alt="">`+(i>=0?`<span class="n">${i+1}</span>`:'');st.appendChild(b);});
+  const add=document.createElement('button');add.className='th add';add.id='addph';add.textContent='+';add.setAttribute('aria-label','Ajouter des photos');st.appendChild(add);
+  /* outils de case */$('#celltools').hidden=S.sel<0;$('#tip').hidden=S.sel>=0;
+  if(S.sel>=0&&S.cells[S.sel])$('#zoom').value=S.cells[S.sel].zoom;$('#swap').classList.toggle('on',S.swap);
+  segOn('#fmt',S.fmt);segOn('#gap',String(S.gap));segOn('#bg',S.bg);segOn('#font',S.font);persist();}
+function segOn(sel,v){document.querySelectorAll(sel+' button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));}
+let raf=0;function soon(){if(!raf)raf=requestAnimationFrame(()=>{raf=0;render();});}
+
+/* ---------- gestes sur la carte ---------- */
+const ptrs=new Map();let drag=null,pinch=null;
+function toCard(e){const r=cv.getBoundingClientRect(),[W,H]=dims();return{x:(e.clientX-r.left)*W/r.width,y:(e.clientY-r.top)*H/r.height,k:W/r.width};}
+function hit(pt){return geo.findIndex(c=>pt.x>=c.x&&pt.x<=c.x+c.w&&pt.y>=c.y&&pt.y<=c.y+c.h);}
+cv.addEventListener('pointerdown',e=>{cv.setPointerCapture(e.pointerId);ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  if(ptrs.size===2&&S.sel>=0){const [a,b]=[...ptrs.values()];pinch={d:Math.hypot(a.x-b.x,a.y-b.y),z:S.cells[S.sel].zoom};drag=null;return;}
+  const pt=toCard(e),i=hit(pt);
+  if(S.swap&&S.sel>=0&&i>=0&&i!==S.sel){const t=S.cells[S.sel];S.cells[S.sel]=S.cells[i];S.cells[i]=t;S.swap=false;S.sel=i;refresh();return;}
+  if(i<0){S.sel=-1;S.swap=false;refresh();return;}
+  if(i!==S.sel){S.sel=i;S.swap=false;refresh();}
+  drag={x:e.clientX,y:e.clientY,k:pt.k};});
+cv.addEventListener('pointermove',e=>{if(!ptrs.has(e.pointerId))return;ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  if(pinch&&ptrs.size>=2){const [a,b]=[...ptrs.values()],c=S.cells[S.sel];c.zoom=Math.min(3,Math.max(1,pinch.z*Math.hypot(a.x-b.x,a.y-b.y)/pinch.d));$('#zoom').value=c.zoom;soon();return;}
+  if(!drag||S.sel<0)return;const c=S.cells[S.sel],cell=geo[S.sel],p=photo(c.pid);if(!cell||!p)return;
+  const d=cover(p,c,cell),dx=(e.clientX-drag.x)*drag.k,dy=(e.clientY-drag.y)*drag.k;drag.x=e.clientX;drag.y=e.clientY;
+  if(d.ox>0.5)c.fx=Math.min(1,Math.max(0,c.fx-dx/d.ox));if(d.oy>0.5)c.fy=Math.min(1,Math.max(0,c.fy-dy/d.oy));soon();});
+function up(e){ptrs.delete(e.pointerId);if(ptrs.size<2)pinch=null;if(!ptrs.size)drag=null;}
+cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
+
+/* ---------- commandes ---------- */
+$('#pick0').onclick=()=>$('#file').click();
+$('#file').onchange=e=>{const f=[...e.target.files];e.target.value='';if(f.length)addFiles(f);};
+$('#strip').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.id==='addph'){$('#file').click();return;}
+  const id=+b.dataset.id,i=S.cells.findIndex(c=>c.pid===id);
+  if(S.sel>=0){if(i>=0&&i!==S.sel){const t=S.cells[S.sel];S.cells[S.sel]=S.cells[i];S.cells[i]=t;}else if(i<0)S.cells[S.sel]={pid:id,fx:.5,fy:.5,zoom:1};}
+  else if(i>=0)S.sel=i;
+  else if(S.cells.length<MAXP){S.cells.push({pid:id,fx:.5,fy:.5,zoom:1});S.layout=null;}
+  else toast('12 photos au maximum sur une carte');
+  S.swap=false;refresh();});
+$('#zoom').oninput=e=>{if(S.sel<0)return;S.cells[S.sel].zoom=+e.target.value;soon();};
+$('#swap').onclick=()=>{S.swap=!S.swap;refresh();if(S.swap)toast('Touche la photo avec laquelle échanger');};
+$('#remove').onclick=()=>{if(S.sel<0)return;S.cells.splice(S.sel,1);S.sel=-1;S.swap=false;S.layout=null;refresh();};
+$('#desel').onclick=()=>{S.sel=-1;S.swap=false;refresh();};
+function seg(sel,fn){$(sel).addEventListener('click',e=>{const b=e.target.closest('button');if(b&&b.dataset.v!==undefined){fn(b.dataset.v);refresh();}});}
+seg('#fmt',v=>{S.fmt=v;S.layout=null;});seg('#lay',v=>S.layout=v);seg('#gap',v=>S.gap=+v);seg('#bg',v=>S.bg=v);seg('#font',v=>S.font=v);
+[['#title','title'],['#sub','sub'],['#link','link'],['#cap','cap']].forEach(([s,k])=>{const el=$(s);el.value=S[k];el.addEventListener('input',()=>{S[k]=el.value;soon();persist();});});
+$('#showqr').checked=S.showQR;$('#showqr').onchange=e=>{S.showQR=e.target.checked;refresh();};
+window.addEventListener('resize',soon);
+
+/* ---------- export ---------- */
+function exportBlob(){return new Promise(res=>{const [W,H]=dims(),c=document.createElement('canvas');c.width=W;c.height=H;
+  const ctx=c.getContext('2d');ctx.imageSmoothingQuality='high';draw(ctx,W,H,false);geo=[];render();c.toBlob(b=>res(b),'image/jpeg',.92);});}
+const fname=()=>((S.title.trim()||'carte-postale').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-zA-Z0-9]+/g,'-').replace(/^-|-$/g,'').toLowerCase()||'carte-postale')+'.jpg';
+function download(blob){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=fname();document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},4000);}
+$('#save').onclick=async()=>{download(await exportBlob());toast('Carte enregistrée');};
+$('#share').onclick=async()=>{const blob=await exportBlob(),file=new File([blob],fname(),{type:'image/jpeg'}),link=S.link.trim();
+  const data={files:[file],title:S.title.trim()||'Carte postale'};if(link)data.text=(S.title.trim()?S.title.trim()+'\n':'')+link;
+  if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share(data);}catch(e){}}
+  else{download(blob);toast('Partage non disponible ici : carte téléchargée');}};
+$('#print').onclick=async()=>{const blob=await exportBlob(),img=$('#printimg');img.src=URL.createObjectURL(blob);
+  $('#pagesize').textContent=S.fmt==='l'?'@page{size:150mm 100mm;margin:0}':'@page{size:100mm 150mm;margin:0}';
+  img.onload=()=>{setTimeout(()=>window.print(),100);};};
+
+/* ---------- divers ---------- */
+let tt=0;function toast(m){const t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(tt);tt=setTimeout(hideToast,2600);}
+function hideToast(){$('#toast').hidden=true;}
+segOn('#fmt',S.fmt);segOn('#gap',String(S.gap));segOn('#bg',S.bg);segOn('#font',S.font);
+if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body>
+</html>
