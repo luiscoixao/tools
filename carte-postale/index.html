@@ -54,6 +54,13 @@ section h2{font-size:12px;letter-spacing:.8px;text-transform:uppercase;color:var
 .row{display:flex;align-items:center;gap:10px;margin:10px 0;flex-wrap:wrap}
 .row>.lbl{width:92px;color:var(--muted);font-size:14px}
 .field{margin:10px 0}.field label{display:block;color:var(--muted);font-size:13px;margin:0 0 4px}
+.swatches{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.sw{width:34px;height:34px;border-radius:50%;padding:0;border:2px solid var(--line);position:relative}
+.sw.on{outline:3px solid var(--accent);outline-offset:2px}
+.sw.auto{background:conic-gradient(#2d2d2d 0 50%,#fafaf7 0);font-size:0}
+.swlabel{font-size:12px;color:var(--muted)}
+.sw.pick{background:conic-gradient(red,yellow,lime,cyan,blue,magenta,red);overflow:hidden}
+.sw.pick input{position:absolute;inset:0;opacity:0;width:100%;height:100%;border:0;padding:0;cursor:pointer}
 #strip{display:flex;gap:8px;overflow-x:auto;padding:2px 0 4px;-webkit-overflow-scrolling:touch}
 .th{position:relative;flex:0 0 64px;height:64px;border-radius:9px;overflow:hidden;border:2px solid transparent;padding:0;background:#0a0b0c}
 .th img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
@@ -116,6 +123,7 @@ section h2{font-size:12px;letter-spacing:.8px;text-transform:uppercase;color:var
     <div class="field"><label for="title">Titre</label><input type="text" id="title" placeholder="Écris ton titre ici" autocomplete="off" enterkeyhint="done"></div>
     <div class="field"><label for="sub">Sous-titre (facultatif)</label><input type="text" id="sub" placeholder="Par exemple un lieu ou une date" autocomplete="off" enterkeyhint="done"></div>
     <div class="row"><span class="lbl">Police</span><div class="seg" id="font"><button data-v="moderne" class="on">Moderne</button><button data-v="epuree">Épurée</button><button data-v="classique">Classique</button></div></div>
+    <div class="row"><span class="lbl">Couleur</span><div id="inks" class="swatches"></div></div>
     <p class="hint" style="margin:4px 0 0">Astuce : touche le titre sur la carte pour le modifier.</p>
   </section>
 
@@ -144,12 +152,13 @@ const $=s=>document.querySelector(s);
 const MAXP=12, SRC_MAX=2400;
 const BG={blanc:{bg:'#fafaf7',ink:'#2d2d2d',sub:'#6b6b66'},sable:{bg:'#efe8dc',ink:'#2b2620',sub:'#776d5f'},noir:{bg:'#141414',ink:'#f2f2ef',sub:'#a5a5a0'}};
 const FONT={moderne:{w:'700',f:'"CP Poppins",-apple-system,sans-serif'},epuree:{w:'800',f:'"CP Inter",-apple-system,sans-serif'},classique:{w:'700',f:'"CP Lora",Georgia,serif'}};
-const S={photos:[],cells:[],fmt:'l',comp:'haut',layout:null,gap:1,bg:'blanc',font:'moderne',title:'Album photo',sub:'',link:'',cap:'',showQR:true,sel:-1,swap:false};
+const INKS=[['auto','Automatique'],['#1f1f1f','Noir'],['#ffffff','Blanc'],['#4a4f57','Anthracite'],['#1f3a5f','Bleu marine'],['#2f6fb0','Bleu'],['#7a1f2b','Bordeaux'],['#c0392b','Rouge'],['#b5562f','Terracotta'],['#b8860b','Doré'],['#2e5e3e','Vert sapin']];
+const S={photos:[],cells:[],fmt:'l',comp:'haut',layout:null,gap:1,bg:'blanc',font:'moderne',ink:'auto',title:'Album photo',sub:'',link:'',cap:'',showQR:true,sel:-1,swap:false};
 let geo=[], headBox=null, qrM=null, qrFor=null, nextId=1;
 const fontsReady=Promise.all(['700 20px "CP Poppins"','400 20px "CP Poppins"','800 20px "CP Inter"','400 20px "CP Inter"','700 20px "CP Lora"','400 20px "CP Lora"'].map(f=>document.fonts.load(f).catch(()=>{})));
 
 /* ---------- réglages mémorisés (pas les photos) ---------- */
-const KEYS=['fmt','comp','gap','bg','font','title','sub','link','cap','showQR'];
+const KEYS=['fmt','comp','gap','bg','font','ink','title','sub','link','cap','showQR'];
 try{const s=JSON.parse(localStorage.getItem('carte-postale')||'{}');KEYS.forEach(k=>{if(k in s)S[k]=s[k];});}catch(e){}
 if(!FONT[S.font])S.font='moderne';
 function persist(){try{const o={};KEYS.forEach(k=>o[k]=S[k]);localStorage.setItem('carte-postale',JSON.stringify(o));}catch(e){}}
@@ -240,7 +249,9 @@ function draw(ctx,W,H,preview){
     const d=cover(p,c,cell);ctx.beginPath();ctx.rect(cell.x,cell.y,cell.w,cell.h);ctx.clip();
     ctx.drawImage(p.src,d.x,d.y,d.dw,d.dh);ctx.restore();});
   const h=G.head;
-  if(h){const ov=h.mode==='overlay',ink=ov?'#ffffff':col.ink,soft=ov?'rgba(255,255,255,.85)':col.sub;
+  if(h){const ov=h.mode==='overlay',custom=/^#[0-9a-f]{6}$/i.test(S.ink);
+    const rgba=(hx,a)=>`rgba(${parseInt(hx.slice(1,3),16)},${parseInt(hx.slice(3,5),16)},${parseInt(hx.slice(5,7),16)},${a})`;
+    const ink=custom?S.ink:(ov?'#ffffff':col.ink),soft=custom?rgba(S.ink,.78):(ov?'rgba(255,255,255,.85)':col.sub);
     if(ov){const top=h.y-u*.09,gr=ctx.createLinearGradient(0,top,0,H);gr.addColorStop(0,'rgba(0,0,0,0)');gr.addColorStop(1,'rgba(0,0,0,.62)');ctx.fillStyle=gr;ctx.fillRect(0,top,W,H-top);ctx.save();ctx.shadowColor='rgba(0,0,0,.55)';ctx.shadowBlur=u*.012;}
     let right=h.x+h.w;
     if(G.qr){const n=G.qr.length+4,qs=Math.max(n,Math.round(h.h*(ov?1:.95)/n)*n),mod=qs/n,qx=right-qs,qy=Math.round(h.y+(h.h-qs)/2);
@@ -280,7 +291,16 @@ function refresh(){const G=render();
   const add=document.createElement('button');add.className='th add';add.id='addph';add.textContent='+';add.setAttribute('aria-label','Ajouter des photos');st.appendChild(add);
   /* outils de case */$('#celltools').hidden=S.sel<0;$('#tip').hidden=S.sel>=0;
   if(S.sel>=0&&S.cells[S.sel])$('#zoom').value=S.cells[S.sel].zoom;$('#swap').classList.toggle('on',S.swap);
-  segOn('#fmt',S.fmt);segOn('#comp',S.comp);segOn('#gap',String(S.gap));segOn('#bg',S.bg);segOn('#font',S.font);persist();}
+  segOn('#fmt',S.fmt);segOn('#comp',S.comp);segOn('#gap',String(S.gap));segOn('#bg',S.bg);segOn('#font',S.font);inkUI();persist();}
+function inkUI(){const box=$('#inks'),known=INKS.some(([v])=>v===S.ink);
+  if(!box.children.length){INKS.forEach(([v,t])=>{const b=document.createElement('button');b.className='sw'+(v==='auto'?' auto':'');b.dataset.v=v;b.title=t;b.setAttribute('aria-label',t);if(v!=='auto')b.style.background=v;box.appendChild(b);});
+    const pk=document.createElement('label');pk.className='sw pick';pk.title='Autre couleur';pk.innerHTML='<input type="color" id="inkpick" aria-label="Autre couleur">';box.appendChild(pk);
+    const lb=document.createElement('span');lb.className='swlabel';lb.id='inkname';box.appendChild(lb);
+    box.addEventListener('click',e=>{const b=e.target.closest('button.sw');if(b){S.ink=b.dataset.v;refresh();}});
+    $('#inkpick').addEventListener('input',e=>{S.ink=e.target.value;soon();inkUI();persist();});}
+  box.querySelectorAll('button.sw').forEach(b=>b.classList.toggle('on',b.dataset.v===S.ink));
+  box.querySelector('.pick').classList.toggle('on',!known);if(!known&&/^#/.test(S.ink)){$('#inkpick').value=S.ink;box.querySelector('.pick').style.background=S.ink;}
+  const n=INKS.find(([v])=>v===S.ink);$('#inkname').textContent=n?n[1]:'Personnalisée';}
 function segOn(sel,v){document.querySelectorAll(sel+' button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));}
 let raf=0;function soon(){if(!raf)raf=requestAnimationFrame(()=>{raf=0;render();});}
 
