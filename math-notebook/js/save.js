@@ -78,7 +78,22 @@ function saveSheet(){
   $('svx').onclick=exportSave;$('svc').onclick=copySave;$('svi').onclick=importSave;$('svp').onclick=pasteSave;
 }
 /* migration douce : on complète, on ne supprime jamais */
+/* reprise de la progression de l'ancienne version (avant la carte des îles) */
+function migrateOld(){
+  if(st.migOld)return 0;
+  let n=0;const mark=(id,stars,m)=>{if(!NOT(id))return;if(!st.nodes[id]){st.nodes[id]=Math.max(1,Math.min(3,stars||1));n++;}st.cards[id]=1;if(st.m[id]==null)st.m[id]=m;};
+  const lv=st.lv||{},best=st.best||{};
+  if(lv.int)for(let i=1;i<=Math.min(3,lv.int);i++)mark('int'+i,2,.6);
+  const all={geo:['geo1','geo2','geo3'],pro:['pro1','pro2']};
+  Object.entries(best).forEach(([k,b])=>{if(!b||k==='int'||k==='review'||k==='test')return;
+    (all[k]||[k+'1']).forEach(id=>mark(id,b,b>=3?.7:b===2?.55:.4));});
+  st.migOld=1;return n;
+}
 function migrate(){
-  if((st.v||0)<SAVE_VERSION){st.mis=st.mis||{};st.m=st.m||{};st.v=SAVE_VERSION;save();}
+  st.m=st.m||{};st.mis=st.mis||{};
+  const n=migrateOld();
+  if(n)setTimeout(()=>toast(`🔁 Ancienne progression récupérée : ${n} notion${n>1?'s':''}`),900);
+  if((st.v||0)<SAVE_VERSION)st.v=SAVE_VERSION;
+  save();if(n)home();
   try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist();}catch(e){}
 }
