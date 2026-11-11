@@ -122,7 +122,8 @@ section h2{font-size:12px;letter-spacing:.8px;text-transform:uppercase;color:var
     <h2>Texte</h2>
     <div class="field"><label for="title">Titre</label><input type="text" id="title" placeholder="Écris ton titre ici" autocomplete="off" enterkeyhint="done"></div>
     <div class="field"><label for="sub">Sous-titre (facultatif)</label><input type="text" id="sub" placeholder="Par exemple un lieu ou une date" autocomplete="off" enterkeyhint="done"></div>
-    <div class="row"><span class="lbl">Police</span><div class="seg" id="font"><button data-v="moderne" class="on">Moderne</button><button data-v="epuree">Épurée</button><button data-v="classique">Classique</button></div></div>
+    <div class="row"><span class="lbl">Police</span><div class="seg" id="font"><button data-v="moderne" class="on">Moderne</button><button data-v="epuree">Épurée</button><button data-v="classique">Classique</button><button data-v="rigolote">Rigolote</button><button data-v="feutre">Feutre</button></div></div>
+    <div class="row"><span class="lbl">Taille</span><input type="range" id="tsize" min="0.7" max="2" step="0.05" value="1"><span class="hint" id="tsizev" style="width:44px;text-align:right">100 %</span></div>
     <div class="row"><span class="lbl">Couleur</span><div id="inks" class="swatches"></div></div>
     <p class="hint" style="margin:4px 0 0">Astuce : touche le titre sur la carte pour le modifier.</p>
   </section>
@@ -151,14 +152,15 @@ section h2{font-size:12px;letter-spacing:.8px;text-transform:uppercase;color:var
 const $=s=>document.querySelector(s);
 const MAXP=12, SRC_MAX=2400;
 const BG={blanc:{bg:'#fafaf7',ink:'#2d2d2d',sub:'#6b6b66'},sable:{bg:'#efe8dc',ink:'#2b2620',sub:'#776d5f'},noir:{bg:'#141414',ink:'#f2f2ef',sub:'#a5a5a0'}};
-const FONT={moderne:{w:'700',f:'"CP Poppins",-apple-system,sans-serif'},epuree:{w:'800',f:'"CP Inter",-apple-system,sans-serif'},classique:{w:'700',f:'"CP Lora",Georgia,serif'}};
+const FONT={moderne:{w:'700',f:'"CP Poppins",-apple-system,sans-serif'},epuree:{w:'800',f:'"CP Inter",-apple-system,sans-serif'},classique:{w:'700',f:'"CP Lora",Georgia,serif'},
+  rigolote:{w:'700',f:'"Chalkboard SE","Chalkboard","Comic Sans MS","Comic Neue",cursive'},feutre:{w:'400',f:'"Marker Felt","Noteworthy","Comic Sans MS",cursive'}};
 const INKS=[['auto','Automatique'],['#1f1f1f','Noir'],['#ffffff','Blanc'],['#4a4f57','Anthracite'],['#1f3a5f','Bleu marine'],['#2f6fb0','Bleu'],['#7a1f2b','Bordeaux'],['#c0392b','Rouge'],['#b5562f','Terracotta'],['#b8860b','Doré'],['#2e5e3e','Vert sapin']];
-const S={photos:[],cells:[],fmt:'l',comp:'haut',layout:null,gap:1,bg:'blanc',font:'moderne',ink:'auto',title:'Album photo',sub:'',link:'',cap:'',showQR:true,sel:-1,swap:false};
+const S={photos:[],cells:[],fmt:'l',comp:'haut',layout:null,gap:1,bg:'blanc',font:'moderne',ink:'auto',tsize:1,title:'Album photo',sub:'',link:'',cap:'',showQR:true,sel:-1,swap:false};
 let geo=[], headBox=null, qrM=null, qrFor=null, nextId=1;
 const fontsReady=Promise.all(['700 20px "CP Poppins"','400 20px "CP Poppins"','800 20px "CP Inter"','400 20px "CP Inter"','700 20px "CP Lora"','400 20px "CP Lora"'].map(f=>document.fonts.load(f).catch(()=>{})));
 
 /* ---------- réglages mémorisés (pas les photos) ---------- */
-const KEYS=['fmt','comp','gap','bg','font','ink','title','sub','link','cap','showQR'];
+const KEYS=['fmt','comp','gap','bg','font','ink','tsize','title','sub','link','cap','showQR'];
 try{const s=JSON.parse(localStorage.getItem('carte-postale')||'{}');KEYS.forEach(k=>{if(k in s)S[k]=s[k];});}catch(e){}
 if(!FONT[S.font])S.font='moderne';
 function persist(){try{const o={};KEYS.forEach(k=>o[k]=S[k]);localStorage.setItem('carte-postale',JSON.stringify(o));}catch(e){}}
@@ -223,10 +225,10 @@ const ROT=[-3.5,2.5,-1.5,3.2,-2.6,1.8,-3,2.2,-1.2,2.9,-2.2,1.4];
 function geometry(W,H){
   const u=Math.min(W,H),comp=S.comp,qr=S.showQR?qrMatrix():null,hasHead=!!(S.title.trim()||S.sub.trim()||qr),sub=!!S.sub.trim();
   let m=Math.round(u*.035),g=[0,Math.round(u*.009),Math.round(u*.022)][S.gap],area,head=null;
-  const hh=hasHead?Math.round(u*(sub?.14:.11)):0,sp=Math.round(u*.012);
+  const k=S.title.trim()?S.tsize:1,hh=hasHead?Math.round(u*((sub?.14:.11)+(k-1)*.085)):0,sp=Math.round(u*.012);
   if(comp==='polaroid')g=Math.round(u*.03);
   if(comp==='surphoto'){area={x:0,y:0,w:W,h:H};
-    if(hasHead){const bh=Math.round(u*(sub?.13:.1)),pad=Math.round(u*.035);head={mode:'overlay',x:pad,y:H-pad-bh,w:W-2*pad,h:bh};}}
+    if(hasHead){const bh=Math.round(u*((sub?.13:.1)+(k-1)*.09)),pad=Math.round(u*.035);head={mode:'overlay',x:pad,y:H-pad-bh,w:W-2*pad,h:bh};}}
   else if(comp==='bas'){area={x:m,y:m,w:W-2*m,h:H-2*m-hh};if(hh)head={mode:'band',x:m,y:H-m-hh+sp,w:W-2*m,h:hh-sp};}
   else{area={x:m,y:m+hh,w:W-2*m,h:H-2*m-hh};if(hh)head={mode:'band',x:m,y:m,w:W-2*m,h:hh-sp};}
   const A=area.w/area.h,L=layouts(S.cells.length,A);
@@ -254,7 +256,7 @@ function draw(ctx,W,H,preview){
     const ink=custom?S.ink:(ov?'#ffffff':col.ink),soft=custom?rgba(S.ink,.78):(ov?'rgba(255,255,255,.85)':col.sub);
     if(ov){const top=h.y-u*.09,gr=ctx.createLinearGradient(0,top,0,H);gr.addColorStop(0,'rgba(0,0,0,0)');gr.addColorStop(1,'rgba(0,0,0,.62)');ctx.fillStyle=gr;ctx.fillRect(0,top,W,H-top);ctx.save();ctx.shadowColor='rgba(0,0,0,.55)';ctx.shadowBlur=u*.012;}
     let right=h.x+h.w;
-    if(G.qr){const n=G.qr.length+4,qs=Math.max(n,Math.round(h.h*(ov?1:.95)/n)*n),mod=qs/n,qx=right-qs,qy=Math.round(h.y+(h.h-qs)/2);
+    if(G.qr){const n=G.qr.length+4,qs=Math.max(n,Math.round(Math.min(h.h*(ov?1:.95),u*.17)/n)*n),mod=qs/n,qx=right-qs,qy=Math.round(h.y+(h.h-qs)/2);
       const sc=ctx.shadowColor;ctx.shadowColor='transparent';ctx.fillStyle='#fff';ctx.fillRect(qx,qy,qs,qs);ctx.fillStyle='#000';
       G.qr.forEach((row,r)=>row.forEach((v,c2)=>{if(v)ctx.fillRect(qx+(c2+2)*mod,qy+(r+2)*mod,Math.ceil(mod),Math.ceil(mod));}));
       ctx.shadowColor=sc;right=qx-u*.016;const cap=S.cap.trim()||"Scannez pour voir l'album";
@@ -264,7 +266,7 @@ function draw(ctx,W,H,preview){
         let mw=0;lines.forEach(l=>mw=Math.max(mw,ctx.measureText(l).width));right-=mw+u*.03;}}
     const tx=h.x,maxW=right-tx,t=S.title.trim(),sb=S.sub.trim(),mid=h.y+h.h/2;
     ctx.textAlign='left';ctx.textBaseline='alphabetic';
-    if(t){const fs=fitText(ctx,t,F.f,Math.round(u*(ov?.05:.047)),maxW,F.w);ctx.fillStyle=ink;
+    if(t){const fs=fitText(ctx,t,F.f,Math.round(u*(ov?.05:.047)*S.tsize),maxW,F.w);ctx.fillStyle=ink;
       if(sb){ctx.save();ctx.font=`400 10px ${F.f}`;ctx.restore();const ss=Math.min(Math.round(u*.024),fitText(ctx,sb,F.f,Math.round(u*.024),maxW,'400'));
         const tot=fs*.74+ss*.74+ss*.7,base=mid-tot/2+fs*.74;ctx.font=`${F.w} ${fs}px ${F.f}`;ctx.fillText(t,tx,base);
         ctx.font=`400 ${ss}px ${F.f}`;ctx.fillStyle=soft;ctx.fillText(sb,tx,base+ss*.7+ss*.74);}
@@ -343,6 +345,8 @@ seg('#fmt',v=>{S.fmt=v;S.layout=null;});seg('#lay',v=>S.layout=v);seg('#comp',v=
 $('#shuffle').onclick=()=>{for(let i=S.cells.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[S.cells[i],S.cells[j]]=[S.cells[j],S.cells[i]];}
   S.cells.forEach(c=>{c.fx=.5;c.fy=.5;c.zoom=1;});S.sel=-1;S.swap=false;refresh();};seg('#gap',v=>S.gap=+v);seg('#bg',v=>S.bg=v);seg('#font',v=>S.font=v);
 [['#title','title'],['#sub','sub'],['#link','link'],['#cap','cap']].forEach(([s,k])=>{const el=$(s);el.value=S[k];el.addEventListener('input',()=>{S[k]=el.value;soon();persist();});});
+$('#tsize').value=S.tsize;$('#tsizev').textContent=Math.round(S.tsize*100)+' %';
+$('#tsize').addEventListener('input',e=>{S.tsize=+e.target.value;$('#tsizev').textContent=Math.round(S.tsize*100)+' %';soon();persist();});
 $('#showqr').checked=S.showQR;$('#showqr').onchange=e=>{S.showQR=e.target.checked;refresh();};
 window.addEventListener('resize',soon);
 
