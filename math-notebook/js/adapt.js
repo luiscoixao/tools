@@ -49,7 +49,7 @@ function genFor(id,fmts,boost,forced){
   let pool=[];for(let d=0;d<=2&&!pool.length;d++)pool=D.filter(f=>Math.abs((T[f.name]||2)-t)<=d);
   const fn=lru(id+'#'+t,pool);
   const it=vary(fresh(id,fn),fmts);
-  it.nid=id;it.tier=T[fn.name]||2;return it;
+  it.nid=id;it.gen=fn.name;it.tier=T[fn.name]||2;return it;
 }
 const TLAB=['','🟢 Facile','🟠 Moyen','🔴 Défi'];
 

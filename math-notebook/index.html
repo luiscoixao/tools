@@ -195,6 +195,16 @@ h2.sec{font-weight:900;font-size:22px;margin:26px 2px 12px}
 .coursbtn{border:2px solid var(--c);background:#fff;color:var(--c);border-radius:999px;padding:7px 14px;font-weight:900;font-size:15px;cursor:pointer}
 .defcard{border-radius:22px;padding:16px;background:#eef2ff;border:3px solid #6366f1}.defcard .rc-top{color:#4f46e5}.defcard p{font-size:19px;line-height:1.5;margin:8px 0}
 .defex{background:#fff;border-radius:12px;padding:8px 12px;font-size:17px!important}
+.toolbar #saveBtn{flex:0 0 56px}
+.savenag{display:none;width:100%;margin-top:10px;padding:10px;border:2px dashed #f59e0b;border-radius:16px;background:#fffbeb;color:#92400e;font-weight:800;font-size:15px;cursor:pointer}
+.diag{margin:2px 0 8px;background:#fff;border-radius:14px;padding:10px 12px;font-size:17px;font-weight:700;color:#7c2d12;border-left:5px solid #f97316}
+.altcard{border-radius:22px;padding:16px;background:linear-gradient(160deg,#fff7ed,#fff);border:3px solid #f97316;box-shadow:0 6px 0 #fdba74}
+.altcard p{margin:0 0 10px;font-size:19px;line-height:1.5}
+.prof{margin:12px 0;border-radius:18px;padding:12px 14px;background:#f5f3ff;text-align:left}
+.prof-h{font-weight:900;font-size:16px;color:#5b21b6;margin-bottom:6px}
+.prof-t{background:#fff;border-radius:12px;padding:8px 10px;margin:6px 0;font-size:16px;line-height:1.4}
+.prof p{margin:4px 0;font-size:16px}
+.mini-go{margin:4px 0 0;font-size:14px;color:#7c3aed}
 .mbtn{position:absolute;left:6px;top:6px;z-index:2;width:26px;height:26px;padding:0;border:0;border-radius:50%;background:rgba(255,255,255,.92);font-size:13px;line-height:26px;box-shadow:0 2px 4px rgba(0,0,0,.18);cursor:pointer}
 .mbtn:active{transform:scale(.9)}
 .lmemo{border:0;background:color-mix(in srgb,var(--c) 14%,#fff);border-radius:12px;font-size:20px;padding:6px 9px;cursor:pointer}
@@ -304,7 +314,8 @@ h2.grp{font-weight:900;font-size:22px;margin:26px 4px 10px}
     <button class="daily" id="daily"></button>
     <div class="nxt" id="nxt"></div>
   </section>
-  <div class="toolbar"><button id="albumBtn">🃏 Mon album</button><button id="weakBtn">🎯 Ma maîtrise</button></div>
+  <div class="toolbar"><button id="albumBtn">🃏 Album</button><button id="weakBtn">🧑‍🏫 Mon prof</button><button id="saveBtn">💾</button></div>
+  <button class="savenag" id="saveNag" onclick="saveSheet()">💾 Pense à sauvegarder ta progression dans Fichiers</button>
   <div id="map"></div>
 </div>
 
@@ -321,6 +332,7 @@ h2.grp{font-weight:900;font-size:22px;margin:26px 4px 10px}
 <div class="onb" id="onb"></div>
 <div class="memo-wrap" id="sheetw"></div>
 
+<script src="js/save.js"></script>
 <script src="js/lib.js"></script>
 <script src="js/engine.js"></script>
 <script src="js/manip.js"></script>
@@ -330,6 +342,7 @@ h2.grp{font-weight:900;font-size:22px;margin:26px 4px 10px}
 <script src="js/tiles.js"></script>
 <script src="js/adapt.js"></script>
 <script src="js/glossaire.js"></script>
+<script src="js/prof.js"></script>
 <script>boot();</script>
 </body>
 </html>

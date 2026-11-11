@@ -305,11 +305,11 @@ function mono(a,n){
 }
 /* fabrique une question : bonne réponse en premier, distracteurs dédoublonnés */
 function Q(q,good,bad,why,hint,img,extra){
-  const a=[good];
-  for(const b of bad){if(a.length>=4)break;if(!a.includes(b))a.push(b);}
+  const a=[good],src=[0];
+  bad.forEach((b,i)=>{if(a.length<4&&!a.includes(b)){a.push(b);src.push(i+1);}});
   const n=Number(good);
-  if(!isNaN(n)) for(const d of [1,-1,2,-2,3,5]){if(a.length>=4)break;const c=String(n+d);if(!a.includes(c))a.push(c);}
-  return Object.assign({q,a:a.map(x=>x.startsWith('$')||x.startsWith('<')?x:'$'+x+'$'),why,hint,img,bubbles:true},extra||{});
+  if(!isNaN(n)) for(const d of [1,-1,2,-2,3,5]){if(a.length>=4)break;const c=String(n+d);if(!a.includes(c)){a.push(c);src.push(-1);}}
+  return Object.assign({q,a:a.map(x=>x.startsWith('$')||x.startsWith('<')?x:'$'+x+'$'),src,why,hint,img,bubbles:true},extra||{});
 }
 
 /* ================= TRACEUR DE COURBES ================= */

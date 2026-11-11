@@ -27,7 +27,7 @@ const KEY=P?profKey(P.current):'mathnb-v1',GOAL=50;
 let st={};try{st=JSON.parse(localStorage.getItem(KEY))||{}}catch(e){}
 st=Object.assign({xp:0,streak:0,last:'',todayDate:'',todayXp:0,nodes:{},cards:{},boss:{},chest:{},speed:{},srs:[],seen:{},tu:{},daily:''},st);
 if(st.err&&st.err.length){st.err.forEach(e=>st.srs.push({it:{...e,type:'qcm'},box:0,due:today()}));delete st.err;}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+function save(){try{const s=JSON.stringify(st);localStorage.setItem(KEY,s);if(window.autoBackup)autoBackup(KEY,s);}catch(e){}}
 function today(){const d=new Date();return Math.floor((d-d.getTimezoneOffset()*6e4)/864e5);}
 function dayStr(d){return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();}
 function checkDay(){
@@ -99,20 +99,20 @@ function renderItem(s,box,onAnswer){
   if(s.idk) box.querySelector('#idkb').onclick=()=>finish(false,true);
   if(s.autoHint&&H.length){hz.insertAdjacentHTML('beforeend',`<div class="hintbox on">🎁 Indice offert : ${H[0]}</div>`);used=1;if(used>=H.length)hb.style.display='none';else hb.textContent='🧭 Méthode';}
   let done=false;
-  function finish(ok,gaveUp){if(done)return;done=true;box.querySelectorAll('button').forEach(b=>{if(!b.classList.contains('keep'))b.disabled=true;});box.querySelectorAll('.hrow > :not(.coursbtn)').forEach(b=>b.remove());onAnswer(ok,gaveUp);}
+  function finish(ok,gaveUp,info){if(done)return;done=true;box.querySelectorAll('button').forEach(b=>{if(!b.classList.contains('keep'))b.disabled=true;});box.querySelectorAll('.hrow > :not(.coursbtn)').forEach(b=>b.remove());onAnswer(ok,gaveUp,info);}
   const T=s.type||'qcm';
   if(T==='qcm'){
-    const opts=shuffle(s.a.map((t,i)=>({t,ok:i===0})));
+    const opts=shuffle(s.a.map((t,i)=>({t,ok:i===0,src:(s.src||[])[i]})));
     zone.innerHTML=`<div class="opts ${s.bubbles!==false&&s.a.every(x=>x.length<46)?'bubbles':''}"></div>`;
     const o=zone.firstChild;
     opts.forEach(x=>{const b=document.createElement('button');b.className='opt';b.innerHTML=x.t;b.dataset.ok=x.ok?1:0;
-      b.onclick=()=>{b.classList.add(x.ok?'ok':'ko');if(!x.ok){b.classList.add('shake');const g=o.querySelector('[data-ok="1"]');g.classList.add('ok');}finish(x.ok);};o.appendChild(b);});
+      b.onclick=()=>{b.classList.add(x.ok?'ok':'ko');if(!x.ok){b.classList.add('shake');const g=o.querySelector('[data-ok="1"]');g.classList.add('ok');}finish(x.ok,false,{pick:x.t,src:x.src});};o.appendChild(b);});
   }else if(T==='tf'){
     zone.innerHTML=`<div class="tfcard" id="tfc"><div class="tflab">Proposition</div><div class="tfprop">${s.prop}</div><div class="tfsw">← Faux · Vrai →</div></div>
       <div class="tfbtns"><button class="opt tfno" data-v="0">❌ Faux</button><button class="opt tfyes" data-v="1">✅ Vrai</button></div>`;
     const card=zone.querySelector('#tfc');
     const choose=v=>{const ok=(v===1)===s.truth;card.classList.add(v?'goR':'goL');zone.querySelector(v?'.tfyes':'.tfno').classList.add(ok?'ok':'ko');
-      if(!ok)zone.querySelector(v?'.tfno':'.tfyes').classList.add('ok');finish(ok);};
+      if(!ok)zone.querySelector(v?'.tfno':'.tfyes').classList.add('ok');finish(ok,false,{said:v});};
     zone.querySelectorAll('.tfbtns .opt').forEach(b=>b.onclick=()=>choose(+b.dataset.v));
     let x0=null;card.addEventListener('pointerdown',e=>{x0=e.clientX;card.setPointerCapture(e.pointerId);});
     card.addEventListener('pointermove',e=>{if(x0!==null)card.style.transform=`translateX(${e.clientX-x0}px) rotate(${(e.clientX-x0)/20}deg)`;});
@@ -122,7 +122,7 @@ function renderItem(s,box,onAnswer){
     let v='';const iv=zone.querySelector('#iv');
     zone.querySelectorAll('.key').forEach(k=>k.onclick=()=>{
       const t=k.textContent;
-      if(k.classList.contains('okk')){if(!v)return;const n=parseFloat(v.replace(',','.').replace('−','-'));const ok=Math.abs(n-s.ans)<1e-6;iv.parentNode.classList.add(ok?'ok':'ko');finish(ok);return;}
+      if(k.classList.contains('okk')){if(!v)return;const n=parseFloat(v.replace(',','.').replace('−','-'));const ok=Math.abs(n-s.ans)<1e-6;iv.parentNode.classList.add(ok?'ok':'ko');finish(ok,false,{val:n});return;}
       if(k.classList.contains('del'))v=v.slice(0,-1);else if(t==='−'){v=v.startsWith('−')?v.slice(1):'−'+v;}else if(v.length<9)v+=t;
       iv.textContent=v||' ';});
   }else if(T==='match'){
@@ -196,8 +196,12 @@ function step(){
     B.innerHTML=kicker('💡 La règle')+`<div class="rcard" style="--k:${S.color}"><div class="rc-top">${S.icon||'⭐'} Carte n°${s.num}</div><div class="rc-t">${s.title}</div>${s.fig?`<div class="lfig">${s.fig}</div>`:''}<div class="rc-b">${s.html}</div></div>`;
     math(B);
     cta(has?'Continuer':'✨ Ajouter à mon album',()=>{if(!st.cards[s.id]){st.cards[s.id]=1;save();sparkle();}next();});
+  }else if(s.kind==='alt'){
+    const x=NOT(s.id),tips=topMis(s.id).slice(0,2);
+    B.innerHTML=kicker('🧑‍🏫 Je t\'explique autrement')+`${s.why?`<p class="muted">${s.why}</p>`:''}<div class="altcard"><div class="rc-t">${x.n.title}</div><div class="rc-b">${ALT[s.id]||x.n.rule}</div></div>${tips.length?`<div class="prof"><div class="prof-h">⚠️ Attention à ton erreur habituelle</div>${tips.map(t=>`<div class="prof-t">${t.msg}</div>`).join('')}</div>`:''}`;
+    math(B);cta('J\'ai compris 👍',next);
   }else if(s.kind==='ex'){
-    B.innerHTML=kicker('👣 Exemple guidé')+`<div class="q">${s.title}</div>${s.fig?`<div class="qimg">${s.fig}</div>`:''}<div class="exl">${s.lines.map(l=>`<div class="exs">${l}</div>`).join('')}</div>`;
+    B.innerHTML=kicker(s.label?'👀 '+s.label:'👣 Exemple guidé')+`<div class="q">${s.title}</div>${s.fig?`<div class="qimg">${s.fig}</div>`:''}<div class="exl">${s.lines.map(l=>`<div class="exs">${l}</div>`).join('')}</div>`;
     math(B);const rows=[...B.querySelectorAll('.exs')];let k=0;
     const go=()=>{if(k<rows.length){rows[k].classList.add('on');rows[k].scrollIntoView({behavior:'smooth',block:'nearest'});k++;}
       if(k<rows.length) cta('Étape suivante ▶',go); else cta('Compris !',next);};
@@ -208,7 +212,7 @@ function step(){
     const it=s.it;
     const tl=it.tier&&S.mode!=='speed'&&S.mode!=='test'?`<span class="tier t${it.tier}">${TLAB[it.tier]}</span>`:'';
     B.innerHTML=kicker((s.label||'')+(s.label?'':'')+(s.label?'':(it.type==='tf'?'⚡ Vrai ou faux ?':it.type==='match'?'🔗 Relie les paires':it.type==='order'?'🧩 Remets dans l\'ordre':it.type==='line'?'📏 Place sur la droite':it.type==='input'?'⌨️ Calcule':'🎮 À toi')))+tl+'<div class="ibox"></div>';
-    renderItem(it,B.querySelector('.ibox'),(ok,gaveUp)=>answered(s,ok,gaveUp));
+    renderItem(it,B.querySelector('.ibox'),(ok,gaveUp,info)=>answered(s,ok,gaveUp,info));
   }
 }
 function adaptAfter(s,ok){
@@ -221,15 +225,17 @@ function adaptAfter(s,ok){
   else{S.missRun=(S.missRun||0)+1;S.okRun=0;if(S.adj>-1){S.adj--;S.lvlMsg='📉 On simplifie un peu.';}
     if(S.missRun>=2&&S.mode!=='boss'&&S.mode!=='test'&&S.mode!=='review'){
       S.remedied=S.remedied||{};const pre=PRE[id];
-      const tgt=pre&&!S.remedied[pre]?pre:!S.remedied[id]?id:null;
-      if(tgt){S.remedied[tgt]=1;const x=NOT(tgt);
-        S.queue.splice(1,0,{kind:'rule',recap:true,id:x.n.id,num:notionNum(x.c,x.n),title:x.n.title,html:x.n.rule,fig:x.n.ruleFig,why:tgt===id?'Deux erreurs de suite : revoyons la règle.':`Deux erreurs de suite : petit détour par une notion de base, <b>${x.n.title}</b>.`},
-          {kind:'item',nid:tgt,gen:{fmts:['qcm'],tier:1},label:'🩹 Petit rappel'});
+      let ins=[];
+      if(!S.remedied[id]){S.remedied[id]=1;ins=profRemedy(id,'Deux erreurs de suite : je t\'explique autrement.');S.lvlMsg='🧑‍🏫 Je vais t\'expliquer autrement.';}
+      else if(pre&&!S.remedied[pre]&&(mastery(pre)??0)<.7){S.remedied[pre]=1;const x=NOT(pre);
+        ins=[{kind:'rule',recap:true,id:x.n.id,num:notionNum(x.c,x.n),title:x.n.title,html:x.n.rule,fig:x.n.ruleFig,why:`Le blocage vient peut-être d'une notion de base : <b>${x.n.title}</b>.`},{kind:'item',nid:pre,gen:{fmts:['qcm'],tier:1},label:'🩹 Petit rappel'}];
         S.lvlMsg='🩹 Petit détour pour consolider la base.';}
+      if(ins.length)S.queue.splice(1,0,...ins);
       S.autoHint=true;S.missRun=0;}}
 }
-function answered(s,ok,gaveUp){
+function answered(s,ok,gaveUp,info){
   const it=s.it,F=$F();
+  const diag=!ok&&!gaveUp&&S.mode!=='speed'?diagnose(s,info):null;if(diag)recordMis(s.nid||it.nid,diag);
   if(S.onItem) S.onItem(s,ok);
   S.lvlMsg='';adaptAfter(s,ok);
   if(ok){
@@ -245,7 +251,7 @@ function answered(s,ok,gaveUp){
     if(S.lives!=null){S.lives--;}
     const good=it.type==='tf'?(it.truth?'Vrai':'Faux'):it.type==='input'?String(it.a[0]):it.type==='match'||it.type==='order'?'':it.type==='line'?String(it.ans).replace('.',','):it.a[0];
     F.className='fb bad show';
-    F.innerHTML=`<h3>${gaveUp?'Voici la solution 🔍':'Pas tout à fait…'}</h3><p>${good?'Bonne réponse : '+good+'<br>':''}${it.why||''}</p>${S.lvlMsg?`<p class="lvlmsg">${S.lvlMsg}</p>`:''}<button class="cta">${S.lives===0?'Voir le résultat':S.retry?'Je la reverrai':'Continuer'}</button>`;
+    F.innerHTML=`<h3>${gaveUp?'Voici la solution 🔍':'Pas tout à fait…'}</h3>${diag?`<div class="diag">🧑‍🏫 ${diag.msg}</div>`:''}<p>${good?'Bonne réponse : '+good+'<br>':''}${it.why||''}</p>${S.lvlMsg?`<p class="lvlmsg">${S.lvlMsg}</p>`:''}<button class="cta">${S.lives===0?'Voir le résultat':S.retry?'Je la reverrai':'Continuer'}</button>`;
     F.querySelector('.cta').onclick=()=>{if(S.lives===0){S.queue=[];step();return;}if(S.retry){const x=S.queue.shift();x.it={...x.it,penalty:0,autoHint:false};S.queue.push({...x,it:vary(stripType(x.it))});step();}else next();};
   }
   math(F);bar();
@@ -270,7 +276,7 @@ function endScreen(o){
   $B().innerHTML=`<div class="end"><div class="big">${o.emoji||(stars===3?'🏆':'🎉')}</div><h2>${o.title||(stars===3?'Sans faute !':'Bien joué !')}</h2>
     ${o.noStars?'':`<div class="endstars">${'★'.repeat(stars)}${'☆'.repeat(3-stars)}</div>`}
     <div class="row"><div class="box"><b>+${total}</b>XP</div>${S.nq&&!o.noCount?`<div class="box"><b>${first}/${S.nq}</b>du 1er coup</div>`:''}<div class="box"><b>🔥 ${st.streak}</b>jour${st.streak>1?'s':''}</div></div>
-    ${extra}${before<GOAL&&st.todayXp>=GOAL?'<p><b>🎯 Objectif du jour atteint !</b> Reviens demain pour garder ta série.</p>':''}</div>`;
+    ${extra}${['notion','practice','review','boss'].includes(S.mode)&&!o.noProf?profBilan():''}${before<GOAL&&st.todayXp>=GOAL?'<p><b>🎯 Objectif du jour atteint !</b> Reviens demain pour garder ta série.</p>':''}</div>`;
   cta(o.btn||'Retour à la carte',o.btnFn||closeSession);
   if(o.confetti!==false) confetti();
   return stars;
@@ -285,6 +291,7 @@ function startNotion(c,i){
   if(!replay||Math.random()<.5) q.push({kind:'hook',html:n.hook,fig:n.hookFig});
   if(n.play) q.push({kind:'play',text:n.play.text,mount:n.play.mount});
   q.push({kind:'rule',id:n.id,num:notionNum(c,n),title:n.title,html:n.rule,fig:n.ruleFig});
+  if(replay&&((mastery(n.id)??1)<.4||topMis(n.id).length))q.push({kind:'alt',id:n.id,why:'La dernière fois, cette notion t\'a posé des difficultés. Voyons-la sous un autre angle.'});
   if(n.ex){const e=typeof n.ex==='function'?n.ex():n.ex;q.push({kind:'ex',...e});}
   if(n.mine){const m=typeof n.mine==='function'?n.mine():n.mine;q.push({kind:'item',label:'✍️ À toi de faire les étapes',it:{type:'order',...m}});}
   const D=n.drill;const nb=replay?6:5;
@@ -402,6 +409,7 @@ function home(){
   const xpN=lvlOf(st.xp)*100-st.xp,left=(BANK.q||[]).length?reserveLeft():0;
   $('nxt').innerHTML=`🏅 Niveau ${lvlOf(st.xp)+1} dans <b>${xpN} XP</b>${left?` · 🔓 +${Math.min(PER_LEVEL,left)} questions`:''}`;
   drawMap();
+  const nag=$('saveNag');if(nag){const l=st.lastExport;nag.style.display=st.xp>=200&&(l==null||today()-l>=7)?'block':'none';}
 }
 function drawMap(){
   const M=$('map');let html='',grp='';
@@ -491,12 +499,12 @@ function profileSheet(){
   const o=$('onb');
   o.innerHTML=`<div class="onb-card"><h2>Profils</h2><div class="plist">${P.list.map(p=>`<button class="prow${p.id===P.current?' on':''}" data-id="${p.id}"><span>${p.av}</span>${p.name}${p.id===P.current?' <small>(actif)</small>':''}</button>`).join('')}</div>
     <button class="prow add" id="padd">➕ Nouveau profil</button><button class="prow" id="pedit">✏️ Modifier mon prénom / avatar</button>
-    <button class="prow" id="palb">🃏 Mon album de cartes</button><button class="prow" id="ptest">📝 ${st.test?'Repasser':'Passer'} le test de niveau</button>
+    <button class="prow" id="palb">🃏 Mon album de cartes</button><button class="prow" id="psave">💾 Sauvegarder / restaurer</button><button class="prow" id="ptest">📝 ${st.test?'Repasser':'Passer'} le test de niveau</button>
     <button class="lnk" id="pclose">Fermer</button></div>`;
   o.classList.add('open');
   o.querySelectorAll('.prow[data-id]').forEach(b=>b.onclick=()=>{if(b.dataset.id===P.current){o.classList.remove('open');return;}P.current=b.dataset.id;saveP();location.reload();});
   $('padd').onclick=()=>onboarding('add');$('pedit').onclick=()=>onboarding('rename');$('ptest').onclick=()=>askTest(false);
-  $('palb').onclick=()=>{o.classList.remove('open');openAlbum();};$('pclose').onclick=()=>o.classList.remove('open');
+  $('palb').onclick=()=>{o.classList.remove('open');openAlbum();};$('psave').onclick=()=>{o.classList.remove('open');saveSheet();};$('pclose').onclick=()=>o.classList.remove('open');
 }
 
 /* ---------- petits effets ---------- */
@@ -510,7 +518,8 @@ function boot(){
   $('lmemo').onclick=()=>{if(S&&S.chap)openAlbum(S.chap);};
   $('pbtn').onclick=()=>P?profileSheet():onboarding('first');
   $('albumBtn').onclick=()=>openAlbum();
-  $('weakBtn').onclick=weakSheet;
+  $('weakBtn').onclick=profSheet;$('saveBtn').onclick=saveSheet;migrate();
+  if(window._recovered)setTimeout(()=>toast('🛟 Progression récupérée depuis la copie de secours'),800);
   home();startKatex();syncBank();
   if(!P)onboarding('first');
   else{let a=null;try{a=sessionStorage.getItem('mathnb-asktest');sessionStorage.removeItem('mathnb-asktest');}catch(e){}if(a)askTest(true);}
