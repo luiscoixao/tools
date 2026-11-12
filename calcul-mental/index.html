@@ -363,7 +363,7 @@ const SK=[
   if(l==2){const n=R(2,99);return{q:`${n} × 100`,a:n*100,...T('Glisser de deux rangs',['Deux rangs : on écrit deux 0',`${n} → ${F(n*100)}`])}}
   if(l==3){const n=R(2,99);return{q:`${F(n*10)} ÷ 10`,a:n,...T('Reculer d’un rang',['Chaque chiffre recule d’un rang : on enlève un 0',`${F(n*10)} → ${n}`])}}
   if(l==4){const n=R(2,99);return Math.random()<.5?{q:`${n} × ${F(1000)}`,a:n*1000,...T('Glisser de trois rangs',['Trois rangs : on écrit trois 0',`${n} → ${F(n*1000)}`])}:{q:`${F(n*100)} ÷ 100`,a:n,...T('Reculer de deux rangs',['On enlève deux 0',`${F(n*100)} → ${n}`])}}
-  const n=R(11,49),m=P([20,30,40,200,300]),d=m>=100?m/100:m/10,z=m/d;
+  const n=R(12,49),m=P([30,40,60,70,80,300,400,600,700]),d=m>=100?m/100:m/10,z=m/d;
   return{q:`${n} × ${m}`,a:n*m,...T(`× ${m} = × ${d}, puis × ${z}`,[`${n} × ${d} = ${n*d}`,`${n*d} × ${z} : on écrit ${z==10?'un 0':'deux 0'}`,`→ ${F(n*m)}`])}}},
 
 {id:'x5',name:'× 5, × 25, × 50',art:'×5',c:['#f59e0b','#fde68a','#b45309'],t:[4,1.5],
@@ -568,7 +568,7 @@ function next(){
   if(Q.mode==='chrono')item=P(unlockedList());
   let cur;
   if(typeof item==='object'){cur=item}
-  else{const l=pickLevel(item);const g=SKM[item].gen(l);cur={sk:item,l,...g}}
+  else{const l=pickLevel(item);/* niveau adulte : on saute les niveaux élémentaires (sauf Tables, déjà relevées) */const g=SKM[item].gen(item==='tab'?l:item==='x10'?5:Math.min(5,l+2));cur={sk:item,l,...g}}
   Q.cur=cur;Q.val='';Q.hint=false;Q.lock=false;Q.nudged=false;
   const k=SKM[cur.sk];
   if(Q.mode!=='chrono'){setColor(k);$('lBar').style.width=(Q.i/Q.items.length*100)+'%'}
