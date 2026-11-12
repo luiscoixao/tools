@@ -245,7 +245,9 @@ const parts=n=>{const p=[];let m=1;while(n>0){const d=n%10;if(d)p.unshift(d*m);n
 /* ============ compétences ============ */
 /* Chaque exercice renvoie : q (énoncé), a (réponse), tech (nom de la technique),
    steps (la technique appliquée aux nombres de l'exercice, la dernière ligne finit par la réponse) */
-const T=(tech,steps)=>({tech,steps});
+const T=(tech,steps)=>({tech,steps:steps.map(x=>String(x).replace(/^→\s*/,''))});
+/* détail complet d'un produit par un chiffre : 47 × 4 = 40 × 4 + 7 × 4 = 160 + 28 = 188 */
+const mulD=(n,d)=>{const p=parts(n);return p.length<2?`${F(n)} × ${d} = ${F(n*d)}`:`${F(n)} × ${d} = ${p.map(x=>F(x)+' × '+d).join(' + ')} = ${p.map(x=>F(x*d)).join(' + ')} = ${F(n*d)}`;};
 function addH(a,b){
   const S=a+b;
   if(b<10){const au=a%10;
@@ -370,8 +372,9 @@ const SK=[
   if(l==2){const n=R(2,99);return{q:`${n} × 100`,a:n*100,...T('Glisser de deux rangs',['Deux rangs : on écrit deux 0',`${n} → ${F(n*100)}`])}}
   if(l==3){const n=R(2,99);return{q:`${F(n*10)} ÷ 10`,a:n,...T('Reculer d’un rang',['Chaque chiffre recule d’un rang : on enlève un 0',`${F(n*10)} → ${n}`])}}
   if(l==4){const n=R(2,99);return Math.random()<.5?{q:`${n} × ${F(1000)}`,a:n*1000,...T('Glisser de trois rangs',['Trois rangs : on écrit trois 0',`${n} → ${F(n*1000)}`])}:{q:`${F(n*100)} ÷ 100`,a:n,...T('Reculer de deux rangs',['On enlève deux 0',`${F(n*100)} → ${n}`])}}
-  const n=R(12,49),m=P([30,40,60,70,80,300,400,600,700]),d=m>=100?m/100:m/10,z=m/d;
-  return{q:`${n} × ${m}`,a:n*m,...T(`× ${m} = × ${d}, puis × ${z}`,[`${n} × ${d} = ${n*d}`,`${n*d} × ${z} : on écrit ${z==10?'un 0':'deux 0'}`,`→ ${F(n*m)}`])}}},
+  let n=R(12,49);if(n%10==0)n++;const m=P([30,40,60,70,80,300,400,600,700]),d=m>=100?m/100:m/10,z=m/d,zz=z==10?'un 0':'deux 0';
+  if(Math.random()<.35&&(d===4||d===6||d===8)){const N=n*m;return{q:`${F(N)} ÷ ${m}`,a:n,...T(`÷ ${m} = ÷ ${z}, puis ÷ ${d}`,[`${m} = ${d} × ${z}`,`${F(N)} ÷ ${z} : on enlève ${zz} → ${F(N/z)}`,`${F(N/z)} ÷ ${d} : ${d}, c'est ${d===4?'deux fois la moitié':d===8?'trois fois la moitié':'moitié puis ÷ 3'}`,`${d===4?`${F(N/z)} → ${F(N/z/2)} → ${n}`:d===8?`${F(N/z)} → ${F(N/z/2)} → ${F(N/z/4)} → ${n}`:`${F(N/z)} → ${F(N/z/2)} → ${n}`}`])}}
+  return{q:`${n} × ${m}`,a:n*m,...T(`× ${m} = × ${d}, puis × ${z}`,[`On découpe : ${m} = ${d} × ${z}`,`D'abord × ${d} : ${mulD(n,d)}`,`Puis × ${z} : on écrit ${zz} à droite de ${F(n*d)}`,`${F(n*d)} × ${z} = ${F(n*m)}`])}}},
 
 {id:'x5',name:'× 5, × 25, × 50',art:'×5',c:['#f59e0b','#fde68a','#b45309'],t:[4,1.5],
  rule:'× 5 = moitié puis × 10 (ou × 10 puis moitié). × 50 = moitié puis × 100. × 25 = quart puis × 100. ÷ 5 = double puis ÷ 10.',
@@ -411,7 +414,7 @@ const SK=[
   if(l<=2){let a,b;if(l==1){a=R(1,8);b=R(0,9-a)}else{a=R(2,9);b=R(10-a,9)}const n=10*a+b,s=a+b;
    return{q:`${n} × 11`,a:n*11,...T('× 11 : écarter et glisser la somme',s<10?[`On écarte : ${a} _ ${b}`,`Somme : ${a} + ${b} = ${s}`,`On glisse ${s} au milieu : ${F(n*11)}`]:[`On écarte : ${a} _ ${b}`,`Somme : ${a} + ${b} = ${s} (plus de 9 !)`,`On glisse ${s%10} et on ajoute la retenue à ${a} : ${F(n*11)}`])}}
   const n=R(12,99);
-  if(l==3)return{q:`${n} × 9`,a:9*n,...T('× 9 = × 10, moins une fois',[`${n} × 10 = ${F(10*n)}`,`${F(10*n)} − ${n} = ${F(9*n)}`])};
+  if(l==3)return{q:`${n} × 9`,a:9*n,...T('× 9 = × 10, moins une fois',[`${n} × 10 = ${F(10*n)}`,`On retire ${n} en deux temps : ${F(10*n)} − ${n-n%10} = ${F(10*n-(n-n%10))}`,`${F(10*n-(n-n%10))} − ${n%10} = ${F(9*n)}`])};
   if(l==4)return{q:`${n} × 99`,a:99*n,...T('× 99 = × 100, moins une fois',[`${n} × 100 = ${F(100*n)}`,`${F(100*n)} − ${n} = ${F(99*n)}`])};
   const m=P([19,21,29,31]),N=R(12,49),r=m%10==9?m+1:m-1,sg=m%10==9?'−':'+';
   return{q:`${N} × ${m}`,a:N*m,...T(`× ${m} = × ${r} ${sg} une fois`,[`${N} × ${r} = ${N} × ${r/10} × 10 = ${F(N*r)}`,`${F(N*r)} ${sg} ${N} = ${F(N*m)}`])}}},
@@ -575,7 +578,11 @@ function next(){
   if(Q.mode==='chrono')item=P(unlockedList());
   let cur;
   if(typeof item==='object'){cur=item}
-  else{const l=pickLevel(item);/* niveau adulte : on saute les niveaux élémentaires (sauf Tables, déjà relevées) */const g=SKM[item].gen(item==='tab'?l:item==='x10'?5:Math.min(5,l+2));cur={sk:item,l,...g}}
+  else{/* niveau adulte : on saute les niveaux élémentaires ; pas deux fois la même question ni la même astuce d'affilée */
+    Q.seen=Q.seen||[];let g,l,t=0;
+    do{l=t<2?pickLevel(item):Math.max(1,Math.min(5,pickLevel(item)+(t%2?1:-1)));g=SKM[item].gen(item==='tab'?l:item==='x10'?5:Math.min(5,l+2));t++;}
+    while(t<8&&(Q.seen.includes(g.q)||(Q.prevTech&&g.tech===Q.prevTech&&t<5)));
+    Q.seen.push(g.q);Q.prevTech=g.tech;cur={sk:item,l,...g}}
   Q.cur=cur;Q.val='';Q.hint=false;Q.lock=false;Q.nudged=false;
   const k=SKM[cur.sk];
   if(Q.mode!=='chrono'){setColor(k);$('lBar').style.width=(Q.i/Q.items.length*100)+'%'}
