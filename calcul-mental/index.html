@@ -272,6 +272,14 @@ function subH(a,b){
     const c0=c-cu;return T('Dizaines, puis passer par la dizaine',[`${F(a)} − ${bt} = ${F(c)}`,`${F(c)} − ${cu} = ${F(c0)} : dizaine ronde`,`Il reste ${u-cu} à enlever : ${F(c0)} − ${u-cu} = ${F(D)}`])}
   return T('Compter en avançant',[`Au lieu d’enlever, on va de ${F(b)} à ${F(a)} par sauts ronds :`,...jsteps(b,a)]);
 }
+/* tables difficiles : on insiste sur les produits réputés durs (chiffres 6-7-8-9, gros produits)
+   et sur ceux où TU bloques (erreurs, lenteur, astuce demandée) — répétition ciblée */
+function tabHard(a,b){const u=[a%10,b%10];let h=0;u.forEach(x=>{if(x>=6)h++;if(x===7||x===8)h++;});if(a*b>=200)h++;if(a>12&&b>12&&u[0]>=6&&u[1]>=6)h++;return h;}
+function tabPick(rg,l){const [a0,a1,b0,b1]=rg,F=S.facts||{},C=[];let tot=0;
+  for(let a=a0;a<=a1;a++)for(let b=b0;b<=b1;b++){if(a===10||b===10||(a===b&&l<5))continue;const w=1+tabHard(a,b)+3*((F[Math.min(a,b)+'x'+Math.max(a,b)]||{}).w||0);C.push([a,b,w]);tot+=w;}
+  let r=Math.random()*tot;for(const c of C){r-=c[2];if(r<=0)return Math.random()<.5?[c[0],c[1]]:[c[1],c[0]];}return [C[0][0],C[0][1]];}
+function tabFact(cur,ok,slow,hint){if(cur.sk!=='tab')return;const [a,b]=cur.q.split(' × ').map(Number),k=Math.min(a,b)+'x'+Math.max(a,b);S.facts=S.facts||{};const f=S.facts[k]=S.facts[k]||{w:0};
+  f.w=!ok?Math.min(6,f.w+2):(slow||hint)?Math.min(6,f.w+1):Math.max(0,f.w-1);if(!f.w)delete S.facts[k];}
 function tabH(a,b){
   if(Math.max(a,b)>12){const g=Math.max(a,b),m=Math.min(a,b),r=g*m;
     if(m===9)return T('× 9 = × 10, moins une fois',[`${g} × 10 = ${10*g}`,`${10*g} − ${g} = ${r}`]);
@@ -350,8 +358,7 @@ const SK=[
  rule:'Tables jusqu’à 20. Chaque table a son raccourci : × 9 = × 10 moins une fois ; de 11 à 19, × 1u = × 10 plus × u (× 14 = × 10 + × 4) ; × 20 = × 2 puis × 10 ; × 5 = moitié de × 10 ; × 4 = double du double ; × 8 = trois doubles ; × 6 = × 5 plus une fois ; × 7 = × 5 plus × 2.',
  ex:'7 × 9',exs:['7 × 10 = 70','70 − 7 = 63'],
  gen(l){let a,b;
-  if(l==1){a=R(13,19);b=R(6,9)}else if(l==2){a=R(13,19);b=R(11,14)}else if(l==3){a=R(13,19);b=R(13,16)}else if(l==4){a=R(14,20);b=R(14,19)}else{a=R(16,19);b=R(16,19)}
-  if(a===b&&l<5)b=a-1;
+  const rg=[[13,19,6,9],[13,19,11,14],[13,19,13,16],[14,20,14,19],[16,19,16,19]][l-1];[a,b]=tabPick(rg,l);
   if(Math.random()<.5)[a,b]=[b,a];
   return{q:`${a} × ${b}`,a:a*b,...tabH(a,b)}}},
 
@@ -617,7 +624,7 @@ function answer(ok){
     const g=Math.round((10+2*cur.l+(fast?5:0))*(Q.hint?.5:1))+Math.min(10,Q.combo-1);
     Q.xp+=g;S.xp+=g;S.dayXp+=g;
   }else{st.s=Math.max(0,st.s-(cur.retry?5:12));Q.combo=0;Q.errors++}
-  st.h.push(ok?1:0);if(st.h.length>12)st.h.shift();st.n++;if(ok)st.ok++;
+  st.h.push(ok?1:0);if(st.h.length>12)st.h.shift();st.n++;if(ok)st.ok++;tabFact(cur,ok,!fast,Q.hint);
   save();beep(ok);
   if(Q.mode!=='chrono')$('combo').textContent=Q.combo>=3?`🔥 ×${Q.combo}`:'';
   const a=$('ans');a.classList.add(ok?'ok':'ko');
