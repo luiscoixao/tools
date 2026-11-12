@@ -99,6 +99,6 @@ function migrate(){
 }
 /* mise à jour automatique : si une nouvelle version est en ligne, l'appli se recharge
    (au lancement et chaque fois qu'on revient dans l'appli) */
-const APP_V='20261112b';
+const APP_V='20261112c';
 function checkUpdate(){try{fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.json()).then(j=>{if(j&&j.v&&j.v!==APP_V){const k='mathnb-upd';if(sessionStorage.getItem(k)===j.v)return;sessionStorage.setItem(k,j.v);location.replace(location.pathname+'?v='+j.v);}}).catch(()=>{});}catch(e){}}
 checkUpdate();document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')checkUpdate();});

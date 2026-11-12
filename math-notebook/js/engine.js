@@ -86,7 +86,8 @@ function renderItem(s,box,onAnswer){
   const head=`${s.img?`<div class="qimg">${s.img}</div>`:''}<div class="q">${s.q||''}</div>`;
   const GL=typeof glossFor==='function'?glossFor((s.q||'')+' '+(s.prop||'')):[];
   box.innerHTML=head+(GL.length?`<div class="gl">${GL.map(g=>`<button class="glc keep" data-g="${GLOSS.indexOf(g)}">❓ ${g[1]}</button>`).join('')}</div>`:'')+`<div class="hints"></div><div class="zone"></div>`+
-    `<div class="hrow"><button class="coursbtn keep" id="cb">📖 Cours</button><button class="hintbtn" id="hb">💡 Coup de pouce</button><button class="solbtn" id="sb">🔍 Solution</button>${s.idk?'<button class="idk" id="idkb">🤷 Je ne sais pas</button>':''}</div>`;
+    `<div class="hrow"><button class="coursbtn keep" id="cb">📖 Cours</button>${S&&S.mode==='prob'?'<button class="coursbtn keep calcb" id="calcb">🧮 Calculatrice</button>':''}<button class="hintbtn" id="hb">💡 Coup de pouce</button><button class="solbtn" id="sb">🔍 Solution</button>${s.idk?'<button class="idk" id="idkb">🤷 Je ne sais pas</button>':''}</div>`;
+  if(box.querySelector('#calcb'))box.querySelector('#calcb').onclick=()=>calcSheet(s.type==='input');
   const zone=box.querySelector('.zone'),hz=box.querySelector('.hints'),hb=box.querySelector('#hb'),sb=box.querySelector('#sb');
   if(!H.length) hb.style.display='none';
   box.querySelectorAll('.glc').forEach(b=>b.onclick=()=>{const g=GLOSS[+b.dataset.g];sheet(`<div class="defcard"><div class="rc-top">📚 Définition</div><div class="rc-t">${g[1]}</div><p>${g[2]}</p>${g[3]?`<p class="defex">Exemple : ${g[3]}</p>`:''}</div>`);});
@@ -120,7 +121,7 @@ function renderItem(s,box,onAnswer){
     card.addEventListener('pointerup',e=>{const d=e.clientX-x0;x0=null;card.style.transform='';if(Math.abs(d)>70&&!done)choose(d>0?1:0);});
   }else if(T==='input'){
     zone.innerHTML=`<div class="inp"><span id="iv">&nbsp;</span></div><div class="kpad">${['7','8','9','4','5','6','1','2','3','−','0',','].map(k=>`<button class="key">${k}</button>`).join('')}<button class="key del">⌫</button><button class="key okk">Valider</button></div>`;
-    let v='';const iv=zone.querySelector('#iv');
+    let v='';const iv=zone.querySelector('#iv');window._setAns=x=>{v=String(x).slice(0,12);iv.textContent=v||' ';};
     zone.querySelectorAll('.key').forEach(k=>k.onclick=()=>{
       const t=k.textContent;
       if(k.classList.contains('okk')){if(!v)return;const n=parseFloat(v.replace(',','.').replace('−','-'));const ok=Math.abs(n-s.ans)<1e-6;iv.parentNode.classList.add(ok?'ok':'ko');finish(ok,false,{val:n});return;}

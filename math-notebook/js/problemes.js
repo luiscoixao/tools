@@ -65,3 +65,18 @@ function startProblems(){
     onEnd:()=>{Object.entries(res).forEach(([k,v])=>{const r=v.filter(Boolean).length/v.length;st.probM[k]=Math.round((probM(k)*.6+r*.4)*100)/100;});
       endScreen({bonus:15,title:'Problèmes résolus !',emoji:'🧩',extra:`<p class="muted">${P.map(p=>`${p.i} ${p.t} : ${probM(p.k)>=.7?'maîtrisé · la prochaine fois en autonomie':'guidé'}`).join('<br>')}</p>`});}});
 }
+/* calculatrice simple pour les problèmes : le résultat peut être envoyé dans la réponse */
+function calcSheet(canSend){
+  const K=['C','(',')','÷','7','8','9','×','4','5','6','−','1','2','3','+','0',',','x²','√','%','⌫','=',''];
+  sheet(`<div class="sh-h">🧮 Calculatrice</div><div class="calc"><div class="cdisp"><small id="cexp">&nbsp;</small><b id="cres">0</b></div>
+   <div class="ckeys">${K.filter(k=>k).map(k=>`<button class="${/[÷×−+=]/.test(k)?'op':k==='C'||k==='⌫'?'cl':''}">${k}</button>`).join('')}</div>
+   ${canSend?'<button class="cta" id="csend">✓ Mettre le résultat dans ma réponse</button>':''}</div>`);
+  let e='',last=null;const ex=$('cexp'),rs=$('cres');
+  const ev=s=>{let j=s.replace(/×/g,'*').replace(/÷/g,'/').replace(/−/g,'-').replace(/,/g,'.').replace(/(\d+(?:\.\d+)?|\))²/g,'($1)**2').replace(/√\(?(\d+(?:\.\d+)?)\)?/g,'Math.sqrt($1)').replace(/(\d+(?:\.\d+)?)%/g,'($1/100)');
+    if(!/^[\d+\-*/().\sMathsqrt*]*$/.test(j))return null;try{const v=Function('return ('+j+')')();return isFinite(v)?Math.round(v*1e8)/1e8:null;}catch(x){return null;}};
+  const show=()=>{ex.textContent=e||' ';const v=ev(e);rs.textContent=v==null?(e?'…':'0'):String(v).replace('.',',').replace('-','−');};
+  document.querySelectorAll('.ckeys button').forEach(b=>b.onclick=()=>{const k=b.textContent;
+    if(k==='C')e='';else if(k==='⌫')e=e.slice(0,-1);else if(k==='='){const v=ev(e);if(v!=null){last=v;e=String(v).replace('.',',').replace('-','−');}}
+    else if(k==='x²')e+='²';else e+=k;show();});
+  if($('csend'))$('csend').onclick=()=>{const v=ev(e);if(v==null)return;if(window._setAns)_setAns(String(v).replace('.',',').replace('-','−'));$('sheetw').classList.remove('open');};
+}
