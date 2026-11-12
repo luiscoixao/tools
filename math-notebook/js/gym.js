@@ -3,7 +3,6 @@
    8 « muscles » · formats : vrai/faux, relier, QCM
    la séance du jour cible le muscle le plus faible
    ===================================================================== */
-/* « Trouve l'erreur » : on touche la ligne fausse d'un calcul */
 const GYMM=[
  {k:'pri',l:'➗ Priorités',c:'#f97316',g:[
   function p1(){const a=ri(2,9),b=ri(2,9),c=ri(2,9);return DX(QQ(`$${a}+${b}\\times${c}$ ?`,N(a+b*c),[N((a+b)*c),N(a+b+c),N(a*b+c)],'',['Quelle opération passe en premier ?']),
