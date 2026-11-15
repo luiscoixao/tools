@@ -246,6 +246,8 @@ function jsteps(from,to){
   if(J.length>1)L.push(`Total : ${J.map(([a,b])=>F(b-a)).join(' + ')} = ${F(to-from)}`);
   return L;
 }
+/* carré malin : on rend un des deux facteurs rond (n−k)(n+k), puis on rajoute k × k */
+function sqRound(n,R0){const k=n-R0,K=Math.abs(k),o=n+k;return T(`On transforme ${n} × ${n} en ${R0} × ${o}, plus facile`,[`${n} est à ${K} de ${R0} : on ${k>0?'enlève':'ajoute'} ${K} au premier ${n}, on ${k>0?'ajoute':'enlève'} ${K} au second`,R0===50?`50 × ${o}, c'est la moitié de 100 × ${o} = ${F(100*o)} : ${F(R0*o)}`:`${R0} × ${o} = ${F(R0*o)}`,`Ce décalage fait perdre ${K} × ${K} = ${K*K} : on le rajoute`,`${F(R0*o)} + ${K*K} = ${F(n*n)}`]);}
 /* découpe un nombre selon ses rangs : 347 → [300,40,7] */
 const parts=n=>{const p=[];let m=1;while(n>0){const d=n%10;if(d)p.unshift(d*m);n=Math.floor(n/10);m*=10}return p};
 
@@ -293,7 +295,7 @@ function tabH(a,b){
   if(Math.max(a,b)>12){const g=Math.max(a,b),m=Math.min(a,b),r=g*m;
     if(m===9)return T('× 9 = × 10, moins une fois',[`${g} × 10 = ${10*g}`,`${10*g} − ${g} = ${r}`]);
     if(g===20)return T('× 20 = × 2, puis × 10',[`Double de ${m} = ${2*m}`,`${2*m} × 10 = ${r}`]);
-    if(m>10&&g<20&&m<20){const ug=g-10,um=m-10;return T('Entre 11 et 19 : (grand nombre + unités du petit) × 10, plus unités × unités',[`${g} + ${um} = ${g+um}`,`${g+um} × 10 = ${(g+um)*10}`,`${ug} × ${um} = ${ug*um}`,`${(g+um)*10} + ${ug*um} = ${r}`]);}
+    if(m>10&&g<20&&m<20){const ug=g-10,um=m-10;return T(`On découpe ${m} en 10 + ${um}`,[`${g} × 10 = ${10*g}`,mulD(g,um),`On additionne : ${10*g} + ${g*um} = ${r}`]);}
     if(g===19)return T('× 19 = × 20, moins une fois',[`${m} × 20 = ${20*m}`,`${20*m} − ${m} = ${r}`]);
     const u=g-10;return T(`× ${g} = × 10, plus × ${u}`,[`${m} × 10 = ${10*m}`,`${m} × ${u} = ${m*u}`,`${10*m} + ${m*u} = ${r}`]);}
   const order=[10,2,5,9,11,4,3,6,8,12,7],rk=n=>{const i=order.indexOf(n);return i<0?99:i};
@@ -318,19 +320,19 @@ function evenParts(n){const h=Math.floor(n/100)*100,r=n-h,t=Math.floor(r/20)*20;
 
 const SK=[
 {id:'comp',name:'Compléments',art:'+?=10',c:['#f97316','#fdba74','#c2410c'],t:[4,1],
- rule:'Vers 10 : les « amis de 10 » (1-9, 2-8, 3-7, 4-6, 5-5). Vers 100 ou 1 000 : chaque chiffre complète à 9, sauf le dernier qui complète à 10.',
- ex:'457 + ? = 1 000',exs:['Centaines : 4 → 5 (pour faire 9)','Dizaines : 5 → 4 (pour faire 9)','Unités : 7 → 3 (pour faire 10)','Réponse : 543'],
+ rule:'On part du petit nombre et on monte par bonds jusqu’au nombre rond, comme un commerçant qui rend la monnaie : d’abord jusqu’à la dizaine, puis la centaine, puis 1 000. On additionne les bonds.',
+ ex:'457 + ? = 1 000',exs:['457 → 460 : + 3','460 → 500 : + 40','500 → 1 000 : + 500','Total : 3 + 40 + 500 = 543'],
  gen(l){
   if(l==1){const n=R(1,9);return{q:`${n} + ? = 10`,a:10-n,...T('Les amis de 10',['Couples qui font 10 : 1-9, 2-8, 3-7, 4-6, 5-5',`${n} va avec ${10-n}`])}}
   if(l==2){const k=R(1,9),n=10*k;return{q:`${n} + ? = 100`,a:100-n,...T('Les amis de 10, en dizaines',[`${n}, c’est ${k} dizaines : il en faut 10`,`${k} + ${10-k} = 10 dizaines`,`Réponse : ${100-n}`])}}
   if(l==3){let n=R(11,89);if(n%10==0)n++;const d=Math.floor(n/10),u=n%10;
-   return{q:`${n} + ? = 100`,a:100-n,...T('Règle du 9 et du 10',['Les dizaines complètent à 9, les unités à 10',`Dizaines : ${d} + ${9-d} = 9`,`Unités : ${u} + ${10-u} = 10`,`Réponse : ${100-n}`])}}
+   return{q:`${n} + ? = 100`,a:100-n,...T('On monte par bonds jusqu’au nombre rond, comme quand on rend la monnaie',jsteps(n,100))}}
   if(l==4){const k=R(11,99),n=10*k;
    if(k%10==0){const c=k/10;return{q:`${n} + ? = 1 000`,a:1000-n,...T('Les amis de 10, en centaines',[`${n}, c’est ${c} centaines : il en faut 10`,`${c} + ${10-c} = 10 centaines`,`Réponse : ${1000-n}`])}}
    const d=Math.floor(k/10),u=k%10;
-   return{q:`${n} + ? = 1 000`,a:1000-n,...T('On enlève le zéro, puis 9 et 10',[`Sans le zéro : ${k} + ? = 100`,`Règle du 9 et du 10 : ${d} → ${9-d}, ${u} → ${10-u}, donc ${100-k}`,`On remet le zéro : ${1000-n}`])}}
+   return{q:`${n} + ? = 1 000`,a:1000-n,...T('On monte par bonds jusqu’au nombre rond, comme quand on rend la monnaie',jsteps(n,1000))}}
   let n=R(101,989);if(n%10==0)n+=3;const c=Math.floor(n/100),d=Math.floor(n/10)%10,u=n%10;
-  return{q:`${n} + ? = ${F(1000)}`,a:1000-n,...T('Règle du 9-9-10',['Centaines et dizaines complètent à 9, les unités à 10',`Centaines : ${c} → ${9-c}`,`Dizaines : ${d} → ${9-d}`,`Unités : ${u} → ${10-u}`,`Réponse : ${1000-n}`])}}},
+  return{q:`${n} + ? = ${F(1000)}`,a:1000-n,...T('On monte par bonds jusqu’au nombre rond, comme quand on rend la monnaie',jsteps(n,1000))}}},
 
 {id:'add',name:'Additions',art:'a+b',c:['#22c55e','#86efac','#15803d'],t:[5,1.5],
  rule:'On ajoute le second nombre en morceaux, de gauche à droite. On passe par la dizaine ronde. S’il finit par 7, 8 ou 9 : on arrondit, puis on corrige.',
@@ -419,7 +421,7 @@ const SK=[
  ex:'53 × 11',exs:['5 + 3 = 8','On glisse 8 entre 5 et 3','583'],
  gen(l){
   if(l<=2){let a,b;if(l==1){a=R(1,8);b=R(0,9-a)}else{a=R(2,9);b=R(10-a,9)}const n=10*a+b,s=a+b;
-   return{q:`${n} × 11`,a:n*11,...T('× 11 : écarter et glisser la somme',s<10?[`On écarte : ${a} _ ${b}`,`Somme : ${a} + ${b} = ${s}`,`On glisse ${s} au milieu : ${F(n*11)}`]:[`On écarte : ${a} _ ${b}`,`Somme : ${a} + ${b} = ${s} (plus de 9 !)`,`On glisse ${s%10} et on ajoute la retenue à ${a} : ${F(n*11)}`])}}
+   return{q:`${n} × 11`,a:n*11,...T(`× 11 : on écarte les deux chiffres de ${n} et on met leur somme au milieu`,s<10?[`On écarte : ${a} _ ${b}`,`Somme : ${a} + ${b} = ${s}`,`On glisse ${s} au milieu : ${F(n*11)}`]:[`On écarte : ${a} _ ${b}`,`Somme : ${a} + ${b} = ${s} (plus de 9 !)`,`On glisse ${s%10} et on ajoute la retenue à ${a} : ${F(n*11)}`])}}
   const n=R(12,99);
   if(l==3)return{q:`${n} × 9`,a:9*n,...T('× 9 = × 10, moins une fois',[`${n} × 10 = ${F(10*n)}`,`On retire ${n} en deux temps : ${F(10*n)} − ${n-n%10} = ${F(10*n-(n-n%10))}`,`${F(10*n-(n-n%10))} − ${n%10} = ${F(9*n)}`])};
   if(l==4)return{q:`${n} × 99`,a:99*n,...T('× 99 = × 100, moins une fois',[`${n} × 100 = ${F(100*n)}`,`${F(100*n)} − ${n} = ${F(99*n)}`])};
@@ -439,16 +441,16 @@ const SK=[
   const x=P([30,40,60,70,80,90]),y=10*R(2,50);return q(x,y,x*y/100,`${x} % = ${x/10} fois 10 %`,[`10 % de ${y} = ${y/10}`,`${x/10} × ${y/10} = ${x*y/100}`])}},
 
 {id:'carres',name:'Carrés',art:'x²',c:['#d946ef','#f0abfc','#a21caf'],t:[6,3],
- rule:'Finit par 5 : on multiplie les dizaines par le suivant et on colle 25 (35² → 3 × 4 = 12 → 1 225). Proche d’un nombre rond : on s’en sert.',
+ rule:'Qui finit par 5 : chiffre des dizaines × le suivant, puis on écrit 25 (35² : 3 × 4 = 12 → 1 225). Proche d’un nombre rond : on rend un facteur rond (47 × 47 → 50 × 44) et on rajoute le petit carré oublié (3 × 3).',
  ex:'65²',exs:['6 × 7 = 42','On colle 25','4 225'],
  gen(l){let n;
   if(l==1){n=R(2,12);return{q:`${n}²`,a:n*n,...T('Carré = le nombre fois lui-même',[`${n}² = ${n} × ${n} = ${n*n}`])}}
   if(l==2){n=R(13,19);const u=n%10,k=u<=5?u:10-u;
-   return{q:`${n}²`,a:n*n,...T('Écart au nombre rond : (n − k)(n + k) + k²',[`On s’écarte de ${k} de chaque côté : ${n-k} × ${n+k} = ${(n-k)*(n+k)}`,`On ajoute ${k}² = ${k*k}`,`${(n-k)*(n+k)} + ${k*k} = ${n*n}`])}}
-  if(l==3){const d=R(1,9);n=10*d+5;return{q:`${n}²`,a:n*n,...T('Finit par 5 : d × (d + 1), puis 25',[`Dizaines : ${d} × ${d+1} = ${d*(d+1)}`,`On colle 25 : ${F(n*n)}`])}}
+   return{q:`${n}²`,a:n*n,...sqRound(n,u<=5?n-u:n+(10-u))}}
+  if(l==3){const d=R(1,9);n=10*d+5;return{q:`${n}²`,a:n*n,...T(`Les carrés qui finissent par 5`,[`On garde le chiffre des dizaines : ${d}`,`On le multiplie par le nombre suivant : ${d} × ${d+1} = ${d*(d+1)}`,`On écrit 25 à la fin : ${F(n*n)}`])}}
   let k=R(-9,9);if(!k)k=4;const sg=k>0?'+':'−',K=Math.abs(k);
-  if(l==4){n=50+k;return{q:`${n}²`,a:n*n,...T('Autour de 50',[`${n} = 50 ${sg} ${K}`,`Centaines : 25 ${sg} ${K} = ${25+k} → ${F((25+k)*100)}`,`On ajoute ${K}² = ${k*k} : ${F(n*n)}`])}}
-  n=100+k;return{q:`${n}²`,a:n*n,...T('Autour de 100',[`${n} = 100 ${sg} ${K}`,`Centaines : ${n} ${sg} ${K} = ${n+k} → ${F((n+k)*100)}`,`On ajoute ${K}² = ${k*k} : ${F(n*n)}`])}}}
+  if(l==4){n=50+k;return{q:`${n}²`,a:n*n,...sqRound(n,50)}}
+  n=100+k;return{q:`${n}²`,a:n*n,...sqRound(n,100)}}}
 ];
 const SKM={};SK.forEach((k,i)=>{k.i=i;SKM[k.id]=k});
 
