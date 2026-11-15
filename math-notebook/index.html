@@ -92,8 +92,9 @@ h2.sec{font-weight:900;font-size:22px;margin:26px 2px 12px}
 .steps{list-style:none;counter-reset:st;margin:0 0 10px;padding:0}
 .steps li{counter-increment:st;position:relative;padding:0 0 8px 36px;font-size:16px;line-height:1.35}
 .steps li::before{content:counter(st);position:absolute;left:0;top:0;width:26px;height:26px;border-radius:50%;background:currentColor;color:#fff;font-weight:900;text-align:center;line-height:26px;font-size:15px}
+.steps li::before{background:#15803d}
 .fb.bad .steps li::before{background:#be123c}
-.steps li b{display:block;font-size:14px;text-transform:uppercase;letter-spacing:.04em;opacity:.85}
+.steps li b.sl{display:block;font-size:14px;text-transform:uppercase;letter-spacing:.04em;opacity:.85}
 .goodans{font-weight:800}
 .tipbox{background:#fff7d6;color:#713f12;border-radius:14px;padding:10px 12px;margin:0 0 12px;font-size:16px;line-height:1.35}
 .tipbox b{display:block;font-size:13px;text-transform:uppercase;letter-spacing:.05em}
@@ -239,6 +240,7 @@ h2.sec{font-weight:900;font-size:22px;margin:26px 2px 12px}
 .gym2{display:flex;gap:10px;margin-top:10px}
 .gymL{flex:1;display:block;padding:13px 8px;border-radius:18px;background:linear-gradient(120deg,var(--g1),var(--g2));color:#fff;font-weight:900;font-size:17px;text-align:center;text-decoration:none;box-shadow:0 4px 0 rgba(0,0,0,.18)}
 .gymL:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.18)}
+.gym.trap{margin-top:10px;background:linear-gradient(120deg,#4c1d95,#7c3aed 60%,#a855f7);box-shadow:0 5px 0 #2e1065}
 .gym.prob{margin-top:10px;background:linear-gradient(120deg,#f97316,#e11d48 60%,#be185d);box-shadow:0 5px 0 #9f1239}
 .calc .cdisp{background:#1e1b4b;color:#fff;border-radius:16px;padding:10px 14px;text-align:right;margin-bottom:10px}
 .cdisp small{display:block;min-height:18px;font-size:15px;opacity:.7;word-break:break-all}
@@ -347,6 +349,7 @@ h2.grp{font-weight:900;font-size:22px;margin:26px 4px 10px}
   </section>
   <button class="gym" id="gymBtn"><span>🏋️ Gym maths</span><small>2 min pour échauffer ton cerveau</small></button>
   <button class="gym prob" id="probBtn" onclick="startProblems()"><span>🧩 Problèmes</span><small>De vrais exercices en plusieurs étapes, guidés puis en autonomie</small></button>
+  <button class="gym trap" id="trapBtn" onclick="startPieges()"><span>🪤 Pièges</span><small>Les énigmes célèbres où l'intuition se trompe, expliquées pas à pas</small></button>
   <div class="gym2"><a href="../calcul-mental/" class="gymL" style="--g1:#f59e0b;--g2:#ef4444">🧮 Calcul mental</a><a href="../calcul-mental/#tab" class="gymL" style="--g1:#8b5cf6;--g2:#ec4899">✖️ Tables</a></div>
   <div class="toolbar"><button id="albumBtn">🃏 Album</button><button id="weakBtn">🧑‍🏫 Mon prof</button><button id="saveBtn">💾</button></div>
   <button class="savenag" id="testNag" style="display:none" onclick="startTest()">📈 Mesure ta progression : test de niveau (5 min)</button>
@@ -367,22 +370,23 @@ h2.grp{font-weight:900;font-size:22px;margin:26px 4px 10px}
 <div class="onb" id="onb"></div>
 <div class="memo-wrap" id="sheetw"></div>
 
-<script src="js/save.js?v=20261112c"></script>
-<script src="js/lib.js?v=20261112c"></script>
-<script src="js/engine.js?v=20261112c"></script>
-<script src="js/manip.js?v=20261112c"></script>
-<script src="js/geofig.js?v=20261112c"></script>
-<script src="js/c-bases.js?v=20261112c"></script>
-<script src="js/c-premiere.js?v=20261112c"></script>
-<script src="js/c-terminale.js?v=20261112c"></script>
-<script src="js/tiles.js?v=20261112c"></script>
-<script src="js/adapt.js?v=20261112c"></script>
-<script src="js/glossaire.js?v=20261112c"></script>
-<script src="js/prof.js?v=20261112c"></script>
-<script src="js/didact.js?v=20261112c"></script>
-<script src="js/gym.js?v=20261112c"></script>
-<script src="js/progres.js?v=20261112c"></script>
-<script src="js/problemes.js?v=20261112c"></script>
+<script src="js/save.js?v=20261115a"></script>
+<script src="js/lib.js?v=20261115a"></script>
+<script src="js/engine.js?v=20261115a"></script>
+<script src="js/manip.js?v=20261115a"></script>
+<script src="js/geofig.js?v=20261115a"></script>
+<script src="js/c-bases.js?v=20261115a"></script>
+<script src="js/c-premiere.js?v=20261115a"></script>
+<script src="js/c-terminale.js?v=20261115a"></script>
+<script src="js/tiles.js?v=20261115a"></script>
+<script src="js/adapt.js?v=20261115a"></script>
+<script src="js/glossaire.js?v=20261115a"></script>
+<script src="js/prof.js?v=20261115a"></script>
+<script src="js/didact.js?v=20261115a"></script>
+<script src="js/gym.js?v=20261115a"></script>
+<script src="js/progres.js?v=20261115a"></script>
+<script src="js/problemes.js?v=20261115a"></script>
+<script src="js/pieges.js?v=20261115a"></script>
 <script>boot();</script>
 </body>
 </html>

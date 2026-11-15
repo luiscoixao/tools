@@ -245,11 +245,11 @@ function answered(s,ok,gaveUp,info){
     const g=Math.max(0,(it.penalty?10-3*it.penalty:10))+(S.combo>=3?5:0);S.gained+=g;
     if(S.mode==='review') srsHit(s.srs,true);
     F.className='fb good show';
-    F.innerHTML=`<h3>${pick(['Bravo !','Exact !','Parfait !','Bien vu !','Yes !'])}${S.combo>=3?' 🔥 '+S.combo+' d\'affilée':''}${g?` <small>+${g} XP</small>`:''}</h3>${tipOf(it)?`<p>💡 ${tipOf(it)}</p>`:it.why?`<p>${it.why}</p>`:''}${S.lvlMsg?`<p class="lvlmsg">${S.lvlMsg}</p>`:''}<button class="cta">Continuer</button>`;
+    F.innerHTML=`<h3>${pick(['Bravo !','Exact !','Parfait !','Bien vu !','Yes !'])}${S.combo>=3?' 🔥 '+S.combo+' d\'affilée':''}${g?` <small>+${g} XP</small>`:''}</h3>${it.fullExp?stepsHTML(it)+tipHTML(it):tipOf(it)?`<p>💡 ${tipOf(it)}</p>`:it.why?`<p>${it.why}</p>`:''}${S.lvlMsg?`<p class="lvlmsg">${S.lvlMsg}</p>`:''}<button class="cta">Continuer</button>`;
     F.querySelector('.cta').onclick=next;
   }else{
     if(!gaveUp) sound(false);S.combo=0;S.missed.add(s);
-    if(S.mode==='review') srsHit(s.srs,false); else if(S.mode!=='speed'&&S.mode!=='gym') srsAdd(it);
+    if(S.mode==='review') srsHit(s.srs,false); else if(!['speed','gym','piege','prob'].includes(S.mode)) srsAdd(it);
     if(S.lives!=null){S.lives--;}
     const good=it.type==='tf'?(it.truth?'Vrai':'Faux'):it.type==='input'?String(it.a[0]):it.type==='match'||it.type==='order'?'':it.type==='line'?String(it.ans).replace('.',','):it.a[0];
     F.className='fb bad show';
