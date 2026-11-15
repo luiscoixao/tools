@@ -121,6 +121,13 @@ h2.sec small{font-size:14px;color:var(--muted);font-weight:800}
 .sheet h3{margin:0 0 4px;font-weight:900;font-size:20px}
 .sheet .sol{font-weight:900;font-size:28px;margin:4px 0 10px}
 .sheet .sol b{color:var(--good)}
+.tpick{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:10px}
+.tpick button{border:0;border-radius:12px;padding:10px 0;font:900 18px Nunito,sans-serif;background:var(--c2,#ede9fe);color:#fff;background:#8b5cf6}
+.tlist{display:grid;gap:4px;margin-top:6px}
+.tlist div{display:flex;align-items:center;gap:10px;background:#f5f3ff;border-radius:10px;padding:6px 12px;font-size:18px;font-weight:800}
+.tlist span{flex:1}
+.tlist b{font-size:20px;color:#6d28d9}
+.tlist small{color:#a78bfa;font-weight:800;min-width:34px;text-align:right}
 .nudge{margin:8px 0 0;font-size:14px;font-weight:800;color:#9a3412;background:#fff7ed;border-radius:12px;padding:8px 10px;text-align:center;animation:nin .4s}
 .nudge b{display:block;margin-bottom:4px;font-size:14px}
 .nudge span{display:inline-block;margin:2px 4px;padding:2px 8px;border-radius:8px;background:#fff;font-size:15px}
@@ -528,8 +535,24 @@ function intro(id){
     <div class="box"><h4>💡 L'astuce</h4><p>${k.rule}</p></div>
     <div class="box"><h4>Exemple : ${k.ex}</h4><ul class="steps">${k.exs.map((s,i)=>`<li${i==k.exs.length-1?' class="r"':''}>${s}</li>`).join('')}</ul></div>
     <div class="box"><h4>Ta progression</h4><div class="lvls">${[1,2,3,4,5].map(i=>`<i class="${i<=l?'on':''}"></i>`).join('')}</div></div>
+    ${id==='tab'?`<div class="box"><h4>📚 Apprendre une table, comme à l'école</h4><p>Choisis une table : tu la lis, tu la récites dans l'ordre, puis dans le désordre.</p><div class="tpick">${Array.from({length:19},(_,i)=>i+2).map(n=>`<button data-n="${n}">${n}</button>`).join('')}</div></div>`:''}
   </div><button class="btn" id="startSk">C'est parti !</button>`;
   $('startSk').onclick=()=>start('skill',Array(10).fill(id));
+  body.querySelectorAll('.tpick button').forEach(b=>b.onclick=()=>learnTable(+b.dataset.n));
+}
+/* apprendre une table : lire, réciter dans l'ordre (en ajoutant n à chaque ligne), puis dans le désordre */
+function tabItem(n,i,ordered){const r=n*i;
+  const t=ordered&&i>1?T(`On ajoute ${n} à la ligne d'avant`,[`${n} × ${i-1} = ${F(n*(i-1))}`,`${F(n*(i-1))} + ${n} = ${F(r)}`])
+   :i===1?T('× 1 : le nombre ne change pas',[`${n} × 1 = ${n}`]):i===10?T('× 10 : on écrit un 0',[`${n} × 10 = ${F(r)}`])
+   :n<=12&&i<=12&&n>1?tabH(n,i):T(`${n} × ${i} = ${n} × 10 − ${n} × ${10-i}`,[`${n} × 10 = ${F(10*n)}`,`${n} × ${10-i} = ${F(n*(10-i))}`,`${F(10*n)} − ${F(n*(10-i))} = ${F(r)}`]);
+  return {sk:'tab',l:1,q:`${n} × ${i}`,a:r,...t};}
+function learnTable(n){
+  const rows=Array.from({length:10},(_,i)=>i+1);
+  body.innerHTML=`<div class="intro"><div class="box"><h4>📖 La table de ${n}</h4>
+    <div class="tlist">${rows.map(i=>`<div><span>${n} × ${i}</span><b>${F(n*i)}</b>${i>1?`<small>+${n}</small>`:''}</div>`).join('')}</div>
+    <p style="margin-top:10px">Chaque ligne, c'est la ligne d'avant <b>+ ${n}</b>. ${n%10===9?'Astuce : × 9 = × 10 moins une fois.':n===5?'Astuce : × 5 = la moitié de × 10.':n>10?`Astuce : ${n} × a = 10 × a + ${n-10} × a.`:''}</p></div>
+    </div><button class="btn" id="goLearn">Je récite dans l'ordre →</button>`;
+  $('goLearn').onclick=()=>start('skill',[...rows.map(i=>tabItem(n,i,true)),...shuffle(rows.slice()).map(i=>tabItem(n,i,false))]);
 }
 
 /* ============ séances ============ */
