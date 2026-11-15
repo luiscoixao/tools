@@ -532,10 +532,10 @@ function intro(id){
   $('top').style.visibility='visible';$('lBar').style.width='0';$('combo').textContent='';
   body.innerHTML=`<div class="intro">
     <div class="ihead" style="--t1:${k.c[0]};--t2:${k.c[1]};--t3:${k.c[2]}"><div class="art">${k.art}</div><h2>${k.name}</h2><p>Niveau ${l} sur 5 · ${'★'.repeat(stars(id))}${'☆'.repeat(3-stars(id))}</p></div>
+    ${id==='tab'?`<div class="box"><h4>📚 Apprendre une table, comme à l'école</h4><p>Choisis une table : tu la lis, tu la récites dans l'ordre, puis dans le désordre.</p><div class="tpick">${Array.from({length:19},(_,i)=>i+2).map(n=>`<button data-n="${n}">${n}</button>`).join('')}</div></div>`:''}
     <div class="box"><h4>💡 L'astuce</h4><p>${k.rule}</p></div>
     <div class="box"><h4>Exemple : ${k.ex}</h4><ul class="steps">${k.exs.map((s,i)=>`<li${i==k.exs.length-1?' class="r"':''}>${s}</li>`).join('')}</ul></div>
     <div class="box"><h4>Ta progression</h4><div class="lvls">${[1,2,3,4,5].map(i=>`<i class="${i<=l?'on':''}"></i>`).join('')}</div></div>
-    ${id==='tab'?`<div class="box"><h4>📚 Apprendre une table, comme à l'école</h4><p>Choisis une table : tu la lis, tu la récites dans l'ordre, puis dans le désordre.</p><div class="tpick">${Array.from({length:19},(_,i)=>i+2).map(n=>`<button data-n="${n}">${n}</button>`).join('')}</div></div>`:''}
   </div><button class="btn" id="startSk">C'est parti !</button>`;
   $('startSk').onclick=()=>start('skill',Array(10).fill(id));
   body.querySelectorAll('.tpick button').forEach(b=>b.onclick=()=>learnTable(+b.dataset.n));
@@ -721,7 +721,7 @@ $('resetBtn').onclick=()=>{if(confirm('Effacer toute ta progression (niveaux, XP
 
 load();home();
 /* lien direct depuis l'appli Mathématiques : #tab ouvre la séance Tables */
-(function(){const d=decodeURIComponent(location.hash.slice(1));if(d&&SK.some(k=>k.id===d))setTimeout(()=>start('skill',Array(10).fill(d)),300);})();
+(function(){const d=decodeURIComponent(location.hash.slice(1));if(d.startsWith('intro-')&&SKM[d.slice(6)]){setTimeout(()=>intro(d.slice(6)),200);return;}if(d&&SK.some(k=>k.id===d))setTimeout(()=>start('skill',Array(10).fill(d)),300);})();
 </script>
 </body>
 </html>
